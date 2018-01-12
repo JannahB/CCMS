@@ -1,0 +1,137 @@
+<div class="ui-g">
+  
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0">  
+    <h1 class="page-header mt-0">Table Maintenance</h1>    
+  </div>
+
+  <!-- FIRST SECTION -->
+  
+  <div class="ui-g form-group " >
+    <div class="card">
+    
+      <div class="ui-g-12">
+        <!-- <h2>Data Tables</h2> -->
+        <p class="muted">Manage all reference data here. Choose a reference data table, then choose a data reference item to edit. </p>
+      </div>
+      <div class="ui-g-12">
+        <p-dropdown 
+            styleClass="big-dropdown"
+            (onChange)="refTableSelected($event)"
+            [options]="refDataTables"
+            [(ngModel)]="selectedTableId"
+            placeholder="choose data table" ></p-dropdown>
+      </div>
+
+      <div *ngIf="selectedTable" class="ui-g-4 ui-sm-12 mt-25">
+        <h2 class="mt-0" style="margin-bottom:35px;">Table Items </h2>
+        <p *ngIf="!selectedItem && selectedTableItems && selectedTableItems.length"
+            class="muted-label uc">Choose a Data Item below</p>
+        <p-listbox 
+            *ngIf="iSaySo"
+            styleClass="data-items-listbox"
+            [options]="selectedTableItems"
+            optionLabel="name"
+            dataKey="{{selectedTableIdField}}"
+            [(ngModel)]="selectedItem"
+            (onChange)="selectedItemChanged($event)">
+        </p-listbox>
+        <button label="New Data Item"
+              type="button" pButton
+              *ngIf="selectedTable"
+              class="secondary width-full outline mt-5"
+              (click)="newRefDataItem()"
+              icon="ui-icon-add"></button>
+      </div>
+
+      <div *ngIf="selectedTable" class="ui-g-8 ui-sm-12">
+        <div class="ui-g-6">
+          <h2 class="">Table Item</h2>
+        </div>
+        <div class="ui-g-6 ta-r">
+            
+        </div>
+
+        <div class="ui-g-12">
+          <div *ngIf="selectedItem" class="card" style="min-height:322px;">
+            <div >
+              <div class="ui-g form-group" >
+                  <!-- NAME -->
+                  <div class="ui-g-12">
+                      <span class="md-inputfield">
+                        <input pInputText id="ti_ref_name" class="width-full" [(ngModel)]="selectedItem.name"/>
+                        <label for="ti_ref_name">Name</label>
+                      </span>
+                  </div>
+                  <!-- Description -->
+                  <div class="ui-g-12">
+                      <span class="md-inputfield">
+                          <input pInputText id="ti_ref_desc" class="width-full" [(ngModel)]="selectedItem.description" />
+                          <label for="ti_ref_desc">Description</label>
+                      </span>
+                  </div>
+
+                  <!-- Notes -->
+                  <div class="ui-g-12 ui-md-8">
+                      <span class="md-inputfield">
+                        <input pInputText id="ti_ref_notes" class="width-full" [(ngModel)]="selectedItem.notes"/>
+                        <label for="ti_ref_notes">Notes</label>
+                      </span>
+                  </div>
+
+                  <!-- ID -->
+                  <div class="ui-g-12 ui-md-4">
+                      <span class="md-inputfield">
+                        <input pInputText id="ti_ref_id" disabled class="width-full" [(ngModel)]="selectedItem.id"/>
+                        <label for="ti_ref_id">ID</label>
+                      </span>
+                  </div>
+
+                  <!-- DATE CREATED -->
+                  <div class="ui-g-12 ui-md-4">
+                    <p-calendar id="ref_dateCreated" placeholder="Start Date"
+                        [(ngModel)]="selectedItem.startDate"
+                        [showIcon]="true"
+                        dateFormat="dd.mm.yy"
+                        disabled="true"></p-calendar>
+                  </div>
+
+                  <!-- DATE MODIFIED -->
+                  <div class="ui-g-12 ui-md-4">
+                    <p-calendar id="ref_dateModified" placeholder="End Date"
+                        [(ngModel)]="selectedItem.endDate"
+                        [showIcon]="true"
+                        dateFormat="dd.mm.yy"
+                        disabled="true"></p-calendar>
+                  </div>
+
+
+                  <!-- SAVE / CANCEL BUTTONS -->
+                  <div class="ui-g-12 ta-r">
+                      <button type="button"
+                              (click)="deleteRefDataItemRequest()"
+                              [disabled]="!selectedItem.id"
+                              label="Delete"
+                              icon="ui-icon-delete"
+                              class="ui-button-danger fl" pButton></button>
+                      <button type="button"
+                              (click)="saveRefDataItem()"
+                              label="Save"
+                              icon="ui-icon-check"
+                              class="secondary" pButton></button>
+                      <button type="button"
+                              (click)="cancelRefDataItemEdit()"
+                              label="Cancel"
+                              icon="ui-icon-clear"
+                              class="ui-button-secondary"
+                              pButton></button>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

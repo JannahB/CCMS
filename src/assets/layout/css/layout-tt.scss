@@ -1,0 +1,66 @@
+/* Theme */
+$primaryColor: #1A87BF;
+$primaryDarkColor: #085981;
+$primaryLightColor: #66ACE2;
+$primaryXLightColor: #BAD9F1;
+$accentColor: #25BF6B;
+$accentDarkColor: #0e7c5b;
+$accentLightColor: #a2eec4;
+$accentTextColor: $accentDarkColor;
+$brandColor: #BF2E1A;
+$buttonColor: #25BF6B;
+$buttonHover: #0e7c5b;
+$topbarBGColor: white;
+$topbarHeight: 60px;
+$logoHeight: 28px;
+$logoWidth: 175px;
+$logoUrl: '../images/logo2x-red.png'; // relative from ./assets/layout/css/
+
+// these 4 are copied from _variables
+/* Common */
+$textColor:#1c333d;
+$textSecondaryColor:#354850;
+$fontSize:16px;
+$lineHeight:1.5em;
+$transitionDuration:.3s;
+$borderRadius:3px;
+
+/* Layout */
+$bodyBgColor: #E6EFF6;
+$maskBgColor:#424242;
+
+$topbarButtonColor: $brandColor;
+$topbarButtonHoverColor:#e8e8e8;
+$topbarSearchBorderColor:$brandColor;
+$topbarSearchColor:$brandColor;
+$topbarIconColor:$brandColor;
+$topbarIconHoverColor:#e0331c;
+$topbarMenuBgColor:#ffffff;
+
+$layoutMenuBgColor:#ffffff;
+$layoutMenuScrollbarBgColor:#aaaaaa;
+$layoutMenuItemIconColor:#757575;
+$layoutMenuItemActiveColor:#e8e8e8;
+
+// Horizontal Light Menu
+$horizontalLightMenuBGColor: $primaryColor;
+$horizontalLayoutMenuItemHoverBgColor: $primaryDarkColor;
+$horizontalLightMenuRouterLinkActiveColor: white;
+$horizontalLightMenuRouterLinkActiveHoverTextColor: $primaryXLightColor;
+$horizontalLayoutMenuItemHoverTextColor: $primaryLightColor;
+$horizontalLayoutMenuItemTextColor: $primaryXLightColor;
+$horizontalLayoutMenuSubMenuBgColor:#ffffff;
+$horizontalLayoutMenuSubMenuActiveBgColor:#e8e8e8;
+
+// Horizontal Dark Menu
+$horizontalDarkLayoutMenuItemTextColor:#ffffff;
+$horizontalDarkLayoutMenuItemTextColorIcon:#ffffff;
+$horizontalDarkLayoutMenuItemTextColorHover: #f2f9ff;
+
+$darkMenuBgColor: #a7a596;
+$darkMenuHoverColor: #676767;
+$darkMenuRouterLinkActiveColor: #085981;
+$lightMenuRouterLinkActiveColor: #0e7c5b;
+
+
+@import '../../sass/layout/_layout';

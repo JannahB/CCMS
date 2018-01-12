@@ -1,0 +1,22 @@
+[
+  {"spokenLanguageOID": 1, "languageName": "Mandarin"},
+  {"spokenLanguageOID": 2, "languageName": "Spanish"},
+  {"spokenLanguageOID": 3, "languageName": "English"},
+  {"spokenLanguageOID": 4, "languageName": "Hindi"},
+  {"spokenLanguageOID": 5, "languageName": "Arabic"},
+  {"spokenLanguageOID": 6, "languageName": "Portuguese"},
+  {"spokenLanguageOID": 7, "languageName": "Bengali"},
+  {"spokenLanguageOID": 8, "languageName": "Russian"},
+  {"spokenLanguageOID": 9, "languageName": "Japanese"},
+  {"spokenLanguageOID": 0, "languageName": "Punjabi"},
+  {"spokenLanguageOID": 1, "languageName": "German"},
+  {"spokenLanguageOID": 2, "languageName": "Javanese"},
+  {"spokenLanguageOID": 3, "languageName": "Wu"},
+  {"spokenLanguageOID": 4, "languageName": "Malay"},
+  {"spokenLanguageOID": 5, "languageName": "Telugu"},
+  {"spokenLanguageOID": 6, "languageName": "Vietnamese"},
+  {"spokenLanguageOID": 7, "languageName": "Korean"},
+  {"spokenLanguageOID": 8, "languageName": "French"},
+  {"spokenLanguageOID": 9, "languageName": "Marathi"},
+  {"spokenLanguageOID": 0, "languageName": "Tamil"}
+]

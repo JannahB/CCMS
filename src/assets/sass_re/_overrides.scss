@@ -1,0 +1,166 @@
+// Overrides -------------
+
+body {
+  .layout-wrapper{
+    height: 100%;
+    width: 100%;
+
+    .layout-container{
+      height: 100%;
+      width: 100%;
+
+      .layout-main {
+        height: 100%;
+        width: auto;
+      }
+    }
+  }
+}
+
+body .ui-widget-header .ui-inputtext, .ui-widget-content .ui-inputtext {
+  width: 100%;
+}
+
+.court-dropdown{
+  ul.ui-dropdown-items.ui-dropdown-list {
+    padding: 0 !important;
+
+    li {
+      font-size: inherit;
+    }
+  }
+}
+
+.task-date-range{
+  span.ui-calendar.ui-calendar-w-btn {
+    width: 100%;
+  }
+
+  input.ui-inputtext.ui-widget {
+    font-size: 0.9em;
+  }
+}
+
+.task-multiselect {
+  .ui-widget-header.ui-corner-all.ui-multiselect-header.ui-helper-clearfix::after {
+    content: "Show all";
+    display: inline;
+  }
+
+  .ui-multiselect .ui-multiselect-label{
+    font-size: 0.9em;
+  }
+}
+
+
+// Remove L/R gutters on phone
+@media (max-width: 600px) {
+
+  .layout-container .layout-main {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  body .ui-fieldset {
+    padding-left: 0 !important;
+    padding-right:0 !important;
+  }
+
+  .ui-g.form-group > div {
+    padding: 1em 0.33em;
+  }
+}
+
+.layout-container .ultima-menu li a {
+  // padding: 1em 1em;
+}
+.layout-container .ultima-menu li a i:first-child {
+  // font-size: 2em;
+}
+
+.layout-container .topbar .logo {
+  // margin-top: -5px;
+}
+
+
+// Toggleable Fieldsets
+// must include 'body' b/c primeng uses it
+body {
+  .base-fieldset {
+
+    label.input-label {
+      font-size: 0.8em;
+      color: #777777;
+      text-transform: uppercase;
+    }
+    label.section-label {
+      font-size: 0.8em;
+      color: #026cb6;
+      text-transform: uppercase;
+    }
+
+    .ui-tabmenu .ui-tabmenu-nav {
+      background: none;
+    }
+    .ui-widget-content {
+      border: none;
+    }
+    .ui-tabview .ui-tabview-panel {
+      padding: 0.625em 0em;
+    }
+    .ui-tabview.ui-widget.ui-widget-content.ui-corner-all.ui-tabview-top {
+      border: none;
+      background: none;
+    }
+    .ui-fieldset .ui-fieldset-legend {
+      font-size: 1.35em;
+    }
+    .ui-fieldset .ui-fieldset-legend .ui-fieldset-toggler {
+      font-size: 0.75em;
+      padding: .25em;
+      height: 1.5em;
+      width: 1.5em;
+      border-radius: 4px;
+    }
+    .ui-tabview .ui-tabview-nav li {
+      font-size: 1.2em;
+      list-style: none;
+      float: left;
+      position: relative;
+      margin: 0 .125em 1px 0;
+      padding: 0;
+      white-space: nowrap;
+    }
+    .ui-fieldset-toggleable {
+      background: white;
+      border: 1px solid #BAD9F1;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+    }
+  }
+  @media (max-width: 600px) {
+    .base-fieldset {
+      .ui-tabview .ui-tabview-nav li {
+        font-size: 1em;
+      }
+    }
+    .ui-fieldset {
+      padding: 0.625em 0;
+    }
+  }
+}
+
+// Horizontal Menu --------------
+
+@media (min-width: 1025px) {
+
+  .layout-container.menu-layout-horizontal .layout-menu {
+    overflow: visible;
+    position: fixed;
+    width: 100%;
+    top: 60px;
+    height: auto;
+    border-bottom: #949179 1px solid;
+    background-color: #a7a596;
+    box-shadow: 0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
+  }
+}

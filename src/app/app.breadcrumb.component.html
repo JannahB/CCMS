@@ -1,0 +1,42 @@
+<div class="layout-breadcrumb">
+    <ul>
+        <li>
+            <a routerLink="">
+                <i class="material-icons">home</i>
+            </a>
+        </li>
+        <li>/</li>
+        <ng-template ngFor let-item let-last="last" [ngForOf]="items">
+            <li>
+                <a [routerLink]="item.routerLink" *ngIf="item.routerLink">{{item.label}}</a>
+                <ng-container *ngIf="!item.routerLink">{{item.label}}</ng-container>
+            </li>
+            <li *ngIf="!last">/</li>
+        </ng-template>
+    </ul>
+
+    <div class="layout-breadcrumb-options">
+        <!-- <span class="text-muted">North Children Court</span> -->
+        <div class="pt-5">
+            <p-dropdown styleClass="width-full"
+                class="court-dropdown"
+                [options]="[{'label':'North Children Court', 'value':1},{'label':'South Children Court', 'value':2},{'label':'East Children Court', 'value':3}]" 
+                [(ngModel)]="selectedCourt">
+            </p-dropdown>
+        </div>
+        <!-- <button pButton type="button" 
+            class="ui-button-secondary"
+            (click)="app.onRightPanelButtonClick($event)" 
+            icon="ui-icon-timer" label="Tasks"></button> -->
+        
+        <!-- <a routerLink="/" title="Tasks">
+            <i class="material-icons">backup</i>
+        </a>
+        <a routerLink="/" title="Bookmark">
+            <i class="material-icons">bookmark</i>
+        </a>
+        <a routerLink="/" title="Logout">
+            <i class="material-icons">power_settings_new</i>
+        </a> -->
+    </div>
+</div>

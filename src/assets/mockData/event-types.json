@@ -1,0 +1,198 @@
+[
+  {
+    "eventTypeOID": 22,
+    "courtOID": 5,
+    "eventTypeName": "AINT",
+    "description": "Adjourned Intake Conference Held - Rule 11.3",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 1,
+    "courtOID": 5,
+    "eventTypeName": "APP",
+    "description": "Application Filed",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 15,
+    "courtOID": 5,
+    "eventTypeName": "BAIL",
+    "description": "Bail Granted - Rule 9.5",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 16,
+    "courtOID": 5,
+    "eventTypeName": "BALT",
+    "description": "Bale Taken - Rule 9",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 17,
+    "courtOID": 5,
+    "eventTypeName": "BNGR",
+    "description": "Bail Not Granted - Rule 9R",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 6,
+    "courtOID": 5,
+    "eventTypeName": "CHGJ",
+    "description": "Change Judicial Officer",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 2,
+    "courtOID": 5,
+    "eventTypeName": "CHNS",
+    "description": "CHINS Application Filed",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 25,
+    "courtOID": 5,
+    "eventTypeName": "COMT",
+    "description": "Committed to Trial - Rule 10.6",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 9093328897184976,
+    "courtOID": 5,
+    "eventTypeName": "CRTD",
+    "description": "Case Created",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 5,
+    "courtOID": 5,
+    "eventTypeName": "DOCG",
+    "description": "Complaint without Oath filed – Rule 8.2",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 18,
+    "courtOID": 5,
+    "eventTypeName": "EMON",
+    "description": "Electronic Monitoring Ordered - Rule 9.8",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 20,
+    "courtOID": 5,
+    "eventTypeName": "FAMT",
+    "description": "First Assessment Done - Rule 11",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 7,
+    "courtOID": 5,
+    "eventTypeName": "FILD",
+    "description": "Case Filed",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 3,
+    "courtOID": 5,
+    "eventTypeName": "INFO",
+    "description": "Information Filed",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 23,
+    "courtOID": 5,
+    "eventTypeName": "INIH",
+    "description": "Initial Hearing Held - Rule 10.5",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 21,
+    "courtOID": 5,
+    "eventTypeName": "INTK",
+    "description": "Intake Conference Held - 11.3",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 4,
+    "courtOID": 5,
+    "eventTypeName": "OATH",
+    "description": "Complaint on Oath filed – Rule 8.2",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 24,
+    "courtOID": 5,
+    "eventTypeName": "PREL",
+    "description": "Preliminary Inquiry Completed - Rule 10.6",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 10,
+    "courtOID": 5,
+    "eventTypeName": "PSUM",
+    "description": "Separate Summons for Parent Issued - Rule 8.4(9)",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 26,
+    "courtOID": 5,
+    "eventTypeName": "RELS",
+    "description": "Released - Rule 10.6",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 14,
+    "courtOID": 5,
+    "eventTypeName": "REPS",
+    "description": "Replacement Summons Issued - Rule 8.4 (8)",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 19,
+    "courtOID": 5,
+    "eventTypeName": "RMND",
+    "description": "Remanded - Rule 9.9",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 12,
+    "courtOID": 5,
+    "eventTypeName": "SMW1",
+    "description": "Summons Withdrawn - Rule 8.4(1)",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 13,
+    "courtOID": 5,
+    "eventTypeName": "SMW2",
+    "description": "Summons Withdrawn - Rule 8.4(2)",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 9,
+    "courtOID": 5,
+    "eventTypeName": "SUM4",
+    "description": "Summons Issued - Rule 8.4(1)",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 11,
+    "courtOID": 5,
+    "eventTypeName": "SUM7",
+    "description": "Summons Served - Rule 8.4 (7)",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 79,
+    "courtOID": 5,
+    "eventTypeName": "UPTD",
+    "description": "Case Updated",
+    "eventCategoryText": "Case"
+  },
+  {
+    "eventTypeOID": 8,
+    "courtOID": 5,
+    "eventTypeName": "WRNT",
+    "description": "Warrant Issued - Rule 8.4(2)",
+    "eventCategoryText": "Case"
+  }
+]

@@ -1,0 +1,438 @@
+<div class="ui-g">
+  
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0">  
+    <label class="minimal block mb-0">Case:</label>
+    <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>    
+  </div>
+
+  <!-- FIRST SECTION -->
+  <div class="ui-g-12 card">
+
+    <div *ngIf="case">
+      <div class="ui-g-12 ui-md-3">
+        <label class="minimal primary block">Filing Date</label>
+        <p-calendar 
+              id="filingDate" 
+              styleClass="width-full"
+              [(ngModel)]="case.caseFilingDate" 
+              (onSelect)="generalDetailsOnBlur($event)" 
+              dateFormat="mm/dd/yy" 
+              placeholder="Case Filing Date" 
+              [showIcon]="true" 
+              [yearNavigator]="true" ></p-calendar>
+      </div>
+
+      <div class="ui-g-12 ui-md-3">
+          <label class="minimal primary block">Case Type</label>
+          <p-dropdown 
+              placeholder="case type..."
+              optionLabel="name"
+              [options]="case.court.caseTypes"
+              [(ngModel)]="case.caseType"
+              (onChange)="ddOnChange($event)"
+              styleClass="width-full">
+          </p-dropdown>  
+      </div>   
+    
+      <div class="ui-g-12 ui-md-3">
+          <label class="minimal primary block">Case Status</label>
+          <p-dropdown 
+              placeholder="case status..."
+              optionLabel="name"
+              [options]="case.court.caseStatuses"
+              [(ngModel)]="case.caseStatus"
+              (onChange)="ddOnChange($event)"
+              styleClass="width-full">
+          </p-dropdown>        
+      </div>
+      
+      <div class="ui-g-12 ui-md-3">
+          <label class="minimal primary block">Case Phase</label>
+          <p-dropdown 
+              placeholder="case phase..."
+              optionLabel="name"
+              [options]="case.court.casePhases"
+              [(ngModel)]="case.casePhase"
+              (onChange)="ddOnChange($event)"
+              styleClass="width-full">
+          </p-dropdown>    
+      </div>
+      
+      <div class="ui-g-12 ui-md-3">
+          <label class="minimal block primary">Case Weight</label>
+          <div class="mar-0">{{ case.caseWeight }}</div>
+          <p-slider [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10" [animate]="true"></p-slider>
+      </div>
+        
+      <!-- CASE PARTIES TABLE -->
+
+      <div class="ui-g-12 mt-20">
+        <h2>Case Parties</h2>
+        <p-dataTable [value]="case.caseParties" 
+                    selectionMode="single" 
+                    [(selection)]="selectedParty" 
+                    (onRowSelect)="partyOnRowSelect($event)"                      
+                    dataKey="caseParty.partyOID" #dtParties>
+          <p-column field="role.name" header="Role" [style]="{'width':'10%'}"></p-column>
+          <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
+          <p-column field="caseParty.lastName" header="Last Name" [style]="{'width':'15%'}"></p-column>
+          <p-column field="caseParty.sex" header="Sex" [style]="{'width':'7%'}"></p-column>
+          <p-column field="caseParty.dob" header="Date of Birth" [style]="{'width':'13%'}"></p-column>
+          <p-column field="" header="Age" [style]="{'width':'7%'}"></p-column>
+          <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+              <ng-template pTemplate="body" let-item="rowData">
+                  {{item.startDate | date:'M/d/yyyy'}}
+              </ng-template>
+          </p-column>
+          <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+              <ng-template pTemplate="body" let-item="rowData">
+                  {{item.endDate | date:'M/d/yyyy'}}
+              </ng-template>
+          </p-column>
+          <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+              <ng-template let-item="rowData" pTemplate="body">
+                  <i class="material-icons delete-icon" (click)="requestDeleteParty(item)">delete</i>
+              </ng-template>
+          </p-column>
+          </p-dataTable>
+
+      </div>
+
+      <div class="ui-g-12">
+        <button type="button"
+            (click)="addCaseParty()"
+            label="Add Case Party"
+            icon="ui-icon-add"
+            class="ui-button-secondary mr-15" pButton></button>
+
+        <button type="button"
+            (click)="createParty()"
+            label="Create Party"
+            icon="ui-icon-add"
+            class="ui-button-secondary " pButton></button>
+      </div>
+
+      <!-- CHARGES TABLE -->
+      
+
+      <div class="ui-g-12 mt-30">
+        <h2>Charges</h2>
+        <p-dataTable [value]="case.caseCharges" 
+                    selectionMode="single" 
+                    [(selection)]="selectedCharge" 
+                    (onRowSelect)="caseOnRowSelect($event)"
+                    dataKey="caseChargeOID" #dtCharges>
+          <p-column field="iccsCode.categoryIdentifier" header="UN Code" [style]="{'width':'7%'}"></p-column>
+          <p-column field="iccsCode.categoryName" header="Description" [style]="{'width':'15%'}"></p-column>
+          <p-column field="leaChargingDetails" header="Charge Description" [style]="{'width':'15%'}"></p-column>
+          <p-column field="" header="Charge Factors" [style]="{'width':'25%'}">
+              <ng-template pTemplate="body" let-item="rowData">
+                <div *ngFor="let factor of item.chargeFactors; let i = index">
+                  {{i+1}}) {{factor.description}}
+                </div>
+              </ng-template>
+          </p-column>
+          <p-column field="localCharge.localCharge" header="Charge/Law" [style]="{'width':'30%'}"></p-column>
+          <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+              <ng-template let-item="rowData" pTemplate="body">
+                  <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
+              </ng-template>
+          </p-column>
+        </p-dataTable>
+
+      </div>
+
+      <div class="ui-g-12">
+          <button type="button"
+              (click)="addCaseCharge()"
+              label="Add Case Charge"
+              icon="ui-icon-add"
+              class="ui-button-secondary mr-15" pButton></button>
+  
+          <button type="button"
+              (click)="createParty()"
+              label="Create Party"
+              icon="ui-icon-add"
+              class="ui-button-secondary " pButton></button>
+        </div>
+  
+        <!-- CASE SAVE BUTTON -->
+        <div class="ui-g-12 ta-r">
+          <button type="button"
+              (click)="saveCase()"
+              label="Save Case"
+              icon="ui-icon-check"
+              class="" pButton></button>
+        </div>
+    
+    </div>
+
+  </div> 
+  <!-- //END FISRT CARD -->
+
+  <!-- SECOND CARD - TAB SECTION -->
+  <div class="ui-g-12 card">
+
+    <div *ngIf="case">
+
+      <p-tabView>
+
+        <!-- EVENTS TAB -->
+
+        <p-tabPanel header="Register" leftIcon="ui-icon-list">
+          <div class="ui-g">
+            <div class="ui-g-12 ui-md-6">
+              <h2>Case Events</h2>
+            </div>
+            <div class="ui-g-12 ui-md-6">
+              <label class="minimal primary block">Category Filter</label>
+              <p-dropdown 
+                  placeholder="category filter..."
+                  [options]="case.court.eventTypes"
+                  [(ngModel)]="case.eventType"
+                  optionLabel="eventTypeName"
+                  (onChange)="ddOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>  
+            </div>
+            
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.caseEvents" 
+                          selectionMode="single" 
+                          [(selection)]="selectedCaseEvent" 
+                          (onRowSelect)="caseEventOnRowSelect($event)"
+                          dataKey="caseEventOID" #dtCaseEvents>
+                <p-column field="eventDate" header="Date/Time" [style]="{'width':'13%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.eventDate | date:'medium'}}
+                    </ng-template>
+                </p-column>
+                <p-column field="eventType.eventCategoryText" header="Event Category" [style]="{'width':'8%'}"></p-column>
+                <p-column field="eventType.eventTypeName" header="Event ID" [style]="{'width':'8%'}"></p-column>
+                <p-column field="eventType.description" header="Event Description" [style]="{'width':'25%'}"></p-column>
+                <p-column field="document.documentName" header="Document" styleClass="text-break" [style]="{'width':'35%'}"></p-column>
+                <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
+                    <ng-template let-item="rowData" pTemplate="body">
+                        <i class="material-icons" (click)="requestViewCaseEvent(item)">search</i>
+                    </ng-template>
+                </p-column>
+              </p-dataTable>
+      
+            </div>
+            <div class="ui-g-12">
+              <button type="button"
+                  (click)="addCompletedEvent()"
+                  label="Add Completed Event"
+                  icon="ui-icon-add"
+                  class="ui-button-secondary mr-15" pButton></button>
+            </div>
+          </div>
+        </p-tabPanel>
+
+
+        <!-- TASKS TAB -->
+
+        <p-tabPanel header="Tasks" leftIcon="ui-icon-timer">
+          <div class="ui-g">
+            <div class="ui-g-12">
+              <h2>Tasks</h2>
+            </div>
+            
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.caseTasks" 
+                          selectionMode="single" 
+                          [(selection)]="selectedTask" 
+                          (onRowSelect)="taskOnRowSelect($event)"
+                          dataKey="taskOID" #dtTasks>
+                <p-column field="dueDate" header="Due Date" [style]="{'width':'13%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.dueDate | date:'M/d/yyyy'}}
+                    </ng-template>
+                </p-column>
+                <p-column field="taskPriorityCode" header="Priority" [style]="{'width':'12%'}"></p-column>
+                <p-column field="" header="Assigned" [style]="{'width':'30%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <span *ngIf="item.assignedParty.partyOID">
+                        {{ 'Party: ' + item.assignedParty.firstName + ' ' + item.assignedParty.lastName }}
+                      </span>
+                      <span *ngIf="item.assignedPool.poolOID">
+                        {{ 'Pool: ' + item.assignedPool.poolName }}
+                      </span>                    
+                  </ng-template>
+                </p-column>
+                <p-column field="taskType.name" header="Task Type" [style]="{'width':'38%'}"></p-column>
+                <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
+                    <ng-template let-item="rowData" pTemplate="body">
+                        <i class="material-icons" (click)="requestViewTask(item)">search</i>
+                    </ng-template>
+                </p-column>
+              </p-dataTable>
+      
+            </div>
+            <div class="ui-g-12">
+              <button type="button"
+                  (click)="addCompletedEvent()"
+                  label="Add Completed Event"
+                  icon="ui-icon-add"
+                  class="ui-button-secondary mr-15" pButton></button>
+            </div>
+          </div>
+        </p-tabPanel>
+        
+        <!-- DOCUMENTS TAB  -->
+
+        <p-tabPanel header="Documents" leftIcon="ui-icon-insert-drive-file" >
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <h2>Documents</h2>
+            </div>
+            <div class="ui-g-12 pt-0">
+                <div class="ui-g-12 ui-md-3">
+                    <label class="minimal primary block">Generate Document</label>
+                    <!-- TODO: Get document types lookup data -->
+                    <p-dropdown 
+                        placeholder="document type..."
+                        [options]=""
+                        [(ngModel)]="documentTemplateTypes"
+                        optionLabel="eventTypeName"
+                        (onChange)="ddOnChange($event)"
+                        styleClass="width-full">
+                    </p-dropdown> 
+                </div>
+                <div class="ui-g-12 ui-md-3 pb-0">
+                    <button type="button"
+                        (click)="generateDoc()"
+                        label="Generate"
+                        icon="ui-icon-settings-applications"
+                        class="ui-button-secondary inline" pButton></button>
+
+                </div>
+            </div>
+            
+            <div class="ui-g-12">
+                <p-dataTable [value]="case.caseDocs" 
+                            selectionMode="single" 
+                            [(selection)]="selectedDoc" 
+                            (onRowSelect)="docOnRowSelect($event)"
+                            dataKey="documentOID" #dtDocs>
+                    <p-column field="lastUpdateDate" header="Document Date" [style]="{'width':'25%'}">
+                        <ng-template pTemplate="body" let-item="rowData">
+                            {{item.lastUpdateDate | date:'medium'}}
+                        </ng-template>
+                    </p-column>
+                    <p-column field="" header="Document Name" [style]="{'width':'75%'}">
+                        <ng-template pTemplate="body" let-item="rowData" styleClass="text-break">
+                            <span>
+                                <a href="{{item.documentURL}}" target="_blank">{{item.documentName}}</a>
+                            </span>
+                        </ng-template>
+                    </p-column>
+                </p-dataTable>
+        
+            </div>
+            
+        </div>
+        </p-tabPanel>
+        
+        <!-- HEARINGS TAB -->
+
+        <p-tabPanel header="Hearings" leftIcon="ui-icon-gavel" >
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <h2>Hearings</h2>
+                </div>
+                
+                <div class="ui-g-12">
+                    <p-dataTable [value]="case.caseHearings" 
+                                selectionMode="single" 
+                                [(selection)]="selectedHearing" 
+                                (onRowSelect)="hearingOnRowSelect($event)"
+                                dataKey="caseHearingOID" #dtHearings>
+                        <p-column field="startDateTime" header="Start Date/Time" [style]="{'width':'20%'}">
+                            <ng-template pTemplate="body" let-item="rowData">
+                                {{item.startDateTime | date:'medium'}}
+                            </ng-template>
+                        </p-column>
+                        <p-column field="endDateTime" header="End Date/Time" [style]="{'width':'20%'}">
+                            <ng-template pTemplate="body" let-item="rowData">
+                                {{item.endDateTime | date:'medium'}}
+                            </ng-template>
+                        </p-column>
+                        
+                        <p-column field="hearingType.hearingName" header="Hearing Type" [style]="{'width':'20%'}"></p-column>
+                        <p-column field="courtLoc.locationID" header="Location" [style]="{'width':'17%'}"></p-column>
+                        <p-column field="" header="Assigned" [style]="{'width':'17%'}">
+                            <ng-template pTemplate="body" let-item="rowData">
+                                {{ item.judicialOfficer.firstName + ' ' + item.judicialOfficer.lastName }}
+                            </ng-template>
+                        </p-column>
+                        <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
+                            <ng-template let-item="rowData" pTemplate="body">
+                                <i class="material-icons" (click)="requestViewHearing(item)">search</i>
+                            </ng-template>
+                        </p-column>
+                    </p-dataTable>
+            
+                </div>
+                <div class="ui-g-12">
+                    <button type="button"
+                        (click)="addHearing()"
+                        label="Add Hearing"
+                        icon="ui-icon-add"
+                        class="ui-button-secondary mr-15" pButton></button>
+                </div>
+            </div>
+        </p-tabPanel>
+        
+        <!-- JUDICIAL ASSIGNMENTS TAB -->
+
+        <p-tabPanel header="Judicial Assignments" leftIcon="ui-icon-gavel" >
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <h2>Judicial Assignments</h2>
+                </div>                
+                <div class="ui-g-12">
+                    <p-dataTable [value]="case.judicialAssignments" 
+                                selectionMode="single" 
+                                [(selection)]="selectedJudicialAssignment" 
+                                (onRowSelect)="judicialAssignmentOnRowSelect($event)"
+                                dataKey="judicialAssignmentOID" #dtJudicialAssignment>
+                        <p-column field="" header="Start Date/Time" [style]="{'width':'20%'}">
+                            <ng-template pTemplate="body" let-item="rowData">
+                                {{item.startDate | date:'medium'}}
+                            </ng-template>
+                        </p-column>
+                        <p-column field="" header="End Date/Time" [style]="{'width':'20%'}">
+                            <ng-template pTemplate="body" let-item="rowData">
+                                {{item.endDate | date:'medium'}}
+                            </ng-template>
+                        </p-column>                        
+                        <p-column field="" header="Assigned" [style]="{'width':'17%'}">
+                            <ng-template pTemplate="body" let-item="rowData">
+                                {{ item.judicialOfficer.firstName + ' ' + item.judicialOfficer.lastName }}
+                            </ng-template>
+                        </p-column>
+                        <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
+                            <ng-template let-item="rowData" pTemplate="body">
+                                <i class="material-icons" (click)="requestViewJudicialAssignment(item)">search</i>
+                            </ng-template>
+                        </p-column>
+                    </p-dataTable>            
+                </div>
+                <div class="ui-g-12">
+                    <button type="button"
+                        (click)="addJudge()"
+                        label="Add Judge"
+                        icon="ui-icon-add"
+                        class="ui-button-secondary mr-15" pButton></button>
+                </div>
+            </div>
+        </p-tabPanel>
+      </p-tabView>
+
+    </div>
+  </div>
+  <!-- //END SECOND CARD - TAB SECTION -->
+
+</div>

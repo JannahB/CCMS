@@ -1,0 +1,93 @@
+[
+  {
+    "casePartyRoleOID": 1,
+    "courtOID": 5,
+    "codefendantIndicator": false,
+    "name": "Child"
+  },
+  {
+    "casePartyRoleOID": 9,
+    "courtOID": 5,
+    "codefendantIndicator": true,
+    "name": "Children Attorney"
+  },
+  {
+    "casePartyRoleOID": 2,
+    "courtOID": 5,
+    "codefendantIndicator": false,
+    "name": "Counsel"
+  },
+  {
+    "casePartyRoleOID": 10,
+    "courtOID": 5,
+    "codefendantIndicator": true,
+    "name": "Defence Attorney"
+  },
+  {
+    "casePartyRoleOID": 6,
+    "courtOID": 5,
+    "codefendantIndicator": true,
+    "name": "Defendant"
+  },
+  {
+    "casePartyRoleOID": 11,
+    "courtOID": 5,
+    "codefendantIndicator": true,
+    "name": "Duty Counsel"
+  },
+  {
+    "casePartyRoleOID": 12,
+    "courtOID": 5,
+    "codefendantIndicator": true,
+    "name": "Interested Party"
+  },
+  {
+    "casePartyRoleOID": 6367536414092919,
+    "courtOID": 5,
+    "codefendantIndicator": false,
+    "name": "Intermediary",
+    "description": "Intermediary"
+  },
+  {
+    "casePartyRoleOID": 7,
+    "courtOID": 5,
+    "codefendantIndicator": true,
+    "name": "Law Enforcement Officer"
+  },
+  {
+    "casePartyRoleOID": 14,
+    "courtOID": 5,
+    "codefendantIndicator": true,
+    "name": "Manager - Community Residence Intermediary"
+  },
+  {
+    "casePartyRoleOID": 4,
+    "courtOID": 5,
+    "codefendantIndicator": false,
+    "name": "Parent"
+  },
+  {
+    "casePartyRoleOID": 13,
+    "courtOID": 5,
+    "codefendantIndicator": true,
+    "name": "Person with Responsibility for Child"
+  },
+  {
+    "casePartyRoleOID": 8,
+    "courtOID": 5,
+    "codefendantIndicator": true,
+    "name": "Prosecutor"
+  },
+  {
+    "casePartyRoleOID": 3,
+    "courtOID": 5,
+    "codefendantIndicator": false,
+    "name": "Social Worker"
+  },
+  {
+    "casePartyRoleOID": 5,
+    "courtOID": 5,
+    "codefendantIndicator": false,
+    "name": "Witness"
+  }
+]

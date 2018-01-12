@@ -1,0 +1,198 @@
+import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {HttpModule} from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {LocationStrategy, HashLocationStrategy} from '@angular/common';
+import {AppRoutes} from './app.routes';
+import 'rxjs/add/operator/toPromise';
+
+import {AccordionModule} from 'primeng/primeng';
+import {AutoCompleteModule} from 'primeng/primeng';
+import {BreadcrumbModule} from 'primeng/primeng';
+import {ButtonModule} from 'primeng/primeng';
+import {CalendarModule} from 'primeng/primeng';
+import {CheckboxModule} from 'primeng/primeng';
+import {ChipsModule} from 'primeng/primeng';
+import {ConfirmDialogModule} from 'primeng/primeng';
+import {SharedModule} from 'primeng/primeng';
+import {ContextMenuModule} from 'primeng/primeng';
+import {DataGridModule} from 'primeng/primeng';
+import {DataListModule} from 'primeng/primeng';
+import {DataScrollerModule} from 'primeng/primeng';
+import {DataTableModule} from 'primeng/primeng';
+import {DialogModule} from 'primeng/primeng';
+import {DragDropModule} from 'primeng/primeng';
+import {DropdownModule} from 'primeng/primeng';
+import {FieldsetModule} from 'primeng/primeng';
+import {FileUploadModule} from 'primeng/primeng';
+import {GrowlModule} from 'primeng/primeng';
+import {InputMaskModule} from 'primeng/primeng';
+import {InputSwitchModule} from 'primeng/primeng';
+import {InputTextModule} from 'primeng/primeng';
+import {InputTextareaModule} from 'primeng/primeng';
+import {LightboxModule} from 'primeng/primeng';
+import {ListboxModule} from 'primeng/primeng';
+import {MenuModule} from 'primeng/primeng';
+import {MenubarModule} from 'primeng/primeng';
+import {MessagesModule} from 'primeng/primeng';
+import {MultiSelectModule} from 'primeng/primeng';
+import {OrderListModule} from 'primeng/primeng';
+import {OrganizationChartModule} from 'primeng/primeng';
+import {OverlayPanelModule} from 'primeng/primeng';
+import {PanelModule} from 'primeng/primeng';
+import {PanelMenuModule} from 'primeng/primeng';
+import {PasswordModule} from 'primeng/primeng';
+import {ProgressBarModule} from 'primeng/primeng';
+import {RadioButtonModule} from 'primeng/primeng';
+import {RatingModule} from 'primeng/primeng';
+import {ScheduleModule} from 'primeng/primeng';
+import {SelectButtonModule} from 'primeng/primeng';
+import {SlideMenuModule} from 'primeng/primeng';
+import {SliderModule} from 'primeng/primeng';
+import {SpinnerModule} from 'primeng/primeng';
+import {SplitButtonModule} from 'primeng/primeng';
+import {StepsModule} from 'primeng/primeng';
+import {TabMenuModule} from 'primeng/primeng';
+import {TabViewModule} from 'primeng/primeng';
+import {TieredMenuModule} from 'primeng/primeng';
+import {ToggleButtonModule} from 'primeng/primeng';
+import {ToolbarModule} from 'primeng/primeng';
+import {TooltipModule} from 'primeng/primeng';
+import {TreeModule} from 'primeng/primeng';
+import {TreeTableModule} from 'primeng/primeng';
+
+import {AppComponent} from './app.component';
+import {AppMenuComponent, AppSubMenuComponent} from './app.menu.component';
+import {AppTopbarComponent} from './app.topbar.component';
+import {AppFooterComponent} from './app.footer.component';
+import {AppBreadcrumbComponent } from './app.breadcrumb.component';
+import {AppRightpanelComponent} from './app.rightpanel.component';
+import {AppInlineProfileComponent} from './app.profile.component';
+
+import { GlobalState } from './common/services/state/global.state'
+import {BreadcrumbService} from './breadcrumb.service';
+import { DateParserService } from './common/services/utility/dates/date-parser.service';
+import { MessageService } from 'primeng/components/common/messageservice';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { IdentifierService } from './common/services/http/identifier.service';
+import { CaseSearchComponent } from './case/case-search/case-search.component';
+import { CaseDetailComponent } from './case/case-detail/case-detail.component';
+import { PartyDetailComponent } from './party/party-detail/party-detail.component';
+import { PartySearchComponent } from './party/party-search/party-search.component';
+import { CaseService } from './common/services/http/case.service';
+import { AdminDataComponent } from './admin/admin-data/admin-data.component';
+import { AdminWorkflowComponent } from './admin/admin-workflow/admin-workflow.component';
+import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
+import { LookupService } from './common/services/http/lookup.service';
+import { CountriesService } from './common/services/http/countries.service';
+import { GenericTypesService } from './common/services/http/generic.types.service';
+import { PartyService } from './common/services/http/party.service';
+import { LanguageService } from './common/services/http/language.service';
+import { DropdownDataTransformService } from './common/services/utility/dropdown-data-transform.service';
+import { DateValidatorService } from './common/services/utility/dates/date-validator.service';
+import { ToastService } from './common/services/utility/toast.service';
+
+
+@NgModule({
+    imports: [
+        BrowserModule,
+        FormsModule,
+        AppRoutes,
+        HttpModule,
+        BrowserAnimationsModule,
+        AccordionModule,
+        AutoCompleteModule,
+        BreadcrumbModule,
+        ButtonModule,
+        CalendarModule,
+        CheckboxModule,
+        ChipsModule,
+        ConfirmDialogModule,
+        SharedModule,
+        ContextMenuModule,
+        DataGridModule,
+        DataListModule,
+        DataScrollerModule,
+        DataTableModule,
+        DialogModule,
+        DragDropModule,
+        DropdownModule,
+        FieldsetModule,
+        FileUploadModule,
+        GrowlModule,
+        InputMaskModule,
+        InputSwitchModule,
+        InputTextModule,
+        InputTextareaModule,
+        LightboxModule,
+        ListboxModule,
+        MenuModule,
+        MenubarModule,
+        MessagesModule,
+        MultiSelectModule,
+        OrderListModule,
+        OrganizationChartModule,
+        OverlayPanelModule,
+        PanelModule,
+        PanelMenuModule,
+        PasswordModule,
+        ProgressBarModule,
+        RadioButtonModule,
+        RatingModule,
+        ScheduleModule,
+        SelectButtonModule,
+        SlideMenuModule,
+        SliderModule,
+        SpinnerModule,
+        SplitButtonModule,
+        StepsModule,
+        TabMenuModule,
+        TabViewModule,
+        TieredMenuModule,
+        ToggleButtonModule,
+        ToolbarModule,
+        TooltipModule,
+        TreeModule,
+        TreeTableModule,
+        HttpClientModule
+    ],
+    declarations: [
+        AppComponent,
+        AppMenuComponent,
+        AppSubMenuComponent,
+        AppTopbarComponent,
+        AppFooterComponent,
+        AppBreadcrumbComponent,
+        AppRightpanelComponent,
+        AppInlineProfileComponent,
+        DashboardComponent,
+        CaseSearchComponent,
+        CaseDetailComponent,
+        PartyDetailComponent,
+        PartySearchComponent,
+        AdminDataComponent,
+        AdminWorkflowComponent,
+        AdminUsersComponent
+    ],
+    providers: [
+        {provide: LocationStrategy, useClass: HashLocationStrategy},
+        BreadcrumbService,
+        GlobalState,
+        DateParserService,
+        DateValidatorService,
+        DropdownDataTransformService,
+        MessageService,
+        ToastService,
+        LanguageService,
+        IdentifierService,
+        PartyService,
+        GenericTypesService,
+        CountriesService,
+        CaseService,
+        LookupService
+    ],
+    bootstrap: [AppComponent]
+})
+export class AppModule { }

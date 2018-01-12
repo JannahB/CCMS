@@ -1,0 +1,5151 @@
+[
+  {
+    "caseOID": 5924787225696180,
+    "court": {
+      "courtOID": 5,
+      "locationCode": "North",
+      "courtName": "Children Court",
+      "casePhases": [
+        {
+          "casePhaseOID": 8,
+          "courtOID": 5,
+          "caseTypeOID": 3,
+          "name": "Case Preparation Management"
+        },
+        {
+          "casePhaseOID": 13,
+          "courtOID": 5,
+          "caseTypeOID": 5,
+          "name": "Case Preparation Management"
+        },
+        {
+          "casePhaseOID": 9,
+          "courtOID": 5,
+          "caseTypeOID": 3,
+          "name": "Hearing"
+        },
+        {
+          "casePhaseOID": 14,
+          "courtOID": 5,
+          "caseTypeOID": 5,
+          "name": "Hearing"
+        },
+        {
+          "casePhaseOID": 2,
+          "courtOID": 5,
+          "caseTypeOID": 1,
+          "name": "Hearing \u0026 Management"
+        },
+        {
+          "casePhaseOID": 4,
+          "courtOID": 5,
+          "caseTypeOID": 2,
+          "name": "Hearing \u0026 Management"
+        },
+        {
+          "casePhaseOID": 6,
+          "courtOID": 5,
+          "caseTypeOID": 4,
+          "name": "Hearing \u0026 Management "
+        },
+        {
+          "casePhaseOID": 1,
+          "courtOID": 5,
+          "caseTypeOID": 1,
+          "name": "Intake"
+        },
+        {
+          "casePhaseOID": 3,
+          "courtOID": 5,
+          "caseTypeOID": 2,
+          "name": "Intake"
+        },
+        {
+          "casePhaseOID": 5,
+          "courtOID": 5,
+          "caseTypeOID": 4,
+          "name": "Intake"
+        },
+        {
+          "casePhaseOID": 7,
+          "courtOID": 5,
+          "caseTypeOID": 3,
+          "name": "Intake"
+        },
+        {
+          "casePhaseOID": 12,
+          "courtOID": 5,
+          "caseTypeOID": 5,
+          "name": "Intake"
+        },
+        {
+          "casePhaseOID": 11,
+          "courtOID": 5,
+          "caseTypeOID": 3,
+          "name": "Monitoring"
+        },
+        {
+          "casePhaseOID": 16,
+          "courtOID": 5,
+          "caseTypeOID": 5,
+          "name": "Monitoring"
+        },
+        {
+          "casePhaseOID": 17,
+          "courtOID": 5,
+          "caseTypeOID": 5,
+          "name": "Preliminary Inquiry"
+        },
+        {
+          "casePhaseOID": 10,
+          "courtOID": 5,
+          "caseTypeOID": 3,
+          "name": "Sentencing"
+        },
+        {
+          "casePhaseOID": 15,
+          "courtOID": 5,
+          "caseTypeOID": 5,
+          "name": "Sentencing"
+        }
+      ],
+      "caseStatuses": [
+        {
+          "statusOID": 5,
+          "courtOID": 5,
+          "name": "Adjourned for Sentencing"
+        },
+        {
+          "statusOID": 2,
+          "courtOID": 5,
+          "name": "Bail Granted"
+        },
+        {
+          "statusOID": 10,
+          "courtOID": 5,
+          "name": "Case Delayed for Reason"
+        },
+        {
+          "statusOID": 1,
+          "courtOID": 5,
+          "name": "Charge Laid"
+        },
+        {
+          "statusOID": 4,
+          "courtOID": 5,
+          "name": "Closed"
+        },
+        {
+          "statusOID": 3,
+          "courtOID": 5,
+          "name": "Committed for Trial"
+        },
+        {
+          "statusOID": 11,
+          "courtOID": 5,
+          "name": "Post Sentence Monitoring"
+        },
+        {
+          "statusOID": 7,
+          "courtOID": 5,
+          "name": "Referred to Drug Treatment Court"
+        },
+        {
+          "statusOID": 6,
+          "courtOID": 5,
+          "name": "Referred to Peer Resolution"
+        },
+        {
+          "statusOID": 8,
+          "courtOID": 5,
+          "name": "Referred to Program"
+        },
+        {
+          "statusOID": 9,
+          "courtOID": 5,
+          "name": "Referred to Program - External"
+        }
+      ],
+      "caseTypes": [
+        {
+          "caseTypeOID": 2,
+          "courtOID": 5,
+          "name": "Application-Children Authority",
+          "shortName": "AP",
+          "casePhases": []
+        },
+        {
+          "caseTypeOID": 1,
+          "courtOID": 5,
+          "name": "Application-Private",
+          "shortName": "AP",
+          "casePhases": []
+        },
+        {
+          "caseTypeOID": 4,
+          "courtOID": 5,
+          "name": "CHINS",
+          "shortName": "CH",
+          "casePhases": []
+        },
+        {
+          "caseTypeOID": 5,
+          "courtOID": 5,
+          "name": "Criminal-Indictable",
+          "shortName": "CR",
+          "casePhases": []
+        },
+        {
+          "caseTypeOID": 3,
+          "courtOID": 5,
+          "name": "Criminal-Summary",
+          "shortName": "CR",
+          "casePhases": []
+        }
+      ],
+      "casePartyRoles": [
+        {
+          "casePartyRoleOID": 1,
+          "courtOID": 5,
+          "codefendantIndicator": false,
+          "name": "Child"
+        },
+        {
+          "casePartyRoleOID": 9,
+          "courtOID": 5,
+          "codefendantIndicator": true,
+          "name": "Children Attorney"
+        },
+        {
+          "casePartyRoleOID": 2,
+          "courtOID": 5,
+          "codefendantIndicator": false,
+          "name": "Counsel"
+        },
+        {
+          "casePartyRoleOID": 10,
+          "courtOID": 5,
+          "codefendantIndicator": true,
+          "name": "Defence Attorney"
+        },
+        {
+          "casePartyRoleOID": 6,
+          "courtOID": 5,
+          "codefendantIndicator": true,
+          "name": "Defendant"
+        },
+        {
+          "casePartyRoleOID": 11,
+          "courtOID": 5,
+          "codefendantIndicator": true,
+          "name": "Duty Counsel"
+        },
+        {
+          "casePartyRoleOID": 12,
+          "courtOID": 5,
+          "codefendantIndicator": true,
+          "name": "Interested Party"
+        },
+        {
+          "casePartyRoleOID": 6367536414092919,
+          "courtOID": 5,
+          "codefendantIndicator": false,
+          "name": "Intermediary",
+          "description": "Intermediary"
+        },
+        {
+          "casePartyRoleOID": 7,
+          "courtOID": 5,
+          "codefendantIndicator": true,
+          "name": "Law Enforcement Officer"
+        },
+        {
+          "casePartyRoleOID": 14,
+          "courtOID": 5,
+          "codefendantIndicator": true,
+          "name": "Manager - Community Residence Intermediary"
+        },
+        {
+          "casePartyRoleOID": 4,
+          "courtOID": 5,
+          "codefendantIndicator": false,
+          "name": "Parent"
+        },
+        {
+          "casePartyRoleOID": 13,
+          "courtOID": 5,
+          "codefendantIndicator": true,
+          "name": "Person with Responsibility for Child"
+        },
+        {
+          "casePartyRoleOID": 8,
+          "courtOID": 5,
+          "codefendantIndicator": true,
+          "name": "Prosecutor"
+        },
+        {
+          "casePartyRoleOID": 3,
+          "courtOID": 5,
+          "codefendantIndicator": false,
+          "name": "Social Worker"
+        },
+        {
+          "casePartyRoleOID": 5,
+          "courtOID": 5,
+          "codefendantIndicator": false,
+          "name": "Witness"
+        }
+      ],
+      "hearingTypes": [
+        {
+          "hearingTypeOID": 4,
+          "courtOID": 5,
+          "hearingName": "Bail Hearing",
+          "durationInMinutes": 0
+        },
+        {
+          "hearingTypeOID": 3,
+          "courtOID": 5,
+          "hearingName": "Case Hearing",
+          "durationInMinutes": 0
+        },
+        {
+          "hearingTypeOID": 2,
+          "courtOID": 5,
+          "hearingName": "Case Preparation Hearing",
+          "durationInMinutes": 30
+        },
+        {
+          "hearingTypeOID": 6,
+          "courtOID": 5,
+          "hearingName": "Drug Treatment Hearing",
+          "durationInMinutes": 0
+        },
+        {
+          "hearingTypeOID": 1,
+          "courtOID": 5,
+          "hearingName": "Initial Hearing",
+          "durationInMinutes": 330
+        },
+        {
+          "hearingTypeOID": 9,
+          "courtOID": 5,
+          "hearingName": "Jury Trial",
+          "durationInMinutes": 0
+        },
+        {
+          "hearingTypeOID": 12,
+          "courtOID": 5,
+          "hearingName": "Monitoring Hearing",
+          "durationInMinutes": 0
+        },
+        {
+          "hearingTypeOID": 5,
+          "courtOID": 5,
+          "hearingName": "PR Hearing",
+          "durationInMinutes": 0
+        },
+        {
+          "hearingTypeOID": 10,
+          "courtOID": 5,
+          "hearingName": "Pre-Sentencing Hearing",
+          "durationInMinutes": 0
+        },
+        {
+          "hearingTypeOID": 7,
+          "courtOID": 5,
+          "hearingName": "Preliminary Review Hearing",
+          "durationInMinutes": 0
+        },
+        {
+          "hearingTypeOID": 13,
+          "courtOID": 5,
+          "hearingName": "Sentence Completion Hearing",
+          "durationInMinutes": 0
+        },
+        {
+          "hearingTypeOID": 11,
+          "courtOID": 5,
+          "hearingName": "Sentencing Hearing",
+          "durationInMinutes": 0
+        },
+        {
+          "hearingTypeOID": 8,
+          "courtOID": 5,
+          "hearingName": "Trial",
+          "durationInMinutes": 0
+        }
+      ],
+      "caseTaskTypes": [
+        {
+          "taskTypeOID": 2,
+          "courtOID": 5,
+          "name": "Allocate Courtroom"
+        },
+        {
+          "taskTypeOID": 1,
+          "courtOID": 5,
+          "name": "Conduct Hearing Process"
+        },
+        {
+          "taskTypeOID": 6,
+          "courtOID": 5,
+          "name": "Notify Probation"
+        },
+        {
+          "taskTypeOID": 3,
+          "courtOID": 5,
+          "name": "Prepare Hearing Notice"
+        },
+        {
+          "taskTypeOID": 5,
+          "courtOID": 5,
+          "name": "Record Fee Payment"
+        },
+        {
+          "taskTypeOID": 4,
+          "courtOID": 5,
+          "name": "Set Hearing Date"
+        },
+        {
+          "taskTypeOID": 832960474289411,
+          "courtOID": 5,
+          "name": "Test",
+          "description": "Test description"
+        }
+      ],
+      "iccsCodes": [
+        {
+          "iccsCodeOID": 5200303527589310,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Acts leading to death or intending to cause death",
+          "categoryIdentifier": "01",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6669601380955949,
+          "courtOID": 5,
+          "parentOID": 5200303527589310,
+          "categoryType": 2,
+          "categoryName": "Intentional homicide",
+          "categoryIdentifier": "0101",
+          "localCharges": [
+            {
+              "localChargeOID": 79462418,
+              "courtOID": 5,
+              "categoryIdentifier": "0101",
+              "localCharge": "Murder "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 2181131780336862,
+          "courtOID": 5,
+          "parentOID": 5200303527589310,
+          "categoryType": 2,
+          "categoryName": "Attempted intentional homicide",
+          "categoryIdentifier": "0102",
+          "localCharges": [
+            {
+              "localChargeOID": 117555239,
+              "courtOID": 5,
+              "categoryIdentifier": "0102",
+              "localCharge": "Attempted murder"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3519025017762966,
+          "courtOID": 5,
+          "parentOID": 5200303527589310,
+          "categoryType": 2,
+          "categoryName": "Non-intentional homicide",
+          "categoryIdentifier": "0103",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 9051802339204364,
+          "courtOID": 5,
+          "parentOID": 3519025017762966,
+          "categoryType": 3,
+          "categoryName": "Non-negligent manslaughter",
+          "categoryIdentifier": "01031",
+          "localCharges": [
+            {
+              "localChargeOID": 57908936,
+              "courtOID": 5,
+              "categoryIdentifier": "01031",
+              "localCharge": "Manslaughter by unlawful act or omission"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 4035499491275992,
+          "courtOID": 5,
+          "parentOID": 3519025017762966,
+          "categoryType": 3,
+          "categoryName": "Negligent manslaughter",
+          "categoryIdentifier": "01032",
+          "localCharges": [
+            {
+              "localChargeOID": 729698371,
+              "courtOID": 5,
+              "categoryIdentifier": "01032",
+              "localCharge": "Manslaughter by gross negligence"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 5928711380463103,
+          "courtOID": 5,
+          "parentOID": 4035499491275992,
+          "categoryType": 4,
+          "categoryName": "Vehicular homicide",
+          "categoryIdentifier": "010321",
+          "localCharges": [
+            {
+              "localChargeOID": 196806369,
+              "courtOID": 5,
+              "categoryIdentifier": "010321",
+              "localCharge": "Causing death by dangerous driving"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 2201567779048148,
+          "courtOID": 5,
+          "parentOID": 4035499491275992,
+          "categoryType": 4,
+          "categoryName": "Non-vehicular homicide",
+          "categoryIdentifier": "010322",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8254950295413891,
+          "courtOID": 5,
+          "parentOID": 5200303527589310,
+          "categoryType": 2,
+          "categoryName": "Assisting or instigating suicide",
+          "categoryIdentifier": "0104",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 9148581876188256,
+          "courtOID": 5,
+          "parentOID": 8254950295413891,
+          "categoryType": 3,
+          "categoryName": "Assisting suicide",
+          "categoryIdentifier": "01041",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8264569087045029,
+          "courtOID": 5,
+          "parentOID": 8254950295413891,
+          "categoryType": 3,
+          "categoryName": "Other acts of assisting or instigating suicide",
+          "categoryIdentifier": "01049",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6027661301252749,
+          "courtOID": 5,
+          "parentOID": 5200303527589310,
+          "categoryType": 2,
+          "categoryName": "Euthanasia",
+          "categoryIdentifier": "0105",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7922222848441879,
+          "courtOID": 5,
+          "parentOID": 5200303527589310,
+          "categoryType": 2,
+          "categoryName": "Illegal feticide",
+          "categoryIdentifier": "0106",
+          "localCharges": [
+            {
+              "localChargeOID": 91284096,
+              "courtOID": 5,
+              "categoryIdentifier": "0106",
+              "localCharge": "Endeavouring to conceal birth"
+            },
+            {
+              "localChargeOID": 806288618,
+              "courtOID": 5,
+              "categoryIdentifier": "0106",
+              "localCharge": "Abortion"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 7640753397407289,
+          "courtOID": 5,
+          "parentOID": 5200303527589310,
+          "categoryType": 2,
+          "categoryName": "Unlawful killing associated with armed conflict",
+          "categoryIdentifier": "0107",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1199811636160025,
+          "courtOID": 5,
+          "parentOID": 5200303527589310,
+          "categoryType": 2,
+          "categoryName": "Other acts leading to death or intending to cause death",
+          "categoryIdentifier": "0109",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6061293890045675,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Acts causing harm or intending to cause harm to the person",
+          "categoryIdentifier": "02",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1775766791992384,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Assaults and threats",
+          "categoryIdentifier": "0201",
+          "localCharges": [
+            {
+              "localChargeOID": 34401714,
+              "courtOID": 5,
+              "categoryIdentifier": "0201",
+              "localCharge": "Cruelty to a Child (Wilfully assault child under care)",
+              "localLaw": "Section 4 Children Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 7567470567278514,
+          "courtOID": 5,
+          "parentOID": 1775766791992384,
+          "categoryType": 3,
+          "categoryName": "Assault",
+          "categoryIdentifier": "02011",
+          "localCharges": [
+            {
+              "localChargeOID": 253377214,
+              "courtOID": 5,
+              "categoryIdentifier": "02011",
+              "localCharge": "Assault ",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 715267186,
+              "courtOID": 5,
+              "categoryIdentifier": "02011",
+              "localCharge": "Common Assault",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 2009506835784362,
+          "courtOID": 5,
+          "parentOID": 7567470567278514,
+          "categoryType": 4,
+          "categoryName": "Serious assault",
+          "categoryIdentifier": "020111",
+          "localCharges": [
+            {
+              "localChargeOID": 223418137,
+              "courtOID": 5,
+              "categoryIdentifier": "020111",
+              "localCharge": "Wounding, causing grievous bodily harm or shooting (intent)",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 351931522,
+              "courtOID": 5,
+              "categoryIdentifier": "020111",
+              "localCharge": "Unlawful and malicious wounding",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 351968455,
+              "courtOID": 5,
+              "categoryIdentifier": "020111",
+              "localCharge": "Beating a person (Battery) ",
+              "localLaw": "Section 5.2 Summary Offences Act"
+            },
+            {
+              "localChargeOID": 357896922,
+              "courtOID": 5,
+              "categoryIdentifier": "020111",
+              "localCharge": "Throwing corrosive fluid with intent to do grievous bodily harm",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 382965782,
+              "courtOID": 5,
+              "categoryIdentifier": "020111",
+              "localCharge": "Throwing stones or other missiles",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 470912324,
+              "courtOID": 5,
+              "categoryIdentifier": "020111",
+              "localCharge": "Aggravated Assault",
+              "localLaw": "Section 5.2 Summary Offences Act"
+            },
+            {
+              "localChargeOID": 873919044,
+              "courtOID": 5,
+              "categoryIdentifier": "020111",
+              "localCharge": "Malicious wounding ",
+              "localLaw": "Section 14 OAP Act"
+            },
+            {
+              "localChargeOID": 958058688,
+              "courtOID": 5,
+              "categoryIdentifier": "020111",
+              "localCharge": "Inflicting grievous bodily harm (Section 14 Offences Act Against The Person)",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 981871321,
+              "courtOID": 5,
+              "categoryIdentifier": "020111",
+              "localCharge": "The use of explosive substance or noxious thing with intent to do grievous bodily harm",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8404100027903198,
+          "courtOID": 5,
+          "parentOID": 7567470567278514,
+          "categoryType": 4,
+          "categoryName": "Minor assault",
+          "categoryIdentifier": "020112",
+          "localCharges": [
+            {
+              "localChargeOID": 240476365,
+              "courtOID": 5,
+              "categoryIdentifier": "020112",
+              "localCharge": "Beating a person (Battery) ",
+              "localLaw": "Section 4 Summary Offences Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 5167388790251260,
+          "courtOID": 5,
+          "parentOID": 1775766791992384,
+          "categoryType": 3,
+          "categoryName": "Threat",
+          "categoryIdentifier": "02012",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4488168467067864,
+          "courtOID": 5,
+          "parentOID": 5167388790251260,
+          "categoryType": 4,
+          "categoryName": "Serious threat",
+          "categoryIdentifier": "020121",
+          "localCharges": [
+            {
+              "localChargeOID": 330081440,
+              "courtOID": 5,
+              "categoryIdentifier": "020121",
+              "localCharge": "Letter threatening to murder Section 10 offences ags Persons Act)",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 6146347500676258,
+          "courtOID": 5,
+          "parentOID": 5167388790251260,
+          "categoryType": 4,
+          "categoryName": "Minor threat",
+          "categoryIdentifier": "020122",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4877228451412867,
+          "courtOID": 5,
+          "parentOID": 1775766791992384,
+          "categoryType": 3,
+          "categoryName": "Other assaults or threats",
+          "categoryIdentifier": "02019",
+          "localCharges": [
+            {
+              "localChargeOID": 627111575,
+              "courtOID": 5,
+              "categoryIdentifier": "02019",
+              "localCharge": "Assault on a plane in flight",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8292202851255495,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Acts against liberty",
+          "categoryIdentifier": "0202",
+          "localCharges": [
+            {
+              "localChargeOID": 243128779,
+              "courtOID": 5,
+              "categoryIdentifier": "0202",
+              "localCharge": "Abduction of a female",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 4792660056790707,
+          "courtOID": 5,
+          "parentOID": 8292202851255495,
+          "categoryType": 3,
+          "categoryName": "Abduction of a minor",
+          "categoryIdentifier": "02021",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8007347875542809,
+          "courtOID": 5,
+          "parentOID": 4792660056790707,
+          "categoryType": 4,
+          "categoryName": "Parental abduction",
+          "categoryIdentifier": "020211",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6528170469800076,
+          "courtOID": 5,
+          "parentOID": 4792660056790707,
+          "categoryType": 4,
+          "categoryName": "Abduction by another family member",
+          "categoryIdentifier": "020212",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7394257657711220,
+          "courtOID": 5,
+          "parentOID": 4792660056790707,
+          "categoryType": 4,
+          "categoryName": "Abduction by a legal guardian",
+          "categoryIdentifier": "020213",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5826519537280998,
+          "courtOID": 5,
+          "parentOID": 4792660056790707,
+          "categoryType": 4,
+          "categoryName": "Other abduction of a minor",
+          "categoryIdentifier": "020219",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3592426435185308,
+          "courtOID": 5,
+          "parentOID": 8292202851255495,
+          "categoryType": 3,
+          "categoryName": "Deprivation of liberty",
+          "categoryIdentifier": "02022",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1339191124693545,
+          "courtOID": 5,
+          "parentOID": 3592426435185308,
+          "categoryType": 4,
+          "categoryName": "Kidnapping",
+          "categoryIdentifier": "020221",
+          "localCharges": [
+            {
+              "localChargeOID": 863023783,
+              "courtOID": 5,
+              "categoryIdentifier": "020221",
+              "localCharge": "Kidnapping",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 2678330232804136,
+          "courtOID": 5,
+          "parentOID": 3592426435185308,
+          "categoryType": 4,
+          "categoryName": "Illegal restraint",
+          "categoryIdentifier": "020222",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 178189939717750,
+          "courtOID": 5,
+          "parentOID": 3592426435185308,
+          "categoryType": 4,
+          "categoryName": "Hijacking",
+          "categoryIdentifier": "020223",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1599187508009203,
+          "courtOID": 5,
+          "parentOID": 3592426435185308,
+          "categoryType": 4,
+          "categoryName": "Other deprivation of liberty",
+          "categoryIdentifier": "020229",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 305141755545139,
+          "courtOID": 5,
+          "parentOID": 8292202851255495,
+          "categoryType": 3,
+          "categoryName": "Other acts against liberty",
+          "categoryIdentifier": "02029",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3766746627931592,
+          "courtOID": 5,
+          "parentOID": 305141755545139,
+          "categoryType": 4,
+          "categoryName": "Illegal adoption",
+          "categoryIdentifier": "020291",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7905690753044073,
+          "courtOID": 5,
+          "parentOID": 305141755545139,
+          "categoryType": 4,
+          "categoryName": "Forced marriage",
+          "categoryIdentifier": "020292",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 752527563062457,
+          "courtOID": 5,
+          "parentOID": 305141755545139,
+          "categoryType": 4,
+          "categoryName": "Other acts against liberty",
+          "categoryIdentifier": "020299",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3258421702037993,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Slavery and exploitation",
+          "categoryIdentifier": "0203",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7303060668327438,
+          "courtOID": 5,
+          "parentOID": 3258421702037993,
+          "categoryType": 3,
+          "categoryName": "Slavery",
+          "categoryIdentifier": "02031",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4301467999266507,
+          "courtOID": 5,
+          "parentOID": 3258421702037993,
+          "categoryType": 3,
+          "categoryName": "Forced labour",
+          "categoryIdentifier": "02032",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1141502982194397,
+          "courtOID": 5,
+          "parentOID": 4301467999266507,
+          "categoryType": 4,
+          "categoryName": "Forced labour for domestic services",
+          "categoryIdentifier": "020321",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6532203653991790,
+          "courtOID": 5,
+          "parentOID": 4301467999266507,
+          "categoryType": 4,
+          "categoryName": "Forced labour for industrial services",
+          "categoryIdentifier": "020322",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6308863725712471,
+          "courtOID": 5,
+          "parentOID": 4301467999266507,
+          "categoryType": 4,
+          "categoryName": "Forced labour for the State or armed forces",
+          "categoryIdentifier": "020323",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4869016728071704,
+          "courtOID": 5,
+          "parentOID": 4301467999266507,
+          "categoryType": 4,
+          "categoryName": "Other forced labour",
+          "categoryIdentifier": "020329",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2603767856214202,
+          "courtOID": 5,
+          "parentOID": 3258421702037993,
+          "categoryType": 3,
+          "categoryName": "Other acts of slavery and exploitation",
+          "categoryIdentifier": "02039",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3657472649074274,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Trafficking in persons (TIP)",
+          "categoryIdentifier": "0204",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3401302835848262,
+          "courtOID": 5,
+          "parentOID": 3657472649074274,
+          "categoryType": 3,
+          "categoryName": "TIP for sexual exploitation",
+          "categoryIdentifier": "02041",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7129887344892330,
+          "courtOID": 5,
+          "parentOID": 3657472649074274,
+          "categoryType": 3,
+          "categoryName": "TIP for forced labour or services",
+          "categoryIdentifier": "02042",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1116471273785160,
+          "courtOID": 5,
+          "parentOID": 3657472649074274,
+          "categoryType": 3,
+          "categoryName": "TIP for organ removal",
+          "categoryIdentifier": "02043",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2096451380545291,
+          "courtOID": 5,
+          "parentOID": 3657472649074274,
+          "categoryType": 3,
+          "categoryName": "TIP for other purposes",
+          "categoryIdentifier": "02049",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8974664648854721,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Coercion",
+          "categoryIdentifier": "0205",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5929969592055172,
+          "courtOID": 5,
+          "parentOID": 8974664648854721,
+          "categoryType": 3,
+          "categoryName": "Extortion or blackmail",
+          "categoryIdentifier": "02051",
+          "localCharges": [
+            {
+              "localChargeOID": 158156169,
+              "courtOID": 5,
+              "categoryIdentifier": "02051",
+              "localCharge": "Demanding money by force or menace",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8923208898101899,
+          "courtOID": 5,
+          "parentOID": 8974664648854721,
+          "categoryType": 3,
+          "categoryName": "Other acts of coercion",
+          "categoryIdentifier": "02059",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6714676279617882,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Negligence",
+          "categoryIdentifier": "0206",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4939146511195767,
+          "courtOID": 5,
+          "parentOID": 6714676279617882,
+          "categoryType": 3,
+          "categoryName": "Negligence in situations of persons under care",
+          "categoryIdentifier": "02061",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4658274856120636,
+          "courtOID": 5,
+          "parentOID": 4939146511195767,
+          "categoryType": 4,
+          "categoryName": "Negligence in situations of children under care",
+          "categoryIdentifier": "020611",
+          "localCharges": [
+            {
+              "localChargeOID": 230805329,
+              "courtOID": 5,
+              "categoryIdentifier": "020611",
+              "localCharge": "Failure to secure a firearm from a child",
+              "localLaw": "Section 7"
+            },
+            {
+              "localChargeOID": 446251139,
+              "courtOID": 5,
+              "categoryIdentifier": "020611",
+              "localCharge": "Cruelty to a Child (wilfully abandons)",
+              "localLaw": "Section 4 Children Act"
+            },
+            {
+              "localChargeOID": 935102121,
+              "courtOID": 5,
+              "categoryIdentifier": "020611",
+              "localCharge": "Exposing a child under the age of twelve to the risk of burning",
+              "localLaw": "Section 6"
+            },
+            {
+              "localChargeOID": 957000392,
+              "courtOID": 5,
+              "categoryIdentifier": "020611",
+              "localCharge": "Cruelty to a Child (wilfully neglects)",
+              "localLaw": "Section 4 Children Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3041243877331367,
+          "courtOID": 5,
+          "parentOID": 4939146511195767,
+          "categoryType": 4,
+          "categoryName": "Negligence in situations of other dependent persons under care",
+          "categoryIdentifier": "020612",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4360301306055100,
+          "courtOID": 5,
+          "parentOID": 4939146511195767,
+          "categoryType": 4,
+          "categoryName": "Other negligence in situations of persons under care",
+          "categoryIdentifier": "020619",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4019373032121935,
+          "courtOID": 5,
+          "parentOID": 6714676279617882,
+          "categoryType": 3,
+          "categoryName": "Professional negligence",
+          "categoryIdentifier": "02062",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6474021243496437,
+          "courtOID": 5,
+          "parentOID": 6714676279617882,
+          "categoryType": 3,
+          "categoryName": "Negligence related to driving a vehicle",
+          "categoryIdentifier": "02063",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1500329207999507,
+          "courtOID": 5,
+          "parentOID": 6714676279617882,
+          "categoryType": 3,
+          "categoryName": "Other acts of negligence",
+          "categoryIdentifier": "02069",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 283363295120610,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Dangerous acts",
+          "categoryIdentifier": "0207",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 895649018844146,
+          "courtOID": 5,
+          "parentOID": 283363295120610,
+          "categoryType": 3,
+          "categoryName": "Acts that endanger health",
+          "categoryIdentifier": "02071",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4194734461783721,
+          "courtOID": 5,
+          "parentOID": 283363295120610,
+          "categoryType": 3,
+          "categoryName": "Operating a vehicle under the influence of psychoactive substances",
+          "categoryIdentifier": "02072",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6196474623082736,
+          "courtOID": 5,
+          "parentOID": 4194734461783721,
+          "categoryType": 4,
+          "categoryName": "Operating a vehicle under the influence of alcohol",
+          "categoryIdentifier": "020721",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1443859170654958,
+          "courtOID": 5,
+          "parentOID": 4194734461783721,
+          "categoryType": 4,
+          "categoryName": "Operating a vehicle under the influence of illicit drugs",
+          "categoryIdentifier": "020722",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5193828795713830,
+          "courtOID": 5,
+          "parentOID": 4194734461783721,
+          "categoryType": 4,
+          "categoryName": "Operating a vehicle under the influence of other psychoactive substances",
+          "categoryIdentifier": "020729",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3548665257764623,
+          "courtOID": 5,
+          "parentOID": 283363295120610,
+          "categoryType": 3,
+          "categoryName": "Other dangerous acts",
+          "categoryIdentifier": "02079",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2364306785420663,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Acts intended to induce fear or emotional distress",
+          "categoryIdentifier": "0208",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7973369331888375,
+          "courtOID": 5,
+          "parentOID": 2364306785420663,
+          "categoryType": 3,
+          "categoryName": "Harassment",
+          "categoryIdentifier": "02081",
+          "localCharges": [
+            {
+              "localChargeOID": 620248581,
+              "courtOID": 5,
+              "categoryIdentifier": "02081",
+              "localCharge": "Misuse of telephone facilities and false telegrams",
+              "localLaw": "Section 106 Summary Offences Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 1448431660342144,
+          "courtOID": 5,
+          "parentOID": 7973369331888375,
+          "categoryType": 4,
+          "categoryName": "Harassment in the workplace",
+          "categoryIdentifier": "020811",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5053872428447411,
+          "courtOID": 5,
+          "parentOID": 7973369331888375,
+          "categoryType": 4,
+          "categoryName": "Other harassment",
+          "categoryIdentifier": "020819",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7904594942699609,
+          "courtOID": 5,
+          "parentOID": 2364306785420663,
+          "categoryType": 3,
+          "categoryName": "Stalking",
+          "categoryIdentifier": "02082",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8391530348436673,
+          "courtOID": 5,
+          "parentOID": 2364306785420663,
+          "categoryType": 3,
+          "categoryName": "Other acts intended to induce fear or emotional distress",
+          "categoryIdentifier": "02089",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7105968124039261,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Defamation or insult",
+          "categoryIdentifier": "0209",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4403788442378616,
+          "courtOID": 5,
+          "parentOID": 7105968124039261,
+          "categoryType": 3,
+          "categoryName": "Defamation or insult due to the victimâ€™s characteristics or ascribed attributes",
+          "categoryIdentifier": "02091",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1333726816680685,
+          "courtOID": 5,
+          "parentOID": 7105968124039261,
+          "categoryType": 3,
+          "categoryName": "Defamation or insult due to the victimâ€™s ascribed beliefs or values",
+          "categoryIdentifier": "02092",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6781136177349044,
+          "courtOID": 5,
+          "parentOID": 7105968124039261,
+          "categoryType": 3,
+          "categoryName": "Other defamation or insult",
+          "categoryIdentifier": "02099",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7464491609794388,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Discrimination",
+          "categoryIdentifier": "0210",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3908547783884241,
+          "courtOID": 5,
+          "parentOID": 7464491609794388,
+          "categoryType": 3,
+          "categoryName": "Personal discrimination",
+          "categoryIdentifier": "02101",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5568663501130746,
+          "courtOID": 5,
+          "parentOID": 7464491609794388,
+          "categoryType": 3,
+          "categoryName": "Group discrimination",
+          "categoryIdentifier": "02102",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1061572680805428,
+          "courtOID": 5,
+          "parentOID": 7464491609794388,
+          "categoryType": 3,
+          "categoryName": "Other discrimination",
+          "categoryIdentifier": "02109",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6768382796625554,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Acts that trespass against the person",
+          "categoryIdentifier": "0211",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6527433932555252,
+          "courtOID": 5,
+          "parentOID": 6768382796625554,
+          "categoryType": 3,
+          "categoryName": "Invasion of privacy",
+          "categoryIdentifier": "02111",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6382898694135722,
+          "courtOID": 5,
+          "parentOID": 6768382796625554,
+          "categoryType": 3,
+          "categoryName": "Other acts that trespass against the person",
+          "categoryIdentifier": "02119",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6047649168368511,
+          "courtOID": 5,
+          "parentOID": 6061293890045675,
+          "categoryType": 2,
+          "categoryName": "Other acts causing harm or intending to cause harm to the person",
+          "categoryIdentifier": "0219",
+          "localCharges": [
+            {
+              "localChargeOID": 184037620,
+              "courtOID": 5,
+              "categoryIdentifier": "0219",
+              "localCharge": "Cruelty to a Child (wilfully ill-treats) ",
+              "localLaw": "Section 4 Children Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3241153917454273,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Injurious acts of a sexual nature",
+          "categoryIdentifier": "03",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 773533985170555,
+          "courtOID": 5,
+          "parentOID": 3241153917454273,
+          "categoryType": 2,
+          "categoryName": "Sexual violence",
+          "categoryIdentifier": "0301",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7143586606782463,
+          "courtOID": 5,
+          "parentOID": 773533985170555,
+          "categoryType": 3,
+          "categoryName": "Rape",
+          "categoryIdentifier": "03011",
+          "localCharges": [
+            {
+              "localChargeOID": 106915275,
+              "courtOID": 5,
+              "categoryIdentifier": "03011 ",
+              "localCharge": "Grievous sexual assault of an adult",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 7399729528043195,
+          "courtOID": 5,
+          "parentOID": 7143586606782463,
+          "categoryType": 4,
+          "categoryName": "Rape with force",
+          "categoryIdentifier": "030111",
+          "localCharges": [
+            {
+              "localChargeOID": 518472197,
+              "courtOID": 5,
+              "categoryIdentifier": "030111 ",
+              "localCharge": "Rape",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8935435212203255,
+          "courtOID": 5,
+          "parentOID": 7143586606782463,
+          "categoryType": 4,
+          "categoryName": "Rape without force",
+          "categoryIdentifier": "030112",
+          "localCharges": [
+            {
+              "localChargeOID": 525756566,
+              "courtOID": 5,
+              "categoryIdentifier": "030112",
+              "localCharge": "Causing or inciting a child to engage in a sexual penetration or sexual touching",
+              "localLaw": "Section 21"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 586741060523885,
+          "courtOID": 5,
+          "parentOID": 7143586606782463,
+          "categoryType": 4,
+          "categoryName": "Statutory rape",
+          "categoryIdentifier": "030113",
+          "localCharges": [
+            {
+              "localChargeOID": 41091581,
+              "courtOID": 5,
+              "categoryIdentifier": "030113",
+              "localCharge": "Sexual penetration of a child",
+              "localLaw": "Section 18"
+            },
+            {
+              "localChargeOID": 899496444,
+              "courtOID": 5,
+              "categoryIdentifier": "030113",
+              "localCharge": "Sexual intercourse with a mentally subnormal person",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3359687055133035,
+          "courtOID": 5,
+          "parentOID": 7143586606782463,
+          "categoryType": 4,
+          "categoryName": "Other rape",
+          "categoryIdentifier": "030119",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 805470948758378,
+          "courtOID": 5,
+          "parentOID": 773533985170555,
+          "categoryType": 3,
+          "categoryName": "Sexual assault",
+          "categoryIdentifier": "03012",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3414349577967256,
+          "courtOID": 5,
+          "parentOID": 805470948758378,
+          "categoryType": 4,
+          "categoryName": "Physical sexual assault",
+          "categoryIdentifier": "030121",
+          "localCharges": [
+            {
+              "localChargeOID": 163227091,
+              "courtOID": 5,
+              "categoryIdentifier": "030121",
+              "localCharge": "Sexual touching of a child",
+              "localLaw": "Section 19"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 5691599426811701,
+          "courtOID": 5,
+          "parentOID": 805470948758378,
+          "categoryType": 4,
+          "categoryName": "Non-physical sexual assault",
+          "categoryIdentifier": "030122",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1424668250430053,
+          "courtOID": 5,
+          "parentOID": 805470948758378,
+          "categoryType": 4,
+          "categoryName": "Other sexual assault not elsewhere classified",
+          "categoryIdentifier": "030129",
+          "localCharges": [
+            {
+              "localChargeOID": 71891585,
+              "courtOID": 5,
+              "categoryIdentifier": "030129",
+              "localCharge": "Causing or inciting a child to engage in sexual activity with an animal",
+              "localLaw": "Section 22"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 5786614245764820,
+          "courtOID": 5,
+          "parentOID": 773533985170555,
+          "categoryType": 3,
+          "categoryName": "Other acts of sexual violence",
+          "categoryIdentifier": "03019",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2257921782996496,
+          "courtOID": 5,
+          "parentOID": 3241153917454273,
+          "categoryType": 2,
+          "categoryName": "Sexual exploitation",
+          "categoryIdentifier": "0302",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2586153567882705,
+          "courtOID": 5,
+          "parentOID": 2257921782996496,
+          "categoryType": 3,
+          "categoryName": "Sexual exploitation of adults",
+          "categoryIdentifier": "03021",
+          "localCharges": [
+            {
+              "localChargeOID": 152290138,
+              "courtOID": 5,
+              "categoryIdentifier": "03021",
+              "localCharge": "Procuration",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 294008667,
+              "courtOID": 5,
+              "categoryIdentifier": "03021 ",
+              "localCharge": "Prostitution",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 307654949,
+              "courtOID": 5,
+              "categoryIdentifier": "03021",
+              "localCharge": "Permitting use of premises as a brothel",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 869857419,
+              "courtOID": 5,
+              "categoryIdentifier": "03021",
+              "localCharge": "Keeping a Brothel",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 4985029786347922,
+          "courtOID": 5,
+          "parentOID": 2257921782996496,
+          "categoryType": 3,
+          "categoryName": "Sexual exploitation of children",
+          "categoryIdentifier": "03022",
+          "localCharges": [
+            {
+              "localChargeOID": 168335356,
+              "courtOID": 5,
+              "categoryIdentifier": "03022",
+              "localCharge": "Allowing or encouraging a child to reside in or frequent a brothel",
+              "localLaw": "Section 11"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 2940568211348417,
+          "courtOID": 5,
+          "parentOID": 4985029786347922,
+          "categoryType": 4,
+          "categoryName": "Child pornography",
+          "categoryIdentifier": "030221",
+          "localCharges": [
+            {
+              "localChargeOID": 157481244,
+              "courtOID": 5,
+              "categoryIdentifier": "030221",
+              "localCharge": "Purchasing, receiving or exchanging child pornography",
+              "localLaw": "Section 40"
+            },
+            {
+              "localChargeOID": 281245545,
+              "courtOID": 5,
+              "categoryIdentifier": "030221",
+              "localCharge": "Publishing, or causing to be published an advertisement conveying the advertiser distributes or shows child pornography",
+              "localLaw": "Section 40"
+            },
+            {
+              "localChargeOID": 515933744,
+              "courtOID": 5,
+              "categoryIdentifier": "030221",
+              "localCharge": "Making or permitting child pornography to be made",
+              "localLaw": "Section 40"
+            },
+            {
+              "localChargeOID": 664095665,
+              "courtOID": 5,
+              "categoryIdentifier": "030221",
+              "localCharge": "Possession or control of child pornography",
+              "localLaw": "Section 40"
+            },
+            {
+              "localChargeOID": 848500141,
+              "courtOID": 5,
+              "categoryIdentifier": "030221",
+              "localCharge": "Obtaining access to child pornography",
+              "localLaw": "Section 40"
+            },
+            {
+              "localChargeOID": 948857290,
+              "courtOID": 5,
+              "categoryIdentifier": "030221",
+              "localCharge": "Publishing, distributing, transmitting or showing child pornography",
+              "localLaw": "Section 40"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 4370429557471600,
+          "courtOID": 5,
+          "parentOID": 4985029786347922,
+          "categoryType": 4,
+          "categoryName": "Child prostitution",
+          "categoryIdentifier": "030222",
+          "localCharges": [
+            {
+              "localChargeOID": 133922342,
+              "courtOID": 5,
+              "categoryIdentifier": "030222",
+              "localCharge": "Controlling the activities of a child prostitute",
+              "localLaw": "Section 15"
+            },
+            {
+              "localChargeOID": 230132100,
+              "courtOID": 5,
+              "categoryIdentifier": "030222",
+              "localCharge": "Arranging or facilitating the prostitution of a child",
+              "localLaw": "Section 16"
+            },
+            {
+              "localChargeOID": 390097648,
+              "courtOID": 5,
+              "categoryIdentifier": "030222",
+              "localCharge": "Paying for the sexual services of a child",
+              "localLaw": "Section 13"
+            },
+            {
+              "localChargeOID": 558009765,
+              "courtOID": 5,
+              "categoryIdentifier": "030222",
+              "localCharge": "Causing or inciting prostitution of a child",
+              "localLaw": "Section 14"
+            },
+            {
+              "localChargeOID": 809847405,
+              "courtOID": 5,
+              "categoryIdentifier": "030222",
+              "localCharge": "Causing or encouraging the seduction, prostitution or sexual penetration of a child",
+              "localLaw": "Section 12"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3159241033992042,
+          "courtOID": 5,
+          "parentOID": 4985029786347922,
+          "categoryType": 4,
+          "categoryName": "Sexual grooming of children",
+          "categoryIdentifier": "030223",
+          "localCharges": [
+            {
+              "localChargeOID": 201898107,
+              "courtOID": 5,
+              "categoryIdentifier": "030223",
+              "localCharge": "Meeting a child following sexual grooming",
+              "localLaw": "Section 25"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 5105817685372269,
+          "courtOID": 5,
+          "parentOID": 4985029786347922,
+          "categoryType": 4,
+          "categoryName": "Other sexual exploitation of children",
+          "categoryIdentifier": "030229",
+          "localCharges": [
+            {
+              "localChargeOID": 260642765,
+              "courtOID": 5,
+              "categoryIdentifier": "030229",
+              "localCharge": "Engaging in sexual activity in the presence of a child",
+              "localLaw": "Section 23"
+            },
+            {
+              "localChargeOID": 579090207,
+              "courtOID": 5,
+              "categoryIdentifier": "030229",
+              "localCharge": "Exposing a child or causing a child to be exposed to pornography",
+              "localLaw": "Section 41"
+            },
+            {
+              "localChargeOID": 966490636,
+              "courtOID": 5,
+              "categoryIdentifier": "030229",
+              "localCharge": "Causing a child to watch a sexual act",
+              "localLaw": "Section 24"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 6252740031137579,
+          "courtOID": 5,
+          "parentOID": 2257921782996496,
+          "categoryType": 3,
+          "categoryName": "Other acts of sexual exploitation",
+          "categoryIdentifier": "03029",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2100390171478529,
+          "courtOID": 5,
+          "parentOID": 3241153917454273,
+          "categoryType": 2,
+          "categoryName": "Other injurious acts of a sexual nature",
+          "categoryIdentifier": "0309",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8244181065193718,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Acts against property involving violence or threat against a person",
+          "categoryIdentifier": "04",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4408800507153194,
+          "courtOID": 5,
+          "parentOID": 8244181065193718,
+          "categoryType": 2,
+          "categoryName": "Robbery",
+          "categoryIdentifier": "0401",
+          "localCharges": [
+            {
+              "localChargeOID": 525000244,
+              "courtOID": 5,
+              "categoryIdentifier": "0401",
+              "localCharge": "Robbery"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 7478461528120278,
+          "courtOID": 5,
+          "parentOID": 4408800507153194,
+          "categoryType": 3,
+          "categoryName": "Robbery from the person",
+          "categoryIdentifier": "04011",
+          "localCharges": [
+            {
+              "localChargeOID": 141470562,
+              "courtOID": 5,
+              "categoryIdentifier": "04011",
+              "localCharge": "Assault with intent to rob (Robbery?)",
+              "localLaw": "24 1a and 24 3"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 1897773802741488,
+          "courtOID": 5,
+          "parentOID": 7478461528120278,
+          "categoryType": 4,
+          "categoryName": "Robbery from the person in a public location",
+          "categoryIdentifier": "040111",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8009417812366075,
+          "courtOID": 5,
+          "parentOID": 7478461528120278,
+          "categoryType": 4,
+          "categoryName": "Robbery from the person in a private location",
+          "categoryIdentifier": "040112",
+          "localCharges": [
+            {
+              "localChargeOID": 944165934,
+              "courtOID": 5,
+              "categoryIdentifier": "040112",
+              "localCharge": "Larceny dwelling house with threats",
+              "localLaw": "Section 14 Larceny Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 2099366646629585,
+          "courtOID": 5,
+          "parentOID": 7478461528120278,
+          "categoryType": 4,
+          "categoryName": "Other robbery from the person",
+          "categoryIdentifier": "040119",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7828820892891091,
+          "courtOID": 5,
+          "parentOID": 4408800507153194,
+          "categoryType": 3,
+          "categoryName": "Robbery of valuables or goods in transit",
+          "categoryIdentifier": "04012",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6583175564157622,
+          "courtOID": 5,
+          "parentOID": 7828820892891091,
+          "categoryType": 4,
+          "categoryName": "Robbery of a car or vehicle",
+          "categoryIdentifier": "040121",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 797993303343101,
+          "courtOID": 5,
+          "parentOID": 7828820892891091,
+          "categoryType": 4,
+          "categoryName": "Other robbery of valuables or goods in transit",
+          "categoryIdentifier": "040129",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7811427304210247,
+          "courtOID": 5,
+          "parentOID": 4408800507153194,
+          "categoryType": 3,
+          "categoryName": "Robbery of an establishment or institution",
+          "categoryIdentifier": "04013",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3988164597180766,
+          "courtOID": 5,
+          "parentOID": 7811427304210247,
+          "categoryType": 4,
+          "categoryName": "Robbery of a financial institution",
+          "categoryIdentifier": "040131",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3911776618525185,
+          "courtOID": 5,
+          "parentOID": 7811427304210247,
+          "categoryType": 4,
+          "categoryName": "Robbery of a non-financial institution",
+          "categoryIdentifier": "040132",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3309262234376982,
+          "courtOID": 5,
+          "parentOID": 4408800507153194,
+          "categoryType": 3,
+          "categoryName": "Robbery of livestock",
+          "categoryIdentifier": "04014",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3461198629126766,
+          "courtOID": 5,
+          "parentOID": 4408800507153194,
+          "categoryType": 3,
+          "categoryName": "Other acts of robbery",
+          "categoryIdentifier": "04019",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6977999540212192,
+          "courtOID": 5,
+          "parentOID": 8244181065193718,
+          "categoryType": 2,
+          "categoryName": "Other acts against property involving violence or threat against a person",
+          "categoryIdentifier": "0409",
+          "localCharges": [
+            {
+              "localChargeOID": 524807604,
+              "courtOID": 5,
+              "categoryIdentifier": "0409",
+              "localCharge": "Sending letters threatening to burn or destroy buildings, crops, ship or cattle",
+              "localLaw": "Section 41 Malicious Damage Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3835746411745809,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Acts against property only",
+          "categoryIdentifier": "05",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2116944383299374,
+          "courtOID": 5,
+          "parentOID": 3835746411745809,
+          "categoryType": 2,
+          "categoryName": "Burglary",
+          "categoryIdentifier": "0501",
+          "localCharges": [
+            {
+              "localChargeOID": 98786651,
+              "courtOID": 5,
+              "categoryIdentifier": "0501",
+              "localCharge": "Attempted larceny",
+              "localLaw": "Section 4 (Serious Larceny) of Larceny"
+            },
+            {
+              "localChargeOID": 269379036,
+              "courtOID": 5,
+              "categoryIdentifier": "0501",
+              "localCharge": "Burglary",
+              "localLaw": "Section 27 of Larceny Act "
+            },
+            {
+              "localChargeOID": 421655320,
+              "courtOID": 5,
+              "categoryIdentifier": "0501",
+              "localCharge": "Sacrilege",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 817037322,
+              "courtOID": 5,
+              "categoryIdentifier": "0501",
+              "localCharge": "Found on cultivated lands",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8543953772003356,
+          "courtOID": 5,
+          "parentOID": 2116944383299374,
+          "categoryType": 3,
+          "categoryName": "Burglary of business premises",
+          "categoryIdentifier": "05011",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4629890737706450,
+          "courtOID": 5,
+          "parentOID": 2116944383299374,
+          "categoryType": 3,
+          "categoryName": "Burglary of private residential premises",
+          "categoryIdentifier": "05012",
+          "localCharges": [
+            {
+              "localChargeOID": 364703370,
+              "courtOID": 5,
+              "categoryIdentifier": "05012",
+              "localCharge": "House Breaking with intent to commit a arrestable offence",
+              "localLaw": "Section 29 of Larceny Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 4033784879825024,
+          "courtOID": 5,
+          "parentOID": 4629890737706450,
+          "categoryType": 4,
+          "categoryName": "Burglary of permanent private residences",
+          "categoryIdentifier": "050121",
+          "localCharges": [
+            {
+              "localChargeOID": 949083613,
+              "courtOID": 5,
+              "categoryIdentifier": "050121",
+              "localCharge": "Entering the dwelling house by night",
+              "localLaw": "Section 29 of Larceny Act "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3092702108058697,
+          "courtOID": 5,
+          "parentOID": 4629890737706450,
+          "categoryType": 4,
+          "categoryName": "Burglary of non-permanent private residences",
+          "categoryIdentifier": "050122",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3191939307460332,
+          "courtOID": 5,
+          "parentOID": 2116944383299374,
+          "categoryType": 3,
+          "categoryName": "Burglary of public premises",
+          "categoryIdentifier": "05013",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7471815139675185,
+          "courtOID": 5,
+          "parentOID": 2116944383299374,
+          "categoryType": 3,
+          "categoryName": "Other acts of burglary",
+          "categoryIdentifier": "05019",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4392812437054399,
+          "courtOID": 5,
+          "parentOID": 3835746411745809,
+          "categoryType": 2,
+          "categoryName": "Theft",
+          "categoryIdentifier": "0502",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1645852852983360,
+          "courtOID": 5,
+          "parentOID": 4392812437054399,
+          "categoryType": 3,
+          "categoryName": "Theft of a motorized vehicle or parts thereof",
+          "categoryIdentifier": "05021",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 58099723752835,
+          "courtOID": 5,
+          "parentOID": 1645852852983360,
+          "categoryType": 4,
+          "categoryName": "Theft of a motorized land vehicle",
+          "categoryIdentifier": "050211",
+          "localCharges": [
+            {
+              "localChargeOID": 239681291,
+              "courtOID": 5,
+              "categoryIdentifier": "050211",
+              "localCharge": "Larceny of motor vehicle",
+              "localLaw": "Section 4 of Larceny Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 1787879720647736,
+          "courtOID": 5,
+          "parentOID": 1645852852983360,
+          "categoryType": 4,
+          "categoryName": "Illegal use of a motorized land vehicle",
+          "categoryIdentifier": "050212",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 832771113967032,
+          "courtOID": 5,
+          "parentOID": 1645852852983360,
+          "categoryType": 4,
+          "categoryName": "Theft of parts of a motorized land vehicle",
+          "categoryIdentifier": "050213",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7582173288978915,
+          "courtOID": 5,
+          "parentOID": 1645852852983360,
+          "categoryType": 4,
+          "categoryName": "Other theft of a motorized vehicle or parts thereof",
+          "categoryIdentifier": "050219",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 780677025605650,
+          "courtOID": 5,
+          "parentOID": 4392812437054399,
+          "categoryType": 3,
+          "categoryName": "Theft of personal property",
+          "categoryIdentifier": "05022",
+          "localCharges": [
+            {
+              "localChargeOID": 735118044,
+              "courtOID": 5,
+              "categoryIdentifier": "05022",
+              "localCharge": "Secreting postal packets",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3981321050576231,
+          "courtOID": 5,
+          "parentOID": 780677025605650,
+          "categoryType": 4,
+          "categoryName": "Theft of personal property from a person",
+          "categoryIdentifier": "050221",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4539627319244558,
+          "courtOID": 5,
+          "parentOID": 780677025605650,
+          "categoryType": 4,
+          "categoryName": "Theft of personal property from a vehicle",
+          "categoryIdentifier": "050222",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7790969991471629,
+          "courtOID": 5,
+          "parentOID": 780677025605650,
+          "categoryType": 4,
+          "categoryName": "Other theft of personal property",
+          "categoryIdentifier": "050229",
+          "localCharges": [
+            {
+              "localChargeOID": 331382888,
+              "courtOID": 5,
+              "categoryIdentifier": "050229",
+              "localCharge": "Larceny dwelling house without threats",
+              "localLaw": "Section 11 Summary Offences Act"
+            },
+            {
+              "localChargeOID": 650792305,
+              "courtOID": 5,
+              "categoryIdentifier": "050229",
+              "localCharge": "Attempted larceny",
+              "localLaw": "Section 8 of Larceny Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 773246258075331,
+          "courtOID": 5,
+          "parentOID": 4392812437054399,
+          "categoryType": 3,
+          "categoryName": "Theft of business property",
+          "categoryIdentifier": "05023",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4391899747515768,
+          "courtOID": 5,
+          "parentOID": 773246258075331,
+          "categoryType": 4,
+          "categoryName": "Theft from a shop",
+          "categoryIdentifier": "050231",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5385979032928120,
+          "courtOID": 5,
+          "parentOID": 773246258075331,
+          "categoryType": 4,
+          "categoryName": "Other theft of business property",
+          "categoryIdentifier": "050239",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2764910313474030,
+          "courtOID": 5,
+          "parentOID": 4392812437054399,
+          "categoryType": 3,
+          "categoryName": "Theft of public property",
+          "categoryIdentifier": "05024",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6012455500652648,
+          "courtOID": 5,
+          "parentOID": 4392812437054399,
+          "categoryType": 3,
+          "categoryName": "Theft of livestock",
+          "categoryIdentifier": "05025",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4824258299249348,
+          "courtOID": 5,
+          "parentOID": 4392812437054399,
+          "categoryType": 3,
+          "categoryName": "Theft of services",
+          "categoryIdentifier": "05026",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8606951217041141,
+          "courtOID": 5,
+          "parentOID": 4392812437054399,
+          "categoryType": 3,
+          "categoryName": "Other acts of theft",
+          "categoryIdentifier": "05029",
+          "localCharges": [
+            {
+              "localChargeOID": 128556388,
+              "courtOID": 5,
+              "categoryIdentifier": "05029",
+              "localCharge": "Praedial larceny",
+              "localLaw": "Summary Offences Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3088259393979680,
+          "courtOID": 5,
+          "parentOID": 3835746411745809,
+          "categoryType": 2,
+          "categoryName": "Intellectual property offences",
+          "categoryIdentifier": "0503",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5875885698324778,
+          "courtOID": 5,
+          "parentOID": 3835746411745809,
+          "categoryType": 2,
+          "categoryName": "Property damage",
+          "categoryIdentifier": "0504",
+          "localCharges": [
+            {
+              "localChargeOID": 193661127,
+              "courtOID": 5,
+              "categoryIdentifier": "0504",
+              "localCharge": "Setting fire",
+              "localLaw": "Section 25 Malicious Damage Act"
+            },
+            {
+              "localChargeOID": 457632063,
+              "courtOID": 5,
+              "categoryIdentifier": "0504",
+              "localCharge": "Conspiracy to set fire",
+              "localLaw": "Section 10 Malicious Damage Act"
+            },
+            {
+              "localChargeOID": 564580935,
+              "courtOID": 5,
+              "categoryIdentifier": "0504",
+              "localCharge": "Malicious damage",
+              "localLaw": "Section 25 of the Summary Offences Act"
+            },
+            {
+              "localChargeOID": 697003251,
+              "courtOID": 5,
+              "categoryIdentifier": "0504",
+              "localCharge": "Malicious damage to a building by fire (Arson) ",
+              "localLaw": "Sections 3-10, 17, 18, 25, 35, 41 Malicious Damage Act"
+            },
+            {
+              "localChargeOID": 744674465,
+              "courtOID": 5,
+              "categoryIdentifier": "0504",
+              "localCharge": "Setting fire to other buildings",
+              "localLaw": "Section 7 Malicious Damage Act"
+            },
+            {
+              "localChargeOID": 792414063,
+              "courtOID": 5,
+              "categoryIdentifier": "0504",
+              "localCharge": "Placing inflammable materials with intent to set fire",
+              "localLaw": "Section 9 Malicious Damage Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8689761360073179,
+          "courtOID": 5,
+          "parentOID": 5875885698324778,
+          "categoryType": 3,
+          "categoryName": "Damage of public property",
+          "categoryIdentifier": "05041",
+          "localCharges": [
+            {
+              "localChargeOID": 609142917,
+              "courtOID": 5,
+              "categoryIdentifier": "05041",
+              "localCharge": "Setting fire to places of worship",
+              "localLaw": "Section 3 Malicious Damage Act"
+            },
+            {
+              "localChargeOID": 796555532,
+              "courtOID": 5,
+              "categoryIdentifier": "05041",
+              "localCharge": "Setting fire to any public building",
+              "localLaw": "Section 6 Malicious Damage Act"
+            },
+            {
+              "localChargeOID": 884665889,
+              "courtOID": 5,
+              "categoryIdentifier": "05041",
+              "localCharge": "Sticking or circulating pamphlets (without name of publisher)",
+              "localLaw": "Section 105 Summary Offences Act Chapter 11:02"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8275375186164004,
+          "courtOID": 5,
+          "parentOID": 5875885698324778,
+          "categoryType": 3,
+          "categoryName": "Damage of personal property",
+          "categoryIdentifier": "05042",
+          "localCharges": [
+            {
+              "localChargeOID": 54285763,
+              "courtOID": 5,
+              "categoryIdentifier": "05042",
+              "localCharge": "Setting fire to a dwelling house any person being therein",
+              "localLaw": "Section 4 Malicious Damage Act"
+            },
+            {
+              "localChargeOID": 590487588,
+              "courtOID": 5,
+              "categoryIdentifier": "05042",
+              "localCharge": "Setting fire to a house, outhouse, warehouse, and other buildings",
+              "localLaw": "Section 5 Malicious Damage Act"
+            },
+            {
+              "localChargeOID": 611033446,
+              "courtOID": 5,
+              "categoryIdentifier": "05042",
+              "localCharge": "Setting fire to ships with intent to prejudice the owners or underwriters",
+              "localLaw": "Section 35 Malicious Damage Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 7050088098187119,
+          "courtOID": 5,
+          "parentOID": 5875885698324778,
+          "categoryType": 3,
+          "categoryName": "Damage of business property",
+          "categoryIdentifier": "05043",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 9050164858925656,
+          "courtOID": 5,
+          "parentOID": 5875885698324778,
+          "categoryType": 3,
+          "categoryName": "Other damage of property",
+          "categoryIdentifier": "05049",
+          "localCharges": [
+            {
+              "localChargeOID": 354282224,
+              "courtOID": 5,
+              "categoryIdentifier": "05049",
+              "localCharge": "Setting fire to goods in buildings",
+              "localLaw": "Section 8 Malicious Damage Act"
+            },
+            {
+              "localChargeOID": 358217837,
+              "courtOID": 5,
+              "categoryIdentifier": "05049",
+              "localCharge": "Setting fire to hay, straw, or implements",
+              "localLaw": "Section 18 Malicious Damage Act"
+            },
+            {
+              "localChargeOID": 486872091,
+              "courtOID": 5,
+              "categoryIdentifier": "05049",
+              "localCharge": "Setting fire to crops",
+              "localLaw": "Section 17 Malicious Damage Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3598240812514088,
+          "courtOID": 5,
+          "parentOID": 3835746411745809,
+          "categoryType": 2,
+          "categoryName": "Other acts against property only",
+          "categoryIdentifier": "0509",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2439884701236545,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Acts involving controlled drugs or other psychoactive substances",
+          "categoryIdentifier": "06",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 827386663928457,
+          "courtOID": 5,
+          "parentOID": 2439884701236545,
+          "categoryType": 2,
+          "categoryName": "Unlawful acts involving controlled drugs or precursors",
+          "categoryIdentifier": "0601",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 72557443940127,
+          "courtOID": 5,
+          "parentOID": 827386663928457,
+          "categoryType": 3,
+          "categoryName": "Unlawful possession, purchase, use, cultivation or production of controlled drugs for personal consumption",
+          "categoryIdentifier": "06011",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 836036352102409,
+          "courtOID": 5,
+          "parentOID": 72557443940127,
+          "categoryType": 4,
+          "categoryName": "Unlawful possession, purchase or use of controlled drugs for personal consumption",
+          "categoryIdentifier": "060111",
+          "localCharges": [
+            {
+              "localChargeOID": 638994813,
+              "courtOID": 5,
+              "categoryIdentifier": "060111",
+              "localCharge": "Possession of Dangerous Drugs",
+              "localLaw": "Schedule of Dangerous Drug Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8983763924526117,
+          "courtOID": 5,
+          "parentOID": 72557443940127,
+          "categoryType": 4,
+          "categoryName": "Unlawful cultivation or production of controlled drugs for personal consumption",
+          "categoryIdentifier": "060112",
+          "localCharges": [
+            {
+              "localChargeOID": 457337410,
+              "courtOID": 5,
+              "categoryIdentifier": "060112",
+              "localCharge": "Cultivating Marijuana for personal consumption",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 6521557054897576,
+          "courtOID": 5,
+          "parentOID": 827386663928457,
+          "categoryType": 3,
+          "categoryName": "Unlawful trafficking, cultivation or production of controlled drugs or precursors not for personal consumption",
+          "categoryIdentifier": "06012",
+          "localCharges": [
+            {
+              "localChargeOID": 644010971,
+              "courtOID": 5,
+              "categoryIdentifier": "06012",
+              "localCharge": "Trafficking Dangerous Drugs",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 6461804123765565,
+          "courtOID": 5,
+          "parentOID": 6521557054897576,
+          "categoryType": 4,
+          "categoryName": "Unlawful trafficking of controlled drugs not for personal consumption",
+          "categoryIdentifier": "060121",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7719626437039023,
+          "courtOID": 5,
+          "parentOID": 6521557054897576,
+          "categoryType": 4,
+          "categoryName": "Unlawful manufacture of controlled drugs not for personal consumption",
+          "categoryIdentifier": "060122",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3354116154017755,
+          "courtOID": 5,
+          "parentOID": 6521557054897576,
+          "categoryType": 4,
+          "categoryName": "Unlawful cultivation of controlled drugs not for personal consumption",
+          "categoryIdentifier": "060123",
+          "localCharges": [
+            {
+              "localChargeOID": 272948,
+              "courtOID": 5,
+              "categoryIdentifier": "060123",
+              "localCharge": "Cultivating Marijuana not for personal consumption",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 2075788623994990,
+          "courtOID": 5,
+          "parentOID": 6521557054897576,
+          "categoryType": 4,
+          "categoryName": "Unlawful diversion of precursors not for personal consumption",
+          "categoryIdentifier": "060124",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5454853611218359,
+          "courtOID": 5,
+          "parentOID": 6521557054897576,
+          "categoryType": 4,
+          "categoryName": "Other unlawful trafficking, cultivation or production of controlled drugs or precursors not for personal consumption",
+          "categoryIdentifier": "060129",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2993608832674370,
+          "courtOID": 5,
+          "parentOID": 827386663928457,
+          "categoryType": 3,
+          "categoryName": "Other unlawful acts involving controlled drugs or precursors",
+          "categoryIdentifier": "06019",
+          "localCharges": [
+            {
+              "localChargeOID": 362147493,
+              "courtOID": 5,
+              "categoryIdentifier": "06019",
+              "localCharge": "Giving or causing a child to be given a dangerous drug",
+              "localLaw": "Section 36"
+            },
+            {
+              "localChargeOID": 634774477,
+              "courtOID": 5,
+              "categoryIdentifier": "06019",
+              "localCharge": "Using a child to buy, sell or deliver a dangerous drug",
+              "localLaw": "Section 37"
+            },
+            {
+              "localChargeOID": 843447285,
+              "courtOID": 5,
+              "categoryIdentifier": "06019",
+              "localCharge": "Exposing a child to a dangerous drug",
+              "localLaw": "Section 35"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8594187331250817,
+          "courtOID": 5,
+          "parentOID": 2439884701236545,
+          "categoryType": 2,
+          "categoryName": "Unlawful acts involving alcohol, tobacco or other controlled substances other controlled substances",
+          "categoryIdentifier": "0602",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2227824521554839,
+          "courtOID": 5,
+          "parentOID": 8594187331250817,
+          "categoryType": 3,
+          "categoryName": "Unlawful production, handling, possession or use of alcohol products",
+          "categoryIdentifier": "06021",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6094356787719312,
+          "courtOID": 5,
+          "parentOID": 2227824521554839,
+          "categoryType": 4,
+          "categoryName": "Unlawful possession or use of alcohol products",
+          "categoryIdentifier": "060211",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2565457343308949,
+          "courtOID": 5,
+          "parentOID": 2227824521554839,
+          "categoryType": 4,
+          "categoryName": "Unlawful production, trafficking or distribution of alcohol products",
+          "categoryIdentifier": "060212",
+          "localCharges": [
+            {
+              "localChargeOID": 772671259,
+              "courtOID": 5,
+              "categoryIdentifier": "060212",
+              "localCharge": "Possession of a still",
+              "localLaw": " "
+            },
+            {
+              "localChargeOID": 874144094,
+              "courtOID": 5,
+              "categoryIdentifier": "060212",
+              "localCharge": "Selling intoxicating liquor without a licence",
+              "localLaw": " "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 7587284533689305,
+          "courtOID": 5,
+          "parentOID": 2227824521554839,
+          "categoryType": 4,
+          "categoryName": "Other unlawful production, handling, possession or use of alcohol products",
+          "categoryIdentifier": "060219",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4101952191012033,
+          "courtOID": 5,
+          "parentOID": 8594187331250817,
+          "categoryType": 3,
+          "categoryName": "Unlawful production, handling, possession or use of tobacco products",
+          "categoryIdentifier": "06022",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4973706555248947,
+          "courtOID": 5,
+          "parentOID": 4101952191012033,
+          "categoryType": 4,
+          "categoryName": "Unlawful possession or use of tobacco products",
+          "categoryIdentifier": "060221",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5837420202651049,
+          "courtOID": 5,
+          "parentOID": 4101952191012033,
+          "categoryType": 4,
+          "categoryName": "Unlawful production, trafficking or distribution of tobacco products",
+          "categoryIdentifier": "060222",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1310787708120184,
+          "courtOID": 5,
+          "parentOID": 4101952191012033,
+          "categoryType": 4,
+          "categoryName": "Other unlawful production, handling, possession or use of tobacco products",
+          "categoryIdentifier": "060229",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7311633904646151,
+          "courtOID": 5,
+          "parentOID": 8594187331250817,
+          "categoryType": 3,
+          "categoryName": "Other unlawful acts involving alcohol, tobacco or other controlled substances",
+          "categoryIdentifier": "06029",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1934514257199861,
+          "courtOID": 5,
+          "parentOID": 2439884701236545,
+          "categoryType": 2,
+          "categoryName": "Other acts involving controlled drugs or other psychoactive substances",
+          "categoryIdentifier": "0609",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2847398872163923,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Acts involving fraud, deception or corruption",
+          "categoryIdentifier": "07",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2750255677992331,
+          "courtOID": 5,
+          "parentOID": 2847398872163923,
+          "categoryType": 2,
+          "categoryName": "Fraud",
+          "categoryIdentifier": "0701",
+          "localCharges": [
+            {
+              "localChargeOID": 62974144,
+              "courtOID": 5,
+              "categoryIdentifier": "0701",
+              "localCharge": "Conspiracy to defraud",
+              "localLaw": "Common Law Offence"
+            },
+            {
+              "localChargeOID": 416002525,
+              "courtOID": 5,
+              "categoryIdentifier": "0701",
+              "localCharge": "Falsification of accounts",
+              "localLaw": "Section 9 0f Criminal Offences Act"
+            },
+            {
+              "localChargeOID": 724314479,
+              "courtOID": 5,
+              "categoryIdentifier": "0701",
+              "localCharge": "Attempted to obtain money by false pretences",
+              "localLaw": "Section 34 of the Larceny Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 4563893025103606,
+          "courtOID": 5,
+          "parentOID": 2750255677992331,
+          "categoryType": 3,
+          "categoryName": "Financial fraud",
+          "categoryIdentifier": "07011",
+          "localCharges": [
+            {
+              "localChargeOID": 644586550,
+              "courtOID": 5,
+              "categoryIdentifier": "07011",
+              "localCharge": "Obtaining property or services by dishonoured cheque",
+              "localLaw": "Dishonoured Cheque Act"
+            },
+            {
+              "localChargeOID": 711776249,
+              "courtOID": 5,
+              "categoryIdentifier": "07011",
+              "localCharge": "Obtaining money by false pretence",
+              "localLaw": "Section 34 of the Larceny Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 834624097965409,
+          "courtOID": 5,
+          "parentOID": 4563893025103606,
+          "categoryType": 4,
+          "categoryName": "Financial fraud against the State",
+          "categoryIdentifier": "070111",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5959983136903824,
+          "courtOID": 5,
+          "parentOID": 4563893025103606,
+          "categoryType": 4,
+          "categoryName": "Financial fraud against natural or legal persons",
+          "categoryIdentifier": "070112",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8554480772498925,
+          "courtOID": 5,
+          "parentOID": 2750255677992331,
+          "categoryType": 3,
+          "categoryName": "Other acts of fraud",
+          "categoryIdentifier": "07019",
+          "localCharges": [
+            {
+              "localChargeOID": 23524071,
+              "courtOID": 5,
+              "categoryIdentifier": "07019",
+              "localCharge": "Obtaining goods by false pretence",
+              "localLaw": "Section 9 of the Summary Offences Act/Section 34 of the Larceny Act"
+            },
+            {
+              "localChargeOID": 658749594,
+              "courtOID": 5,
+              "categoryIdentifier": "07019",
+              "localCharge": "Impersonating a police officer",
+              "localLaw": "Police Service Act - Section 62"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 4336143762184253,
+          "courtOID": 5,
+          "parentOID": 2847398872163923,
+          "categoryType": 2,
+          "categoryName": "Forgery/counterfeiting",
+          "categoryIdentifier": "0702",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 9049116002467852,
+          "courtOID": 5,
+          "parentOID": 4336143762184253,
+          "categoryType": 3,
+          "categoryName": "Counterfeiting means of payment",
+          "categoryIdentifier": "07021",
+          "localCharges": [
+            {
+              "localChargeOID": 146065174,
+              "courtOID": 5,
+              "categoryIdentifier": "07021",
+              "localCharge": "Possession of counterfeit coins",
+              "localLaw": "Section 12 Coinage Offences Act"
+            },
+            {
+              "localChargeOID": 733253614,
+              "courtOID": 5,
+              "categoryIdentifier": "07021",
+              "localCharge": "Uttering a forged document(means of payment)"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 1507041501858182,
+          "courtOID": 5,
+          "parentOID": 9049116002467852,
+          "categoryType": 4,
+          "categoryName": "Counterfeiting means of cash payment",
+          "categoryIdentifier": "070211",
+          "localCharges": [
+            {
+              "localChargeOID": 171630335,
+              "courtOID": 5,
+              "categoryIdentifier": "070211",
+              "localCharge": "Possession of implements for forgery",
+              "localLaw": "Section 12 of Forgery Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 1967706382369450,
+          "courtOID": 5,
+          "parentOID": 9049116002467852,
+          "categoryType": 4,
+          "categoryName": "Counterfeiting means of non-cash payment",
+          "categoryIdentifier": "070212",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8999667789744456,
+          "courtOID": 5,
+          "parentOID": 4336143762184253,
+          "categoryType": 3,
+          "categoryName": "Counterfeit product offences",
+          "categoryIdentifier": "07022",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7329386179597904,
+          "courtOID": 5,
+          "parentOID": 4336143762184253,
+          "categoryType": 3,
+          "categoryName": "Acts of forgery/counterfeiting documents",
+          "categoryIdentifier": "07023",
+          "localCharges": [
+            {
+              "localChargeOID": 503157001,
+              "courtOID": 5,
+              "categoryIdentifier": "07023",
+              "localCharge": "Forgery (testamentary documents, deed or bond, bank notes or currency notes)",
+              "localLaw": "Section 4 of Forgery Act"
+            },
+            {
+              "localChargeOID": 732332731,
+              "courtOID": 5,
+              "categoryIdentifier": "07023",
+              "localCharge": "Demanding property on forged document",
+              "localLaw": "Section 10 0f Forgery Act"
+            },
+            {
+              "localChargeOID": 777441151,
+              "courtOID": 5,
+              "categoryIdentifier": "07023",
+              "localCharge": "Uttering a forged document(other)"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8697814603589195,
+          "courtOID": 5,
+          "parentOID": 4336143762184253,
+          "categoryType": 3,
+          "categoryName": "Other acts of forgery/counterfeiting",
+          "categoryIdentifier": "07029",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1319013233152236,
+          "courtOID": 5,
+          "parentOID": 2847398872163923,
+          "categoryType": 2,
+          "categoryName": "Corruption",
+          "categoryIdentifier": "0703",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5958983632361239,
+          "courtOID": 5,
+          "parentOID": 1319013233152236,
+          "categoryType": 3,
+          "categoryName": "Bribery",
+          "categoryIdentifier": "07031",
+          "localCharges": [
+            {
+              "localChargeOID": 305679789,
+              "courtOID": 5,
+              "categoryIdentifier": "07031",
+              "localCharge": "Corruption - receiving a bribe",
+              "localLaw": "Section 3 of Prevention of Corruption Act"
+            },
+            {
+              "localChargeOID": 571594633,
+              "courtOID": 5,
+              "categoryIdentifier": "07031",
+              "localCharge": "Offering bribe to Police Officer",
+              "localLaw": "Section 61c of the Police Service Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 9179255207937536,
+          "courtOID": 5,
+          "parentOID": 5958983632361239,
+          "categoryType": 4,
+          "categoryName": "Active bribery",
+          "categoryIdentifier": "070311",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8720638545894691,
+          "courtOID": 5,
+          "parentOID": 5958983632361239,
+          "categoryType": 4,
+          "categoryName": "Passive bribery",
+          "categoryIdentifier": "070312",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5882185638931623,
+          "courtOID": 5,
+          "parentOID": 1319013233152236,
+          "categoryType": 3,
+          "categoryName": "Embezzlement",
+          "categoryIdentifier": "07032",
+          "localCharges": [
+            {
+              "localChargeOID": 293689789,
+              "courtOID": 5,
+              "categoryIdentifier": "07032",
+              "localCharge": "Stealing or Embezzlement by employee of Trinidad and Tobago Post",
+              "localLaw": "Section 19 of Larceny Act"
+            },
+            {
+              "localChargeOID": 518048344,
+              "courtOID": 5,
+              "categoryIdentifier": "07032",
+              "localCharge": "Fraudulent conversion"
+            },
+            {
+              "localChargeOID": 940270770,
+              "courtOID": 5,
+              "categoryIdentifier": "07032",
+              "localCharge": "Embezzlement by a clerk or servant",
+              "localLaw": "Section 18 of Larceny Act "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 761683716524892,
+          "courtOID": 5,
+          "parentOID": 1319013233152236,
+          "categoryType": 3,
+          "categoryName": "Abuse of functions",
+          "categoryIdentifier": "07033",
+          "localCharges": [
+            {
+              "localChargeOID": 904582226,
+              "courtOID": 5,
+              "categoryIdentifier": "07033",
+              "localCharge": "Misconduct in public office",
+              "localLaw": "Common Law Offence / Civil Service Regulations"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 1540701962720147,
+          "courtOID": 5,
+          "parentOID": 1319013233152236,
+          "categoryType": 3,
+          "categoryName": "Trading in influence",
+          "categoryIdentifier": "07034",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2228332566174082,
+          "courtOID": 5,
+          "parentOID": 1319013233152236,
+          "categoryType": 3,
+          "categoryName": "Illicit enrichment",
+          "categoryIdentifier": "07035",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8490202347709725,
+          "courtOID": 5,
+          "parentOID": 1319013233152236,
+          "categoryType": 3,
+          "categoryName": "Other acts of corruption",
+          "categoryIdentifier": "07039",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 155179414420717,
+          "courtOID": 5,
+          "parentOID": 2847398872163923,
+          "categoryType": 2,
+          "categoryName": "Acts involving the proceeds of crime",
+          "categoryIdentifier": "0704",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 859950691938503,
+          "courtOID": 5,
+          "parentOID": 155179414420717,
+          "categoryType": 3,
+          "categoryName": "Money laundering",
+          "categoryIdentifier": "07041",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8729957377928063,
+          "courtOID": 5,
+          "parentOID": 155179414420717,
+          "categoryType": 3,
+          "categoryName": "Illicit trafficking in cultural property",
+          "categoryIdentifier": "07042",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 847296614025568,
+          "courtOID": 5,
+          "parentOID": 155179414420717,
+          "categoryType": 3,
+          "categoryName": "Other acts involving the proceeds of crime",
+          "categoryIdentifier": "07049",
+          "localCharges": [
+            {
+              "localChargeOID": 350662820,
+              "courtOID": 5,
+              "categoryIdentifier": "07049",
+              "localCharge": "Receiving stolen goods",
+              "localLaw": "Section 35 Larceny Act/Section 33 Summary Offences Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 2039139070721906,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Acts against public order, authority and provisions of the State",
+          "categoryIdentifier": "08",
+          "localCharges": [
+            {
+              "localChargeOID": 159327590,
+              "courtOID": 5,
+              "categoryIdentifier": "08",
+              "localCharge": "Assaulting a Police Officer"
+            },
+            {
+              "localChargeOID": 161733188,
+              "courtOID": 5,
+              "categoryIdentifier": "08",
+              "localCharge": "Assaulting a clergy man"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 5295069923053388,
+          "courtOID": 5,
+          "parentOID": 2039139070721906,
+          "categoryType": 2,
+          "categoryName": "Acts against public order behavioural standards",
+          "categoryIdentifier": "0801",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8731984564915102,
+          "courtOID": 5,
+          "parentOID": 5295069923053388,
+          "categoryType": 3,
+          "categoryName": "Violent public disorder offences",
+          "categoryIdentifier": "08011",
+          "localCharges": [
+            {
+              "localChargeOID": 297553912,
+              "courtOID": 5,
+              "categoryIdentifier": "08011",
+              "localCharge": "Fighting",
+              "localLaw": "Section 49 Summary Offences Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8230610250316512,
+          "courtOID": 5,
+          "parentOID": 5295069923053388,
+          "categoryType": 3,
+          "categoryName": "Acts related to social and religious public order norms and standards",
+          "categoryIdentifier": "08012",
+          "localCharges": [
+            {
+              "localChargeOID": 2147633,
+              "courtOID": 5,
+              "categoryIdentifier": "08012",
+              "localCharge": "Loitering",
+              "localLaw": "Section 45 cSummary Offences Act"
+            },
+            {
+              "localChargeOID": 73564707,
+              "courtOID": 5,
+              "categoryIdentifier": "08012",
+              "localCharge": "Being in enclosed place for unlawful purposes",
+              "localLaw": "Section 46 of the Summary Offences Act"
+            },
+            {
+              "localChargeOID": 166096608,
+              "courtOID": 5,
+              "categoryIdentifier": "08012",
+              "localCharge": "Allowing a child to beg",
+              "localLaw": "Section 5"
+            },
+            {
+              "localChargeOID": 282629243,
+              "courtOID": 5,
+              "categoryIdentifier": "08012",
+              "localCharge": "Depositing litter in a public place",
+              "localLaw": "Section 3 Litter Act"
+            },
+            {
+              "localChargeOID": 314482095,
+              "courtOID": 5,
+              "categoryIdentifier": "08012",
+              "localCharge": "Fail to have bin in public vehicle (bus, maxi or taxi)",
+              "localLaw": "Section 3B Litter Act"
+            },
+            {
+              "localChargeOID": 444556342,
+              "courtOID": 5,
+              "categoryIdentifier": "08012",
+              "localCharge": "Violent, Obscene or Profane Language",
+              "localLaw": "Section 49 Summary Offences Act"
+            },
+            {
+              "localChargeOID": 570955733,
+              "courtOID": 5,
+              "categoryIdentifier": "08012",
+              "localCharge": "Causing or procuring a child to beg",
+              "localLaw": "Section 5"
+            },
+            {
+              "localChargeOID": 605696317,
+              "courtOID": 5,
+              "categoryIdentifier": "08012",
+              "localCharge": "Any person procuring or endeavouring to procure alms or charitable contributions for himself or other under false or fraudulent pretences",
+              "localLaw": "Section 46 (a) of the Summary Offences Act"
+            },
+            {
+              "localChargeOID": 630495396,
+              "courtOID": 5,
+              "categoryIdentifier": "08012",
+              "localCharge": "Disorderly/indecent behaviour",
+              "localLaw": "Section 52 Summary Offences Act"
+            },
+            {
+              "localChargeOID": 891884384,
+              "courtOID": 5,
+              "categoryIdentifier": "08012",
+              "localCharge": "Lewd or suggestive dancing",
+              "localLaw": "Section 51 (b) Summary Offences Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 6548518928532882,
+          "courtOID": 5,
+          "parentOID": 5295069923053388,
+          "categoryType": 3,
+          "categoryName": "Other acts against public order behavioural standards",
+          "categoryIdentifier": "08019",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8043397127897345,
+          "courtOID": 5,
+          "parentOID": 2039139070721906,
+          "categoryType": 2,
+          "categoryName": "Acts against public order sexual standards",
+          "categoryIdentifier": "0802",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7297451691157005,
+          "courtOID": 5,
+          "parentOID": 8043397127897345,
+          "categoryType": 3,
+          "categoryName": "Prostitution offences",
+          "categoryIdentifier": "08021",
+          "localCharges": [
+            {
+              "localChargeOID": 236080062,
+              "courtOID": 5,
+              "categoryIdentifier": "08021",
+              "localCharge": "Any woman loitering about and soliciting passers-by for the purpose of prostitution",
+              "localLaw": "Section 46 (a) of the Summary Offences Act"
+            },
+            {
+              "localChargeOID": 408936314,
+              "courtOID": 5,
+              "categoryIdentifier": "08021",
+              "localCharge": "Soliciting for Immoral Purposes",
+              "localLaw": "Section 23 Sexual Offences Act "
+            },
+            {
+              "localChargeOID": 490306190,
+              "courtOID": 5,
+              "categoryIdentifier": "08021",
+              "localCharge": "Living on the earnings of prostitution",
+              "localLaw": "Section 23 Sexual Offences Act "
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8923632580500229,
+          "courtOID": 5,
+          "parentOID": 8043397127897345,
+          "categoryType": 3,
+          "categoryName": "Pornography offences",
+          "categoryIdentifier": "08022",
+          "localCharges": [
+            {
+              "localChargeOID": 95546785,
+              "courtOID": 5,
+              "categoryIdentifier": "08022",
+              "localCharge": "Any person who offers for sale or distribution or who exhibits to public view, any profane, indecent, or obscene book, paper, print, drawing, painting, or representation",
+              "localLaw": "Section 46 (a) of the Summary Offences Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 6728825882143792,
+          "courtOID": 5,
+          "parentOID": 8043397127897345,
+          "categoryType": 3,
+          "categoryName": "Other acts against public order sexual standards",
+          "categoryIdentifier": "08029",
+          "localCharges": [
+            {
+              "localChargeOID": 88757847,
+              "courtOID": 5,
+              "categoryIdentifier": "08029",
+              "localCharge": "Indecent exposure",
+              "localLaw": "Section 46 Summary Offences Act"
+            },
+            {
+              "localChargeOID": 647586961,
+              "courtOID": 5,
+              "categoryIdentifier": "08029",
+              "localCharge": "Bestiality",
+              "localLaw": "Section 14 Sexual Offences Act"
+            },
+            {
+              "localChargeOID": 679981589,
+              "courtOID": 5,
+              "categoryIdentifier": "08029",
+              "localCharge": "Buggery"
+            },
+            {
+              "localChargeOID": 731228337,
+              "courtOID": 5,
+              "categoryIdentifier": "08029",
+              "localCharge": "Incest (not rape/assault)",
+              "localLaw": "Section 9 Sexual Offences Act"
+            },
+            {
+              "localChargeOID": 754517112,
+              "courtOID": 5,
+              "categoryIdentifier": "08029 ",
+              "localCharge": "Serious indecency",
+              "localLaw": "Section 16 (1) Sexual Offences Act"
+            },
+            {
+              "localChargeOID": 766484849,
+              "courtOID": 5,
+              "categoryIdentifier": "08029",
+              "localCharge": "Any person wilfully and obscenely exposing his person",
+              "localLaw": "Section 46 (a) of the Summary Offences Act"
+            },
+            {
+              "localChargeOID": 798369962,
+              "courtOID": 5,
+              "categoryIdentifier": "08029",
+              "localCharge": "Bigamy",
+              "localLaw": "Section 55 Offences Against Persons Act"
+            },
+            {
+              "localChargeOID": 854239202,
+              "courtOID": 5,
+              "categoryIdentifier": "08029",
+              "localCharge": "Any person who exposes in any public place or in view thereof any defamatory or insulting writing or object",
+              "localLaw": "Section 46 (a) of the Summary Offences Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 3087106331477468,
+          "courtOID": 5,
+          "parentOID": 2039139070721906,
+          "categoryType": 2,
+          "categoryName": "Acts related to freedom of expression or control of expression",
+          "categoryIdentifier": "0803",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8507583031463526,
+          "courtOID": 5,
+          "parentOID": 3087106331477468,
+          "categoryType": 3,
+          "categoryName": "Acts against freedom of expression",
+          "categoryIdentifier": "08031",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3776677480040641,
+          "courtOID": 5,
+          "parentOID": 3087106331477468,
+          "categoryType": 3,
+          "categoryName": "Acts related to expressions of controlled social beliefs and norms",
+          "categoryIdentifier": "08032",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5922958167452021,
+          "courtOID": 5,
+          "parentOID": 3776677480040641,
+          "categoryType": 4,
+          "categoryName": "Violations of norms on religious beliefs/views",
+          "categoryIdentifier": "080321",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8634296498305231,
+          "courtOID": 5,
+          "parentOID": 3776677480040641,
+          "categoryType": 4,
+          "categoryName": "Violations of norms on intolerance and incitement to hatred",
+          "categoryIdentifier": "080322",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 431030541882606,
+          "courtOID": 5,
+          "parentOID": 3776677480040641,
+          "categoryType": 4,
+          "categoryName": "Other acts related to expressions of controlled social beliefs and norms",
+          "categoryIdentifier": "080329",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3783470636658480,
+          "courtOID": 5,
+          "parentOID": 3087106331477468,
+          "categoryType": 3,
+          "categoryName": "Other acts related to freedom of expression or control of expression",
+          "categoryIdentifier": "08039",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7568413163985048,
+          "courtOID": 5,
+          "parentOID": 2039139070721906,
+          "categoryType": 2,
+          "categoryName": "Acts contrary to public revenue or regulatory provisions",
+          "categoryIdentifier": "0804",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2872770888145602,
+          "courtOID": 5,
+          "parentOID": 7568413163985048,
+          "categoryType": 3,
+          "categoryName": "Acts against public revenue provisions",
+          "categoryIdentifier": "08041",
+          "localCharges": [
+            {
+              "localChargeOID": 279963317,
+              "courtOID": 5,
+              "categoryIdentifier": "08041",
+              "localCharge": "Knowingly harbouring uncustomed goods",
+              "localLaw": "Customs Ordinance"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 4403325650745661,
+          "courtOID": 5,
+          "parentOID": 7568413163985048,
+          "categoryType": 3,
+          "categoryName": "Acts against commercial or financial regulations",
+          "categoryIdentifier": "08042",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1608023423418473,
+          "courtOID": 5,
+          "parentOID": 7568413163985048,
+          "categoryType": 3,
+          "categoryName": "Acts against regulations on betting",
+          "categoryIdentifier": "08043",
+          "localCharges": [
+            {
+              "localChargeOID": 137297411,
+              "courtOID": 5,
+              "categoryIdentifier": "08043",
+              "localCharge": "Any person playing or betting in any open and public place at any game or pretended game of chance or with any instrument of gaming",
+              "localLaw": "Section 46 (a) of the Summary Offences Act"
+            },
+            {
+              "localChargeOID": 791807793,
+              "courtOID": 5,
+              "categoryIdentifier": "08043",
+              "localCharge": "Possession of Whe Whe Marks",
+              "localLaw": "Section 19 Gambling and Betting Act"
+            },
+            {
+              "localChargeOID": 889843276,
+              "courtOID": 5,
+              "categoryIdentifier": "08043",
+              "localCharge": "Assembled for the purpose of gambling"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 6727754930189566,
+          "courtOID": 5,
+          "parentOID": 7568413163985048,
+          "categoryType": 3,
+          "categoryName": "Smuggling of goods",
+          "categoryIdentifier": "08044",
+          "localCharges": [
+            {
+              "localChargeOID": 930997235,
+              "courtOID": 5,
+              "categoryIdentifier": "08044",
+              "localCharge": "Importing prohibited goods",
+              "localLaw": "Section 213 of Customs Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 2517315476291748,
+          "courtOID": 5,
+          "parentOID": 7568413163985048,
+          "categoryType": 3,
+          "categoryName": "Market manipulations or insider trading",
+          "categoryIdentifier": "08045",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7300011551875728,
+          "courtOID": 5,
+          "parentOID": 7568413163985048,
+          "categoryType": 3,
+          "categoryName": "Other acts against public administration or regulatory provisions",
+          "categoryIdentifier": "08049",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1041040682039525,
+          "courtOID": 5,
+          "parentOID": 2039139070721906,
+          "categoryType": 2,
+          "categoryName": "Acts related to migration",
+          "categoryIdentifier": "0805",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2193060625470443,
+          "courtOID": 5,
+          "parentOID": 1041040682039525,
+          "categoryType": 3,
+          "categoryName": "Smuggling of migrants offences",
+          "categoryIdentifier": "08051",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4462159129763818,
+          "courtOID": 5,
+          "parentOID": 1041040682039525,
+          "categoryType": 3,
+          "categoryName": "Other unlawful acts related to migration",
+          "categoryIdentifier": "08059",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3361669104469910,
+          "courtOID": 5,
+          "parentOID": 2039139070721906,
+          "categoryType": 2,
+          "categoryName": "Acts against the justice system",
+          "categoryIdentifier": "0806",
+          "localCharges": [
+            {
+              "localChargeOID": 268687356,
+              "courtOID": 5,
+              "categoryIdentifier": "0806",
+              "localCharge": "Assisting in harbouring, concealing or preventing a child from returning to Community Residence or to any person with whom he is placed out on licence",
+              "localLaw": "Section 86"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 7995827732819163,
+          "courtOID": 5,
+          "parentOID": 3361669104469910,
+          "categoryType": 3,
+          "categoryName": "Obstruction of justice",
+          "categoryIdentifier": "08061",
+          "localCharges": [
+            {
+              "localChargeOID": 180240259,
+              "courtOID": 5,
+              "categoryIdentifier": "08061 ",
+              "localCharge": "Obstructing a Police Officer",
+              "localLaw": "Police Service Act - Section 59; Section 29 Offences Against the Person Act"
+            },
+            {
+              "localChargeOID": 229868821,
+              "courtOID": 5,
+              "categoryIdentifier": "08061",
+              "localCharge": "Refuse to give name and address",
+              "localLaw": "Section 93 (1) MVRTA"
+            },
+            {
+              "localChargeOID": 435889916,
+              "courtOID": 5,
+              "categoryIdentifier": "08061",
+              "localCharge": "Making false report to police",
+              "localLaw": "Section 6 Criminal Law Act"
+            },
+            {
+              "localChargeOID": 438528269,
+              "courtOID": 5,
+              "categoryIdentifier": "08061",
+              "localCharge": "Failure to report suspected sexual offence in respect of a minor",
+              "localLaw": "Section 31 Sexual Offences Act"
+            },
+            {
+              "localChargeOID": 775309397,
+              "courtOID": 5,
+              "categoryIdentifier": "08061",
+              "localCharge": "Assault on a Peace Officer"
+            },
+            {
+              "localChargeOID": 841653437,
+              "courtOID": 5,
+              "categoryIdentifier": "08061",
+              "localCharge": "Supplying false information in an application for a motor vehicle or the registration of a motor vehicle etc",
+              "localLaw": "Section 94 Motor Vehicles and Road Traffic Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 4650596530717419,
+          "courtOID": 5,
+          "parentOID": 3361669104469910,
+          "categoryType": 3,
+          "categoryName": "Breach of justice order",
+          "categoryIdentifier": "08062",
+          "localCharges": [
+            {
+              "localChargeOID": 137085047,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Escaping from Community Residence",
+              "localLaw": "Section 83"
+            },
+            {
+              "localChargeOID": 244410386,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Breach of Protection Order",
+              "localLaw": "Section 20 Domestic Violence Act"
+            },
+            {
+              "localChargeOID": 310541601,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Assisting or inducing a child to escape from care",
+              "localLaw": "Section 47"
+            },
+            {
+              "localChargeOID": 428346613,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Harbouring, concealing or preventing a child from returning to care/previous child offender ",
+              "localLaw": "Section 47"
+            },
+            {
+              "localChargeOID": 541134344,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Failing to return to Community Residence",
+              "localLaw": "Section 71"
+            },
+            {
+              "localChargeOID": 598938653,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Failing to produce child",
+              "localLaw": "Section 68"
+            },
+            {
+              "localChargeOID": 733252024,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Resisting arrest"
+            },
+            {
+              "localChargeOID": 748470259,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Inciting others to commit a breach of rules of the Community Residence",
+              "localLaw": "Section 82"
+            },
+            {
+              "localChargeOID": 766252412,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Breach of the rules of the Community Residence",
+              "localLaw": "Section 82"
+            },
+            {
+              "localChargeOID": 857153765,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Escaping lawful custody",
+              "localLaw": "Common Law"
+            },
+            {
+              "localChargeOID": 872507439,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Assisting or inducing an offender to escape from Community Residence or from any person with whom he is placed out on licence",
+              "localLaw": "Section 86"
+            },
+            {
+              "localChargeOID": 957845141,
+              "courtOID": 5,
+              "categoryIdentifier": "08062",
+              "localCharge": "Harbouring, concealing or preventing a child from returning to Community Residence ",
+              "localLaw": "Section 71 and section 86"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 406642216395251,
+          "courtOID": 5,
+          "parentOID": 3361669104469910,
+          "categoryType": 3,
+          "categoryName": "Criminal intent",
+          "categoryIdentifier": "08063",
+          "localCharges": [
+            {
+              "localChargeOID": 269580828,
+              "courtOID": 5,
+              "categoryIdentifier": "08063",
+              "localCharge": "Any person found in any verandah, gallery, passage, gateway, dwelling house, warehouse, store, stable, outhouse, or other building, or in any yard, garden or other enclosed land, for any unlawful purpose.",
+              "localLaw": "Section 46 (a) of the Summary Offences Act"
+            },
+            {
+              "localChargeOID": 304440260,
+              "courtOID": 5,
+              "categoryIdentifier": "08063",
+              "localCharge": "Any person armed with, or having upon him any weapon or instrument which there is a reasonable cause to believe is intended for the purpose of committing any indictable offence; and every such weapon and instrument shall, on the conviction of the offender, be forfeited",
+              "localLaw": "Section 46 (a) of the Summary Offences Act"
+            },
+            {
+              "localChargeOID": 691557091,
+              "courtOID": 5,
+              "categoryIdentifier": "08063",
+              "localCharge": "Any person having in has custody or possession any implement which there is reasonable cause to believe is intended for the purpose of unlawfully breaking into any building; and every such implement shall on the conviction of the offender be forfeited",
+              "localLaw": "Section 46 (a) of the Summary Offences Act"
+            },
+            {
+              "localChargeOID": 701347464,
+              "courtOID": 5,
+              "categoryIdentifier": "08063",
+              "localCharge": "Possession of knife",
+              "localLaw": "Section 2 Restriction of Offences Weapons Act"
+            },
+            {
+              "localChargeOID": 758052219,
+              "courtOID": 5,
+              "categoryIdentifier": "08063",
+              "localCharge": "Possession of house breaking implements",
+              "localLaw": "Section 30 Larceny Act"
+            },
+            {
+              "localChargeOID": 762161673,
+              "courtOID": 5,
+              "categoryIdentifier": "08063",
+              "localCharge": "Any person found in or about any market, wharf, or jetty, or in or about any vessel, for any unlawful purpose",
+              "localLaw": "Section 46 (a) of the Summary Offences Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 4189254964304283,
+          "courtOID": 5,
+          "parentOID": 3361669104469910,
+          "categoryType": 3,
+          "categoryName": "Conspiracy",
+          "categoryIdentifier": "08064",
+          "localCharges": [
+            {
+              "localChargeOID": 872380883,
+              "courtOID": 5,
+              "categoryIdentifier": "08064",
+              "localCharge": "Conspiracy to obstruct justice"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 304395766405092,
+          "courtOID": 5,
+          "parentOID": 3361669104469910,
+          "categoryType": 3,
+          "categoryName": "Other acts against the justice system",
+          "categoryIdentifier": "08069",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5429503556341562,
+          "courtOID": 5,
+          "parentOID": 2039139070721906,
+          "categoryType": 2,
+          "categoryName": "Acts related to democratic elections",
+          "categoryIdentifier": "0807",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6363145958406618,
+          "courtOID": 5,
+          "parentOID": 5429503556341562,
+          "categoryType": 3,
+          "categoryName": "Acts intended to unduly influence voters at elections",
+          "categoryIdentifier": "08071",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3572367871330275,
+          "courtOID": 5,
+          "parentOID": 5429503556341562,
+          "categoryType": 3,
+          "categoryName": "Other acts related to democratic elections",
+          "categoryIdentifier": "08079",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2437007399533352,
+          "courtOID": 5,
+          "parentOID": 2039139070721906,
+          "categoryType": 2,
+          "categoryName": "Acts contrary to labour law",
+          "categoryIdentifier": "0808",
+          "localCharges": [
+            {
+              "localChargeOID": 238422535,
+              "courtOID": 5,
+              "categoryIdentifier": "0808",
+              "localCharge": "Conducing the employment of a child by p/lg/pwr",
+              "localLaw": "Section 110"
+            },
+            {
+              "localChargeOID": 859970497,
+              "courtOID": 5,
+              "categoryIdentifier": "0808",
+              "localCharge": "Employment of a child",
+              "localLaw": "section 105"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 5540766013477327,
+          "courtOID": 5,
+          "parentOID": 2437007399533352,
+          "categoryType": 3,
+          "categoryName": "Collective labour law violations",
+          "categoryIdentifier": "08081",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4284742542941166,
+          "courtOID": 5,
+          "parentOID": 2437007399533352,
+          "categoryType": 3,
+          "categoryName": "Individual labour law violations",
+          "categoryIdentifier": "08082",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2898922446313494,
+          "courtOID": 5,
+          "parentOID": 2039139070721906,
+          "categoryType": 2,
+          "categoryName": "Other acts against public order, authority and provisions of the State",
+          "categoryIdentifier": "0809",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 799304233278056,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Acts against public safety and state security",
+          "categoryIdentifier": "09",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3122186072719694,
+          "courtOID": 5,
+          "parentOID": 799304233278056,
+          "categoryType": 2,
+          "categoryName": "Acts involving weapons, explosives and other destructive materials",
+          "categoryIdentifier": "0901",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 33827719159008,
+          "courtOID": 5,
+          "parentOID": 3122186072719694,
+          "categoryType": 3,
+          "categoryName": "Possession or use of weapons and explosives",
+          "categoryIdentifier": "09011",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6155340445037085,
+          "courtOID": 5,
+          "parentOID": 33827719159008,
+          "categoryType": 4,
+          "categoryName": "Unlawful possession or use of firearms",
+          "categoryIdentifier": "090111",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7554187968944909,
+          "courtOID": 5,
+          "parentOID": 33827719159008,
+          "categoryType": 4,
+          "categoryName": "Unlawful possession or use of other weapons or explosives",
+          "categoryIdentifier": "090112",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6376835872312488,
+          "courtOID": 5,
+          "parentOID": 33827719159008,
+          "categoryType": 4,
+          "categoryName": "Unlawful possession or use of chemical, biological or radioactive materials",
+          "categoryIdentifier": "090113",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1792595185382848,
+          "courtOID": 5,
+          "parentOID": 33827719159008,
+          "categoryType": 4,
+          "categoryName": "Other acts related to possession or use of weapons and explosives",
+          "categoryIdentifier": "090119",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6668704026049297,
+          "courtOID": 5,
+          "parentOID": 3122186072719694,
+          "categoryType": 3,
+          "categoryName": "Trafficking of weapons and explosives",
+          "categoryIdentifier": "09012",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 148263700308601,
+          "courtOID": 5,
+          "parentOID": 6668704026049297,
+          "categoryType": 4,
+          "categoryName": "Trafficking of firearms",
+          "categoryIdentifier": "090121",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3535017226002824,
+          "courtOID": 5,
+          "parentOID": 6668704026049297,
+          "categoryType": 4,
+          "categoryName": "Trafficking of other weapons or explosives",
+          "categoryIdentifier": "090122",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 930718151214184,
+          "courtOID": 5,
+          "parentOID": 6668704026049297,
+          "categoryType": 4,
+          "categoryName": "Trafficking of chemical, biological or radioactive materials",
+          "categoryIdentifier": "090123",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8741294487943932,
+          "courtOID": 5,
+          "parentOID": 6668704026049297,
+          "categoryType": 4,
+          "categoryName": "Other acts related to trafficking of weapons and explosives",
+          "categoryIdentifier": "090129",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1818964598497796,
+          "courtOID": 5,
+          "parentOID": 3122186072719694,
+          "categoryType": 3,
+          "categoryName": "Other acts relating to weapons and explosives",
+          "categoryIdentifier": "09019",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2964806088950804,
+          "courtOID": 5,
+          "parentOID": 799304233278056,
+          "categoryType": 2,
+          "categoryName": "Acts against health and safety",
+          "categoryIdentifier": "0902",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3042926390031316,
+          "courtOID": 5,
+          "parentOID": 2964806088950804,
+          "categoryType": 3,
+          "categoryName": "Acts against health and safety at work",
+          "categoryIdentifier": "09021",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 905649859798577,
+          "courtOID": 5,
+          "parentOID": 2964806088950804,
+          "categoryType": 3,
+          "categoryName": "Other acts against health and safety",
+          "categoryIdentifier": "09029",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6508294269204766,
+          "courtOID": 5,
+          "parentOID": 799304233278056,
+          "categoryType": 2,
+          "categoryName": "Acts against computer systems",
+          "categoryIdentifier": "0903",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6384912930218251,
+          "courtOID": 5,
+          "parentOID": 6508294269204766,
+          "categoryType": 3,
+          "categoryName": "Unlawful access to a computer system",
+          "categoryIdentifier": "09031",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8008518181059204,
+          "courtOID": 5,
+          "parentOID": 6508294269204766,
+          "categoryType": 3,
+          "categoryName": "Unlawful interference with a computer system or computer data",
+          "categoryIdentifier": "09032",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 464070236098946,
+          "courtOID": 5,
+          "parentOID": 8008518181059204,
+          "categoryType": 4,
+          "categoryName": "Unlawful interference with a computer system",
+          "categoryIdentifier": "090321",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5255867690927752,
+          "courtOID": 5,
+          "parentOID": 8008518181059204,
+          "categoryType": 4,
+          "categoryName": "Unlawful interference with computer data",
+          "categoryIdentifier": "090322",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7203094254522358,
+          "courtOID": 5,
+          "parentOID": 6508294269204766,
+          "categoryType": 3,
+          "categoryName": "Unlawful interception or access of computer data",
+          "categoryIdentifier": "09033",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8577930755787414,
+          "courtOID": 5,
+          "parentOID": 6508294269204766,
+          "categoryType": 3,
+          "categoryName": "Other acts against computer systems",
+          "categoryIdentifier": "09039",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 394556182736017,
+          "courtOID": 5,
+          "parentOID": 799304233278056,
+          "categoryType": 2,
+          "categoryName": "Acts against state security",
+          "categoryIdentifier": "0904",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1903456945658926,
+          "courtOID": 5,
+          "parentOID": 799304233278056,
+          "categoryType": 2,
+          "categoryName": "Acts related to an organized criminal group",
+          "categoryIdentifier": "0905",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3478076972088844,
+          "courtOID": 5,
+          "parentOID": 1903456945658926,
+          "categoryType": 3,
+          "categoryName": "Participation in an organized criminal group",
+          "categoryIdentifier": "09051",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2685399404600396,
+          "courtOID": 5,
+          "parentOID": 1903456945658926,
+          "categoryType": 3,
+          "categoryName": "Other acts related to an organized criminal group",
+          "categoryIdentifier": "09059",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4964591718817237,
+          "courtOID": 5,
+          "parentOID": 799304233278056,
+          "categoryType": 2,
+          "categoryName": "Terrorism",
+          "categoryIdentifier": "0906",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6207914649128395,
+          "courtOID": 5,
+          "parentOID": 4964591718817237,
+          "categoryType": 3,
+          "categoryName": "Participation in a terrorist group",
+          "categoryIdentifier": "09061",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3004317501221312,
+          "courtOID": 5,
+          "parentOID": 4964591718817237,
+          "categoryType": 3,
+          "categoryName": "Financing of terrorism",
+          "categoryIdentifier": "09062",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1934694536382243,
+          "courtOID": 5,
+          "parentOID": 4964591718817237,
+          "categoryType": 3,
+          "categoryName": "Other acts related to the activities of a terrorist group",
+          "categoryIdentifier": "09069",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5165127062842900,
+          "courtOID": 5,
+          "parentOID": 799304233278056,
+          "categoryType": 2,
+          "categoryName": "Non-injurious traffic violations",
+          "categoryIdentifier": "0907",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4472748387050399,
+          "courtOID": 5,
+          "parentOID": 799304233278056,
+          "categoryType": 2,
+          "categoryName": "Other acts against public safety and state security",
+          "categoryIdentifier": "0909",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7055521720435953,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Acts against the natural environment",
+          "categoryIdentifier": "10",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4346051395564613,
+          "courtOID": 5,
+          "parentOID": 7055521720435953,
+          "categoryType": 2,
+          "categoryName": "Acts that cause environmental pollution or degradation",
+          "categoryIdentifier": "1001",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7366683709511201,
+          "courtOID": 5,
+          "parentOID": 4346051395564613,
+          "categoryType": 3,
+          "categoryName": "Acts that cause the pollution or degradation of air",
+          "categoryIdentifier": "10011",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5827383993663004,
+          "courtOID": 5,
+          "parentOID": 4346051395564613,
+          "categoryType": 3,
+          "categoryName": "Acts that cause the pollution or degradation of water",
+          "categoryIdentifier": "10012",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 737953782072282,
+          "courtOID": 5,
+          "parentOID": 4346051395564613,
+          "categoryType": 3,
+          "categoryName": "Acts that cause the pollution or degradation of soil",
+          "categoryIdentifier": "10013",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3952337440686052,
+          "courtOID": 5,
+          "parentOID": 4346051395564613,
+          "categoryType": 3,
+          "categoryName": "Other acts that cause environmental pollution or degradation",
+          "categoryIdentifier": "10019",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2989996599560590,
+          "courtOID": 5,
+          "parentOID": 7055521720435953,
+          "categoryType": 2,
+          "categoryName": "Acts involving the movement or dumping of waste",
+          "categoryIdentifier": "1002",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 467876139100762,
+          "courtOID": 5,
+          "parentOID": 2989996599560590,
+          "categoryType": 3,
+          "categoryName": "Acts involving the movement or dumping of waste within national borders",
+          "categoryIdentifier": "10021",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2602302398183444,
+          "courtOID": 5,
+          "parentOID": 2989996599560590,
+          "categoryType": 3,
+          "categoryName": "Acts involving the movement or dumping of waste across national borders",
+          "categoryIdentifier": "10022",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5485655419366119,
+          "courtOID": 5,
+          "parentOID": 7055521720435953,
+          "categoryType": 2,
+          "categoryName": "Trade or possession of protected or prohibited species of fauna and flora",
+          "categoryIdentifier": "1003",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3457310325741316,
+          "courtOID": 5,
+          "parentOID": 5485655419366119,
+          "categoryType": 3,
+          "categoryName": "Trade or possession of protected species of wild fauna and flora",
+          "categoryIdentifier": "10031",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2879707189634620,
+          "courtOID": 5,
+          "parentOID": 3457310325741316,
+          "categoryType": 4,
+          "categoryName": "Trade or possession of protected species within national borders",
+          "categoryIdentifier": "100311",
+          "localCharges": [
+            {
+              "localChargeOID": 859368586,
+              "courtOID": 5,
+              "categoryIdentifier": "100311",
+              "localCharge": "Possession of wild animal during closed season",
+              "localLaw": "Section 5 Conservation of Wildlife Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 5664421468192698,
+          "courtOID": 5,
+          "parentOID": 3457310325741316,
+          "categoryType": 4,
+          "categoryName": "Trafficking of protected species across national borders",
+          "categoryIdentifier": "100312",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8379972721739844,
+          "courtOID": 5,
+          "parentOID": 5485655419366119,
+          "categoryType": 3,
+          "categoryName": "Trade or possession of prohibited or controlled species of animals",
+          "categoryIdentifier": "10032",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 7002857222864192,
+          "courtOID": 5,
+          "parentOID": 5485655419366119,
+          "categoryType": 3,
+          "categoryName": "Other trade or possession of protected or prohibited species of fauna and flora",
+          "categoryIdentifier": "10039",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5760515512573442,
+          "courtOID": 5,
+          "parentOID": 7055521720435953,
+          "categoryType": 2,
+          "categoryName": "Acts that result in the depletion or degradation of natural resources",
+          "categoryIdentifier": "1004",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3786137309646093,
+          "courtOID": 5,
+          "parentOID": 5760515512573442,
+          "categoryType": 3,
+          "categoryName": "Illegal logging",
+          "categoryIdentifier": "10041",
+          "localCharges": [
+            {
+              "localChargeOID": 52671620,
+              "courtOID": 5,
+              "categoryIdentifier": "10041",
+              "localCharge": "Removal of timber without permit",
+              "localLaw": "Section 7A of Forest Act"
+            },
+            {
+              "localChargeOID": 429926559,
+              "courtOID": 5,
+              "categoryIdentifier": "10041",
+              "localCharge": "Transporting logs without haulage permit",
+              "localLaw": "Section 4A (1) Sawmill Act as amended at Act no 24 of 1999"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 8472994165692798,
+          "courtOID": 5,
+          "parentOID": 5760515512573442,
+          "categoryType": 3,
+          "categoryName": "Illegal hunting, fishing or gathering of wild fauna and flora",
+          "categoryIdentifier": "10042",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 706768697506574,
+          "courtOID": 5,
+          "parentOID": 5760515512573442,
+          "categoryType": 3,
+          "categoryName": "Illegal mining",
+          "categoryIdentifier": "10043",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3073889125182395,
+          "courtOID": 5,
+          "parentOID": 5760515512573442,
+          "categoryType": 3,
+          "categoryName": "Other acts that result in the depletion or degradation of natural resources",
+          "categoryIdentifier": "10049",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1175238827915129,
+          "courtOID": 5,
+          "parentOID": 7055521720435953,
+          "categoryType": 2,
+          "categoryName": "Other acts against the natural environment",
+          "categoryIdentifier": "1009",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2727988342310230,
+          "courtOID": 5,
+          "parentOID": 1175238827915129,
+          "categoryType": 3,
+          "categoryName": "Acts against animals",
+          "categoryIdentifier": "10091",
+          "localCharges": [
+            {
+              "localChargeOID": 308796138,
+              "courtOID": 5,
+              "categoryIdentifier": "10091",
+              "localCharge": "Killing, maiming or wounding cattle",
+              "localLaw": "Section 34 (1) of Malicious Damage Act"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 5223412598522824,
+          "courtOID": 5,
+          "parentOID": 1175238827915129,
+          "categoryType": 3,
+          "categoryName": "Other acts against the natural environment",
+          "categoryIdentifier": "10099",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5113197450623277,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Other criminal acts not elsewhere classified",
+          "categoryIdentifier": "11",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 583029802918215,
+          "courtOID": 5,
+          "parentOID": 5113197450623277,
+          "categoryType": 2,
+          "categoryName": "Acts under universal jurisdiction",
+          "categoryIdentifier": "1101",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 9220574226810674,
+          "courtOID": 5,
+          "parentOID": 583029802918215,
+          "categoryType": 3,
+          "categoryName": "Torture",
+          "categoryIdentifier": "11011",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8958497951005363,
+          "courtOID": 5,
+          "parentOID": 583029802918215,
+          "categoryType": 3,
+          "categoryName": "Piracy",
+          "categoryIdentifier": "11012",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 2430802686674661,
+          "courtOID": 5,
+          "parentOID": 583029802918215,
+          "categoryType": 3,
+          "categoryName": "War crimes",
+          "categoryIdentifier": "11013",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 9042117504289944,
+          "courtOID": 5,
+          "parentOID": 2430802686674661,
+          "categoryType": 4,
+          "categoryName": "Unlawfully killing, causing or intending to cause death or serious injury associated with armed conflict",
+          "categoryIdentifier": "110131",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5516654810558672,
+          "courtOID": 5,
+          "parentOID": 2430802686674661,
+          "categoryType": 4,
+          "categoryName": "Unlawful destruction or damage to property associated with armed conflict",
+          "categoryIdentifier": "110132",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 180607564389880,
+          "courtOID": 5,
+          "parentOID": 2430802686674661,
+          "categoryType": 4,
+          "categoryName": "Sexual violence associated with armed conflict",
+          "categoryIdentifier": "110133",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3004546051331739,
+          "courtOID": 5,
+          "parentOID": 2430802686674661,
+          "categoryType": 4,
+          "categoryName": "Acts against liberty or human dignity associated with armed conflict",
+          "categoryIdentifier": "110134",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 891436539632940,
+          "courtOID": 5,
+          "parentOID": 2430802686674661,
+          "categoryType": 4,
+          "categoryName": "Conscripting or enlisting child soldiers",
+          "categoryIdentifier": "110135",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 645618325183607,
+          "courtOID": 5,
+          "parentOID": 2430802686674661,
+          "categoryType": 4,
+          "categoryName": "Other war crimes",
+          "categoryIdentifier": "110139",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4070476056314184,
+          "courtOID": 5,
+          "parentOID": 583029802918215,
+          "categoryType": 3,
+          "categoryName": "Genocide",
+          "categoryIdentifier": "11014",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6154484995449471,
+          "courtOID": 5,
+          "parentOID": 583029802918215,
+          "categoryType": 3,
+          "categoryName": "Crimes against humanity",
+          "categoryIdentifier": "11015",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 4734438217932945,
+          "courtOID": 5,
+          "parentOID": 583029802918215,
+          "categoryType": 3,
+          "categoryName": "Crime of aggression",
+          "categoryIdentifier": "11016",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 8648729358889526,
+          "courtOID": 5,
+          "parentOID": 583029802918215,
+          "categoryType": 3,
+          "categoryName": "Other acts under universal jurisdiction",
+          "categoryIdentifier": "11019",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 1775056093477916,
+          "courtOID": 5,
+          "parentOID": 5113197450623277,
+          "categoryType": 2,
+          "categoryName": "Acts contrary to youth regulations and acts on minors",
+          "categoryIdentifier": "1102",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 5186341053660959,
+          "courtOID": 5,
+          "parentOID": 1775056093477916,
+          "categoryType": 3,
+          "categoryName": "Status offences",
+          "categoryIdentifier": "11021",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 3426281100509475,
+          "courtOID": 5,
+          "parentOID": 1775056093477916,
+          "categoryType": 3,
+          "categoryName": "Other acts contrary to youth regulations and acts on minors",
+          "categoryIdentifier": "11029",
+          "localCharges": []
+        },
+        {
+          "iccsCodeOID": 6595546625195639,
+          "courtOID": 5,
+          "parentOID": 5113197450623277,
+          "categoryType": 2,
+          "categoryName": "Other criminal acts not elsewhere classified",
+          "categoryIdentifier": "1109",
+          "localCharges": [
+            {
+              "localChargeOID": 967551587,
+              "courtOID": 5,
+              "categoryIdentifier": "1109",
+              "localCharge": "Attempted suicide"
+            }
+          ]
+        },
+        {
+          "iccsCodeOID": 78440413378996,
+          "courtOID": 5,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "Test",
+          "categoryIdentifier": "Test",
+          "localCharges": []
+        }
+      ],
+      "eventTypes": [
+        {
+          "eventTypeOID": 22,
+          "courtOID": 5,
+          "eventTypeName": "AINT",
+          "description": "Adjourned Intake Conference Held - Rule 11.3",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 1,
+          "courtOID": 5,
+          "eventTypeName": "APP",
+          "description": "Application Filed",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 15,
+          "courtOID": 5,
+          "eventTypeName": "BAIL",
+          "description": "Bail Granted - Rule 9.5",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 16,
+          "courtOID": 5,
+          "eventTypeName": "BALT",
+          "description": "Bale Taken - Rule 9",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 17,
+          "courtOID": 5,
+          "eventTypeName": "BNGR",
+          "description": "Bail Not Granted - Rule 9R",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 6,
+          "courtOID": 5,
+          "eventTypeName": "CHGJ",
+          "description": "Change Judicial Officer",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 2,
+          "courtOID": 5,
+          "eventTypeName": "CHNS",
+          "description": "CHINS Application Filed",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 25,
+          "courtOID": 5,
+          "eventTypeName": "COMT",
+          "description": "Committed to Trial - Rule 10.6",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 9093328897184976,
+          "courtOID": 5,
+          "eventTypeName": "CRTD",
+          "description": "Case Created",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 5,
+          "courtOID": 5,
+          "eventTypeName": "DOCG",
+          "description": "Complaint without Oath filed – Rule 8.2",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 18,
+          "courtOID": 5,
+          "eventTypeName": "EMON",
+          "description": "Electronic Monitoring Ordered - Rule 9.8",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 20,
+          "courtOID": 5,
+          "eventTypeName": "FAMT",
+          "description": "First Assessment Done - Rule 11",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 7,
+          "courtOID": 5,
+          "eventTypeName": "FILD",
+          "description": "Case Filed",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 3,
+          "courtOID": 5,
+          "eventTypeName": "INFO",
+          "description": "Information Filed",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 23,
+          "courtOID": 5,
+          "eventTypeName": "INIH",
+          "description": "Initial Hearing Held - Rule 10.5",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 21,
+          "courtOID": 5,
+          "eventTypeName": "INTK",
+          "description": "Intake Conference Held - 11.3",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 4,
+          "courtOID": 5,
+          "eventTypeName": "OATH",
+          "description": "Complaint on Oath filed – Rule 8.2",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 24,
+          "courtOID": 5,
+          "eventTypeName": "PREL",
+          "description": "Preliminary Inquiry Completed - Rule 10.6",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 10,
+          "courtOID": 5,
+          "eventTypeName": "PSUM",
+          "description": "Separate Summons for Parent Issued - Rule 8.4(9)",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 26,
+          "courtOID": 5,
+          "eventTypeName": "RELS",
+          "description": "Released - Rule 10.6",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 14,
+          "courtOID": 5,
+          "eventTypeName": "REPS",
+          "description": "Replacement Summons Issued - Rule 8.4 (8)",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 19,
+          "courtOID": 5,
+          "eventTypeName": "RMND",
+          "description": "Remanded - Rule 9.9",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 12,
+          "courtOID": 5,
+          "eventTypeName": "SMW1",
+          "description": "Summons Withdrawn - Rule 8.4(1)",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 13,
+          "courtOID": 5,
+          "eventTypeName": "SMW2",
+          "description": "Summons Withdrawn - Rule 8.4(2)",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 9,
+          "courtOID": 5,
+          "eventTypeName": "SUM4",
+          "description": "Summons Issued - Rule 8.4(1)",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 11,
+          "courtOID": 5,
+          "eventTypeName": "SUM7",
+          "description": "Summons Served - Rule 8.4 (7)",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 79,
+          "courtOID": 5,
+          "eventTypeName": "UPTD",
+          "description": "Case Updated",
+          "eventCategoryText": "Case"
+        },
+        {
+          "eventTypeOID": 8,
+          "courtOID": 5,
+          "eventTypeName": "WRNT",
+          "description": "Warrant Issued - Rule 8.4(2)",
+          "eventCategoryText": "Case"
+        }
+      ],
+      "chargeFactors": [
+        {
+          "chargeFactorOID": 1,
+          "courtOID": 5,
+          "name": "At",
+          "description": "Attempted/Completed"
+        },
+        {
+          "chargeFactorOID": 2,
+          "courtOID": 5,
+          "name": "We",
+          "description": "Type of Weapon Used"
+        },
+        {
+          "chargeFactorOID": 3,
+          "courtOID": 5,
+          "name": "SiC",
+          "description": "Situational Context"
+        },
+        {
+          "chargeFactorOID": 4,
+          "courtOID": 5,
+          "name": "Geo",
+          "description": "Geographic Location"
+        },
+        {
+          "chargeFactorOID": 5,
+          "courtOID": 5,
+          "name": "DaT",
+          "description": "Date and Time"
+        },
+        {
+          "chargeFactorOID": 6,
+          "courtOID": 5,
+          "name": "Lo",
+          "description": "Type of Location"
+        },
+        {
+          "chargeFactorOID": 7,
+          "courtOID": 5,
+          "name": "Mot",
+          "description": "Motive"
+        },
+        {
+          "chargeFactorOID": 8,
+          "courtOID": 5,
+          "name": "Cy",
+          "description": "Cybercrime Related"
+        },
+        {
+          "chargeFactorOID": 9,
+          "courtOID": 5,
+          "name": "Rep",
+          "description": "Reported By"
+        },
+        {
+          "chargeFactorOID": 10,
+          "courtOID": 5,
+          "name": "SV",
+          "description": "Sex of Victim"
+        }
+      ],
+      "courtLocations": [
+        {
+          "locationOID": 1,
+          "courtOID": 5,
+          "locationID": "Courtroom 1"
+        },
+        {
+          "locationOID": 2,
+          "courtOID": 5,
+          "locationID": "Courtroom 2"
+        },
+        {
+          "locationOID": 3,
+          "courtOID": 5,
+          "locationID": "Courtroom 3"
+        },
+        {
+          "locationOID": 4,
+          "courtOID": 5,
+          "locationID": "Courtroom 4"
+        },
+        {
+          "locationOID": 5,
+          "courtOID": 5,
+          "locationID": "Hearing Room 1"
+        },
+        {
+          "locationOID": 6,
+          "courtOID": 5,
+          "locationID": "Hearing Room 2"
+        },
+        {
+          "locationOID": 7,
+          "courtOID": 5,
+          "locationID": "Hearing Room 3"
+        },
+        {
+          "locationOID": 6239730299114704,
+          "courtOID": 5,
+          "locationID": "test",
+          "locationName": "courtroom location added successfully"
+        }
+      ],
+      "staffRoles": [
+        {
+          "staffRoleOID": 1,
+          "courtOID": 5,
+          "staffRoleName": "IT",
+          "judicialOfficer": false,
+          "ccmsAdmin": true
+        },
+        {
+          "staffRoleOID": 2,
+          "courtOID": 5,
+          "staffRoleName": "Judicial",
+          "judicialOfficer": true,
+          "ccmsAdmin": false
+        },
+        {
+          "staffRoleOID": 3,
+          "courtOID": 5,
+          "staffRoleName": "Court Staff",
+          "judicialOfficer": false,
+          "ccmsAdmin": false
+        },
+        {
+          "staffRoleOID": 4,
+          "courtOID": 5,
+          "staffRoleName": "Judicial Support Officer",
+          "judicialOfficer": false,
+          "ccmsAdmin": false
+        }
+      ],
+      "personIDTypes": [],
+      "roles": []
+    },
+    "caseNumber": "C-North-AP-148-2017-1",
+    "caseParties": [
+      {
+        "caseParty": {
+          "partyOID": 1315464832571922,
+          "courtOID": 0,
+          "lastName": "Smith",
+          "firstName": "John",
+          "sex": "M",
+          "password": "5732329396870e38a1f5b6d35be0b3c378a84afd",
+          "dob": "May 2, 2001",
+          "isCourtUser": false,
+          "anonymizationFlag": false,
+          "roles": [],
+          "notes": "",
+          "addresses": [
+            {
+              "addressOID": 7460454374551515,
+              "partyOID": 1315464832571922,
+              "addressType": "Personal",
+              "startDate": "Nov 14, 2017",
+              "address1": "123 Main",
+              "address2": "add 2",
+              "address3": "add 3",
+              "communityCode": "CommunityCode",
+              "administrativeArea": "AdminArea",
+              "municipalityName": "City",
+              "postalCode": "Postal",
+              "countryName": "TT",
+              "addressDescriptionText": "Add Desc"
+            }
+          ],
+          "emails": [],
+          "phoneNumbers": [],
+          "identifiers": [],
+          "interpreterRequiredIndicator": false,
+          "spokenLanguages": [],
+          "alternativeName": "jonny",
+          "authorizedCourts": [],
+          "queryName": ""
+        },
+        "role": {
+          "casePartyRoleOID": 1,
+          "courtOID": 5,
+          "codefendantIndicator": false,
+          "name": "Child"
+        },
+        "startDate": "Dec 4, 2017",
+        "endDate": "Dec 7, 2017"
+      },
+      {
+        "caseParty": {
+          "partyOID": 8443983363370155,
+          "courtOID": 0,
+          "lastName": "Fardy",
+          "firstName": "Roger",
+          "sex": "M",
+          "password": "5732329396870e38a1f5b6d35be0b3c378a84afd",
+          "dob": "Mar 12, 1981",
+          "isCourtUser": false,
+          "anonymizationFlag": false,
+          "roles": [],
+          "notes": "Notes about the person",
+          "addresses": [
+            {
+              "addressOID": 1755321436710086,
+              "partyOID": 8443983363370155,
+              "addressType": "Primary",
+              "startDate": "Nov 13, 2017",
+              "endDate": "Jan 4, 2018",
+              "address1": "#1 Hevron Heights",
+              "address2": "Upper Mendez Drive",
+              "address3": "Address 3",
+              "communityCode": "12548",
+              "administrativeArea": "1487",
+              "municipalityName": "Champ Fleurs",
+              "postalCode": "NA",
+              "countryName": "Trinidad \u0026 Tobago",
+              "addressDescriptionText": "Description"
+            }
+          ],
+          "emails": [
+            {
+              "partyEmailOID": 0,
+              "partyOID": 8443983363370155,
+              "emailAddressType": "Primary",
+              "emailAddress": "123@gmail",
+              "startDate": "Oct 31, 2017",
+              "endDate": "Jan 4, 2018"
+            }
+          ],
+          "phoneNumbers": [
+            {
+              "partyPhoneOID": 2948552948437699,
+              "partyOID": 8443983363370155,
+              "phoneType": "Primary",
+              "phoneNumber": "18684995347",
+              "startDate": "Oct 31, 2017",
+              "endDate": "Jan 4, 2018",
+              "textMessagesIndicator": true
+            }
+          ],
+          "identifiers": [
+            {
+              "partyIdentifierOID": 0,
+              "partyOID": 8443983363370155,
+              "identifierType": "National ID",
+              "identifierValue": "123456789",
+              "notes": "Fake Number",
+              "startDate": "Oct 31, 2017",
+              "endDate": "Jan 4, 2018"
+            }
+          ],
+          "interpreterRequiredIndicator": true,
+          "spokenLanguages": [
+            {
+              "spokenLanguageOID": 7186174523845806,
+              "partyOID": 8443983363370155,
+              "languageName": "Spanish"
+            }
+          ],
+          "alternativeName": "Robert",
+          "authorizedCourts": [],
+          "queryName": ""
+        },
+        "role": {
+          "casePartyRoleOID": 2,
+          "courtOID": 5,
+          "codefendantIndicator": false,
+          "name": "Counsel"
+        },
+        "startDate": "Dec 4, 2017"
+      },
+      {
+        "caseParty": {
+          "partyOID": 2833419327271106,
+          "courtOID": 0,
+          "lastName": "Dennis",
+          "firstName": "Mark",
+          "sex": "M",
+          "password": "5732329396870e38a1f5b6d35be0b3c378a84afd",
+          "dob": "Jan 7, 1961",
+          "isCourtUser": false,
+          "anonymizationFlag": false,
+          "roles": [],
+          "notes": "",
+          "addresses": [],
+          "emails": [],
+          "phoneNumbers": [],
+          "identifiers": [],
+          "interpreterRequiredIndicator": false,
+          "spokenLanguages": [],
+          "alternativeName": "Mark",
+          "authorizedCourts": [],
+          "queryName": ""
+        },
+        "role": {
+          "casePartyRoleOID": 4,
+          "courtOID": 5,
+          "codefendantIndicator": false,
+          "name": "Parent"
+        },
+        "startDate": "Dec 4, 2017"
+      }
+    ],
+    "caseCharges": [],
+    "caseTasks": [],
+    "caseEvents": [],
+    "caseDocs": [],
+    "caseHearings": [],
+    "judicialAssignments": [],
+    "casePhase": {
+      "casePhaseOID": 2,
+      "courtOID": 5,
+      "caseTypeOID": 1,
+      "name": "Hearing \u0026 Management"
+    },
+    "caseStatus": {
+      "statusOID": 1,
+      "courtOID": 5,
+      "name": "Charge Laid"
+    },
+    "caseType": {
+      "caseTypeOID": 1,
+      "courtOID": 5,
+      "name": "Application-Private",
+      "shortName": "AP",
+      "casePhases": []
+    },
+    "caseFilingDate": "Dec 4, 2017",
+    "caseCaption": "In the matter of an application in respect of John Smith",
+    "caseWeight": 2,
+    "searchCasePartyRoleOID": 0
+  }
+
+]

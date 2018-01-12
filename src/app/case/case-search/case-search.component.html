@@ -1,0 +1,86 @@
+<div class="ui-g">
+
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0">
+    <h1 class="page-header mt-0">Search Case</h1>
+  </div>
+
+  <!-- FIRST SECTION -->
+  <div class="ui-g-12 card">
+
+    <div class="form-group mt-20" >
+      <div class="ui-g-12 ui-md-6">
+          <span class="md-inputfield">
+              <input [(ngModel)]="caseNumberText" type="text" class="width-full"  pInputText>
+              <label>Case Number (partial)</label>
+          </span>
+      </div>
+
+      <div class="ui-g-12 ui-md-6">
+          <span class="md-inputfield">
+              <input [(ngModel)]="casePartyNameText" type="text" class="width-full" pInputText>
+              <label>Case Party Name (partial)</label>
+          </span>
+      </div>
+
+
+      <div class="ui-g-12 ui-md-3">
+        <label class="minimal primary block">Case Party Type</label>
+        <p-dropdown placeholder="case party type..." optionLabel="name" [options]="casePartyRoleTypes" [(ngModel)]="selectedCasePartyRoleType" (onChange)="ddOnChange($event)"
+          styleClass="width-full">
+        </p-dropdown>
+      </div>
+
+      <div class="ui-g-12 ui-md-3">
+        <label class="minimal primary block">Case Type</label>
+        <p-dropdown placeholder="case type..." optionLabel="name" [options]="caseTypes" [(ngModel)]="selectedCaseType" (onChange)="ddOnChange($event)"
+          styleClass="width-full">
+        </p-dropdown>
+      </div>
+      
+      <div class="ui-g-12 ui-md-3">
+        <label class="minimal primary block">Case Status</label>
+        <p-dropdown placeholder="case status..." optionLabel="name" [options]="caseStatusTypes" [(ngModel)]="selectedCaseStatusTyped"
+          (onChange)="ddOnChange($event)" styleClass="width-full">
+        </p-dropdown>
+      </div>
+
+      <div class="ui-g-12 ui-md-3">
+        <label class="minimal primary block">Case Phase</label>
+        <p-dropdown placeholder="case phase..." optionLabel="name" [options]="casePhaseTypes" [(ngModel)]="selectedCasePhaseType"
+          (onChange)="ddOnChange($event)" styleClass="width-full">
+        </p-dropdown>
+      </div>
+
+      
+
+      <!-- SEARCH BUTTONS -->
+      <div class="ui-g-12 mt-20 ta-c">
+        <button type="button" (click)="onSearch()" label="Search" icon="ui-icon-search" class="mr-20" pButton></button>
+
+        <button type="button" (click)="onReset()" label="Reset" icon="ui-icon-autorenew" class="ui-button-secondary " pButton></button>
+      </div>
+
+      <!-- CASE PARTIES TABLE -->
+
+      <div class="ui-g-12 mv-20">
+        <h2>Search Case Results</h2>
+        <p-dataTable [value]="caseResults" selectionMode="single" [(selection)]="selectedCase" (onRowSelect)="caseOnRowSelect($event)"
+          dataKey="caseOID" #dtCaseResults>
+          <p-column field="caseNumber" header="Case Number" [style]="{'width':'13%'}"></p-column>
+          <p-column field="caseCaption" header="Caption" [style]="{'width':'25%'}"></p-column>
+          <p-column field="caseType.name" header="Case Type" [style]="{'width':'15%'}"></p-column>
+          <p-column field="caseStatus.name" header="Case Status" [style]="{'width':'15%'}"></p-column>
+          <p-column field="casePhase.name" header="Case Phase" [style]="{'width':'15%'}"></p-column>
+          <p-column styleClass="col-button" header="View" [style]="{'width':'8%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+              <i class="material-icons" (click)="requestViewCase(item)">search</i>
+            </ng-template>
+          </p-column>
+        </p-dataTable>
+
+      </div>
+    </div>
+  </div>
+  <!-- //END FISRT CARD -->
+</div>

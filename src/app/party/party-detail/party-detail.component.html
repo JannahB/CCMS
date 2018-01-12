@@ -1,0 +1,617 @@
+<div class="ui-g-12" class="base-fieldset">
+    <div class="ui-g-12 pb-0">
+      <h1 class="page-header inline">{{party?.firstName}} {{party?.lastName}}</h1>    
+    </div>
+      
+    <!-- GENERAL DETAILS -->
+    <p-fieldset (blur)="generalDetailsOnBlur($event)" legend="General Details" toggleable="true" >
+      <div class="ui-g form-group" novalidate>
+      
+        <div  *ngIf="party">
+        
+          <!-- column 1 -->
+          <div class="ui-g-12 ui-md-4">
+  
+            <div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                <input pInputText type="text" [(ngModel)]="party.firstName" name="firstName" (blur)="generalDetailsOnBlur($event)" >
+                <label>First Name</label>
+              </span>
+            </div>
+            <div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                <input type="text" pInputText [(ngModel)]="party.lastName" (blur)="generalDetailsOnBlur($event)" >
+                <label>Last Name</label>
+              </span>
+            </div>
+            <div class="ui-g-12 mb-0">
+              <span class="md-inputfield">
+                <input type="text" pInputText [(ngModel)]="party.alternativeName" (blur)="generalDetailsOnBlur($event)" >
+                <label>Alternative Name</label>
+              </span>
+            </div>          
+          </div>
+          
+          <!-- column 2 -->
+          <div class="ui-g-12 ui-md-3 pt-0 mt-n-5">
+            
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Date of Birth</label>
+              <p-calendar 
+                    id="dob" 
+                    inputStyleClass="width-full"
+                    [(ngModel)]="party.dob" 
+                    (onSelect)="generalDetailsOnBlur($event)" 
+                    dateFormat="mm/dd/yy" 
+                    placeholder="Date of Birth" 
+                    [showIcon]="true" 
+                    [yearNavigator]="true" ></p-calendar>
+            </div>
+  
+            <div class="ui-g-12 mb-0">
+              <label class="minimal block primary">Age</label>
+              <div class="mar-0">{{calculateAge(party.dob)}}</div>
+              <!-- <span class="md-inputfield">
+                <input type="text" disabled pInputText [(ngModel)]="party.age" (blur)="generalDetailsOnBlur($event)" >
+              </span> -->
+            </div> 
+  
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Sex</label>
+                <p-dropdown 
+                    placeholder="choose gender"
+                    
+                    [options]="genderTypes"
+                    [(ngModel)]="party.sex"
+                    (onChange)="genderTypesOnChange($event)">
+                </p-dropdown>
+            </div>
+  
+          </div>
+  
+          <!-- column 3 -->
+          <div class="ui-g-12 ui-md-5">
+            <div class="ui-g-12 ">
+              <label class="minimal primary mr-10">Interpreter Required</label>
+              <p-inputSwitch [(ngModel)]="party.interpreterRequiredIndicator" ></p-inputSwitch>
+              <!-- [(ngModel)]="switchChecked" -->
+            </div>
+  
+            <div class="ui-g-12 ">
+              <label class="minimal primary block">Languages Spoken</label>
+              <span class="ui-fluid">
+                <p-autoComplete 
+                    field="languageName"
+                    [(ngModel)]="party.spokenLanguages" 
+                    [suggestions]="filteredLanguages" 
+                    (completeMethod)="getLangsToFilter($event)" 
+                    styleClass="width-full"
+                    [minLength]="1" 
+                    placeholder="Languages Spoken"
+                    [dropdown]="true"
+                    [multiple]="true">
+                </p-autoComplete>
+              </span>
+            </div>
+  
+          </div>
+  
+          <div class="ui-g-12 pt-0">
+            <label class="minimal block primary">Notes</label>
+            <textarea [rows]="3" [cols]="30" [(ngModel)]="party.notes" pInputTextarea placeholder="Notes" styleClass="width-full" autoResize="autoResize"></textarea>
+          </div>
+          <div class="ui-g-12 ta-r">
+              <button type="button"
+                      label="Cancel"
+                      class="ui-button-secondary mr-15"
+                      (click)="cancelDetailsEdit()"
+                      icon="ui-icon-clear"
+                      pButton></button>
+              <button type="button" 
+                      label="Save"
+                      class=""
+                      (click)="saveDetails()"
+                      icon="ui-icon-check"
+                      pButton></button>
+          </div>
+          
+        </div>
+  
+      </div>
+    </p-fieldset>
+  
+    <!-- IDENTIFIERS -->
+    <p-fieldset legend="Identifiers" toggleable="true" collapsed="true">
+      <div class="ui-g form-group">
+  
+        <div class="ui-g-12">
+          <p-dataTable [value]="party?.identifiers" 
+                       selectionMode="single" 
+                       [(selection)]="selectedIdentifier" 
+                       (onRowSelect)="identifierOnRowSelect($event)"                      
+                       dataKey="partyIdentifierOID" #dtIdentifiers>
+              <p-column field="identifierType" header="Type" [style]="{'width':'20%'}"></p-column>
+              <p-column field="identifierValue" header="Value" [style]="{'width':'20%'}"></p-column>
+              <p-column field="notes" header="Notes" [style]="{'width':'26%'}"></p-column>
+              <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.startDate | date:'M/d/yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'M/d/yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                  <ng-template let-identifier="rowData" pTemplate="body">
+                      <i class="material-icons delete-icon" (click)="requestDeleteIdentifier(identifier)">delete</i>
+                  </ng-template>
+              </p-column>
+          </p-dataTable>
+        </div>
+        <div class="ui-g-12">
+          <button type="button"
+              (click)="newIdentifier()"
+              label="Add New"
+              icon="ui-icon-add"
+              class="" pButton></button>
+        </div>
+  
+        <div class="ui-g-12" *ngIf="selectedIdentifier">
+          <hr>
+          <h3>Edit Identifier</h3>
+  
+          <div class="ui-g-12 ui-md-6">
+              <div class="ui-g-12 mb-20">
+                  <label class="minimal primary block">Identifier Type</label>
+                  <p-dropdown 
+                      placeholder="choose type"
+                      styleClass="width-full"
+                      [options]="identifierTypeOptions"                    
+                      [(ngModel)]="selectedIdentifier.identifierType"
+                      (onChange)="identifierTypeOnChange($event)">
+                      <!-- 
+                        optionLabel="name"
+                      dataKey="id"
+                     -->
+                  </p-dropdown>
+                </div>
+        
+                <div class="ui-g-12 mb-20">
+                  <span class="md-inputfield">
+                      <input [(ngModel)]="selectedIdentifier.identifierValue"
+                            type="text" pInputText>
+                      <label>Identifier Value</label>
+                  </span>
+                </div>
+                
+                <div class="ui-g-12 mb-20">
+                  <span class="md-inputfield">
+                    <input type="text" [(ngModel)]="selectedIdentifier.notes" pInputText>
+                    <label>Notes</label>
+                  </span>
+                </div>
+          </div>
+  
+          <div class="ui-g-12 ui-md-6">
+            
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="identifierStartDate"
+                placeholder="Start Date"
+                [(ngModel)]="selectedIdentifier.startDate"
+                [yearNavigator]="true" 
+                [showIcon]="true">
+              </p-calendar>
+            </div>
+  
+            <div class="ui-g-12  mb-0">
+              <label class="minimal primary block">End Date</label>
+              <p-calendar id="identifierEndDate"
+                  placeholder="End Date"
+                  [(ngModel)]="selectedIdentifier.endDate"
+                  [yearNavigator]="true" 
+                  [showIcon]="true">
+                </p-calendar>
+            </div>
+  
+          </div>
+          <div class="ui-g-12 ta-r">
+  
+            <button type="button"
+                    label="Cancel"
+                    class="ui-button-secondary mr-15"
+                    (click)="cancelIdentifierEdit()"
+                    icon="ui-icon-clear"
+                    pButton></button>
+            <button type="button" 
+                    label="Save"
+                    class=""
+                    (click)="saveIdentifier()"
+                    icon="ui-icon-check"
+                    pButton></button>
+          </div>
+  
+        </div>
+      </div>
+    </p-fieldset>
+  
+    <!-- EMAILS  -->
+    <p-fieldset legend="Emails" toggleable="true" collapsed="true">
+      <div class="ui-g form-group" *ngIf="party">
+        <div class="ui-g-12">
+          <p-dataTable [value]="party?.emails" 
+                        selectionMode="single" 
+                        [(selection)]="selectedEmail" 
+                        (onRowSelect)="emailOnRowSelect($event)"                      
+                        dataKey="partyEmailOID">
+              <p-column field="emailAddressType" header="Type" [style]="{'width':'20%'}"></p-column>
+              <p-column field="emailAddress" header="Email Address" [style]="{'width':'20%'}"></p-column>
+              <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.startDate | date:'M/d/yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'M/d/yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <i class="material-icons delete-icon" (click)="requestDeleteEmail(item)">delete</i>
+                  </ng-template>
+              </p-column>
+          </p-dataTable>
+        </div>
+        <div class="ui-g-12">
+          <button type="button"
+              (click)="newEmail()"
+              label="Add New"
+              icon="ui-icon-add"
+              class="" pButton></button>
+        </div>
+  
+        <div class="ui-g-12" *ngIf="selectedEmail">
+          <hr>
+          <h3>Edit Email</h3>
+  
+          <div class="ui-g-12 ui-md-6">
+            <div class="ui-g-12 mb-20">
+              <label class="minimal primary block">Email Type</label>
+              <p-dropdown 
+                  placeholder="choose type"
+                  styleClass="width-full"
+                  [options]="emailTypes"                    
+                  [(ngModel)]="selectedEmail.emailAddressType"
+                  (onChange)="emailTypeOnChange($event)">
+              </p-dropdown>
+            </div>
+      
+            <div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                  <input [(ngModel)]="selectedEmail.emailAddress"
+                        type="text" pInputText>
+                  <label>Email Address</label>
+              </span>
+            </div> 
+                
+          </div>
+  
+          <div class="ui-g-12 ui-md-6">
+            
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="emailStartDate"
+                placeholder="Start Date"
+                [(ngModel)]="selectedEmail.startDate"
+                [yearNavigator]="true" 
+                [showIcon]="true">
+              </p-calendar>
+            </div>
+  
+            <div class="ui-g-12  mb-0">
+              <label class="minimal primary block">End Date</label>
+              <p-calendar id="emailEndDate"
+                  placeholder="End Date"
+                  [(ngModel)]="selectedEmail.endDate"
+                  [yearNavigator]="true" 
+                  [showIcon]="true">
+                </p-calendar>
+            </div>
+  
+          </div>
+          <div class="ui-g-12 ta-r">
+  
+            <button type="button"
+                    label="Cancel"
+                    class="ui-button-secondary mr-15"
+                    (click)="cancelEmailEdit()"
+                    icon="ui-icon-clear"
+                    pButton></button>
+            <button type="button" 
+                    label="Save"
+                    class=""
+                    (click)="saveEmail()"
+                    icon="ui-icon-check"
+                    pButton></button>
+          </div>
+        </div>
+      </div>
+    </p-fieldset>
+  
+    <!-- PHONES -->
+    <p-fieldset legend="Phones" toggleable="true" collapsed="true">
+      <div class="ui-g form-group" *ngIf="party">
+        <div class="ui-g-12">
+          <p-dataTable [value]="party?.phoneNumbers" 
+                        selectionMode="single" 
+                        [(selection)]="selectedPhone" 
+                        (onRowSelect)="phoneOnRowSelect($event)"                      
+                        dataKey="partyPhoneOID">
+              <p-column field="phoneType" header="Type" [style]="{'width':'20%'}"></p-column>
+              <p-column field="phoneNumber" header="Phone Number" [style]="{'width':'20%'}"></p-column>
+              <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.startDate | date:'M/d/yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'M/d/yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <i class="material-icons delete-icon" (click)="requestDeletePhone(item)">delete</i>
+                  </ng-template>
+              </p-column>
+          </p-dataTable>
+        </div>
+        <div class="ui-g-12">
+          <button type="button"
+              (click)="newPhone()"
+              label="Add New"
+              icon="ui-icon-add"
+              class="" pButton></button>
+        </div>
+  
+        <div class="ui-g-12" *ngIf="selectedPhone">
+          <hr>
+          <h3>Edit Phone</h3>
+  
+          <div class="ui-g-12 ui-md-6">
+            <div class="ui-g-12 mb-20">
+              <label class="minimal primary block">Phone Type</label>
+              <p-dropdown 
+                  placeholder="choose type"
+                  styleClass="width-full"
+                  [options]="phoneTypes"                    
+                  [(ngModel)]="selectedPhone.phoneType"
+                  (onChange)="phoneTypeOnChange($event)">
+              </p-dropdown>
+            </div>
+      
+            <div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                  <input [(ngModel)]="selectedPhone.phoneNumber"
+                        type="text" pInputText>
+                  <label>Phone Number</label>
+              </span>
+            </div> 
+          </div>
+  
+          <div class="ui-g-12 ui-md-6">
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="phoneStartDate"
+                placeholder="Start Date"
+                [(ngModel)]="selectedPhone.startDate"
+                [yearNavigator]="true" 
+                [showIcon]="true">
+              </p-calendar>
+            </div>
+  
+            <div class="ui-g-12  mb-0">
+              <label class="minimal primary block">End Date</label>
+              <p-calendar id="phoneEndDate"
+                  placeholder="End Date"
+                  [(ngModel)]="selectedPhone.endDate"
+                  [yearNavigator]="true" 
+                  [showIcon]="true">
+                </p-calendar>
+            </div>
+  
+          </div>
+          <div class="ui-g-12 ta-r">
+  
+            <button type="button"
+                    label="Cancel"
+                    class="ui-button-secondary mr-15"
+                    (click)="cancelPhoneEdit()"
+                    icon="ui-icon-clear"
+                    pButton></button>
+            <button type="button" 
+                    label="Save"
+                    class=""
+                    (click)="savePhone()"
+                    icon="ui-icon-check"
+                    pButton></button>
+          </div>
+        </div>
+      </div>
+    </p-fieldset>
+    
+  
+    <!-- ADDRESSES  -->
+    <p-fieldset legend="Addresses" toggleable="true" collapsed="true">
+  
+      <div class="ui-g form-group" *ngIf="party">
+        <div class="ui-g-12">
+          <p-dataTable [value]="party?.addresses" 
+                        selectionMode="single" 
+                        [(selection)]="selectedAddress" 
+                        (onRowSelect)="addressOnRowSelect($event)"    
+                        [responsive]="true"                  
+                        dataKey="addressOID">
+              <p-column field="addressType" header="Type" [style]="{'width':'20%'}"></p-column>
+              <p-column field="address1" header="Address1" [style]="{'width':'20%'}"></p-column>
+              <p-column field="municipalityName" header="City" [style]="{'width':'20%'}"></p-column>
+              <p-column field="postalCode" header="Postal Code" [style]="{'width':'20%'}"></p-column>
+              <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.startDate | date:'M/d/yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'M/d/yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <i class="material-icons delete-icon" (click)="requestDeleteAddress(item)">delete</i>
+                  </ng-template>
+              </p-column>
+          </p-dataTable>
+        </div>
+        <div class="ui-g-12">
+          <button type="button"
+              (click)="newAddress()"
+              label="Add New"
+              icon="ui-icon-add"
+              class="" pButton></button>
+        </div>
+  
+        <div class="ui-g-12" *ngIf="selectedAddress">
+          <hr>
+          <h3>Edit Address</h3>
+  
+          <div class="ui-g-12">
+            <div class="ui-g-12 ui-md-4 mb-20">
+              <label class="minimal primary block">Address Type</label>
+              <p-dropdown 
+                  placeholder="choose type"
+                  styleClass="width-full"
+                  [options]="addressTypes"                    
+                  [(ngModel)]="selectedAddress.addressType"
+                  (onChange)="addressTypeOnChange($event)">
+              </p-dropdown>
+            </div>
+          </div>
+  
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.address1"  type="text" pInputText>
+              <label>Address 1</label>
+            </span>
+          </div>
+        
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.address2"  type="text" pInputText>
+              <label>Address 2</label>
+            </span>
+          </div>
+  
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.address3" type="text" pInputText>
+              <label>Address 3</label>
+            </span>
+          </div>
+  
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.communityCode"  type="text" pInputText>
+              <label>Community Code</label>
+            </span>
+          </div>
+  
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.administrativeArea"  type="text" pInputText>
+              <label>Administrative Area</label>
+            </span>
+          </div>
+          
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.postalCode"  type="text" pInputText>
+              <label>Postal Code</label>
+            </span>
+          </div>
+  
+          <div class="ui-g-12 ui-md-6 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.municipalityName"  type="text" pInputText>
+              <label>City</label>
+            </span>
+          </div>
+          
+          <div class="ui-g-12 ui-md-6 mb-20 mt-n-20">
+            <label class="minimal primary block">Country</label>
+            <p-dropdown
+              placeholder="choose country"
+              [(ngModel)]="selectedAddress.countryName"
+              [options]="countries"
+              [style]="{'width':'100%'}"
+              (onChange)="countryOnChange($event)">
+            </p-dropdown>
+          </div>
+  
+          <div class="ui-g-12 ui-md-8 pt-0">
+            <label class="minimal block primary">Description</label>
+            <textarea pInputTextarea 
+                      [rows]="4" [cols]="30" 
+                      [(ngModel)]="selectedAddress.addressDescriptionText" 
+                      placeholder="Description" 
+                      styleClass="width-full" 
+                      autoResize="autoResize"></textarea>
+          </div>
+  
+          <div class="ui-g-12 ui-md-4 mb-20 mt-n-20">
+            <div class="ui-g-12 mb-0 ta-r">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="addressStartDate"
+                placeholder="Start Date"
+                [(ngModel)]="selectedAddress.startDate"
+                [yearNavigator]="true" 
+                [showIcon]="true">
+              </p-calendar>
+            </div>
+  
+            <div class="ui-g-12  mb-0 ta-r">
+              <label class="minimal primary block">End Date</label>
+              <p-calendar id="addressEndDate"
+                  placeholder="End Date"
+                  [(ngModel)]="selectedAddress.endDate"
+                  [yearNavigator]="true" 
+                  [showIcon]="true">
+                </p-calendar>
+            </div>
+  
+          </div>
+          <div class="ui-g-12 ta-r">
+  
+            <button type="button"
+                    label="Cancel"
+                    class="ui-button-secondary mr-15"
+                    (click)="cancelAddressEdit()"
+                    icon="ui-icon-clear"
+                    pButton></button>
+            <button type="button" 
+                    label="Save"
+                    class=""
+                    (click)="saveAddress()"
+                    icon="ui-icon-check"
+                    pButton></button>
+          </div>
+        </div>
+      </div>
+    </p-fieldset>
+  
+      
+    
+  </div>

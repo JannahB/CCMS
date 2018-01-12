@@ -1,0 +1,80 @@
+[
+  {
+    "hearingTypeOID": 4,
+    "courtOID": 5,
+    "hearingName": "Bail Hearing",
+    "durationInMinutes": 0
+  },
+  {
+    "hearingTypeOID": 3,
+    "courtOID": 5,
+    "hearingName": "Case Hearing",
+    "durationInMinutes": 0
+  },
+  {
+    "hearingTypeOID": 2,
+    "courtOID": 5,
+    "hearingName": "Case Preparation Hearing",
+    "durationInMinutes": 30
+  },
+  {
+    "hearingTypeOID": 6,
+    "courtOID": 5,
+    "hearingName": "Drug Treatment Hearing",
+    "durationInMinutes": 0
+  },
+  {
+    "hearingTypeOID": 1,
+    "courtOID": 5,
+    "hearingName": "Initial Hearing",
+    "durationInMinutes": 330
+  },
+  {
+    "hearingTypeOID": 9,
+    "courtOID": 5,
+    "hearingName": "Jury Trial",
+    "durationInMinutes": 0
+  },
+  {
+    "hearingTypeOID": 12,
+    "courtOID": 5,
+    "hearingName": "Monitoring Hearing",
+    "durationInMinutes": 0
+  },
+  {
+    "hearingTypeOID": 5,
+    "courtOID": 5,
+    "hearingName": "PR Hearing",
+    "durationInMinutes": 0
+  },
+  {
+    "hearingTypeOID": 10,
+    "courtOID": 5,
+    "hearingName": "Pre-Sentencing Hearing",
+    "durationInMinutes": 0
+  },
+  {
+    "hearingTypeOID": 7,
+    "courtOID": 5,
+    "hearingName": "Preliminary Review Hearing",
+    "durationInMinutes": 0
+  },
+  {
+    "hearingTypeOID": 13,
+    "courtOID": 5,
+    "hearingName": "Sentence Completion Hearing",
+    "durationInMinutes": 0
+  },
+  {
+    "hearingTypeOID": 11,
+    "courtOID": 5,
+    "hearingName": "Sentencing Hearing",
+    "durationInMinutes": 0
+  },
+  {
+    "hearingTypeOID": 8,
+    "courtOID": 5,
+    "hearingName": "Trial",
+    "durationInMinutes": 0
+  }
+]
