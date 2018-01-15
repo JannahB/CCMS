@@ -19,6 +19,7 @@ export class DropdownDataTransformService {
 
   /*
     This supports case where parent object value is the label and no ID is present
+    Like a list of objects with just one value. Ex:countries { name:"United State"}, {name:"United Kingdom"}, ...
   */
   public transformSameLabelAndValue<T>(data:T[], labelField:string = "name"):SelectItem[]{
     if(!data){

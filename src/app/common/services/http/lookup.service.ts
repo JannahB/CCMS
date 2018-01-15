@@ -22,21 +22,21 @@ export class LookupService {
   constructor(@Inject(forwardRef(() => HttpClient)) protected http:HttpClient){}
 
 
-  
-  public fetchLookup(endpoint: string) {
+
+  public fetchLookup<T>(endpoint: string):Observable<T[]> {
     let url: string = this.getBaseUrl() + endpoint;
 
-    return this.http.get(url);
+    return this.http.get<T[]>(url);
   }
-  
-  
+
+
   public getMock(fileName) {
     let url: string = this.getBaseMockUrl() + fileName;
-    
+
     return this.http.get(url)
   }
 
 
-  
+
 
 }

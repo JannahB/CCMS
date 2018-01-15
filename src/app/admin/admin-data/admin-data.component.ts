@@ -41,8 +41,8 @@ export class AdminDataComponent implements OnInit {
   eventTypes: EventType[];
   hearingTypes: HearingType[];
   locationTypes: CourtLocation[];
-  
-  constructor( 
+
+  constructor(
     private breadCrumbSvc:BreadcrumbService,
     private lookupSvc: LookupService
   ) {
@@ -67,6 +67,7 @@ export class AdminDataComponent implements OnInit {
       this.lookupSvc.getMock('event-types.json'),
       this.lookupSvc.getMock('hearing-types.json'),
       this.lookupSvc.getMock('location-types.json'),
+      // this.lookupSvc.fetchLookup<CaseType>('case-types')
     );
 
     var subscription = source.subscribe(
@@ -81,7 +82,7 @@ export class AdminDataComponent implements OnInit {
         this.hearingTypes = results[7] as HearingType[];
         this.locationTypes = results[8] as CourtLocation[];
         // this.locationTypes = this.dropdownTransformSvc.transform(this.companyOfficeContactTypes, 'contactLastName');
-        
+
       });
 
 
@@ -95,13 +96,13 @@ export class AdminDataComponent implements OnInit {
       { value: 7, label: "Event Types", data: 'eventTypes', idField:'eventTypeOID'},
       { value: 8, label: "Hearing Types", data:'hearingTypes', idField:'hearingTypeOID'},
       { value: 9, label: "Court Locations", data:'locationTypes', idField:'locationOID'}
-      
+
     ];
   }
 
   refTableSelected(event) {
     this.selectedTableId = event.value;
-    
+
     this.selectedTable = this.refDataTables.find((type) => type.value ==  event.value);
     this.selectedTableIdField = this[this.selectedTable.idField];
     this.selectedTableItems = this[this.selectedTable.data];
