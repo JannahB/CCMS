@@ -25,16 +25,19 @@ import { PartySearchComponent } from './party/party-search/party-search.componen
 import { AdminDataComponent } from './admin/admin-data/admin-data.component';
 import { AdminWorkflowComponent } from './admin/admin-workflow/admin-workflow.component';
 import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
+import { LoginComponent } from './login/login.component';
+import { CanActivateAuthenticationGuard } from './common/guards/can-activate-authentication.guard';
 
 export const routes: Routes = [
-    {path: '', component: DashboardComponent},
-    {path: 'party-detail', component: PartyDetailComponent},
-    {path: 'party-search', component: PartySearchComponent},
-    {path: 'case', component: CaseDetailComponent},
-    {path: 'case-search', component: CaseSearchComponent},
-    {path: 'admin-data', component: AdminDataComponent},
-    {path: 'admin-workflow', component: AdminWorkflowComponent},
-    {path: 'admin-users', component: AdminUsersComponent},
+    {path: '', component: DashboardComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'login', component: LoginComponent },
+    {path: 'party-detail', component: PartyDetailComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'party-search', component: PartySearchComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'case', component: CaseDetailComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'case-search', component: CaseSearchComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'admin-data', component: AdminDataComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'admin-workflow', component: AdminWorkflowComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'admin-users', component: AdminUsersComponent, canActivate: [CanActivateAuthenticationGuard]},
     
     // {path: 'demo', component: DashboardDemoComponent},
     // {path: 'sample', component: SampleDemoComponent},

@@ -1,0 +1,32 @@
+
+<div  >
+    <p-fieldset legend="Log In" >
+        <form #loginForm="ngForm">
+          <div>
+            <label class="input-label" for="userName">User Name:</label>
+            <input pInputText name="userName" [(ngModel)]="userName" placeholder="Enter User Name..." required #userNameField="ngModel" />
+
+            <div class="ui-messages-error" [hidden]="userNameField.valid || userNameField.untouched">
+                <div *ngIf="userNameField.errors && userNameField.errors.required">
+                    User Name is required
+                </div>
+            </div>
+          </div>
+          <div>
+            <label class="input-label" for="password">Password:</label>
+            <input pInputText type="password" name="password" [(ngModel)]="password" placeholder="Enter Password..." required #passwordField="ngModel" />
+            
+            <div class="ui-messages-error" [hidden]="passwordField.valid || passwordField.untouched">
+                <div *ngIf="passwordField.errors && passwordField.errors.required">
+                    Password is required
+                </div>
+            </div>
+          </div>  
+          <div>
+            <button (click)="loginClicked()" class="ui-button" [disabled]="isAttemptingLogin || !loginForm.form.valid">Log In</button>
+          </div>
+          <div *ngIf="hasLoginFailed" class="ui-messages-error">Login Failed</div>
+        </form>
+    </p-fieldset>
+
+</div>
