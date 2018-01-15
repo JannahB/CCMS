@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
@@ -93,6 +93,10 @@ import { LanguageService } from './common/services/http/language.service';
 import { DropdownDataTransformService } from './common/services/utility/dropdown-data-transform.service';
 import { DateValidatorService } from './common/services/utility/dates/date-validator.service';
 import { ToastService } from './common/services/utility/toast.service';
+import { AuthorizationInterceptor } from './common/interceptors/authorization.interceptor';
+import { LoginComponent } from './login/login.component';
+import { CanActivateAuthenticationGuard } from './common/guards/can-activate-authentication.guard';
+import { AuthenticationService } from './common/services/http/authentication.service';
 
 
 @NgModule({
@@ -174,7 +178,8 @@ import { ToastService } from './common/services/utility/toast.service';
         PartySearchComponent,
         AdminDataComponent,
         AdminWorkflowComponent,
-        AdminUsersComponent
+        AdminUsersComponent,
+        LoginComponent
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
@@ -191,7 +196,10 @@ import { ToastService } from './common/services/utility/toast.service';
         GenericTypesService,
         CountriesService,
         CaseService,
-        LookupService
+        LookupService,
+        CanActivateAuthenticationGuard,
+        AuthenticationService,
+        {provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true }
     ],
     bootstrap: [AppComponent]
 })
