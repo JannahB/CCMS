@@ -12,11 +12,19 @@ export abstract class HttpBaseService<T extends AuditEntity>{
     public static authenticationToken:string = null;
 
     protected getBaseUrl():string{
-        return `${environment.apiUrl}/api`;
+        return `${environment.apiUrl}`;
     }
 
     protected getBaseMockUrl():string{
       return `${environment.mockUrl}`;
+    }
+
+    protected get uiVersion2Headers():any{
+      return { 
+        headers: {
+          uiVersion: "2"
+        }
+      };
     }
 
     constructor(@Inject(forwardRef(() => HttpClient)) protected http:HttpClient){}

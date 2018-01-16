@@ -24,10 +24,18 @@ export class PartyService extends HttpBaseService<Party> {
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
   }
 
-  public fetch(body:any):Observable<Party[]>{
+  public fetch(partyName:string):Observable<Party[]>{
     let url: string = this.getBaseUrl();
 
-    return this.http.post<Party[]>(url, body)
+    return this.http.post<Party[]>(url, 
+      {
+        partyName: partyName
+      }, 
+      { 
+        headers: {
+          uiVersion: "2"
+        }
+      })
       .map(res => {
         let parties:Party[] = res;
         return this.convertDates(parties);
