@@ -33,7 +33,7 @@ export class AuthenticationService{
                 .post<FetchTokenResponse>(url,
                 {
                     userName: userName,
-                    courtOID: courtOID
+                    courtOID: courtOID.toString()
                 })
                 .map(response => {
                     AuthorizationInterceptor.authToken = response.token;
