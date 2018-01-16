@@ -46,9 +46,9 @@ export class LoginComponent implements OnInit {
       .subscribe(
         (loginResult) => { 
           this.authenticationService
-            .FetchToken(userName, loginResult.roles[0].courtOID)
+            .FetchToken(userName, 5)
             .subscribe(tokenResult => {
-
+              this.handleAuthenticationComplete();
             });
         }, 
         (error) => {
