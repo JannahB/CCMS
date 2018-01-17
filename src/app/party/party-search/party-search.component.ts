@@ -34,7 +34,7 @@ export class PartySearchComponent implements OnInit {
     console.log(event)
     let partyId = event.data.partyOID;
 
-    this.router.navigate(['/party-detail', partyId ]);
+    this.router.navigate(['party-detail', partyId ]);
 
   }
 
