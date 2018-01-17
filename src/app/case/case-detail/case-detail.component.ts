@@ -101,4 +101,83 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   }
 
+
+  // -------------------------
+  //   ADD CASE CHARGE
+  // ------------------------=
+
+  showModalAddCaseCharge: boolean = false;
+
+  sectionTypes: any[];        // FetchICCSCategory GET
+  selectedSectionType: any;
+  divisionTypes: any[];
+  selectedDivisionType: any;
+  groupTypes: any[];
+  selectedGroupType: any;
+  classTypes: any[];
+  selectedClassType: any;
+  chargeLawTypes: any[];
+  selectedChargeLawType: any;
+  leaLeadChargeText:string;
+  chargeFactorTypes: any[];        // FetchChargeFactor GET
+  selectedChargeFactors: any[];
+  filteredChargeFactorTypes: any[];
+  lastSelectedTypeLocalCharges: any[] = [];
+
+  onShowAddCaseChargeModal() {
+    this.showModalAddCaseCharge = true;
+    // TODO:
+    // FetchICCSCategory GET
+    // FetchChargeFactor GET
+  }
+
+
+  sectionTypeOnChange(event){
+    // TODO:
+    // Get divisionTypes = FetchICCSCategory POST {iccsCodeOID: "6061293890045675"} == selectedSectionType.parentOID
+  }
+
+  divisionTypeOnChange(event){
+    // TODO:
+    // Get groupTypes = FetchICCSCategory POST {iccsCodeOID: "1775766791992384"} == selectedDivisionType.parentOID
+  }
+
+  groupTypeOnChange(event){
+    // TODO:
+    // Get classTypes = FetchICCSCategory POST {iccsCodeOID: "7567470567278514} == selectedGroupType.parentOID
+  }
+
+  classTypeOnChange(event){
+    // this uses [selectedType]localCharges[] of the last selected Type above
+  }
+
+  chargeLawTypeOnChange(event){
+    // may not need to handle this one, use [(ngModel)]
+  }
+
+  getChargeFactorsToFilter(event) {
+    let query = event.query;
+    this.filteredChargeFactorTypes = this.filterChargeFactors(query, this.chargeFactorTypes);
+  }
+
+  filterChargeFactors( query, chargeFactorTypes: any[] ):any[] {
+    let filtered : any[] = [];
+    for(let i = 0; i < chargeFactorTypes.length; i++) {
+      let cf = chargeFactorTypes[i];
+      if(cf.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+          filtered.push(cf);
+      }
+    }
+    return filtered;
+  }
+
+  saveCaseCharge(){
+    // TODO: handle save
+    this.hideModals();
+  }
+
+
+  hideModals(){
+    this.showModalAddCaseCharge = false;
+  }
 }

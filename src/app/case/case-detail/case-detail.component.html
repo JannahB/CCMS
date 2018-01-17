@@ -1,9 +1,9 @@
 <div class="ui-g">
-  
+
   <!-- HEADER -->
-  <div class="ui-g-12 pv-0">  
+  <div class="ui-g-12 pv-0">
     <label class="minimal block mb-0">Case:</label>
-    <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>    
+    <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>
   </div>
 
   <!-- FIRST SECTION -->
@@ -12,67 +12,67 @@
     <div *ngIf="case">
       <div class="ui-g-12 ui-md-3">
         <label class="minimal primary block">Filing Date</label>
-        <p-calendar 
-              id="filingDate" 
+        <p-calendar
+              id="filingDate"
               styleClass="width-full"
-              [(ngModel)]="case.caseFilingDate" 
-              (onSelect)="generalDetailsOnBlur($event)" 
-              dateFormat="mm/dd/yy" 
-              placeholder="Case Filing Date" 
-              [showIcon]="true" 
+              [(ngModel)]="case.caseFilingDate"
+              (onSelect)="generalDetailsOnBlur($event)"
+              dateFormat="mm/dd/yy"
+              placeholder="Case Filing Date"
+              [showIcon]="true"
               [yearNavigator]="true" ></p-calendar>
       </div>
 
       <div class="ui-g-12 ui-md-3">
           <label class="minimal primary block">Case Type</label>
-          <p-dropdown 
+          <p-dropdown
               placeholder="case type..."
               optionLabel="name"
               [options]="case.court.caseTypes"
               [(ngModel)]="case.caseType"
               (onChange)="ddOnChange($event)"
               styleClass="width-full">
-          </p-dropdown>  
-      </div>   
-    
+          </p-dropdown>
+      </div>
+
       <div class="ui-g-12 ui-md-3">
           <label class="minimal primary block">Case Status</label>
-          <p-dropdown 
+          <p-dropdown
               placeholder="case status..."
               optionLabel="name"
               [options]="case.court.caseStatuses"
               [(ngModel)]="case.caseStatus"
               (onChange)="ddOnChange($event)"
               styleClass="width-full">
-          </p-dropdown>        
+          </p-dropdown>
       </div>
-      
+
       <div class="ui-g-12 ui-md-3">
           <label class="minimal primary block">Case Phase</label>
-          <p-dropdown 
+          <p-dropdown
               placeholder="case phase..."
               optionLabel="name"
               [options]="case.court.casePhases"
               [(ngModel)]="case.casePhase"
               (onChange)="ddOnChange($event)"
               styleClass="width-full">
-          </p-dropdown>    
+          </p-dropdown>
       </div>
-      
+
       <div class="ui-g-12 ui-md-3">
           <label class="minimal block primary">Case Weight</label>
           <div class="mar-0">{{ case.caseWeight }}</div>
           <p-slider [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10" [animate]="true"></p-slider>
       </div>
-        
+
       <!-- CASE PARTIES TABLE -->
 
       <div class="ui-g-12 mt-20">
         <h2>Case Parties</h2>
-        <p-dataTable [value]="case.caseParties" 
-                    selectionMode="single" 
-                    [(selection)]="selectedParty" 
-                    (onRowSelect)="partyOnRowSelect($event)"                      
+        <p-dataTable [value]="case.caseParties"
+                    selectionMode="single"
+                    [(selection)]="selectedParty"
+                    (onRowSelect)="partyOnRowSelect($event)"
                     dataKey="caseParty.partyOID" #dtParties>
           <p-column field="role.name" header="Role" [style]="{'width':'10%'}"></p-column>
           <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
@@ -114,13 +114,54 @@
       </div>
 
       <!-- CHARGES TABLE -->
-      
+
 
       <div class="ui-g-12 mt-30">
         <h2>Charges</h2>
-        <p-dataTable [value]="case.caseCharges" 
-                    selectionMode="single" 
-                    [(selection)]="selectedCharge" 
+
+        <!--
+          ******** NEW TABLE ***********
+          Waiting for Aaron to add the
+          dependency tree in case data
+          ******************************
+         -->
+        <!-- <p-dataTable [value]="case.caseCharges"
+                    selectionMode="single"
+                    [(selection)]="selectedCharge"
+                    (onRowSelect)="caseOnRowSelect($event)"
+                    dataKey="caseChargeOID" #dtCharges>
+          <p-column header="#" field="" [style]="{'width':'12%'}">
+            <ng-template pTemplate="body" let-n="rowIndex">
+              {{n+1}}
+            </ng-template>
+          </p-column>
+          <p-column header="Section" field="iccsCode.categoryIdentifier" [style]="{'width':'12%'}"></p-column>
+          <p-column header="Division" field="" [style]="{'width':'12%'}"></p-column>
+          <p-column header="Group" field="" [style]="{'width':'12%'}"></p-column>
+          <p-column header="Class" field="" [style]="{'width':'12%'}"></p-column>
+          <p-column header="Charge/Law" field="localCharge.localCharge" [style]="{'width':'30%'}"></p-column>
+          <p-column header="Lead Charge Description" field="leaChargingDetails" [style]="{'width':'15%'}"></p-column>
+          <p-column header="Charge Factors" field="" [style]="{'width':'25%'}">
+              <ng-template pTemplate="body" let-item="rowData">
+                <div *ngFor="let factor of item.chargeFactors; let i = index">
+                  {{i+1}}) {{factor.description}}
+                </div>
+              </ng-template>
+          </p-column>
+          <p-column header="Start Date" field="" [style]="{'width':'12%'}"></p-column>
+          <p-column header="End Date"   field="" [style]="{'width':'12%'}"></p-column>
+
+          <p-column header="Delete" styleClass="col-button" [style]="{'width':'8%'}">
+              <ng-template let-item="rowData" pTemplate="body">
+                  <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
+              </ng-template>
+          </p-column>
+        </p-dataTable> -->
+
+
+        <p-dataTable [value]="case.caseCharges"
+                    selectionMode="single"
+                    [(selection)]="selectedCharge"
                     (onRowSelect)="caseOnRowSelect($event)"
                     dataKey="caseChargeOID" #dtCharges>
           <p-column field="iccsCode.categoryIdentifier" header="UN Code" [style]="{'width':'7%'}"></p-column>
@@ -144,32 +185,32 @@
       </div>
 
       <div class="ui-g-12">
-          <button type="button"
-              (click)="addCaseCharge()"
-              label="Add Case Charge"
-              icon="ui-icon-add"
-              class="ui-button-secondary mr-15" pButton></button>
-  
-          <button type="button"
-              (click)="createParty()"
-              label="Create Party"
-              icon="ui-icon-add"
-              class="ui-button-secondary " pButton></button>
-        </div>
-  
-        <!-- CASE SAVE BUTTON -->
-        <div class="ui-g-12 ta-r">
-          <button type="button"
-              (click)="saveCase()"
-              label="Save Case"
-              icon="ui-icon-check"
-              class="" pButton></button>
-        </div>
-    
-    </div>
+        <button type="button"
+            (click)="onShowAddCaseChargeModal()"
+            label="Add Case Charge"
+            icon="ui-icon-add"
+            class="ui-button-secondary mr-15" pButton></button>
 
-  </div> 
+        <button type="button"
+            (click)="createParty()"
+            label="Create Party"
+            icon="ui-icon-add"
+            class="ui-button-secondary " pButton></button>
+      </div>
+
+      <!-- CASE SAVE BUTTON -->
+      <div class="ui-g-12 ta-r">
+        <button type="button"
+            (click)="saveCase()"
+            label="Save Case"
+            icon="ui-icon-check"
+            class="" pButton></button>
+      </div>
+
+    </div>
+  </div>
   <!-- //END FISRT CARD -->
+
 
   <!-- SECOND CARD - TAB SECTION -->
   <div class="ui-g-12 card">
@@ -187,20 +228,20 @@
             </div>
             <div class="ui-g-12 ui-md-6">
               <label class="minimal primary block">Category Filter</label>
-              <p-dropdown 
+              <p-dropdown
                   placeholder="category filter..."
                   [options]="case.court.eventTypes"
                   [(ngModel)]="case.eventType"
                   optionLabel="eventTypeName"
                   (onChange)="ddOnChange($event)"
                   styleClass="width-full">
-              </p-dropdown>  
+              </p-dropdown>
             </div>
-            
+
             <div class="ui-g-12">
-              <p-dataTable [value]="case.caseEvents" 
-                          selectionMode="single" 
-                          [(selection)]="selectedCaseEvent" 
+              <p-dataTable [value]="case.caseEvents"
+                          selectionMode="single"
+                          [(selection)]="selectedCaseEvent"
                           (onRowSelect)="caseEventOnRowSelect($event)"
                           dataKey="caseEventOID" #dtCaseEvents>
                 <p-column field="eventDate" header="Date/Time" [style]="{'width':'13%'}">
@@ -218,7 +259,7 @@
                     </ng-template>
                 </p-column>
               </p-dataTable>
-      
+
             </div>
             <div class="ui-g-12">
               <button type="button"
@@ -238,11 +279,11 @@
             <div class="ui-g-12">
               <h2>Tasks</h2>
             </div>
-            
+
             <div class="ui-g-12">
-              <p-dataTable [value]="case.caseTasks" 
-                          selectionMode="single" 
-                          [(selection)]="selectedTask" 
+              <p-dataTable [value]="case.caseTasks"
+                          selectionMode="single"
+                          [(selection)]="selectedTask"
                           (onRowSelect)="taskOnRowSelect($event)"
                           dataKey="taskOID" #dtTasks>
                 <p-column field="dueDate" header="Due Date" [style]="{'width':'13%'}">
@@ -258,7 +299,7 @@
                       </span>
                       <span *ngIf="item.assignedPool.poolOID">
                         {{ 'Pool: ' + item.assignedPool.poolName }}
-                      </span>                    
+                      </span>
                   </ng-template>
                 </p-column>
                 <p-column field="taskType.name" header="Task Type" [style]="{'width':'38%'}"></p-column>
@@ -268,7 +309,7 @@
                     </ng-template>
                 </p-column>
               </p-dataTable>
-      
+
             </div>
             <div class="ui-g-12">
               <button type="button"
@@ -279,7 +320,7 @@
             </div>
           </div>
         </p-tabPanel>
-        
+
         <!-- DOCUMENTS TAB  -->
 
         <p-tabPanel header="Documents" leftIcon="ui-icon-insert-drive-file" >
@@ -291,14 +332,14 @@
                 <div class="ui-g-12 ui-md-3">
                     <label class="minimal primary block">Generate Document</label>
                     <!-- TODO: Get document types lookup data -->
-                    <p-dropdown 
+                    <p-dropdown
                         placeholder="document type..."
                         [options]=""
                         [(ngModel)]="documentTemplateTypes"
                         optionLabel="eventTypeName"
                         (onChange)="ddOnChange($event)"
                         styleClass="width-full">
-                    </p-dropdown> 
+                    </p-dropdown>
                 </div>
                 <div class="ui-g-12 ui-md-3 pb-0">
                     <button type="button"
@@ -309,11 +350,11 @@
 
                 </div>
             </div>
-            
+
             <div class="ui-g-12">
-                <p-dataTable [value]="case.caseDocs" 
-                            selectionMode="single" 
-                            [(selection)]="selectedDoc" 
+                <p-dataTable [value]="case.caseDocs"
+                            selectionMode="single"
+                            [(selection)]="selectedDoc"
                             (onRowSelect)="docOnRowSelect($event)"
                             dataKey="documentOID" #dtDocs>
                     <p-column field="lastUpdateDate" header="Document Date" [style]="{'width':'25%'}">
@@ -329,12 +370,12 @@
                         </ng-template>
                     </p-column>
                 </p-dataTable>
-        
+
             </div>
-            
+
         </div>
         </p-tabPanel>
-        
+
         <!-- HEARINGS TAB -->
 
         <p-tabPanel header="Hearings" leftIcon="ui-icon-gavel" >
@@ -342,11 +383,11 @@
                 <div class="ui-g-12">
                     <h2>Hearings</h2>
                 </div>
-                
+
                 <div class="ui-g-12">
-                    <p-dataTable [value]="case.caseHearings" 
-                                selectionMode="single" 
-                                [(selection)]="selectedHearing" 
+                    <p-dataTable [value]="case.caseHearings"
+                                selectionMode="single"
+                                [(selection)]="selectedHearing"
                                 (onRowSelect)="hearingOnRowSelect($event)"
                                 dataKey="caseHearingOID" #dtHearings>
                         <p-column field="startDateTime" header="Start Date/Time" [style]="{'width':'20%'}">
@@ -359,7 +400,7 @@
                                 {{item.endDateTime | date:'medium'}}
                             </ng-template>
                         </p-column>
-                        
+
                         <p-column field="hearingType.hearingName" header="Hearing Type" [style]="{'width':'20%'}"></p-column>
                         <p-column field="courtLoc.locationID" header="Location" [style]="{'width':'17%'}"></p-column>
                         <p-column field="" header="Assigned" [style]="{'width':'17%'}">
@@ -373,7 +414,7 @@
                             </ng-template>
                         </p-column>
                     </p-dataTable>
-            
+
                 </div>
                 <div class="ui-g-12">
                     <button type="button"
@@ -384,18 +425,18 @@
                 </div>
             </div>
         </p-tabPanel>
-        
+
         <!-- JUDICIAL ASSIGNMENTS TAB -->
 
         <p-tabPanel header="Judicial Assignments" leftIcon="ui-icon-gavel" >
             <div class="ui-g">
                 <div class="ui-g-12">
                     <h2>Judicial Assignments</h2>
-                </div>                
+                </div>
                 <div class="ui-g-12">
-                    <p-dataTable [value]="case.judicialAssignments" 
-                                selectionMode="single" 
-                                [(selection)]="selectedJudicialAssignment" 
+                    <p-dataTable [value]="case.judicialAssignments"
+                                selectionMode="single"
+                                [(selection)]="selectedJudicialAssignment"
                                 (onRowSelect)="judicialAssignmentOnRowSelect($event)"
                                 dataKey="judicialAssignmentOID" #dtJudicialAssignment>
                         <p-column field="" header="Start Date/Time" [style]="{'width':'20%'}">
@@ -407,7 +448,7 @@
                             <ng-template pTemplate="body" let-item="rowData">
                                 {{item.endDate | date:'medium'}}
                             </ng-template>
-                        </p-column>                        
+                        </p-column>
                         <p-column field="" header="Assigned" [style]="{'width':'17%'}">
                             <ng-template pTemplate="body" let-item="rowData">
                                 {{ item.judicialOfficer.firstName + ' ' + item.judicialOfficer.lastName }}
@@ -418,7 +459,7 @@
                                 <i class="material-icons" (click)="requestViewJudicialAssignment(item)">search</i>
                             </ng-template>
                         </p-column>
-                    </p-dataTable>            
+                    </p-dataTable>
                 </div>
                 <div class="ui-g-12">
                     <button type="button"
@@ -436,3 +477,119 @@
   <!-- //END SECOND CARD - TAB SECTION -->
 
 </div>
+
+
+<!-- ADD CASE CHARGE MODAL -->
+
+<p-dialog header="Add Case Charge" width="450" [(visible)]="showModalAddCaseCharge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+  <form (ngSubmit)="saveCaseCharge()" #caseChargeForm="ngForm" novalidate>
+    <div class="ui-g">
+      <div class="form-group" >
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Section</label>
+          <p-dropdown
+              placeholder="choose Section..."
+              name="ddSection"
+              [options]="sectionTypes"
+              optionLabel="name"
+              [(ngModel)]="selectedSectionType"
+              (onChange)="sectionTypeOnChange($event)"
+              styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Division</label>
+            <p-dropdown
+                placeholder="choose Division..."
+                name="ddDivision"
+                [options]="divisionTypes"
+                optionLabel="name"
+                [(ngModel)]="selectedDivisionType"
+                (onChange)="divisionTypeOnChange($event)"
+                styleClass="width-full">
+            </p-dropdown>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Group</label>
+          <p-dropdown
+              placeholder="choose Group..."
+              name="ddGroup"
+              [options]="groupTypes"
+              optionLabel="name"
+              [(ngModel)]="selectedGroupType"
+              (onChange)="groupTypeOnChange($event)"
+              styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Class</label>
+          <p-dropdown
+              placeholder="choose Class..."
+              name="ddClass"
+              [options]="classTypes"
+              optionLabel="name"
+              [(ngModel)]="selectedClassType"
+              (onChange)="classTypeOnChange($event)"
+              styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Charge/Law</label>
+          <p-dropdown
+              [required]="lastSelectedTypeLocalCharges.length > 0 ? true : undefined"
+              placeholder="choose Charge/Law..."
+              name="ddChargeLaw"
+              [options]="chargeLawTypes"
+              optionLabel="name"
+              [(ngModel)]="selectedChargeLawType"
+              (onChange)="chargeLawTypeOnChange($event)"
+              styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+        <div class="ui-g-12">
+          <label class="minimal primary block" for="tiLea">LEA Lead Charge</label>
+          <textarea id="tiLea"
+                    name="tiLea"
+                    [(ngModel)]="leaLeadChargeText"
+                    [rows]="2"
+                    pInputTextarea
+                    autoResize="autoResize"
+                    class="width-full"></textarea>
+        </div>
+
+        <div class="ui-g-12 ">
+          <label class="minimal primary block">Charge Factors</label>
+          <span class="ui-fluid">
+            <p-autoComplete
+                field="name"
+                name="acChargeFactors"
+                [(ngModel)]="selectedChargeFactors"
+                [suggestions]="filteredChargeFactorTypes"
+                (completeMethod)="getChargeFactorsToFilter($event)"
+                styleClass="width-full"
+                [minLength]="1"
+                placeholder="select Charge Factors"
+                [dropdown]="true"
+                [multiple]="true">
+            </p-autoComplete>
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+            <button label="Cancel" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+            <button label="Save"   type="submit" pButton icon="fa-check" (click)="saveCaseCharge()" ></button>
+        </div>
+    </p-footer>
+
+  </form>
+</p-dialog>
