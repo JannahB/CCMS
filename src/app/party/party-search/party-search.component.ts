@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PartyService } from '../../common/services/http/party.service';
+import { Party } from '../../common/entities/Party';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-party-search',
@@ -8,19 +10,32 @@ import { PartyService } from '../../common/services/http/party.service';
 })
 export class PartySearchComponent implements OnInit {
 
-  public partyNameText:string = "";
+  partyNameText:string = "";
+  partyResults: Party[]
 
   constructor(
-    private partyService:PartyService
+    private partyService:PartyService,
+    private router:Router
   ) { }
 
   ngOnInit() {
   }
 
   public onSearch():void{
+    let obj = { "partyName": this.partyNameText };
     this.partyService
-      .fetch(this.partyNameText)
-      .subscribe();
+      .fetchAny(obj)
+      .subscribe((result) => {
+        this.partyResults = result;
+      });
+  }
+
+  partyOnRowSelect(event) {
+    console.log(event)
+    let partyId = event.data.partyOID;
+
+    this.router.navigate(['/party-detail', partyId ]);
+
   }
 
 }

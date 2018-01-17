@@ -24,17 +24,30 @@ export class PartyService extends HttpBaseService<Party> {
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
   }
 
-  public fetch(partyName:string):Observable<Party[]>{
+  // public fetch(partyName:string):Observable<Party[]>{
+  //   let url: string = this.getBaseUrl();
+
+  //   return this.http.post<Party[]>(url,
+  //     {
+  //       partyName: partyName
+  //     },
+  //     {
+  //       headers: {
+  //         uiVersion: "2"
+  //       }
+  //     })
+  //     .map(res => {
+  //       let parties:Party[] = res;
+  //       return this.convertDates(parties);
+  //     })
+  // }
+
+  public fetchAny(obj:any):Observable<Party[]>{
     let url: string = this.getBaseUrl();
 
-    return this.http.post<Party[]>(url, 
+    return this.http.post<Party[]>(url, obj,
       {
-        partyName: partyName
-      }, 
-      { 
-        headers: {
-          uiVersion: "2"
-        }
+        headers: { uiVersion: "2" }
       })
       .map(res => {
         let parties:Party[] = res;
@@ -42,15 +55,19 @@ export class PartyService extends HttpBaseService<Party> {
       })
   }
 
-  public get():Observable<Party[]>{
-    let url:string = this.getBaseUrl();
+  public fetchOne(id:string):Observable<Party>{
+    let url: string = this.getBaseUrl();
 
-    return this.http.get<Party[]>(url)
+    return this.http.post<Party>(url,
+      { partyOID : id },
+      {
+        headers: { uiVersion: "2" }
+      })
       .map(res => {
-        let parties:Party[] = res;
-        
-        return this.convertDates(parties);
-      });
+        let party:Party = res[0];
+        party = this.convertDates([party])[0];
+        return party;
+      })
   }
 
   public getMock():Observable<Party[]>{
@@ -81,7 +98,7 @@ export class PartyService extends HttpBaseService<Party> {
 
     parties.forEach( p => {
       p.dob = DateConverter.convertDate(p.dob);
-      
+
       let idents:Identifier[] = p.identifiers;
       if(idents) {
         idents.forEach( idf => {

@@ -4,29 +4,34 @@
     <div class="ui-g-12 pv-0">
       <h1 class="page-header mt-0">Search Party</h1>
     </div>
-  
+
     <!-- FIRST SECTION -->
     <div class="ui-g-12 card">
-  
-      <div class="form-group mt-20" >
-        <div class="ui-g-12 ph-30 big-search">
-            <span class="md-inputfield">
-                <input [(ngModel)]="partyNameText" type="text" class="width-full"  pInputText>
-                <label>First or Last Name (partial)</label>
-            </span>
+
+      <form (ngSubmit)="onSearch()" #searchForm="ngForm" novalidate>
+
+        <div class="form-group mt-20" >
+          <div class="ui-g-12 ph-30 big-search">
+              <span class="md-inputfield">
+                  <input [(ngModel)]="partyNameText" name="tiName" type="text" class="width-full"  pInputText>
+                  <label>First or Last Name (partial)</label>
+              </span>
+          </div>
+
+
+          <!-- SEARCH BUTTONS -->
+          <div class="ui-g-12 mt-20 ta-c">
+            <button type="submit" label="Search" icon="ui-icon-search" class="mr-20" pButton></button>
+
+            <button type="button" (click)="onReset()" label="Reset" icon="ui-icon-autorenew" class="ui-button-secondary " pButton></button>
+          </div>
+
         </div>
-  
-  
-        <!-- SEARCH BUTTONS -->
-        <div class="ui-g-12 mt-20 ta-c">
-          <button type="button" (click)="onSearch()" label="Search" icon="ui-icon-search" class="mr-20" pButton></button>
-  
-          <button type="button" (click)="onReset()" label="Reset" icon="ui-icon-autorenew" class="ui-button-secondary " pButton></button>
-        </div>
-  
-        <!-- CASE PARTIES TABLE -->
-  
-        <div class="ui-g-12 mv-20">
+      </form>
+
+      <!-- CASE PARTIES TABLE -->
+
+      <div class="ui-g-12 mv-20">
           <h2>Search Party Results</h2>
           <p-dataTable [value]="partyResults" selectionMode="single" [(selection)]="selectedParty" (onRowSelect)="partyOnRowSelect($event)"
             dataKey="partyOID" #dtPartyResults>
@@ -47,8 +52,6 @@
           <button type="button" (click)="onNewParty()" label="New Party" icon="ui-icon-add" pButton></button>
         </div>
 
-
-      </div>
     </div>
     <!-- //END FISRT CARD -->
   </div>
