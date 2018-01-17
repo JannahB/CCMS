@@ -146,9 +146,8 @@
               </p-column>
           </p-dataTable>
         </div>
-        <div class="ui-g-12">
+        <div class="ui-g-12" *ngIf="!newIdentifierMode">
           <button type="button"
-              *ngIf="!newIdentifierMode"
               (click)="newIdentifier()"
               label="Add Identifier"
               icon="ui-icon-add"
@@ -156,7 +155,7 @@
         </div>
 
         <div class="ui-g-12" *ngIf="selectedIdentifier">
-          <h3>{{ newIdentifierMode ? 'New' : 'Edit'}} Identifier</h3>
+          <h3 class="mt-0">{{ newIdentifierMode ? 'New' : 'Edit'}} Identifier</h3>
 
           <div class="ui-g-12 ui-md-6">
               <div class="ui-g-12 mb-20">
@@ -261,9 +260,8 @@
               </p-column>
           </p-dataTable>
         </div>
-        <div class="ui-g-12">
+        <div class="ui-g-12" *ngIf="!newEmailMode">
           <button type="button"
-              *ngIf="!newEmailMode"
               (click)="newEmail()"
               label="Add Email"
               icon="ui-icon-add"
@@ -271,7 +269,7 @@
         </div>
 
         <div class="ui-g-12" *ngIf="selectedEmail">
-          <h3>{{ newEmailMode ? 'New' : 'Edit'}} Email</h3>
+          <h3 class="mt-0">{{ newEmailMode ? 'New' : 'Edit'}} Email</h3>
 
           <div class="ui-g-12 ui-md-6">
             <div class="ui-g-12 mb-20">
@@ -365,9 +363,8 @@
               </p-column>
           </p-dataTable>
         </div>
-        <div class="ui-g-12">
+        <div class="ui-g-12" *ngIf="!newPhoneMode">
           <button type="button"
-              *ngIf="!newPhoneMode"
               (click)="newPhone()"
               label="Add Phone"
               icon="ui-icon-add"
@@ -375,7 +372,7 @@
         </div>
 
         <div class="ui-g-12" *ngIf="selectedPhone">
-          <h3>{{ newPhoneMode ? 'New' : 'Edit'}} Phone</h3>
+          <h3 class="mt-0">{{ newPhoneMode ? 'New' : 'Edit'}} Phone</h3>
 
           <div class="ui-g-12 ui-md-6">
             <div class="ui-g-12 mb-20">
@@ -472,9 +469,8 @@
               </p-column>
           </p-dataTable>
         </div>
-        <div class="ui-g-12">
+        <div class="ui-g-12" *ngIf="!newAddressMode">
           <button type="button"
-              *ngIf="!newAddressMode"
               (click)="newAddress()"
               label="Add Address"
               icon="ui-icon-add"
@@ -482,7 +478,7 @@
         </div>
 
         <div class="ui-g-12" *ngIf="selectedAddress">
-          <h3>{{ newAddressMode ? 'New' : 'Edit'}} Address</h3>
+          <h3 class="mt-0">{{ newAddressMode ? 'New' : 'Edit'}} Address</h3>
 
           <div class="ui-g-12">
             <div class="ui-g-12 ui-md-4 mb-20">
