@@ -32,18 +32,21 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   addressTypes:SelectItem[];
   selectedAddress: Address;
+  addressToDelete:Address;
   selectedAddressCopy: Address;
   countries:SelectItem[];
   countriesSubscription: Subscription;
   emailTypes:SelectItem[];
   selectedEmail:Email;
+  emailToDelete:Email;
   selectedEmailCopy: Email;
   filteredLanguages:string[];
   genderTypes:any[];
   genericSubsciption: Subscription;
   selectedIdentifier:Identifier;
+  identifierToDelete: Identifier;
   selectedIdentifierCopy: Identifier;
-  identifierTypes:Identifier[];
+  identifierTypes: Identifier[];
   identifierTypeOptions: SelectItem[];
   identifierSubscription: Subscription;
   languages:Language[];
@@ -52,6 +55,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   partySubscription: Subscription;
   phoneTypes:SelectItem[];
   selectedPhone: PhoneNumber;
+  phoneToDelete: PhoneNumber;
   selectedPhoneCopy: PhoneNumber;
 
   newEmailMode: boolean = false;
@@ -181,6 +185,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     --------------------  */
   savePartyDetails() {
     // TODO: Save Party functionality
+      this.saveParty();
   }
 
   /* -------------------
@@ -202,13 +207,20 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.selectedIdentifier.identifierType = event.value;
   }
 
-  requestDeleteIdentifier() {
+  requestDeleteIdentifier(identifier:Identifier) {
     this.showDeleteIdentifierModal = true;
+    this.identifierToDelete = identifier;
   }
 
   deleteIdentifier() {
     this.showDeleteIdentifierModal = false;
-    // TODO: Process delete
+    
+    this.removeArrayItem(this.party.identifiers, this.identifierToDelete);
+    this.saveParty(false);
+    this.identifierToDelete = null;
+    this.selectedIdentifierCopy = null;
+    this.selectedIdentifier = null;
+    this.newIdentifierMode = false;
   }
 
   cancelIdentifierEdit() {
@@ -231,9 +243,8 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   saveIdentifier() {
     this.newIdentifierMode = false;
 
-    // TODO: Process save
-    //
     this.selectedIdentifier = null;
+    this.saveParty();
   }
 
   /* -------------------
@@ -255,13 +266,20 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       this.selectedEmail.emailAddressType = event.value;
     }
 
-    requestDeleteEmail() {
+    requestDeleteEmail(email:Email) {
       this.showDeleteEmailModal = true;
+      this.emailToDelete = email;
     }
 
     deleteEmail() {
       this.showDeleteEmailModal = false;
-      // TODO: Process delete
+      
+      this.removeArrayItem(this.party.emails, this.emailToDelete);
+      this.saveParty(false);
+      this.emailToDelete = null;
+      this.selectedEmailCopy = null;
+      this.selectedEmail = null;
+      this.newEmailMode = false;
     }
 
     cancelEmailEdit() {
@@ -282,8 +300,8 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     saveEmail() {
       this.newEmailMode = false;
 
-      // TODO: Process save
       this.selectedEmail = null;
+      this.saveParty();
     }
 
 
@@ -306,12 +324,19 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       this.selectedPhone.phoneType = event.value;
     }
 
-    requestDeletePhone() {
+    requestDeletePhone(phone:PhoneNumber) {
       this.showDeletePhoneModal = true;
+      this.phoneToDelete = phone;
     }
     deletePhone() {
       this.showDeletePhoneModal = false;
-      // TODO: Process delete
+      
+      this.removeArrayItem(this.party.phoneNumbers, this.phoneToDelete);
+      this.saveParty(false);
+      this.phoneToDelete = null;
+      this.selectedPhoneCopy = null;
+      this.selectedPhone = null;
+      this.newPhoneMode = false;
     }
 
 
@@ -333,9 +358,8 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     savePhone() {
       this.newPhoneMode = false;
 
-      // TODO: Process save
-      //
       this.selectedPhone = null;
+      this.saveParty();
     }
 
 
@@ -362,12 +386,19 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       this.selectedAddress.countryName = event.value;
     }
 
-    requestDeleteAddress() {
+    requestDeleteAddress(address:Address) {
       this.showDeleteAddressModal = true;
+      this.addressToDelete = address;
     }
     deleteAddress() {
       this.showDeleteAddressModal = false;
-      // TODO: Process delete
+      
+      this.removeArrayItem(this.party.addresses, this.addressToDelete);
+      this.saveParty(false);
+      this.addressToDelete = null;
+      this.selectedAddressCopy = null;
+      this.selectedAddress = null;
+      this.newAddressMode = false;
     }
 
     cancelAddressEdit() {
@@ -388,9 +419,9 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     saveAddress() {
       this.newAddressMode = false;
 
-      // TODO: Process save
-      //
       this.selectedAddress = null;
+
+      this.saveParty();
     }
 
     hideModals(){
@@ -408,5 +439,24 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       {label:'M', value:'M'}, {label:'F', value:'F'},
     ];
 
+  }
+
+  private saveParty(shouldShowSuccessMessage:boolean = true):void{
+    this.partySvc
+      .saveParty(this.party)
+      .subscribe(result => {
+        console.log("Party saved");
+        this.party = result;
+        if(shouldShowSuccessMessage){
+          this.toastSvc.showSuccessMessage('Party Saved!');
+        }
+      });
+  }
+
+  private removeArrayItem<T>(array:T[], item:T):void{
+    var index = array.indexOf(item);
+    if (index > -1) {
+       array.splice(index, 1);
+    }
   }
 }
