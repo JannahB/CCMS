@@ -39,34 +39,38 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     private activatedRoute:ActivatedRoute,
     private breadCrumbSvc: BreadcrumbService,
     private caseSvc: CaseService
-  ) { 
+  ) {
     this.breadCrumbSvc.setItems([
       { label: 'Case', routerLink: ['/case-detail'] }
     ]);
   }
 
   ngOnInit() {
-    
+
     let params:any = this.activatedRoute.params;
     let caseId:string = params.value.caseId;
     if(parseInt(caseId) == 0) {
-      this.case = new Case();
+      // TODO: Create New Case with empty properties;
+      // new'ing doesn't bring properties w/o constructor on entity!?
+      // this.case = new Case();
+
+      // this is temp until empty new Case()
+      this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe (kase => {
+        this.case = kase;
+      })
     }
 
-    // FETCH CASE Call when API calls are ready
-    // this.caseSubscription = this.partySvc.fetch(partyId).subscribe (parties => {
-    //   this.party = parties[0];
-    // })
 
     this.caseSubscription = this.caseSvc.getOneMock(caseId).subscribe (kase => {
       this.case = kase;
     })
+
   }
 
   ngOnDestroy() {
-    
+
     if (this.caseSubscription) this.caseSubscription.unsubscribe();
-    
+
   }
 
 

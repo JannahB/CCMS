@@ -77,7 +77,7 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http.get<Case[]>(url)
       .map(res => {
         let cases:Case[] = res;
-        
+
         return this.convertDates(cases);
       });
   }
@@ -103,10 +103,10 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   private convertDates(cases:Case[]){
-    if(!cases) return;
+    if(!cases || Object.keys(cases).length === 0) return;
     cases.forEach( kase => {
       kase.caseFilingDate = DateConverter.convertDate(kase.caseFilingDate);
-      
+
       let caseDocs:CaseDocument[] = kase.caseDocs;
       if(caseDocs) {
         caseDocs.forEach( cd => {
@@ -115,23 +115,23 @@ export class CaseService extends HttpBaseService<Case> {
           cd.lastUpdateDate = DateConverter.convertDate(cd.lastUpdateDate);
         })
       }
-      
+
       let caseEvents: CaseEvent[] = kase.caseEvents;
       if(caseEvents) {
         caseEvents.forEach( ce => {
           ce.eventDate = DateConverter.convertDate(ce.eventDate);
         })
       }
-      
+
       // TODO: This needs work after CaseHearings entity changes are made
       // let caseHearings: CaseHearing[] = kase.caseHearings.hearing;
 
-      
+
       let caseParties: Party[] = kase.caseParties;
       if(caseParties) {
         caseParties.forEach( cp => {
           cp.dob = DateConverter.convertDate(cp.dob);
-  
+
           let idents:Identifier[] = cp.identifiers;
           if(idents) {
             idents.forEach( idf => {
@@ -170,7 +170,7 @@ export class CaseService extends HttpBaseService<Case> {
           ct.dueDate = DateConverter.convertDate(ct.dueDate);
         })
       }
-      
+
 
     })
     return cases;

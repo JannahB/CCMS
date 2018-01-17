@@ -12,7 +12,7 @@ export class LookupService {
   public static authenticationToken:string = null;
 
   protected getBaseUrl():string{
-    return `${environment.apiUrl}/api`;
+    return `${environment.apiUrl}`;
   }
 
   protected getBaseMockUrl():string{
@@ -24,11 +24,22 @@ export class LookupService {
 
 
   public fetchLookup<T>(endpoint: string):Observable<T[]> {
-    let url: string = this.getBaseUrl() + endpoint;
+    let url: string = this.getBaseUrl() +'/'+ endpoint;
 
     return this.http.get<T[]>(url);
   }
 
+  public fetchPhaseByTypeLookup<T>(caseTypeOID):Observable<T[]> {
+    let url: string = this.getBaseUrl() + '/FetchPhaseByType';
+
+    return this.http.post<T[]>(
+      url,
+      { typeOID: caseTypeOID },
+      { headers:
+        { uiVersion: "2" }
+      }
+    );
+  }
 
   public getMock(fileName) {
     let url: string = this.getBaseMockUrl() + fileName;

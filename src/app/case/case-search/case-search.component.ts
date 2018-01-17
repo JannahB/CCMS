@@ -1,3 +1,5 @@
+import { DropdownDataTransformService } from './../../common/services/utility/dropdown-data-transform.service';
+import { SelectItem } from 'primeng/primeng';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -7,6 +9,9 @@ import { CaseType } from './../../common/entities/CaseType';
 import { CasePhase } from '../../common/entities/CasePhase';
 import { CaseStatus } from '../../common/entities/CaseStatus';
 import { CasePartyRole } from '../../common/entities/CasePartyRole';
+import { LookupService } from '../../common/services/http/lookup.service';
+import { Subscription } from 'rxjs/Subscription';
+import { ToastService } from '../../common/services/utility/toast.service';
 
 @Component({
   selector: 'app-case-search',
@@ -22,44 +27,95 @@ export class CaseSearchComponent implements OnInit {
   selectedCaseStatusType: CaseStatus;
   selectedCasePartyRoleType: CasePartyRole;
 
-  caseTypes: CaseType[];
-  casePhaseTypes: CasePhase[];
-  caseStatusTypes: CaseStatus[];
-  casePartyRoleTypes: CasePartyRole[];
   caseResults: Case [];
+  caseTypes: CaseType[];
+  caseTypeOptions: SelectItem[];
+  casePhaseTypes: CasePhase[];
+  casePhaseTypeOptions: SelectItem[];
+  caseStatusTypes: CaseStatus[];
+  caseStatusTypeOptions: SelectItem[];
+  casePartyRoleTypes: CasePartyRole[];
+  casePartyRoleTypeOptions: SelectItem[];
+
+  caseSubsciption: Subscription;
+  caseTypesSubscription: Subscription;
+  casePhaseTypesSubscription: Subscription;
+  caseStatusTypesSubscription: Subscription;
+  casePartyRoleTypesSubscription: Subscription;
+
 
   constructor(
     private caseSvc: CaseService,
+    private lookupSvc: LookupService,
+    private dropdownSvc: DropdownDataTransformService,
+    private toastSvc: ToastService,
     private router:Router
   ) { }
 
   ngOnInit() {
+
+    this.caseTypesSubscription = this.lookupSvc.fetchLookup<CaseType>('FetchCaseType').subscribe(items => {
+      this.caseTypes = items;
+    });
+
+    this.caseStatusTypesSubscription = this.lookupSvc.fetchLookup<CaseStatus>('FetchCaseStatus').subscribe(items => {
+      this.caseStatusTypes = items;
+    });
+
+    this.casePartyRoleTypesSubscription = this.lookupSvc.fetchLookup<CasePartyRole>('FetchCasePartyRole').subscribe(items => {
+      this.casePartyRoleTypes = items;
+    });
+
+  }
+
+  // This call is chained depency of CaseType Selection and needs caseTypeOID passed in
+  onCaseTypeSelect(event) {
+    let typeOID = event.value.caseTypeOID.toString(); // TODO: Verify this is event.value
+    this.casePhaseTypesSubscription = this.lookupSvc.fetchPhaseByTypeLookup<CasePhase>(typeOID).subscribe(items => {
+      this.casePhaseTypes = items;
+    });
+
   }
 
   onSearch() {
     let obj = {};
-    if(this.caseNumberText != '') obj = {...obj, caseNumber: this.caseNumberText };
-    if(this.casePartyNameText != '') obj = {...obj, casePartyName: this.casePartyNameText};
+    if(this.caseNumberText && this.caseNumberText != '') obj = {...obj, caseNumber: this.caseNumberText };
+    if(this.casePartyNameText && this.casePartyNameText != '') obj = {...obj, casePartyName: this.casePartyNameText};
+    if(this.selectedCaseType) obj = {...obj, caseType: this.selectedCaseType.caseTypeOID.toString() };
+    if(this.selectedCasePhaseType) obj = {...obj, casePhase: this.selectedCasePhaseType.casePhaseOID.toString()};
+    if(this.selectedCaseStatusType) obj = {...obj, caseStatus: this.selectedCaseStatusType.statusOID.toString()};
+    if(this.selectedCasePartyRoleType) obj = {...obj, casePartyRoleOID: this.selectedCasePartyRoleType.casePartyRoleOID.toString()};
 
-    // TODO: These 4 need to be checked for accuracy and activated
-    // if(this.selectedCaseType) obj = {...obj, caseNumber: this.caseNumberText };
-    // if(this.selectedCasePhaseType) obj = {...obj, casePhase: this.selectedCasePhaseType};
-    // if(this.selectedCaseStatusType) obj = {...obj, caseStatus: this.selectedCaseStatusType};
-    // if(this.selectedCasePartyRoleType) obj = {...obj, casePartyRoleOID: this.selectedCasePartyRoleType};
+    if(Object.keys(obj).length === 0) {
+      this.toastSvc.showInfoMessage('Please enter/select criteria and try again.', 'Criteria Needed')
+      return;
+    }
 
     this.caseSvc
       .fetchAny(obj)
       .subscribe((result) => {
+        if(!result) {
+          this.toastSvc.showInfoMessage('Please alter search criteria and try again.', 'No Results');
+        }
         this.caseResults = result;
       });
 
   }
 
-  partyOnRowSelect(event) {
-    console.log(event)
-    let partyId = event.data.partyOID;
+  onReset() {
+    this.caseNumberText = null;
+    this.casePartyNameText = null;
+    this.selectedCaseType = null;
+    this.selectedCasePhaseType = null;
+    this.selectedCaseStatusType = null;
+    this.selectedCasePartyRoleType = null;
+  }
 
-    this.router.navigate(['/party-detail', partyId ]);
+  caseOnRowSelect(event) {
+    console.log(event)
+    let caseId = event.data.caseOID;
+
+    this.router.navigate(['/case-detail', caseId ]);
 
   }
 

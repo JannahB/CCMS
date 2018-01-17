@@ -28,7 +28,7 @@ export const routes: Routes = [
     {path: 'login', component: LoginComponent },
     {path: 'party-detail/:partyId', component: PartyDetailComponent},
     {path: 'party-search', component: PartySearchComponent},
-    {path: 'case', component: CaseDetailComponent},
+    {path: 'case-detail/:caseId', component: CaseDetailComponent},
     {path: 'case-search', component: CaseSearchComponent},
     {path: 'admin-data', component: AdminDataComponent},
     {path: 'admin-workflow', component: AdminWorkflowComponent},
