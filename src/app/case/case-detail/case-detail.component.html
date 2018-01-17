@@ -491,12 +491,17 @@
           <p-dropdown
               placeholder="choose Section..."
               name="ddSection"
+              [required]="true"
               [options]="sectionTypes"
               optionLabel="name"
               [(ngModel)]="selectedSectionType"
               (onChange)="sectionTypeOnChange($event)"
               styleClass="width-full">
           </p-dropdown>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddSection.errors?.required && ddSection.touched" >
+                Section is required
+          </div>
         </div>
 
         <div class="ui-g-12 mb-0">
@@ -550,17 +555,26 @@
               (onChange)="chargeLawTypeOnChange($event)"
               styleClass="width-full">
           </p-dropdown>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddChargeLaw.errors?.required && ddChargeLaw.touched" >
+                Charge/Law is required
+          </div>
         </div>
 
         <div class="ui-g-12">
           <label class="minimal primary block" for="tiLea">LEA Lead Charge</label>
           <textarea id="tiLea"
                     name="tiLea"
+                    [required]="true"
                     [(ngModel)]="leaLeadChargeText"
                     [rows]="2"
                     pInputTextarea
                     autoResize="autoResize"
                     class="width-full"></textarea>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiLea.errors?.required && tiLea.touched" >
+                LEA Lead Charge is required
+          </div>
         </div>
 
         <div class="ui-g-12 ">
