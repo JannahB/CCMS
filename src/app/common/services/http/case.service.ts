@@ -31,6 +31,36 @@ export class CaseService extends HttpBaseService<Case> {
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
   }
 
+
+  public fetchAny(obj:any):Observable<Case[]>{
+    let url: string = this.getBaseUrl();
+
+    return this.http.post<Case[]>(url, obj,
+      {
+        headers: { uiVersion: "2" }
+      })
+      .map(res => {
+        let cases:Case[] = res;
+        return this.convertDates(cases);
+      })
+  }
+
+  public fetchOne(id:string):Observable<Case>{
+    let url: string = this.getBaseUrl();
+
+    return this.http.post<Case>(url,
+      { caseOID : id },
+      {
+        headers: { uiVersion: "2" }
+      })
+      .map(res => {
+        let kase:Case = res[0];
+        kase = this.convertDates([kase])[0];
+        return kase;
+      })
+  }
+
+
   public fetch(body:any):Observable<Case[]>{
     let url: string = this.getBaseUrl();
 
