@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { SelectItem } from 'primeng/primeng';
@@ -77,7 +77,8 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     private dropdownSvc: DropdownDataTransformService,
     private partySvc: PartyService,
     private genericTypeSvc: GenericTypesService,
-    private countriesSvc: CountriesService
+    private countriesSvc: CountriesService,
+    private router:Router
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Party Detail', routerLink: ['/party-detail'] }
@@ -86,19 +87,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    let params:any = this.activatedRoute.params;
-    let partyId:string = params.value.partyId;
-
-    if(partyId == "0" || partyId == null) {
-      // TODO: Create New Party with empty properties;
-      // new'ing doesn't bring properties w/o constructor on entity!?
-      this.party = new Party();
-    } else {
-      this.partySubscription = this.partySvc.fetchOne(partyId).subscribe (party => {
-        this.party = party;
-      });
-
-    }
+    this.initializeParty();
 
     /// MOCK SUPPORT
     /*
@@ -136,6 +125,28 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
     this.buildRefData();
 
+    this.router.events
+      .subscribe( event => {
+        if(event instanceof NavigationEnd){
+          this.initializeParty();
+        }
+      })
+  }
+
+  private initializeParty():void{
+    let params:any = this.activatedRoute.params;
+    let partyId:string = params.value.partyId;
+
+    if(partyId == "0" || partyId == null) {
+      // TODO: Create New Party with empty properties;
+      // new'ing doesn't bring properties w/o constructor on entity!?
+      this.party = new Party();
+    } else {
+      this.partySubscription = this.partySvc.fetchOne(partyId).subscribe (party => {
+        this.party = party;
+      });
+
+    }
   }
 
   ngOnDestroy() {
@@ -446,9 +457,13 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       .saveParty(this.party)
       .subscribe(result => {
         console.log("Party saved");
+        let shouldRedirectToEditPartyRoute:boolean = !this.party.partyOID;
         this.party = result;
         if(shouldShowSuccessMessage){
           this.toastSvc.showSuccessMessage('Party Saved!');
+        }
+        if(shouldRedirectToEditPartyRoute){
+          this.router.navigate(["party-detail", this.party.partyOID]);
         }
       });
   }
