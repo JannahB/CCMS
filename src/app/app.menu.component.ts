@@ -19,40 +19,40 @@ export class AppMenuComponent implements OnInit {
     constructor(public app: AppComponent, private _state:GlobalState) {}
 
     ngOnInit() {
-        
+
         this._state.subscribe('theme.change', (theme) => {
             this.changeTheme(theme);
         });
 
         this.model = [
             {label: 'Dashboard', icon: 'dashboard', routerLink: ['/']},
-            {label: 'Case', icon: 'gavel',  
+            {label: 'Case', icon: 'gavel',
                 items: [
                     {label:'Search Case', icon:'search', routerLink: ['/case-search']},
-                    {label:'New Case', icon:'gavel', routerLink: ['/case']}, 
+                    {label:'New Case', icon:'gavel', routerLink: ['/case']},
                 ]},
-            {label: 'Party', icon: 'folder_shared',  
+            {label: 'Party', icon: 'folder_shared',
                 items: [
                     {label:'Search Party', icon:'search', routerLink: ['/party-search']},
-                    {label:'New Party', icon:'folder_shared', routerLink: ['/party-detail']}, 
+                    {label:'New Party', icon:'folder_shared', routerLink: ['/party-detail/0']},
                 ]},
             {label: 'Admin', icon: 'security',
                 items: [
                     {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
-                    {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin-workflow']}, 
-                    {label:'User Maintenance', icon:'account_box', routerLink: ['/admin-users']},                     
+                    {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin-workflow']},
+                    {label:'User Maintenance', icon:'account_box', routerLink: ['/admin-users']},
                 ]},
-            
+
             // {
             //     label: 'Themes', icon: 'palette', badge: '2',
             //     items: [
             //         {label: 'TT Blue', icon: 'brush', command: (event) => {this.changeTheme('tt'); }},
-            //         {label: 'TT Red', icon: 'brush', command: (event) => {this.changeTheme('tt2'); }},                    
+            //         {label: 'TT Red', icon: 'brush', command: (event) => {this.changeTheme('tt2'); }},
             //     ]
             // },
 
             /* Reference Section ----------- */
-            
+
             // { label: 'ref', icon: 'menu', items: [
             // {
             //     label: 'Themes', icon: 'palette', badge: '2',
@@ -163,7 +163,7 @@ export class AppMenuComponent implements OnInit {
         ];
     }
 
-    changeTheme(theme) { 
+    changeTheme(theme) {
         const themeLink: HTMLLinkElement = <HTMLLinkElement> document.getElementById('theme-css');
         const layoutLink: HTMLLinkElement = <HTMLLinkElement> document.getElementById('layout-css');
 
@@ -179,12 +179,12 @@ export class AppMenuComponent implements OnInit {
     template: `
         <ng-template ngFor let-child let-i="index" [ngForOf]="(root ? item : item.items)">
             <li [ngClass]="{'active-menuitem': isActive(i)}" [class]="child.badgeStyleClass" *ngIf="child.visible === false ? false : true">
-                <a [href]="child.url||'#'" 
-                        (click)="itemClick($event,child,i)" 
+                <a [href]="child.url||'#'"
+                        (click)="itemClick($event,child,i)"
                         (mouseenter)="onMouseEnter(i)"
-                        class="ripplelink" 
+                        class="ripplelink"
                         *ngIf="!child.routerLink"
-                        [attr.tabindex]="!visible ? '-1' : null" 
+                        [attr.tabindex]="!visible ? '-1' : null"
                         [attr.target]="child.target">
                     <i *ngIf="child.icon" class="material-icons">{{child.icon}}</i>
                     <span>{{child.label}}</span>
@@ -192,13 +192,13 @@ export class AppMenuComponent implements OnInit {
                     <i class="material-icons submenu-icon" *ngIf="child.items">keyboard_arrow_down</i>
                 </a>
 
-                <a (click)="itemClick($event,child,i)" 
-                        (mouseenter)="onMouseEnter(i)" 
-                        class="ripplelink" 
+                <a (click)="itemClick($event,child,i)"
+                        (mouseenter)="onMouseEnter(i)"
+                        class="ripplelink"
                         *ngIf="child.routerLink"
                         [routerLink]="child.routerLink" routerLinkActive="active-menuitem-routerlink"
-                        [routerLinkActiveOptions]="{exact: true}" 
-                        [attr.tabindex]="!visible ? '-1' : null" 
+                        [routerLinkActiveOptions]="{exact: true}"
+                        [attr.tabindex]="!visible ? '-1' : null"
                         [attr.target]="child.target">
                     <i *ngIf="child.icon" class="material-icons">{{child.icon}}</i>
                     <span>{{child.label}}</span>

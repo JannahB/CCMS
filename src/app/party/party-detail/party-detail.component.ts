@@ -29,7 +29,7 @@ import { CountriesService } from '../../common/services/http/countries.service';
 export class PartyDetailComponent implements OnInit, OnDestroy {
 
   lockApiCalls:boolean = false;
-  
+
   addressTypes:SelectItem[];
   selectedAddress: Address;
   selectedAddressCopy: Address;
@@ -42,7 +42,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   genderTypes:any[];
   genericSubsciption: Subscription;
   selectedIdentifier:Identifier;
-  selectedIdentifierCopy: Identifier; 
+  selectedIdentifierCopy: Identifier;
   identifierTypes:Identifier[];
   identifierTypeOptions: SelectItem[];
   identifierSubscription: Subscription;
@@ -54,9 +54,19 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   selectedPhone: PhoneNumber;
   selectedPhoneCopy: PhoneNumber;
 
-  constructor( 
+  newEmailMode: boolean = false;
+  newIdentifierMode: boolean = false;
+  newPhoneMode: boolean = false;
+  newAddressMode: boolean = false;
+
+  showDeleteIdentifierModal: boolean = false;
+  showDeleteEmailModal: boolean = false;
+  showDeletePhoneModal: boolean = false;
+  showDeleteAddressModal: boolean = false;
+
+  constructor(
     private activatedRoute: ActivatedRoute,
-    private breadCrumbSvc:BreadcrumbService, 
+    private breadCrumbSvc:BreadcrumbService,
     private toastSvc:ToastService,
     private languageSvc: LanguageService,
     private identifierSvc: IdentifierService,
@@ -75,19 +85,28 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     let params:any = this.activatedRoute.params;
     let partyId:string = params.value.partyId;
 
-    // FETCH Party Call when API calls are ready
-    // this.partySubscription = this.partySvc.fetch(partyId).subscribe (parties => {
-    //   this.party = parties[0];
-    // })
+    if(partyId == "0" || partyId == null) {
+      // TODO: Create New Party with empty properties;
+      // new'ing doesn't bring properties w/o constructor on entity!?
+      this.party = new Party();
+    } else {
+      this.partySubscription = this.partySvc.fetchOne(partyId).subscribe (party => {
+        this.party = party;
+      });
 
+    }
+
+    /// MOCK SUPPORT
+    /*
     this.partySubscription = this.partySvc.getOneMock(partyId).subscribe (party => {
       this.party = party;
     })
 
-    // this.partySubscription = this.partySvc.getMock().subscribe( parties => {
-    //   // TODO: Change this to support sinble party when wired to API
-    //   this.party = parties[1];
-    // });
+    this.partySubscription = this.partySvc.getMock().subscribe( parties => {
+      // TODO: Change this to support sinble party when wired to API
+      this.party = parties[1];
+    });
+    */
 
     this.languageSubscription = this.languageSvc.getMock().subscribe(langs => {
       this.languages = langs;
@@ -110,47 +129,32 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.countriesSubscription = this.countriesSvc.getMock().subscribe( countries => {
       this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
     })
-    
+
     this.buildRefData();
-    
+
   }
 
   ngOnDestroy() {
     if (this.languageSubscription) this.languageSubscription.unsubscribe();
     if(this.identifierSubscription) this.identifierSubscription.unsubscribe();
-    if(this.partySubscription) this.partySubscription.unsubscribe();  
+    if(this.partySubscription) this.partySubscription.unsubscribe();
     if(this.genericSubsciption) this.genericSubsciption.unsubscribe();
     if(this.countriesSubscription) this.countriesSubscription.unsubscribe();
   }
 
 
-  /* ------------------- 
+  /* -------------------
     General Details Methods
     --------------------  */
   calculateAge(dob) {
     if(!dob) return;
     return moment().diff(dob, 'years');
   }
-  
+
   genderTypesOnChange(event) {
     this.party.sex = event.value;
     // Persist party object
     this.toastSvc.showSuccessMessage('Party Saved!')
-  }
-
-
-  generalDetailsOnBlur(event) {
-    // validate profile
-    // let isValid = this.validateGeneralDetails(this.party);
-    // if(!isValid) return;
-
-    // // prevent multiple calls from being sent at same time
-    // if(this.lockApiCalls) return;
-    // this.lockApiCalls = true;
-
-    // // prepare and save
-    // let party = this.preparePartyForSave();
-    // this.persistParty(party);
   }
 
   getLangsToFilter(event) {
@@ -172,13 +176,19 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     return filtered;
   }
 
+  /* -------------------
+      General Details Party Methods
+    --------------------  */
+  savePartyDetails() {
+    // TODO: Save Party functionality
+  }
 
-  /* ------------------- 
-      Identifier Methods 
+  /* -------------------
+      Identifier Methods
     --------------------  */
   newIdentifier() {
+    this.newIdentifierMode = true;
     this.selectedIdentifier = new Identifier();
-    // this.selectedIdentifier.identifierValue = 'new value';
     this.party.identifiers.push(this.selectedIdentifier);
     this.party.identifiers = this.party.identifiers.slice();
   }
@@ -193,11 +203,17 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   }
 
   requestDeleteIdentifier() {
-    this.toastSvc.showInfoMessage('implement Delete functionality', 'TODO');
+    this.showDeleteIdentifierModal = true;
+  }
+
+  deleteIdentifier() {
+    this.showDeleteIdentifierModal = false;
+    // TODO: Process delete
   }
 
   cancelIdentifierEdit() {
-    if(!this.selectedIdentifier.partyIdentifierOID && this.selectedIdentifier.partyIdentifierOID < 0) {
+    this.newIdentifierMode = false;
+    if(!this.selectedIdentifier.partyIdentifierOID ) {
       // remove from datasource
       let list = this.party.identifiers;
       let i:number = list.indexOf(this.selectedIdentifier);
@@ -208,108 +224,136 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     } else {
       this.selectedIdentifier = { ...this.selectedIdentifierCopy }
     }
+    // deselect item in grid
+    this.selectedIdentifier = null;
   }
 
   saveIdentifier() {
-    // 
+    this.newIdentifierMode = false;
+
+    // TODO: Process save
+    //
+    this.selectedIdentifier = null;
   }
 
-  /* ------------------- 
-      Email Methods 
+  /* -------------------
+      Email Methods
     --------------------  */
     newEmail() {
+      this.newEmailMode = true;
       this.selectedEmail = new Email();
       this.party.emails.push(this.selectedEmail);
       this.party.emails = this.party.emails.slice();
     }
-  
+
     emailOnRowSelect(event){
       this.selectedEmailCopy = { ...this.selectedEmail }
       this.selectedEmail = event.data;
     }
-  
+
     emailTypeOnChange(event) {
       this.selectedEmail.emailAddressType = event.value;
     }
-  
+
     requestDeleteEmail() {
-      this.toastSvc.showInfoMessage('implement Delete functionality', 'TODO');
+      this.showDeleteEmailModal = true;
     }
-  
+
+    deleteEmail() {
+      this.showDeleteEmailModal = false;
+      // TODO: Process delete
+    }
+
     cancelEmailEdit() {
-      if(!this.selectedEmail.partyEmailOID && this.selectedEmail.partyEmailOID < 0) {
+      this.newEmailMode = false;
+      if(!this.selectedEmail.partyEmailOID ) {
         // remove from datasource
         let list  = this.party.emails;
         let i:number = list.indexOf(this.selectedEmail);
         list.splice(i, 1);
         // force binding refresh
         this.party.emails = list.slice();
-        this.selectedEmail = null;
       } else {
         this.selectedEmail = { ...this.selectedEmailCopy }
       }
+      this.selectedEmail = null;
     }
-  
+
     saveEmail() {
-      // 
+      this.newEmailMode = false;
+
+      // TODO: Process save
+      this.selectedEmail = null;
     }
 
 
-    /* ------------------- 
-      Phone Number Methods 
+    /* -------------------
+      Phone Number Methods
     --------------------  */
     newPhone() {
+      this.newPhoneMode = true;
       this.selectedPhone = new PhoneNumber();
       this.party.phoneNumbers.push(this.selectedPhone);
       this.party.phoneNumbers = this.party.phoneNumbers.slice();
     }
-  
+
     phoneOnRowSelect(event){
       this.selectedPhoneCopy = { ...this.selectedPhone }
       this.selectedPhone = event.data;
     }
-  
+
     phoneTypeOnChange(event) {
       this.selectedPhone.phoneType = event.value;
     }
-  
+
     requestDeletePhone() {
-      this.toastSvc.showInfoMessage('implement Delete functionality', 'TODO');
+      this.showDeletePhoneModal = true;
     }
-  
+    deletePhone() {
+      this.showDeletePhoneModal = false;
+      // TODO: Process delete
+    }
+
+
     cancelPhoneEdit() {
-      if(!this.selectedPhone.partyPhoneOID && this.selectedPhone.partyPhoneOID < 0) {
+      this.newPhoneMode = false;
+      if(!this.selectedPhone.partyPhoneOID) {
         // remove from datasource
         let list  = this.party.phoneNumbers;
         let i:number = list.indexOf(this.selectedPhone);
         list.splice(i, 1);
         // force binding refresh
         this.party.phoneNumbers = list.slice();
-        this.selectedPhone = null;
       } else {
         this.selectedPhone = { ...this.selectedPhoneCopy }
       }
+      this.selectedPhone = null;
     }
-  
+
     savePhone() {
-      // 
+      this.newPhoneMode = false;
+
+      // TODO: Process save
+      //
+      this.selectedPhone = null;
     }
 
 
-    /* ------------------- 
-      Address Methods 
+    /* -------------------
+      Address Methods
     --------------------  */
     newAddress() {
+      this.newAddressMode = true;
       this.selectedAddress = new Address();
       this.party.addresses.push(this.selectedAddress);
       this.party.addresses = this.party.addresses.slice();
     }
-  
+
     addressOnRowSelect(event){
       this.selectedAddressCopy = { ...this.selectedAddress }
       this.selectedAddress = event.data;
     }
-  
+
     addressTypeOnChange(event) {
       this.selectedAddress.addressType = event.value;
     }
@@ -317,35 +361,51 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     countryOnChange(event) {
       this.selectedAddress.countryName = event.value;
     }
-  
+
     requestDeleteAddress() {
-      this.toastSvc.showInfoMessage('implement Delete functionality', 'TODO');
+      this.showDeleteAddressModal = true;
     }
-  
+    deleteAddress() {
+      this.showDeleteAddressModal = false;
+      // TODO: Process delete
+    }
+
     cancelAddressEdit() {
-      if(!this.selectedAddress.addressOID && this.selectedAddress.addressOID < 0) {
+      this.newAddressMode = false;
+      if(!this.selectedAddress.addressOID ) {
         // remove from datasource
         let list  = this.party.addresses;
         let i:number = list.indexOf(this.selectedAddress);
         list.splice(i, 1);
         // force binding refresh
         this.party.addresses = list.slice();
-        this.selectedAddress = null;
       } else {
         this.selectedAddress = { ...this.selectedAddressCopy }
       }
-    }
-  
-    saveAddress() {
-      // 
+      this.selectedAddress = null;
     }
 
-  
+    saveAddress() {
+      this.newAddressMode = false;
+
+      // TODO: Process save
+      //
+      this.selectedAddress = null;
+    }
+
+    hideModals(){
+      this.showDeleteIdentifierModal = false;
+      this.showDeleteEmailModal = false;
+      this.showDeletePhoneModal = false;
+      this.showDeleteAddressModal = false;
+    }
+
+
 
   private buildRefData() {
 
     this.genderTypes = [
-      {label:'M', value:'M'}, {label:'F', value:'F'}, 
+      {label:'M', value:'M'}, {label:'F', value:'F'},
     ];
 
   }

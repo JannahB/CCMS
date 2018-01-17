@@ -26,7 +26,7 @@ export const routes: Routes = [
 
     {path: '', component: DashboardComponent},
     {path: 'login', component: LoginComponent },
-    {path: 'party-detail', component: PartyDetailComponent},
+    {path: 'party-detail/:partyId', component: PartyDetailComponent},
     {path: 'party-search', component: PartySearchComponent},
     {path: 'case', component: CaseDetailComponent},
     {path: 'case-search', component: CaseSearchComponent},
