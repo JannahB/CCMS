@@ -87,10 +87,10 @@ export class PartyService extends HttpBaseService<Party> {
         party.partyOID = data.partyOID ? data.partyOID.toString() : "0";
         // only update court user on update
         party.isCourtUser = (data.isCourtUser ? "1" : "0");
-
-        party.interpreterRequiredIndicator = (data.interpreterRequiredIndicator ? "1" : "0");
-        party.spokenLanguages = data.spokenLanguages.map(language => language.languageName);
     }
+    
+    party.interpreterRequiredIndicator = (data.interpreterRequiredIndicator ? "1" : "0");
+    party.spokenLanguages = data.spokenLanguages.map(language => language.languageName);
     party.firstName = data.firstName;
     party.lastName = data.lastName;
     party.alternativeName = data.alternativeName;
