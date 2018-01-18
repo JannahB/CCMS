@@ -14,6 +14,7 @@ import { CaseService } from './../../common/services/http/case.service';
 import { CaseTask } from '../../common/entities/CaseTask';
 import { DocTemplate } from '../../common/entities/DocTemplate';
 import { Party } from './../../common/entities/Party';
+import { TaskType } from '../../common/entities/TaskType';
 
 
 @Component({
@@ -108,8 +109,69 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
 
+
+  // MODALS --------------------------------------------
+
+  hideModals(){
+    this.showModalAddCaseCharge = false;
+    this.showModalAddCaseParty = false;
+    this.showModalAddCaseTask = false;
+    this.showModalAddJudge = false;
+  }
+
   // -------------------------
-  //   ADD CASE CHARGE
+  //   ADD CASE PARTY MODAL
+  // ------------------------=
+
+  showModalAddCaseParty: boolean = false;
+  partySearchText: string;
+  searchPartyResults: Party[];
+  casePartyRoleTypes: CasePartyRole[];
+  selectedSearchParty: Party;
+
+  showAddCaseParty(){
+    this.showModalAddCaseParty = true;
+  }
+
+  searchForParty(){
+    // TODO: handle search with
+    this.partySearchText;
+
+    // TODO: set the first item in the results to selectedSearchParty
+  }
+
+  searchPartyOnRowSelect(event){
+    this.selectedSearchParty = event.data;
+    // TODO: reset the other 3 properties in the form
+  }
+
+  searchPartyRoleTypeOnChange() {
+    // If you look at the Case Parties that come back in the ng1 app,
+    // the object is shaped differently than a Party. It looks like:
+    // caseParties: [
+    //   {
+    //     party: {},
+    //     role: {}
+    //   },
+    // ]
+    // So I'm not sure how you want to tie selectedParty.role
+  }
+
+  addPartyToCase() {
+    // TODO: handle save: I think saving case is req'd to persist CaseParty
+    // unfortunately, saving case takes over 20 seconds
+    this.hideModals();
+  }
+
+  calculateAge(dob) {
+    if(!dob) return;
+    return moment().diff(dob, 'years');
+  }
+
+
+
+  // -------------------------
+  //   ADD CASE CHARGE MODAL
   // ------------------------=
 
   showModalAddCaseCharge: boolean = false;
@@ -184,47 +246,79 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
 
   // -------------------------
-  //   ADD CASE CHARGE
+  //   ADD CASE TASK MODAL
   // ------------------------=
 
-  showModalAddCaseParty: boolean = false;
-  partySearchText: string;
-  searchPartyResults: Party[];
-  casePartyRoleTypes: CasePartyRole[];
-  selectedSearchParty: Party;
+  showModalAddCaseTask: boolean = false;
+  task: any = {};
+  taskTypes: TaskType[];
+  priorityTypes: any[];
+  taskParties: Party[];
+  staffPools: any[];
 
-  showAddCaseParty(){
-    this.showModalAddCaseParty = true;
+  onShowCaseTaskModal(){
+    this.showModalAddCaseTask = true;
+    // TODO: get lookup data
   }
 
-  searchForParty(){
-    // TODO: handle search with
-    this.partySearchText;
+  taskTypeOnChange(event) {
+    // TODO: handle change, may not be needed if binding to ngModel
+  }
+  priorityTypeOnChange(event){
+    // TODO: handle change, may not be needed if binding to ngModel
   }
 
-  searchPartyOnRowSelect(event){
-    this.selectedSearchParty = event.data;
+  assignedPersonTypeOnChange(event) {
+    // TODO: handle change, may not be needed if binding to ngModel
   }
 
-  searchPartyRoleTypeOnChange() {
-
+  staffPoolTypeOnChange(event) {
+    // TODO: handle change, may not be needed if binding to ngModel
   }
 
-  addPartyToCase() {
+  saveCaseTask(){
     // TODO: handle save
-    this.hideModals();
   }
 
-  hideModals(){
-    this.showModalAddCaseCharge = false;
-    this.showModalAddCaseParty = false;
+
+
+
+  // -------------------------
+  //   ADD JUDGE MODAL
+  // ------------------------=
+
+  showModalAddJudge: boolean = false;
+  judges: any[];
+  judge: any = {};
+
+
+  onShowJudgeModal(){
+    this.showModalAddJudge = true;
+    // TODO: get lookup data
   }
 
-  calculateAge(dob) {
-    if(!dob) return;
-    return moment().diff(dob, 'years');
+  saveJudge(){
+    // TODO: handle save
   }
 
+
+  // -------------------------
+  //   ADD COMPLETED EVENT MODAL
+  // ------------------------=
+
+  showModalEvent: boolean = false;
+  events: any[];
+  event: any = {};
+
+
+  onShowEventModal(){
+    this.showModalEvent = true;
+    // TODO: get lookup data
+  }
+
+  saveEvent(){
+    // TODO: handle save
+  }
 
 
 }
