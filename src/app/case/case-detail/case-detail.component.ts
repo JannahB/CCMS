@@ -1,6 +1,8 @@
+import { CasePartyRole } from './../../common/entities/CasePartyRole';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
+import * as moment from 'moment';
 
 import { BreadcrumbService } from '../../breadcrumb.service';
 import { CaseHearing } from './../../common/entities/CaseHearing';
@@ -38,7 +40,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   constructor(
     private activatedRoute:ActivatedRoute,
     private breadCrumbSvc: BreadcrumbService,
-    private caseSvc: CaseService
+    private caseSvc: CaseService,
+    private router:Router
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Case', routerLink: ['/case-detail'] }
@@ -73,6 +76,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   }
 
+  addNewParty() {
+    this.router.navigate(['/party-detail', 0 ]);
+  }
 
   partyOnRowSelect(event) {
 
@@ -131,7 +137,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     // FetchChargeFactor GET
   }
 
-
   sectionTypeOnChange(event){
     // TODO:
     // Get divisionTypes = FetchICCSCategory POST {iccsCodeOID: "6061293890045675"} == selectedSectionType.parentOID
@@ -177,7 +182,49 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
 
+
+  // -------------------------
+  //   ADD CASE CHARGE
+  // ------------------------=
+
+  showModalAddCaseParty: boolean = false;
+  partySearchText: string;
+  searchPartyResults: Party[];
+  casePartyRoleTypes: CasePartyRole[];
+  selectedSearchParty: Party;
+
+  showAddCaseParty(){
+    this.showModalAddCaseParty = true;
+  }
+
+  searchForParty(){
+    // TODO: handle search with
+    this.partySearchText;
+  }
+
+  searchPartyOnRowSelect(event){
+    this.selectedSearchParty = event.data;
+  }
+
+  searchPartyRoleTypeOnChange() {
+
+  }
+
+  addPartyToCase() {
+    // TODO: handle save
+    this.hideModals();
+  }
+
   hideModals(){
     this.showModalAddCaseCharge = false;
+    this.showModalAddCaseParty = false;
   }
+
+  calculateAge(dob) {
+    if(!dob) return;
+    return moment().diff(dob, 'years');
+  }
+
+
+
 }

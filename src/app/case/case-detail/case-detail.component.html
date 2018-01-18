@@ -101,14 +101,14 @@
 
       <div class="ui-g-12">
         <button type="button"
-            (click)="addCaseParty()"
+            (click)="showAddCaseParty()"
             label="Add Case Party"
             icon="ui-icon-add"
             class="ui-button-secondary mr-15" pButton></button>
 
         <button type="button"
-            (click)="createParty()"
-            label="Create Party"
+            (click)="addNewParty()"
+            label="Create New Party"
             icon="ui-icon-add"
             class="ui-button-secondary " pButton></button>
       </div>
@@ -190,12 +190,6 @@
             label="Add Case Charge"
             icon="ui-icon-add"
             class="ui-button-secondary mr-15" pButton></button>
-
-        <button type="button"
-            (click)="createParty()"
-            label="Create Party"
-            icon="ui-icon-add"
-            class="ui-button-secondary " pButton></button>
       </div>
 
       <!-- CASE SAVE BUTTON -->
@@ -491,6 +485,8 @@
           <p-dropdown
               placeholder="choose Section..."
               name="ddSection"
+              id="ddSection"
+              #ddSection="ngModel"
               [required]="true"
               [options]="sectionTypes"
               optionLabel="name"
@@ -509,6 +505,7 @@
             <p-dropdown
                 placeholder="choose Division..."
                 name="ddDivision"
+                id="ddDivision"
                 [options]="divisionTypes"
                 optionLabel="name"
                 [(ngModel)]="selectedDivisionType"
@@ -549,6 +546,8 @@
               [required]="lastSelectedTypeLocalCharges.length > 0 ? true : undefined"
               placeholder="choose Charge/Law..."
               name="ddChargeLaw"
+              id="ddChargeLaw"
+              #ddChargeLaw="ngModel"
               [options]="chargeLawTypes"
               optionLabel="name"
               [(ngModel)]="selectedChargeLawType"
@@ -565,6 +564,7 @@
           <label class="minimal primary block" for="tiLea">LEA Lead Charge</label>
           <textarea id="tiLea"
                     name="tiLea"
+                    #tiLea="ngModel"
                     [required]="true"
                     [(ngModel)]="leaLeadChargeText"
                     [rows]="2"
@@ -605,5 +605,99 @@
         </div>
     </p-footer>
 
+  </form>
+</p-dialog>
+
+
+<!-- ADD CASE PARTY MODAL -->
+
+<p-dialog header="Add Case Charge" width="600" [(visible)]="showModalAddCaseParty" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+  <form (ngSubmit)="saveCaseParty()" #casePartyForm="ngForm" novalidate>
+    <div class="ui-g">
+      <div class="form-group" >
+
+        <div class="ui-g-12 ui-md-6">
+          <div class="ui-inputgroup">
+              <span class="md-inputfield">
+                  <input type="text" [(ngModel)]="partySearchText" name="tiPartySearch" pInputText>
+                  <label>Party Name</label>
+              </span>
+              <button pButton type="button" (click)="searchForParty()" icon="ui-icon-search"></button>
+          </div>
+        </div>
+
+        <div class="ui-g-12">
+          <p-dataTable [value]="searchPartyResults"
+                      selectionMode="single"
+                      [(selection)]="selectedSearchParty"
+                      (onRowSelect)="searchPartyOnRowSelect($event)"
+                      dataKey="partyOID" #dtSearchParty>
+            <p-column header="Select" field="" [style]="{'width':'7%'}"></p-column>
+            <p-column header="First Name" field="firstName" [style]="{'width':'15%'}"></p-column>
+            <p-column header="Last Name" field="lastName" [style]="{'width':'15%'}"></p-column>
+            <p-column header="DOB" field="dob" [style]="{'width':'15%'}"></p-column>
+            <p-column header="Age" field="" [style]="{'width':'15%'}">
+                <ng-template pTemplate="body" let-item="rowData">
+                    {{ calculateAge(item) }}
+                </ng-template>
+            </p-column>
+            <p-column header="Sex" field="sex" [style]="{'width':'7%'}"></p-column>
+          </p-dataTable>
+        </div>
+
+        <div *ngIf="selectedSearchParty">
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Party Role</label>
+          <p-dropdown
+              placeholder="choose Party Role..."
+              name="ddPartyRole"
+              id="ddPartyRole"
+              #ddPartyRole="ngModel"
+              [required]="true"
+              [options]="casePartyRoleTypes"
+              optionLabel="name"
+              [(ngModel)]="selectedSearchParty.role"
+              (onChange)="searchPartyRoleTypeOnChange($event)"
+              styleClass="width-full">
+          </p-dropdown>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddPartyRole.errors?.required && ddPartyRole.touched" >
+                Party Role is required
+          </div>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Start Date</label>
+          <p-calendar
+                id="dtStartDate"
+                name="dtStartDate"
+                inputStyleClass="width-full"
+                [(ngModel)]="selectedSearchParty.startDate"
+                dateFormat="mm/dd/yy"
+                placeholder="Start Date"
+                [showIcon]="true"
+                [yearNavigator]="true" ></p-calendar>
+        </div>
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">End Date</label>
+          <p-calendar
+                id="dtEndDate"
+                name="dtEndDate"
+                inputStyleClass="width-full"
+                [(ngModel)]="selectedSearchParty.endDate"
+                dateFormat="mm/dd/yy"
+                placeholder="End Date"
+                [showIcon]="true"
+                [yearNavigator]="true" ></p-calendar>
+        </div>
+      </div>
+      </div>
+    </div>
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="Cancel" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+          <button label="Add Case Party"   type="submit" pButton icon="fa-check" (click)="addPartyToCase()" ></button>
+      </div>
+    </p-footer>
   </form>
 </p-dialog>
