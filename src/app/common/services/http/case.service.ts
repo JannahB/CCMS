@@ -15,17 +15,21 @@ import { HttpBaseService } from '../http/http-base.service';
 import { Case } from './../../entities/Case';
 import { CaseHearings } from '../../entities/CaseHearings';
 import { Email } from '../../entities/Email';
+import { IccsCode } from '../../entities/IccsCode';
+import { DatePipe } from '@angular/common';
+import { CaseParty } from '../../entities/CaseParty';
 
 
 @Injectable()
 export class CaseService extends HttpBaseService<Case> {
 
   private mockFile: string = 'cases-b.json';
+  private datePipe:DatePipe = new DatePipe("en");
 
   // Override Base URL's set in Super
-  protected getBaseUrl():string{
-    return `${super.getBaseUrl()}/FetchCase`;
-  }
+  // protected getBaseUrl():string{
+  //   return `${super.getBaseUrl()}/FetchCase`;
+  // }
 
   protected getBaseMockUrl():string{
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
@@ -33,12 +37,9 @@ export class CaseService extends HttpBaseService<Case> {
 
 
   public fetchAny(obj:any):Observable<Case[]>{
-    let url: string = this.getBaseUrl();
-
-    return this.http.post<Case[]>(url, obj,
-      {
-        headers: { uiVersion: "2" }
-      })
+    let url: string = `${super.getBaseUrl()}/FetchCase`;
+    
+    return this.http.post<Case[]>(url, obj)
       .map(res => {
         let cases:Case[] = res;
         return this.convertDates(cases);
@@ -46,13 +47,10 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public fetchOne(id:string):Observable<Case>{
-    let url: string = this.getBaseUrl();
-
+    let url: string = `${super.getBaseUrl()}/FetchCase`;
+    
     return this.http.post<Case>(url,
-      { caseOID : id },
-      {
-        headers: { uiVersion: "2" }
-      })
+      { caseOID : id })
       .map(res => {
         let kase:Case = res[0];
         kase = this.convertDates([kase])[0];
@@ -62,9 +60,10 @@ export class CaseService extends HttpBaseService<Case> {
 
 
   public fetch(body:any):Observable<Case[]>{
-    let url: string = this.getBaseUrl();
-
-    return this.http.post<Case[]>(url, body)
+    let url: string = `${super.getBaseUrl()}/FetchCase`;
+    
+    return this.http.post<Case[]>(url, body,
+    )
       .map(res => {
         let cases:Case[] = res;
         return this.convertDates(cases);
@@ -72,7 +71,7 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public get():Observable<Case[]>{
-    let url:string = this.getBaseUrl();
+    let url:string = `${super.getBaseUrl()}/FetchCase`;
 
     return this.http.get<Case[]>(url)
       .map(res => {
@@ -127,33 +126,35 @@ export class CaseService extends HttpBaseService<Case> {
       // let caseHearings: CaseHearing[] = kase.caseHearings.hearing;
 
 
-      let caseParties: Party[] = kase.caseParties;
+      let caseParties: CaseParty[] = kase.caseParties;
       if(caseParties) {
         caseParties.forEach( cp => {
-          cp.dob = DateConverter.convertDate(cp.dob);
+          let caseParty = cp.caseParty;
 
-          let idents:Identifier[] = cp.identifiers;
+          caseParty.dob = DateConverter.convertDate(caseParty.dob);
+
+          let idents:Identifier[] = caseParty.identifiers;
           if(idents) {
             idents.forEach( idf => {
               idf.startDate = DateConverter.convertDate(idf.startDate);
               idf.endDate = DateConverter.convertDate(idf.endDate);
             })
           }
-          let addresses:Address[] = cp.addresses;
+          let addresses:Address[] = caseParty.addresses;
           if(addresses) {
             addresses.forEach( addr => {
               addr.startDate = DateConverter.convertDate(addr.startDate);
               addr.endDate = DateConverter.convertDate(addr.endDate);
             })
           }
-          let emails:Email[] = cp.emails;
+          let emails:Email[] = caseParty.emails;
           if(emails) {
             emails.forEach( em => {
               em.startDate = DateConverter.convertDate(em.startDate);
               em.endDate = DateConverter.convertDate(em.endDate);
             })
           }
-          let phones:PhoneNumber[] = cp.phoneNumbers;
+          let phones:PhoneNumber[] = caseParty.phoneNumbers;
           if(phones) {
             phones.forEach(ph => {
               ph.startDate = DateConverter.convertDate(ph.startDate);
@@ -174,6 +175,79 @@ export class CaseService extends HttpBaseService<Case> {
 
     })
     return cases;
+  }
+
+  public fetchICCSCategory(iccsCodeOID:number = null):Observable<IccsCode[]>{
+    let url:string = `${super.getBaseUrl()}/FetchICCSCategory`;
+    
+    let params:Object = "";
+    
+    if(iccsCodeOID){
+      params = { iccsCodeOID: iccsCodeOID.toString() };
+    }
+
+    return this.http.post<IccsCode[]>(url, params);
+  }
+
+  public saveCourtCase(data:Case):Observable<Case>{
+    var caseData:any = {
+      caseFilingDate: null,
+      caseType: null,
+      caseStatus: null,
+      casePhase: null,
+      caseWeight: "0",
+      caseParties: [],
+      caseCharges: []
+    };
+    if (data.caseOID)
+        caseData.caseOID = data.caseOID.toString();
+
+    if (data.caseFilingDate)
+        caseData.caseFilingDate = this.datePipe.transform(data.caseFilingDate, "yyyy-MM-dd");
+    if (data.caseType)
+        caseData.caseType = data.caseType.caseTypeOID.toString();
+    if (data.caseStatus)
+        caseData.caseStatus = data.caseStatus.statusOID.toString();
+    if (data.casePhase)
+        caseData.casePhase = data.casePhase.casePhaseOID.toString();
+    if (data.caseWeight)
+        caseData.caseWeight = data.caseWeight.toString();
+    if (data.caseParties.length > 0) {
+        data.caseParties.forEach(value => {
+            var party = {
+                partyRoleOID: value.role.casePartyRoleOID.toString(),
+                partyOID: value.caseParty.partyOID.toString(),
+                startDate: this.datePipe.transform(value.startDate, "yyyy-MM-dd"),
+                endDate: null
+            };
+
+            if (value.endDate)
+                party.endDate = this.datePipe.transform(value.endDate, "yyyy-MM-dd");
+
+            caseData.caseParties.push(party);
+        });
+    }
+    if (data.caseCharges.length > 0) {
+        data.caseCharges.forEach(value => {
+            var charge:any = {
+                iccsCodeOID: value.iccsCode.iccsCodeOID.toString(),
+                lea: value.leaChargingDetails,
+                factors: []
+            };
+            if (value.localCharge)
+                charge.localChargeOID = value.localCharge.localChargeOID.toString();
+            value.chargeFactors.forEach(factor => {
+                charge.factors.push(factor.chargeFactorOID.toString());
+            });
+            caseData.caseCharges.push(charge);
+        });
+    }
+
+    let url:string = `${super.getBaseUrl()}/SaveCourtCase`;
+
+    return this.http
+      .post<Case>(url, caseData)
+      .map(c => this.convertDates([c])[0]);
   }
 
 }

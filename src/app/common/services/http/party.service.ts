@@ -88,7 +88,7 @@ export class PartyService extends HttpBaseService<Party> {
         // only update court user on update
         party.isCourtUser = (data.isCourtUser ? "1" : "0");
     }
-    
+
     party.interpreterRequiredIndicator = (data.interpreterRequiredIndicator ? "1" : "0");
     party.spokenLanguages = data.spokenLanguages.map(language => language.languageName);
     party.firstName = data.firstName;
@@ -179,7 +179,7 @@ export class PartyService extends HttpBaseService<Party> {
     let url: string = `${super.getBaseUrl()}/SaveParty`;
     return this.http
       .post<Party[]>(url, party)
-      .map(parties => parties[0]);
+      .map(parties => this.convertDates(parties)[0]);
   }
 
   public getMock():Observable<Party[]>{

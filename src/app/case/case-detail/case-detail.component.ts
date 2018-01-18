@@ -15,6 +15,7 @@ import { CaseTask } from '../../common/entities/CaseTask';
 import { DocTemplate } from '../../common/entities/DocTemplate';
 import { Party } from './../../common/entities/Party';
 import { TaskType } from '../../common/entities/TaskType';
+import { IccsCode } from '../../common/entities/IccsCode';
 
 
 @Component({
@@ -56,18 +57,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if(parseInt(caseId) == 0) {
       // TODO: Create New Case with empty properties;
       // new'ing doesn't bring properties w/o constructor on entity!?
-      // this.case = new Case();
+      this.case = new Case();
 
       // this is temp until empty new Case()
-      this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe (kase => {
-        this.case = kase;
-      })
+      
     }
 
-
-    this.caseSubscription = this.caseSvc.getOneMock(caseId).subscribe (kase => {
+    this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe (kase => {
       this.case = kase;
-    })
+    });
 
   }
 
@@ -176,14 +174,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   showModalAddCaseCharge: boolean = false;
 
-  sectionTypes: any[];        // FetchICCSCategory GET
-  selectedSectionType: any;
-  divisionTypes: any[];
-  selectedDivisionType: any;
-  groupTypes: any[];
-  selectedGroupType: any;
-  classTypes: any[];
-  selectedClassType: any;
+  sectionTypes: IccsCode[];        // FetchICCSCategory GET
+  selectedSectionType: IccsCode;
+  divisionTypes: IccsCode[];
+  selectedDivisionType: IccsCode;
+  groupTypes: IccsCode[];
+  selectedGroupType: IccsCode;
+  classTypes: IccsCode[];
+  selectedClassType: IccsCode;
   chargeLawTypes: any[];
   selectedChargeLawType: any;
   leaLeadChargeText:string;
@@ -194,28 +192,44 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   onShowAddCaseChargeModal() {
     this.showModalAddCaseCharge = true;
+
+    this.caseSvc
+      .fetchICCSCategory()
+      .subscribe(categories => {
+        this.sectionTypes = categories;
+      })
     // TODO:
-    // FetchICCSCategory GET
     // FetchChargeFactor GET
   }
 
   sectionTypeOnChange(event){
-    // TODO:
-    // Get divisionTypes = FetchICCSCategory POST {iccsCodeOID: "6061293890045675"} == selectedSectionType.parentOID
+    this.caseSvc
+      .fetchICCSCategory(this.selectedSectionType.iccsCodeOID)
+      .subscribe(categories => {
+        this.divisionTypes = categories;
+      });
   }
 
   divisionTypeOnChange(event){
-    // TODO:
-    // Get groupTypes = FetchICCSCategory POST {iccsCodeOID: "1775766791992384"} == selectedDivisionType.parentOID
+    this.chargeLawTypes = this.selectedDivisionType.localCharges;
+    this.caseSvc
+      .fetchICCSCategory(this.selectedDivisionType.iccsCodeOID)
+      .subscribe(categories => {
+        this.groupTypes = categories;
+      });
   }
 
   groupTypeOnChange(event){
-    // TODO:
-    // Get classTypes = FetchICCSCategory POST {iccsCodeOID: "7567470567278514} == selectedGroupType.parentOID
+    this.chargeLawTypes = this.selectedGroupType.localCharges;
+    this.caseSvc
+      .fetchICCSCategory(this.selectedGroupType.iccsCodeOID)
+      .subscribe(categories => {
+        this.classTypes = categories;
+      });
   }
 
   classTypeOnChange(event){
-    // this uses [selectedType]localCharges[] of the last selected Type above
+    this.chargeLawTypes = this.selectedClassType.localCharges;
   }
 
   chargeLawTypeOnChange(event){
@@ -239,7 +253,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   saveCaseCharge(){
-    // TODO: handle save
+    
     this.hideModals();
   }
 
@@ -318,6 +332,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   saveEvent(){
     // TODO: handle save
+  }
+
+  saveCase(){
+    this.caseSvc
+      .saveCourtCase(this.case)
+      .subscribe(c => this.case = c);
   }
 
 
