@@ -13,9 +13,15 @@ body {
         height: 100%;
         width: auto;
       }
+      .footer {
+        padding: .5em;
+        padding-left: 0;
+        padding-right: 0px;
+      }
     }
   }
 }
+
 
 body .ui-widget-header .ui-inputtext, .ui-widget-content .ui-inputtext {
   width: 100%;

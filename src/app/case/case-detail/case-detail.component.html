@@ -257,7 +257,7 @@
             </div>
             <div class="ui-g-12">
               <button type="button"
-                  (click)="addCompletedEvent()"
+                  (click)="onShowEventModal()"
                   label="Add Completed Event"
                   icon="ui-icon-add"
                   class="ui-button-secondary mr-15" pButton></button>
@@ -780,7 +780,7 @@
   </p-dialog>
 
 
-  <!-- ADD JUDICIAL ASSIGNMENT MODAL -->
+<!-- ADD JUDICIAL ASSIGNMENT MODAL -->
 
 <p-dialog header="Add Judicial Assignment" width="450" [(visible)]="showModalAddJudge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
     <form (ngSubmit)="saveJudge()" #caseJudgeForm="ngForm" novalidate>
@@ -830,6 +830,78 @@
       <p-footer>
           <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
             <button label="Add Judge" type="submit" pButton icon="fa-check" [disabled]="!caseJudgeForm.form.valid"></button>
+            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+          </div>
+      </p-footer>
+
+    </form>
+  </p-dialog>
+
+
+
+  <!-- ADD EVENT MODAL -->
+
+<p-dialog header="Add Completed Event" width="450" [(visible)]="showModalAddEvent" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <form (ngSubmit)="saveEvent()" #caseEventForm="ngForm" novalidate>
+      <div class="ui-g">
+        <div class="form-group" >
+
+          <div class="ui-g-12 mb-15">
+            <label class="minimal primary block">Event ID</label>
+            <p-dropdown name="ddEventId" id="ddEventId" placeholder="choose Event ID..." #ddEventId="ngModel"
+                [required]="true"
+                [options]="eventTypes"
+                optionLabel="name"
+                [(ngModel)]="event.eventType"
+                styleClass="width-full">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddEventId.errors?.required && ddEventId.touched" >
+                  Please select an Event
+            </div>
+          </div>
+
+          <div class="ui-g-12 mb-15">
+            <label class="minimal primary block">Event Initiated By</label>
+            <p-dropdown name="ddInitiator" id="ddInitiator" placeholder="choose initiator..." #ddInitiator="ngModel"
+                [required]="true"
+                [options]="eventParties"
+                optionLabel="name"
+                [(ngModel)]="event.initiatedByParty"
+                styleClass="width-full">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddInitiator.errors?.required && ddInitiator.touched" >
+                  Please Initiator of the Event
+            </div>
+          </div>
+
+          <div class="ui-g-12">
+            <span class="md-inputfield">
+              <input pInputText id="tiEventDuration" name="tiEventDuration" class="width-full"
+                     [(ngModel)]="event.durationTimeMin"/>
+              <label for="ti_ref_name">Event Duration (Min)</label>
+            </span>
+          </div>
+
+          <div class="ui-g-12 mb-15">
+            <label class="minimal primary block">Document</label>
+            <p-dropdown name="ddJudge" id="ddJudge" placeholder="choose Judge..."
+                [required]="true"
+                [options]="documents"
+                optionLabel="name"
+                [(ngModel)]="event.documentTemplateOID"
+                styleClass="width-full">
+            </p-dropdown>
+          </div>
+
+
+        </div>
+      </div>
+
+      <p-footer>
+          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+            <button label="Add Event" type="submit" pButton icon="fa-check" [disabled]="!caseEventForm.form.valid"></button>
             <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
           </div>
       </p-footer>
