@@ -1,3 +1,4 @@
+import { EventType } from './../../common/entities/EventType';
 import { CasePartyRole } from './../../common/entities/CasePartyRole';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -115,6 +116,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showModalAddCaseParty = false;
     this.showModalAddCaseTask = false;
     this.showModalAddJudge = false;
+    this.showModalAddEvent = false;
   }
 
   // -------------------------
@@ -318,15 +320,19 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   // -------------------------
   //   ADD COMPLETED EVENT MODAL
+  //   (in Register tab)
   // ------------------------=
 
-  showModalEvent: boolean = false;
+  showModalAddEvent: boolean = false;
   events: any[];
   event: any = {};
+  eventTypes: EventType[]; // verify correct data type
+  eventParties: Party[];   // verify correct data type
+  documents: any[];
 
 
   onShowEventModal(){
-    this.showModalEvent = true;
+    this.showModalAddEvent = true;
     // TODO: get lookup data
   }
 

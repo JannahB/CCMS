@@ -34,4 +34,27 @@ export class DropdownDataTransformService {
     });
   }
 
+  /*
+    This supports case where label must include two fields for easier searching
+  */
+  public transformConcatTwoLabels<T>
+  (
+    data:T[],
+    labelField1:string = "description",
+    labelField2:string = "name",
+    delimiter:string = ':',
+    dataField:string = "id"
+  ):SelectItem[]{
+    if(!data){
+      return null;
+    }
+
+    return data.map(item => {
+      return {
+        label: item[labelField1] + delimiter + item[labelField2],
+        value: item[dataField]
+      }
+    });
+  }
+
 }
