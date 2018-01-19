@@ -1,3 +1,96 @@
-<p>
-  admin-workflow works!
-</p>
+<div class="ui-g">
+
+    <!-- HEADER -->
+    <div class="ui-g-12 pv-0">
+      <h1 class="page-header mt-0">Admin - Event Workflow</h1>
+    </div>
+
+    <!-- SELECT EVENT TYPE SECTION -->
+    <div class="ui-g-12 card">
+
+      <!--
+        EVENT Type----
+        courtOID: number;
+        description: string;
+        eventCategoryText: string;
+        eventTypeName: string;
+        eventTypeOID: number;
+       -->
+
+      <!-- PARENT CASE TYPE -->
+      <div class="ui-g-12 mb-0">
+        <label class="minimal primary block">Event Type</label>
+        <p-dropdown placeholder="choose Event Type..."
+                    [required]="true"
+                    [options]="eventTypes"
+                    optionLabel="eventTypeName"
+                    [(ngModel)]="selectedEvent"
+                    (onChange)="eventTypeOnChange($event)"
+                    styleClass="width-full">
+        </p-dropdown>
+      </div>
+
+      <!-- Description -->
+      <div class="ui-g-12">
+        <label class="minimal primary block" for="taDesc">Description</label>
+        <textarea id="taDesc" name="taDesc" #taDesc="ngModel"
+                  [required]="true"
+                  [(ngModel)]="selectedEvent"
+                  [rows]="2"
+                  pInputTextarea
+                  autoResize="autoResize"
+                  class="width-full"></textarea>
+      </div>
+
+      <!-- WORKFLOW STEPS TABLE -->
+
+      <div class="ui-g-12 mv-20">
+        <h2>Workflow Steps</h2>
+        <p-dataTable [value]="workflowSteps" selectionMode="single" [(selection)]="selectedStep" (onRowSelect)="stepOnRowSelect($event)"
+          dataKey="workflowStepOID" #dtWorkflowSteps>
+          <p-column header="Time Delay" field="" [style]="{'width':'13%'}"></p-column>
+          <p-column header="Task" field="" [style]="{'width':'25%'}"></p-column>
+          <p-column header="Document" field="" [style]="{'width':'15%'}"></p-column>
+          <p-column header="Assigned Resource" field="" [style]="{'width':'15%'}"></p-column>
+          <p-column header="Remove" styleClass="col-button" [style]="{'width':'8%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+              <i class="material-icons" (click)="requestViewParty(item)">search</i>
+            </ng-template>
+          </p-column>
+        </p-dataTable>
+      </div>
+
+      <div class="ui-g-12 mt-0 mb-30 ta-l">
+        <button type="button" (click)="onAddStep()" label="Add Task Step" icon="ui-icon-add" pButton></button>
+      </div>
+
+
+      <!-- SAVE / CANCEL BUTTONS -->
+      <div class="ui-g-12 ta-r">
+          <button type="button"
+                  (click)="deleteDataItemRequest()"
+                  [disabled]="!selectedItem"
+                  label="Delete"
+                  icon="ui-icon-delete"
+                  class="ui-button-danger fl" pButton></button>
+          <button type="button"
+                  (click)="saveWorkflow()"
+                  label="Save"
+                  icon="ui-icon-check"
+                  class="secondary" pButton></button>
+          <button type="button"
+                  (click)="tplForm.reset(); cancelWorkflowEdit()"
+                  label="Cancel"
+                  icon="ui-icon-clear"
+                  class="ui-button-secondary"
+                  pButton></button>
+
+      </div>
+
+
+
+
+    </div>
+    <!-- //END SELECT EVENT TYPE SECTION -->
+
+  </div>

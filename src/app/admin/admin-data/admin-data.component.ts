@@ -45,7 +45,7 @@ export class AdminDataComponent implements OnInit {
   hearingTypes: HearingType[];
   locationTypes: CourtLocation[];
 
-  liveTemplate: TemplateRef<any>;
+  selectedTemplate: TemplateRef<any>;
 
   @ViewChild('tpl1') tpl1: TemplateRef<any>;
   @ViewChild('tpl2') tpl2: TemplateRef<any>;
@@ -132,7 +132,7 @@ export class AdminDataComponent implements OnInit {
     this.selectedTableItems = this[this.selectedTable.data];
     this.selectedItem = this.selectedTableItems[0];
     this.selectedTableLabel = this.selectedTable['label'];
-    this.liveTemplate = this.selectedTable['tpl'];
+    this.selectedTemplate = this.selectedTable['tpl'];
 
     console.log('selectedTable', this.selectedTable);
     console.log('selectedTableItems', this.selectedTableItems);
