@@ -1,0 +1,59 @@
+
+
+
+.login{
+
+  .login-logo{
+    width: 200px;
+    margin-bottom: 30px;
+
+    // display: inline-block;
+    // vertical-align: middle;
+    // width: 150px;
+    // height: 78px;
+    // background: url(../images/logo/logo-red-300x156.png) top left no-repeat;
+    // background-size: 150px 78px;
+  }
+
+  h1 {
+    font-size: 2em;
+    font-weight: 100;
+    text-transform: uppercase;
+    color: #777777;
+  }
+
+  .bg-img{
+    background: url('./../../assets/layout/images/login/children-cricket-2.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position:center;
+  }
+
+  .login-container{
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  input {
+    widows: 100%;
+    color: #3369b1;
+    font-size: 1.5em;
+    font-weight: 100;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .md-inputfield label {
+
+    text-transform: uppercase;
+    color: #777777;
+    font-size: 0.85em;
+    font-weight: 700;
+    top: -15px;
+  }
+
+  .ui-button {
+    font-size: 1.4em;
+    text-transform: uppercase;
+  }
+}
+
+

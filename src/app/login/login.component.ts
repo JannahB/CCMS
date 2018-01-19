@@ -7,7 +7,7 @@ import { AuthenticationService } from '../common/services/http/authentication.se
 @Component({
   selector: 'login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
 
@@ -44,13 +44,13 @@ export class LoginComponent implements OnInit {
     this.authenticationService
       .FetchLoginCredentials(userName, password)
       .subscribe(
-        (loginResult) => { 
+        (loginResult) => {
           this.authenticationService
             .FetchToken(userName, 5)
             .subscribe(tokenResult => {
               this.handleAuthenticationComplete();
             });
-        }, 
+        },
         (error) => {
           this.hasLoginFailed = true;
           this.isAttemptingLogin = false;
@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
     this.isAttemptingLogin = false;
 
     let url:string = "/";
-    
+
     this.router.navigateByUrl(url);
   }
 
