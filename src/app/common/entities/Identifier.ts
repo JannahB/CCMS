@@ -7,4 +7,6 @@ export class Identifier extends LookupEntity {
   identifierType: string;
   identifierValue: string;
   notes:string;
+
+  description: string;
 }

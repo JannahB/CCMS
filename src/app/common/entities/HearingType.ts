@@ -1,9 +1,11 @@
 
 export class HearingType {
 
-  hearingTypeOID: number; 
+  hearingTypeOID: number;
   hearingName: string;
-  durationInMinutes: number; 
-  courtOID: number; 
-  
+  durationInMinutes: number;
+  courtOID: number;
+  description: string;
+
+
 }

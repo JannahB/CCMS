@@ -1,8 +1,9 @@
 
 export class CourtLocation {
 
-  courtOID: number; 
-  locationID: string; 
-  locationOID: number; 
-  
+  courtOID: number;
+  locationID: string;
+  locationOID: number;
+
+  description: string;
 }
