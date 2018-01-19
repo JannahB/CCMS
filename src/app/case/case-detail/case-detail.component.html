@@ -582,7 +582,7 @@
           <p-dropdown name="ddSection" id="ddSection" #ddSection="ngModel" placeholder="choose Section..."
               [required]="true"
               [options]="sectionTypes"
-              optionLabel="name"
+              optionLabel="categoryName"
               [(ngModel)]="selectedSectionType"
               (onChange)="sectionTypeOnChange($event)"
               styleClass="width-full">
@@ -597,7 +597,7 @@
             <label class="minimal primary block">Division</label>
             <p-dropdown name="ddDivision" id="ddDivision" placeholder="choose Division..."
                 [options]="divisionTypes"
-                optionLabel="name"
+                optionLabel="categoryName"
                 [(ngModel)]="selectedDivisionType"
                 (onChange)="divisionTypeOnChange($event)"
                 styleClass="width-full">
@@ -608,7 +608,7 @@
           <label class="minimal primary block">Group</label>
           <p-dropdown name="ddGroup" placeholder="choose Group..."
               [options]="groupTypes"
-              optionLabel="name"
+              optionLabel="categoryName"
               [(ngModel)]="selectedGroupType"
               (onChange)="groupTypeOnChange($event)"
               styleClass="width-full">
@@ -619,7 +619,7 @@
           <label class="minimal primary block">Class</label>
           <p-dropdown name="ddClass" placeholder="choose Class..."
               [options]="classTypes"
-              optionLabel="name"
+              optionLabel="categoryName"
               [(ngModel)]="selectedClassType"
               (onChange)="classTypeOnChange($event)"
               styleClass="width-full">
@@ -631,7 +631,7 @@
           <p-dropdown name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel" placeholder="choose Charge/Law..."
               [required]="lastSelectedTypeLocalCharges.length > 0 ? true : undefined"
               [options]="chargeLawTypes"
-              optionLabel="name"
+              optionLabel="localCharge"
               [(ngModel)]="selectedChargeLawType"
               (onChange)="chargeLawTypeOnChange($event)"
               styleClass="width-full">
