@@ -6,6 +6,12 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build",
+    "build:local": "ng build --env=local",
+    "build:dev": "ng build --env=dev",
+    "build:test": "ng build --env=test",
+    "build:training": "ng build --env=training",
+    "build:prod": "ng build --env=prod",
+    "start:local": "ng serve --env=local --port 4800 --host 0.0.0.0",
     "start": "ng serve --port 4800 --host 0.0.0.0",
     "local": "ng serve --port 4800 --host 192.168.2.100 --public",
     "test": "ng test",
