@@ -1,21 +1,23 @@
 <div class="ui-g">
-  
+
   <!-- HEADER -->
-  <div class="ui-g-12 pv-0">  
-    <h1 class="page-header mt-0">Table Maintenance</h1>    
+  <div class="ui-g-12 pv-0">
+    <h1 class="page-header mt-0">Table Maintenance</h1>
   </div>
 
   <!-- FIRST SECTION -->
-  
+
   <div class="ui-g form-group " >
     <div class="card">
-    
+
+      <!-- <div class="ui-g-12">
+      </div> -->
       <div class="ui-g-12">
-        <!-- <h2>Data Tables</h2> -->
+        <h2 class="mt-0">Data Tables</h2>
         <p class="muted">Manage all reference data here. Choose a reference data table, then choose a data reference item to edit. </p>
       </div>
       <div class="ui-g-12">
-        <p-dropdown 
+        <p-dropdown
             styleClass="big-dropdown"
             (onChange)="refTableSelected($event)"
             [options]="refDataTables"
@@ -27,7 +29,7 @@
         <h2 class="mt-0" style="margin-bottom:35px;">Table Items </h2>
         <p *ngIf="!selectedItem && selectedTableItems && selectedTableItems.length"
             class="muted-label uc">Choose a Data Item below</p>
-        <p-listbox 
+        <p-listbox
             *ngIf="iSaySo"
             styleClass="data-items-listbox"
             [options]="selectedTableItems"
@@ -46,88 +48,21 @@
 
       <div *ngIf="selectedTable" class="ui-g-8 ui-sm-12">
         <div class="ui-g-6">
-          <h2 class="">Table Item</h2>
+          <h2 class="">{{selectedTableLabel}}</h2>
         </div>
         <div class="ui-g-6 ta-r">
-            
+
         </div>
 
         <div class="ui-g-12">
           <div *ngIf="selectedItem" class="card" style="min-height:322px;">
-            <div >
-              <div class="ui-g form-group" >
-                  <!-- NAME -->
-                  <div class="ui-g-12">
-                      <span class="md-inputfield">
-                        <input pInputText id="ti_ref_name" class="width-full" [(ngModel)]="selectedItem.name"/>
-                        <label for="ti_ref_name">Name</label>
-                      </span>
-                  </div>
-                  <!-- Description -->
-                  <div class="ui-g-12">
-                      <span class="md-inputfield">
-                          <input pInputText id="ti_ref_desc" class="width-full" [(ngModel)]="selectedItem.description" />
-                          <label for="ti_ref_desc">Description</label>
-                      </span>
-                  </div>
 
-                  <!-- Notes -->
-                  <div class="ui-g-12 ui-md-8">
-                      <span class="md-inputfield">
-                        <input pInputText id="ti_ref_notes" class="width-full" [(ngModel)]="selectedItem.notes"/>
-                        <label for="ti_ref_notes">Notes</label>
-                      </span>
-                  </div>
-
-                  <!-- ID -->
-                  <div class="ui-g-12 ui-md-4">
-                      <span class="md-inputfield">
-                        <input pInputText id="ti_ref_id" disabled class="width-full" [(ngModel)]="selectedItem.id"/>
-                        <label for="ti_ref_id">ID</label>
-                      </span>
-                  </div>
-
-                  <!-- DATE CREATED -->
-                  <div class="ui-g-12 ui-md-4">
-                    <p-calendar id="ref_dateCreated" placeholder="Start Date"
-                        [(ngModel)]="selectedItem.startDate"
-                        [showIcon]="true"
-                        dateFormat="dd.mm.yy"
-                        disabled="true"></p-calendar>
-                  </div>
-
-                  <!-- DATE MODIFIED -->
-                  <div class="ui-g-12 ui-md-4">
-                    <p-calendar id="ref_dateModified" placeholder="End Date"
-                        [(ngModel)]="selectedItem.endDate"
-                        [showIcon]="true"
-                        dateFormat="dd.mm.yy"
-                        disabled="true"></p-calendar>
-                  </div>
+            <!-- ------------------
+                  TEMPLATE OUTLET
+                 ------------------ -->
+            <ng-container *ngTemplateOutlet='liveTemplate'></ng-container>
 
 
-                  <!-- SAVE / CANCEL BUTTONS -->
-                  <div class="ui-g-12 ta-r">
-                      <button type="button"
-                              (click)="deleteRefDataItemRequest()"
-                              [disabled]="!selectedItem.id"
-                              label="Delete"
-                              icon="ui-icon-delete"
-                              class="ui-button-danger fl" pButton></button>
-                      <button type="button"
-                              (click)="saveRefDataItem()"
-                              label="Save"
-                              icon="ui-icon-check"
-                              class="secondary" pButton></button>
-                      <button type="button"
-                              (click)="cancelRefDataItemEdit()"
-                              label="Cancel"
-                              icon="ui-icon-clear"
-                              class="ui-button-secondary"
-                              pButton></button>
-                  </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -135,3 +70,599 @@
   </div>
 </div>
 
+
+<!-- --------------------
+      CASE TYPES TEMPLATE 1
+-->
+<ng-template #tpl1>
+  <form (ngSubmit)="saveDataItem()" #tplForm="ngForm" novalidate>
+    <div class="ui-g form-group" >
+
+      <!-- NAME -->
+      <div class="ui-g-12">
+        <span class="md-inputfield">
+          <input pInputText id="tiName" name="tiName" #tiName="ngModel" class="width-full"
+                  [(ngModel)]="selectedItem.name"/>
+          <label for="tiName">Name</label>
+        </span>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiName.errors?.required && tiName.touched" >
+              Please enter a type Name
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="ui-g-12">
+        <label class="minimal primary block" for="taDesc">Description</label>
+        <textarea id="taDesc" name="taDesc" #taDesc="ngModel"
+                  [required]="true"
+                  [(ngModel)]="selectedItem.description"
+                  [rows]="2"
+                  pInputTextarea
+                  autoResize="autoResize"
+                  class="width-full"></textarea>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="taDesc.errors?.required && taDesc.touched" >
+              Please enter a description
+        </div>
+      </div>
+
+      <!-- SAVE / CANCEL BUTTONS -->
+      <div class="ui-g-12 ta-r">
+          <button type="button"
+                  (click)="deleteDataItemRequest()"
+                  [disabled]="!selectedItem.id"
+                  label="Delete"
+                  icon="ui-icon-delete"
+                  class="ui-button-danger fl" pButton></button>
+          <button type="button"
+                  (click)="saveDataItem()"
+                  label="Save"
+                  icon="ui-icon-check"
+                  class="secondary" pButton></button>
+          <button type="button"
+                  (click)="tplForm.reset(); cancelDataItemEdit()"
+                  label="Cancel"
+                  icon="ui-icon-clear"
+                  class="ui-button-secondary"
+                  pButton></button>
+      </div>
+    </div>
+
+  </form>
+</ng-template>
+
+
+
+<!-- --------------------
+      CASE PHASES TEMPLATE 2
+-->
+<ng-template #tpl2>
+  <form (ngSubmit)="saveParentCaseType()" #tplForm="ngForm" novalidate>
+    <div class="ui-g form-group" >
+
+      <!-- PARENT CASE TYPE -->
+      <div class="ui-g-12 mb-0">
+        <label class="minimal primary block">Select Parent Case Type</label>
+        <p-dropdown name="ddParentCaseType" id="ddParentCaseType" #ddParentCaseType="ngModel" placeholder="choose Parent Case Type..."
+                    [required]="true"
+                    [options]="caseTypes"
+                    optionLabel="name"
+                    [(ngModel)]="selectedItem.caseTypeOID"
+                    (onChange)="parentCaseTypeOnChange($event)"
+                    styleClass="width-full">
+        </p-dropdown>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddParentCaseType.errors?.required && ddParentCaseType.touched" >
+              Parent Case Type is required
+        </div>
+      </div>
+
+      <!-- NAME -->
+      <div class="ui-g-12">
+        <span class="md-inputfield">
+          <input pInputText id="tiName" name="tiName" #tiName="ngModel" class="width-full"
+                  [(ngModel)]="selectedItem.name"/>
+          <label for="tiName">Name</label>
+        </span>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiName.errors?.required && tiName.touched" >
+              Please enter a type Name
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="ui-g-12">
+        <label class="minimal primary block" for="taDesc">Description</label>
+        <textarea id="taDesc" name="taDesc" #taDesc="ngModel"
+                  [required]="true"
+                  [(ngModel)]="selectedItem.description"
+                  [rows]="2"
+                  pInputTextarea
+                  autoResize="autoResize"
+                  class="width-full"></textarea>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="taDesc.errors?.required && taDesc.touched" >
+              Please enter a description
+        </div>
+      </div>
+
+
+      <!-- SAVE / CANCEL BUTTONS -->
+      <div class="ui-g-12 ta-r">
+          <button type="button"
+                  (click)="deleteDataItemRequest()"
+                  [disabled]="!selectedItem.id"
+                  label="Delete"
+                  icon="ui-icon-delete"
+                  class="ui-button-danger fl" pButton></button>
+          <button type="button"
+                  (click)="saveDataItem()"
+                  label="Save"
+                  icon="ui-icon-check"
+                  class="secondary" pButton></button>
+          <button type="button"
+                  (click)="tplForm.reset(); cancelDataItemEdit()"
+                  label="Cancel"
+                  icon="ui-icon-clear"
+                  class="ui-button-secondary"
+                  pButton></button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+
+<!-- --------------------
+      Case Party Role TEMPLATE 3
+-->
+<ng-template #tpl3>
+  <form (ngSubmit)="saveDataItem()" #tplForm="ngForm" novalidate>
+    <div class="ui-g form-group" >
+
+      <!-- NAME -->
+      <div class="ui-g-12">
+        <span class="md-inputfield">
+          <input pInputText id="tiName" name="tiName" #tiName="ngModel" class="width-full"
+                  [(ngModel)]="selectedItem.name"/>
+          <label for="tiName">Name</label>
+        </span>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiName.errors?.required && tiName.touched" >
+              Please enter a type Name
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="ui-g-12">
+        <label class="minimal primary block" for="taDesc">Description</label>
+        <textarea id="taDesc" name="taDesc" #taDesc="ngModel"
+                  [required]="true"
+                  [(ngModel)]="selectedItem.description"
+                  [rows]="2"
+                  pInputTextarea
+                  autoResize="autoResize"
+                  class="width-full"></textarea>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="taDesc.errors?.required && taDesc.touched" >
+              Please enter a description
+        </div>
+      </div>
+
+      <!-- Allow Codefendants -->
+      <div class="ui-g-12 ">
+        <label class="minimal primary mr-10">Allow Codefendants</label>
+        <p-inputSwitch name="swCodefendant" [(ngModel)]="selectedItem.codefendantIndicator" ></p-inputSwitch>
+      </div>
+
+      <!-- SAVE / CANCEL BUTTONS -->
+      <div class="ui-g-12 ta-r">
+          <button type="button"
+                  (click)="deleteDataItemRequest()"
+                  [disabled]="!selectedItem.id"
+                  label="Delete"
+                  icon="ui-icon-delete"
+                  class="ui-button-danger fl" pButton></button>
+          <button type="button"
+                  (click)="saveDataItem()"
+                  label="Save"
+                  icon="ui-icon-check"
+                  class="secondary" pButton></button>
+          <button type="button"
+                  (click)="tplForm.reset(); cancelDataItemEdit()"
+                  label="Cancel"
+                  icon="ui-icon-clear"
+                  class="ui-button-secondary"
+                  pButton></button>
+      </div>
+    </div>
+
+  </form>
+</ng-template>
+
+
+
+<!-- --------------------
+      ICCS CODES TEMPLATE 4
+-->
+
+<ng-template #tpl4>
+  <form (ngSubmit)="saveIccsCode()" #tplForm="ngForm" novalidate>
+    <div class="ui-g form-group" >
+
+      <!--CATEGORY NAME -->
+      <div class="ui-g-12">
+        <span class="md-inputfield">
+          <input pInputText id="tiName" name="tiName" #tiName="ngModel" class="width-full"
+                  [(ngModel)]="selectedItem.name"/>
+          <label for="tiName">Category Name</label>
+        </span>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiName.errors?.required && tiName.touched" >
+              Please enter a Category Name
+        </div>
+      </div>
+
+      <!-- CATEGORY TYPE -->
+      <div class="ui-g-12 mb-0">
+        <label class="minimal primary block">Category Type</label>
+        <p-dropdown name="ddCategoryType" id="ddCategoryType" #ddCategoryType="ngModel" placeholder="choose Category Type..."
+                    [required]="true"
+                    [options]="iccsCodeTypes"
+                    optionLabel="name"
+                    [(ngModel)]="selectedItem.iccsCodeOID"
+                    (onChange)="onCategoryTypeChanged($event)"
+                    styleClass="width-full">
+        </p-dropdown>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddCategoryType.errors?.required && ddCategoryType.touched" >
+              Category Type is required
+        </div>
+      </div>
+
+      <!-- PARENT ICCS Code -->
+      <div class="ui-g-12 mb-0">
+        <label class="minimal primary block">Parent ICCS Code</label>
+        <p-dropdown name="ddParentIccsCode" id="ddParentIccsCode" #ddParentIccsCode="ngModel" placeholder="choose Parent ICCS Code..."
+                    [required]="true"
+                    [options]="parentIccsCodes"
+                    optionLabel="name"
+                    [(ngModel)]="selectedItem.iccsCodeOID"
+                    (onChange)="isThisNeeded($event)"
+                    styleClass="width-full">
+        </p-dropdown>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddParentIccsCode.errors?.required && ddParentIccsCode.touched" >
+              Parent ICCS Code is required
+        </div>
+      </div>
+
+      <!--CATEGORY Identifier -->
+      <div class="ui-g-12">
+        <span class="md-inputfield">
+          <input pInputText id="tiCatIdentifier" name="tiCatIdentifier" #tiCatIdentifier="ngModel" class="width-full"
+                  [(ngModel)]="selectedItem.categoryIdentifier"/>
+          <label for="tiCatIdentifier">Category Identifier</label>
+        </span>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiCatIdentifier.errors?.required && tiCatIdentifier.touched" >
+              Please enter a Category Identifier
+        </div>
+      </div>
+
+
+      <!-- SAVE / CANCEL BUTTONS -->
+      <div class="ui-g-12 ta-r">
+          <button type="button"
+                  (click)="deleteDataItemRequest()"
+                  [disabled]="!selectedItem.id"
+                  label="Delete"
+                  icon="ui-icon-delete"
+                  class="ui-button-danger fl" pButton></button>
+          <button type="button"
+                  (click)="saveDataItem()"
+                  label="Save"
+                  icon="ui-icon-check"
+                  class="secondary" pButton></button>
+          <button type="button"
+                  (click)="tplForm.reset(); cancelDataItemEdit()"
+                  label="Cancel"
+                  icon="ui-icon-clear"
+                  class="ui-button-secondary"
+                  pButton></button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+
+
+  <!-- --------------------
+      EVENT TYPES TEMPLATE 5
+-->
+<ng-template #tpl5>
+  <form (ngSubmit)="saveDataItem()" #tplForm="ngForm" novalidate>
+    <div class="ui-g form-group" >
+
+      <!-- NAME -->
+      <div class="ui-g-12">
+        <span class="md-inputfield">
+          <input pInputText id="tiName" name="tiName" #tiName="ngModel" class="width-full"
+                  [(ngModel)]="selectedItem.name"/>
+          <label for="tiName">Name</label>
+        </span>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiName.errors?.required && tiName.touched" >
+              Please enter a type Name
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="ui-g-12">
+        <label class="minimal primary block" for="taDesc">Description</label>
+        <textarea id="taDesc" name="taDesc" #taDesc="ngModel"
+                  [required]="true"
+                  [(ngModel)]="selectedItem.description"
+                  [rows]="2"
+                  pInputTextarea
+                  autoResize="autoResize"
+                  class="width-full"></textarea>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="taDesc.errors?.required && taDesc.touched" >
+              Please enter a description
+        </div>
+      </div>
+
+      <!-- EVENT CATEGORY -->
+      <div class="ui-g-12 mb-0">
+        <label class="minimal primary block">Event Category</label>
+        <p-dropdown name="ddEventCategory" id="ddEventCategory" #ddEventCategory="ngModel" placeholder="choose Event Category..."
+                    [required]="true"
+                    [options]="eventCategories"
+                    optionLabel="name"
+                    [(ngModel)]="selectedItem.eventCategoryText"
+                    (onChange)="isThisNeeded($event)"
+                    styleClass="width-full">
+        </p-dropdown>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddEventCategory.errors?.required && ddEventCategory.touched" >
+              Parent ICCS Code is required
+        </div>
+      </div>
+
+      <!-- SAVE / CANCEL BUTTONS -->
+      <div class="ui-g-12 ta-r">
+        <button type="button"
+                (click)="deleteDataItemRequest()"
+                [disabled]="!selectedItem.id"
+                label="Delete"
+                icon="ui-icon-delete"
+                class="ui-button-danger fl" pButton></button>
+        <button type="button"
+                (click)="saveDataItem()"
+                label="Save"
+                icon="ui-icon-check"
+                class="secondary" pButton></button>
+        <button type="button"
+                (click)="tplForm.reset(); cancelDataItemEdit()"
+                label="Cancel"
+                icon="ui-icon-clear"
+                class="ui-button-secondary"
+                pButton></button>
+      </div>
+    </div>
+
+  </form>
+</ng-template>
+
+
+  <!-- --------------------
+      HEARING TYPES TEMPLATE 6
+-->
+<ng-template #tpl6>
+  <form (ngSubmit)="saveDataItem()" #tplForm="ngForm" novalidate>
+    <div class="ui-g form-group" >
+
+      <!-- NAME -->
+      <div class="ui-g-12">
+        <span class="md-inputfield">
+          <input pInputText id="tiName" name="tiName" #tiName="ngModel" class="width-full"
+                  [(ngModel)]="selectedItem.name"/>
+          <label for="tiName">Name</label>
+        </span>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiName.errors?.required && tiName.touched" >
+              Please enter a type Name
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="ui-g-12">
+        <label class="minimal primary block" for="taDesc">Description</label>
+        <textarea id="taDesc" name="taDesc" #taDesc="ngModel"
+                  [required]="true"
+                  [(ngModel)]="selectedItem.description"
+                  [rows]="2"
+                  pInputTextarea
+                  autoResize="autoResize"
+                  class="width-full"></textarea>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="taDesc.errors?.required && taDesc.touched" >
+              Please enter a description
+        </div>
+      </div>
+
+      <!-- DURATION (MIN) -->
+      <div class="ui-g-12">
+        <span class="md-inputfield">
+          <input pInputText id="tiDuration" name="tiDuration" #tiDuration="ngModel" class="width-full"
+                  [(ngModel)]="selectedItem.name"/>
+          <label for="tiDuration">Duration (in minutes)</label>
+        </span>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiDuration.errors?.required && tiDuration.touched" >
+              Please enter Duration in minutes
+        </div>
+      </div>
+
+      <!-- SAVE / CANCEL BUTTONS -->
+      <div class="ui-g-12 ta-r">
+          <button type="button"
+                  (click)="deleteDataItemRequest()"
+                  [disabled]="!selectedItem.id"
+                  label="Delete"
+                  icon="ui-icon-delete"
+                  class="ui-button-danger fl" pButton></button>
+          <button type="button"
+                  (click)="saveDataItem()"
+                  label="Save"
+                  icon="ui-icon-check"
+                  class="secondary" pButton></button>
+          <button type="button"
+                  (click)="tplForm.reset(); cancelDataItemEdit()"
+                  label="Cancel"
+                  icon="ui-icon-clear"
+                  class="ui-button-secondary"
+                  pButton></button>
+      </div>
+    </div>
+
+  </form>
+</ng-template>
+
+
+
+  <!-- --------------------
+      CASE STATUS TYPES TEMPLATE 7
+-->
+<!-- <ng-template #tpl7>
+    <div>
+      <div class="ui-g form-group" >
+
+          CASE STATUS TYPES TEMPLATE 7
+
+      </div>
+    </div>
+  </ng-template> -->
+
+
+
+  <!-- --------------------
+      CASE STATUS TYPES TEMPLATE 8
+-->
+<!-- <ng-template #tpl8>
+    <div>
+      <div class="ui-g form-group" >
+
+          CASE STATUS TYPES TEMPLATE 8
+
+      </div>
+    </div>
+  </ng-template> -->
+
+
+
+
+  <!-- --------------------
+      CASE STATUS TYPES TEMPLATE 9
+-->
+<!-- <ng-template #tpl9>
+    <div>
+      <div class="ui-g form-group" >
+
+          CASE STATUS TYPES TEMPLATE 9
+
+      </div>
+    </div>
+  </ng-template> -->
+
+
+
+<!-- -------------------------------  SAMPLE TEMPLATE -------------------------------- -->
+  <ng-template #tpl000000000>
+    <form (ngSubmit)="saveParentCaseType()" #tplForm="ngForm" novalidate>
+      <div class="ui-g form-group" >
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Charge/Law</label>
+          <p-dropdown name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel" placeholder="choose Charge/Law..."
+              [required]="lastSelectedTypeLocalCharges.length > 0 ? true : undefined"
+              [options]="chargeLawTypes"
+              optionLabel="name"
+              [(ngModel)]="selectedChargeLawType"
+              (onChange)="chargeLawTypeOnChange($event)"
+              styleClass="width-full">
+          </p-dropdown>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddChargeLaw.errors?.required && ddChargeLaw.touched" >
+                Charge/Law is required
+          </div>
+        </div>
+
+
+        <!-- NAME -->
+        <div class="ui-g-12">
+            <span class="md-inputfield">
+              <input pInputText id="ti_ref_name" class="width-full" [(ngModel)]="selectedItem.name"/>
+              <label for="ti_ref_name">Name</label>
+            </span>
+        </div>
+
+        <!-- Description -->
+        <div class="ui-g-12">
+          <label class="minimal primary block" for="taDesc">Description</label>
+          <textarea id="taDesc" name="taDesc" #taDesc="ngModel"
+                    [required]="true"
+                    [(ngModel)]="selectedItem.description"
+                    [rows]="2"
+                    pInputTextarea
+                    autoResize="autoResize"
+                    class="width-full"></textarea>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="taDesc.errors?.required && taDesc.touched" >
+                Please enter a description
+          </div>
+        </div>
+
+        <!-- START DATE -->
+        <div class="ui-g-12 ui-md-4">
+          <p-calendar id="ref_dateCreated" placeholder="Start Date"
+              [(ngModel)]="selectedItem.startDate"
+              [showIcon]="true"
+              dateFormat="dd.mm.yy"
+              disabled="true"></p-calendar>
+        </div>
+
+        <!-- END DATE -->
+        <div class="ui-g-12 ui-md-4">
+          <p-calendar id="ref_dateModified" placeholder="End Date"
+              [(ngModel)]="selectedItem.endDate"
+              [showIcon]="true"
+              dateFormat="dd.mm.yy"
+              disabled="true"></p-calendar>
+        </div>
+
+
+        <!-- SAVE / CANCEL BUTTONS -->
+        <div class="ui-g-12 ta-r">
+            <button type="button"
+                    (click)="deleteDataItemRequest()"
+                    [disabled]="!selectedItem.id"
+                    label="Delete"
+                    icon="ui-icon-delete"
+                    class="ui-button-danger fl" pButton></button>
+            <button type="button"
+                    (click)="saveDataItem()"
+                    label="Save"
+                    icon="ui-icon-check"
+                    class="secondary" pButton></button>
+            <button type="button"
+                    (click)="tplForm.reset(); cancelDataItemEdit()"
+                    label="Cancel"
+                    icon="ui-icon-clear"
+                    class="ui-button-secondary"
+                    pButton></button>
+          </div>
+        </div>
+    </form>
+  </ng-template>
