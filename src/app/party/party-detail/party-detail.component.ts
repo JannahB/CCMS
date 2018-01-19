@@ -19,6 +19,7 @@ import { Party } from './../../common/entities/Party';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { Email } from '../../common/entities/Email';
 import { CountriesService } from '../../common/services/http/countries.service';
+import { CollectionUtil } from '../../common/utils/collection-util';
 
 
 @Component({
@@ -226,7 +227,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   deleteIdentifier() {
     this.showDeleteIdentifierModal = false;
     
-    this.removeArrayItem(this.party.identifiers, this.identifierToDelete);
+    CollectionUtil.removeArrayItem(this.party.identifiers, this.identifierToDelete);
     this.saveParty(false);
     this.identifierToDelete = null;
     this.selectedIdentifierCopy = null;
@@ -285,7 +286,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     deleteEmail() {
       this.showDeleteEmailModal = false;
       
-      this.removeArrayItem(this.party.emails, this.emailToDelete);
+      CollectionUtil.removeArrayItem(this.party.emails, this.emailToDelete);
       this.saveParty(false);
       this.emailToDelete = null;
       this.selectedEmailCopy = null;
@@ -342,7 +343,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     deletePhone() {
       this.showDeletePhoneModal = false;
       
-      this.removeArrayItem(this.party.phoneNumbers, this.phoneToDelete);
+      CollectionUtil.removeArrayItem(this.party.phoneNumbers, this.phoneToDelete);
       this.saveParty(false);
       this.phoneToDelete = null;
       this.selectedPhoneCopy = null;
@@ -404,7 +405,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     deleteAddress() {
       this.showDeleteAddressModal = false;
       
-      this.removeArrayItem(this.party.addresses, this.addressToDelete);
+      CollectionUtil.removeArrayItem(this.party.addresses, this.addressToDelete);
       this.saveParty(false);
       this.addressToDelete = null;
       this.selectedAddressCopy = null;
@@ -468,10 +469,5 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       });
   }
 
-  private removeArrayItem<T>(array:T[], item:T):void{
-    var index = array.indexOf(item);
-    if (index > -1) {
-       array.splice(index, 1);
-    }
-  }
+  
 }

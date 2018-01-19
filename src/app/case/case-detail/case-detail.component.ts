@@ -1,6 +1,7 @@
 import { EventType } from './../../common/entities/EventType';
 import { CasePartyRole } from './../../common/entities/CasePartyRole';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
@@ -17,6 +18,11 @@ import { DocTemplate } from '../../common/entities/DocTemplate';
 import { Party } from './../../common/entities/Party';
 import { TaskType } from '../../common/entities/TaskType';
 import { IccsCode } from '../../common/entities/IccsCode';
+import { ChargeFactor } from '../../common/entities/ChargeFactor';
+import { ToastService } from '../../common/services/utility/toast.service';
+import { CollectionUtil } from '../../common/utils/collection-util';
+import { PartyService } from '../../common/services/http/party.service';
+import { CaseParty } from '../../common/entities/CaseParty';
 
 
 @Component({
@@ -39,12 +45,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   selectedJudicialAssignment: any;
   documentTemplateTypes: DocTemplate[] = [];
 
+  datePipe:DatePipe = new DatePipe("en");
 
   constructor(
     private activatedRoute:ActivatedRoute,
     private breadCrumbSvc: BreadcrumbService,
     private caseSvc: CaseService,
-    private router:Router
+    private partySvc: PartyService,
+    private router:Router,
+    private toastSvc:ToastService
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Case', routerLink: ['/case-detail'] }
@@ -117,6 +126,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showModalAddCaseTask = false;
     this.showModalAddJudge = false;
     this.showModalAddEvent = false;
+    this.showDeleteChargeModal = false;
+    this.showDeletePartyModal = false;
   }
 
   // -------------------------
@@ -124,42 +135,63 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   // ------------------------=
 
   showModalAddCaseParty: boolean = false;
+  showDeletePartyModal: boolean = false;
   partySearchText: string;
   searchPartyResults: Party[];
   casePartyRoleTypes: CasePartyRole[];
   selectedSearchParty: Party;
+  selectedSearchPartyRole: CasePartyRole = null;
+  selectedSearchPartyStartDate:Date = null;
+  selectedSearchPartyEndDate:Date = null;
+  selectedCaseParty:CaseParty = null;
 
   showAddCaseParty(){
     this.showModalAddCaseParty = true;
+    this.caseSvc
+      .fetchCasePartyRole()
+      .subscribe( roles => this.casePartyRoleTypes = roles );
   }
 
   searchForParty(){
-    // TODO: handle search with
-    this.partySearchText;
+    let obj = { "partyName": this.partySearchText };
+    this.partySvc
+      .fetchAny(obj)
+      .subscribe( results => {
+        this.searchPartyResults = results;
 
-    // TODO: set the first item in the results to selectedSearchParty
+        if(results.length){
+          this.selectedSearchParty = results[0];
+        }
+      });
+
   }
 
   searchPartyOnRowSelect(event){
     this.selectedSearchParty = event.data;
-    // TODO: reset the other 3 properties in the form
+    
+    this.selectedSearchPartyRole = null;
+    this.selectedSearchPartyStartDate = null;
+    this.selectedSearchPartyEndDate = null;
   }
 
   searchPartyRoleTypeOnChange() {
-    // If you look at the Case Parties that come back in the ng1 app,
-    // the object is shaped differently than a Party. It looks like:
-    // caseParties: [
-    //   {
-    //     party: {},
-    //     role: {}
-    //   },
-    // ]
-    // So I'm not sure how you want to tie selectedParty.role
+    
   }
 
   addPartyToCase() {
-    // TODO: handle save: I think saving case is req'd to persist CaseParty
-    // unfortunately, saving case takes over 20 seconds
+    let caseParty:CaseParty = new CaseParty();
+
+    caseParty.caseParty = this.selectedSearchParty;
+    caseParty.role = this.selectedSearchPartyRole;
+    caseParty.startDate = this.selectedSearchPartyStartDate ? this.datePipe.transform(this.selectedSearchPartyStartDate, "MM/dd/yyyy") : "";
+    caseParty.endDate = this.selectedSearchPartyEndDate ? this.datePipe.transform(this.selectedSearchPartyEndDate, "MM/dd/yyyy") : "";
+
+    let caseParties:CaseParty[] = this.case.caseParties.slice();
+    caseParties.push(caseParty);
+    this.case.caseParties = caseParties;
+
+    this.saveCase();
+
     this.hideModals();
   }
 
@@ -168,13 +200,24 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     return moment().diff(dob, 'years');
   }
 
+  requestDeleteParty(party:CaseParty):void{
+    this.selectedCaseParty = party;
+    this.showDeletePartyModal = true;
+  }
 
+  deleteParty():void{
+    CollectionUtil.removeArrayItem(this.case.caseParties, this.selectedCaseParty);
+    this.case.caseParties = this.case.caseParties.slice();
+    this.showDeletePartyModal = false;
+    this.saveCase(false);
+  }
 
   // -------------------------
   //   ADD CASE CHARGE MODAL
   // ------------------------=
 
   showModalAddCaseCharge: boolean = false;
+  showDeleteChargeModal:boolean = false;
 
   sectionTypes: IccsCode[];        // FetchICCSCategory GET
   selectedSectionType: IccsCode;
@@ -187,9 +230,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   chargeLawTypes: any[];
   selectedChargeLawType: any;
   leaLeadChargeText:string;
-  chargeFactorTypes: any[];        // FetchChargeFactor GET
-  selectedChargeFactors: any[];
-  filteredChargeFactorTypes: any[];
+  chargeFactorTypes: ChargeFactor[];        // FetchChargeFactor GET
+  selectedChargeFactors: ChargeFactor[];
+  filteredChargeFactorTypes: ChargeFactor[];
   lastSelectedTypeLocalCharges: any[] = [];
 
   onShowAddCaseChargeModal() {
@@ -200,8 +243,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .subscribe(categories => {
         this.sectionTypes = categories;
       })
-    // TODO:
-    // FetchChargeFactor GET
+    
+    this.caseSvc
+      .fetchChargeFactor()
+      .subscribe(chargeFactors =>{
+        this.chargeFactorTypes = chargeFactors;
+        this.filteredChargeFactorTypes = chargeFactors;
+      })
   }
 
   sectionTypeOnChange(event){
@@ -255,11 +303,68 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   saveCaseCharge(){
+    let charge:CaseCharge;
     
+    if(this.selectedCharge){
+      charge = this.selectedCharge;
+    }else{
+      charge = new CaseCharge();
+    }
+
+    let iccsCode:IccsCode = this.getIccsCode();
+
+    charge.caseOID = this.case.caseOID;
+    charge.courtOID = this.case.court.courtOID;
+    charge.chargeFactors = this.selectedChargeFactors;
+    charge.iccsCode = iccsCode;
+
+    if(iccsCode){
+      charge.iccsChargeCategoryOID = iccsCode.iccsCodeOID;
+    }
+
+    charge.leaChargingDetails = this.leaLeadChargeText;
+    charge.localCharge = this.selectedChargeLawType;
+
+    if(!charge.caseChargeOID){
+      this.case.caseCharges.push(charge);
+    }
+
+    this.case.caseCharges = this.case.caseCharges.slice();
+
     this.hideModals();
   }
 
+  private getIccsCode():IccsCode{
+    if(this.selectedClassType){
+      return this.selectedClassType;
+    }
 
+    if(this.selectedGroupType){
+      return this.selectedGroupType;
+    }
+
+    if(this.selectedDivisionType){
+      return this.selectedDivisionType;
+    }
+
+    if(this.selectedSectionType){
+      return this.selectedSectionType;
+    }
+
+    return null;
+  }
+
+  requestDeleteCharge(charge:CaseCharge):void{
+    this.selectedCharge = charge;
+    this.showDeleteChargeModal = true;
+  }
+
+  deleteCharge():void{
+    CollectionUtil.removeArrayItem(this.case.caseCharges, this.selectedCharge);
+    this.case.caseCharges = this.case.caseCharges.slice();
+    this.showDeleteChargeModal = false;
+    this.saveCase(false);
+  }
 
   // -------------------------
   //   ADD CASE TASK MODAL
@@ -340,10 +445,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     // TODO: handle save
   }
 
-  saveCase(){
+  saveCase(shouldShowSuccessMessage:boolean = true){
     this.caseSvc
       .saveCourtCase(this.case)
-      .subscribe(c => this.case = c);
+      .subscribe(c => {
+        this.case = c;
+        if(shouldShowSuccessMessage){
+          this.toastSvc.showSuccessMessage("Case Saved");
+        }
+      });
   }
 
 
