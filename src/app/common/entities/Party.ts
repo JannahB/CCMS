@@ -18,7 +18,7 @@ export class Party extends LookupEntity {
   dob: Date = null; 
   isCourtUser: boolean = false; 
   anonymizationFlag: boolean = false; 
-  roles: Role[] = [];
+  role: Role = new Role();
   notes: string = ""; 
   addresses: Address[] = [];
   emails: Email[] = []; 
@@ -29,4 +29,6 @@ export class Party extends LookupEntity {
   alternativeName: string = ""; 
   authorizedCourts: AuthorizedCourt[] = []; 
   queryName: string = ""; 
+
+  age:number = 0;
 }

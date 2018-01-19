@@ -17,6 +17,8 @@ import { DocTemplate } from '../../common/entities/DocTemplate';
 import { Party } from './../../common/entities/Party';
 import { TaskType } from '../../common/entities/TaskType';
 import { IccsCode } from '../../common/entities/IccsCode';
+import { ChargeFactor } from '../../common/entities/ChargeFactor';
+import { ToastService } from '../../common/services/utility/toast.service';
 
 
 @Component({
@@ -44,7 +46,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     private activatedRoute:ActivatedRoute,
     private breadCrumbSvc: BreadcrumbService,
     private caseSvc: CaseService,
-    private router:Router
+    private router:Router,
+    private toastSvc:ToastService
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Case', routerLink: ['/case-detail'] }
@@ -187,9 +190,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   chargeLawTypes: any[];
   selectedChargeLawType: any;
   leaLeadChargeText:string;
-  chargeFactorTypes: any[];        // FetchChargeFactor GET
-  selectedChargeFactors: any[];
-  filteredChargeFactorTypes: any[];
+  chargeFactorTypes: ChargeFactor[];        // FetchChargeFactor GET
+  selectedChargeFactors: ChargeFactor[];
+  filteredChargeFactorTypes: ChargeFactor[];
   lastSelectedTypeLocalCharges: any[] = [];
 
   onShowAddCaseChargeModal() {
@@ -200,8 +203,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .subscribe(categories => {
         this.sectionTypes = categories;
       })
-    // TODO:
-    // FetchChargeFactor GET
+    
+    this.caseSvc
+      .fetchChargeFactor()
+      .subscribe(chargeFactors =>{
+        this.chargeFactorTypes = chargeFactors;
+        this.filteredChargeFactorTypes = chargeFactors;
+      })
   }
 
   sectionTypeOnChange(event){
@@ -255,8 +263,55 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   saveCaseCharge(){
+    let charge:CaseCharge;
     
+    if(this.selectedCharge){
+      charge = this.selectedCharge;
+    }else{
+      charge = new CaseCharge();
+    }
+
+    let iccsCode:IccsCode = this.getIccsCode();
+
+    charge.caseOID = this.case.caseOID;
+    charge.courtOID = this.case.court.courtOID;
+    charge.chargeFactors = this.selectedChargeFactors;
+    charge.iccsCode = iccsCode;
+
+    if(iccsCode){
+      charge.iccsChargeCategoryOID = iccsCode.iccsCodeOID;
+    }
+
+    charge.leaChargingDetails = this.leaLeadChargeText;
+    charge.localCharge = this.selectedChargeLawType;
+
+    if(!charge.caseChargeOID){
+      this.case.caseCharges.push(charge);
+    }
+
+    this.case.caseCharges = this.case.caseCharges.slice();
+
     this.hideModals();
+  }
+
+  private getIccsCode():IccsCode{
+    if(this.selectedClassType){
+      return this.selectedClassType;
+    }
+
+    if(this.selectedGroupType){
+      return this.selectedGroupType;
+    }
+
+    if(this.selectedDivisionType){
+      return this.selectedDivisionType;
+    }
+
+    if(this.selectedSectionType){
+      return this.selectedSectionType;
+    }
+
+    return null;
   }
 
 
@@ -343,7 +398,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   saveCase(){
     this.caseSvc
       .saveCourtCase(this.case)
-      .subscribe(c => this.case = c);
+      .subscribe(c => {
+        this.case = c;
+        this.toastSvc.showSuccessMessage("Case Saved");
+      });
   }
 
 

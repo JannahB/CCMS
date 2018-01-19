@@ -79,7 +79,7 @@
           <p-column field="caseParty.lastName" header="Last Name" [style]="{'width':'15%'}"></p-column>
           <p-column field="caseParty.sex" header="Sex" [style]="{'width':'7%'}"></p-column>
           <p-column field="caseParty.dob" header="Date of Birth" [style]="{'width':'13%'}"></p-column>
-          <p-column field="" header="Age" [style]="{'width':'7%'}"></p-column>
+          <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column>
           <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
               <ng-template pTemplate="body" let-item="rowData">
                   {{item.startDate | date:'M/d/yyyy'}}
@@ -573,7 +573,7 @@
 <!-- ADD CASE CHARGE MODAL -->
 
 <p-dialog header="Add Case Charge" width="450" [(visible)]="showModalAddCaseCharge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-  <form (ngSubmit)="saveCaseCharge()" #caseChargeForm="ngForm" novalidate>
+  <form  #caseChargeForm="ngForm" novalidate><!-- (ngSubmit)="saveCaseCharge()" -->
     <div class="ui-g">
       <div class="form-group" >
 
@@ -661,7 +661,7 @@
           <label class="minimal primary block">Charge Factors</label>
           <span class="ui-fluid">
             <p-autoComplete name="acChargeFactors"
-                field="name"
+                field="description"
                 [(ngModel)]="selectedChargeFactors"
                 [suggestions]="filteredChargeFactorTypes"
                 (completeMethod)="getChargeFactorsToFilter($event)"
