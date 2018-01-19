@@ -1,6 +1,7 @@
 import { EventType } from './../../common/entities/EventType';
 import { CasePartyRole } from './../../common/entities/CasePartyRole';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
@@ -20,6 +21,8 @@ import { IccsCode } from '../../common/entities/IccsCode';
 import { ChargeFactor } from '../../common/entities/ChargeFactor';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { CollectionUtil } from '../../common/utils/collection-util';
+import { PartyService } from '../../common/services/http/party.service';
+import { CaseParty } from '../../common/entities/CaseParty';
 
 
 @Component({
@@ -42,11 +45,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   selectedJudicialAssignment: any;
   documentTemplateTypes: DocTemplate[] = [];
 
+  datePipe:DatePipe = new DatePipe("en");
 
   constructor(
     private activatedRoute:ActivatedRoute,
     private breadCrumbSvc: BreadcrumbService,
     private caseSvc: CaseService,
+    private partySvc: PartyService,
     private router:Router,
     private toastSvc:ToastService
   ) {
@@ -122,6 +127,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showModalAddJudge = false;
     this.showModalAddEvent = false;
     this.showDeleteChargeModal = false;
+    this.showDeletePartyModal = false;
   }
 
   // -------------------------
@@ -129,42 +135,63 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   // ------------------------=
 
   showModalAddCaseParty: boolean = false;
+  showDeletePartyModal: boolean = false;
   partySearchText: string;
   searchPartyResults: Party[];
   casePartyRoleTypes: CasePartyRole[];
   selectedSearchParty: Party;
+  selectedSearchPartyRole: CasePartyRole = null;
+  selectedSearchPartyStartDate:Date = null;
+  selectedSearchPartyEndDate:Date = null;
+  selectedCaseParty:CaseParty = null;
 
   showAddCaseParty(){
     this.showModalAddCaseParty = true;
+    this.caseSvc
+      .fetchCasePartyRole()
+      .subscribe( roles => this.casePartyRoleTypes = roles );
   }
 
   searchForParty(){
-    // TODO: handle search with
-    this.partySearchText;
+    let obj = { "partyName": this.partySearchText };
+    this.partySvc
+      .fetchAny(obj)
+      .subscribe( results => {
+        this.searchPartyResults = results;
 
-    // TODO: set the first item in the results to selectedSearchParty
+        if(results.length){
+          this.selectedSearchParty = results[0];
+        }
+      });
+
   }
 
   searchPartyOnRowSelect(event){
     this.selectedSearchParty = event.data;
-    // TODO: reset the other 3 properties in the form
+    
+    this.selectedSearchPartyRole = null;
+    this.selectedSearchPartyStartDate = null;
+    this.selectedSearchPartyEndDate = null;
   }
 
   searchPartyRoleTypeOnChange() {
-    // If you look at the Case Parties that come back in the ng1 app,
-    // the object is shaped differently than a Party. It looks like:
-    // caseParties: [
-    //   {
-    //     party: {},
-    //     role: {}
-    //   },
-    // ]
-    // So I'm not sure how you want to tie selectedParty.role
+    
   }
 
   addPartyToCase() {
-    // TODO: handle save: I think saving case is req'd to persist CaseParty
-    // unfortunately, saving case takes over 20 seconds
+    let caseParty:CaseParty = new CaseParty();
+
+    caseParty.caseParty = this.selectedSearchParty;
+    caseParty.role = this.selectedSearchPartyRole;
+    caseParty.startDate = this.selectedSearchPartyStartDate ? this.datePipe.transform(this.selectedSearchPartyStartDate, "MM/dd/yyyy") : "";
+    caseParty.endDate = this.selectedSearchPartyEndDate ? this.datePipe.transform(this.selectedSearchPartyEndDate, "MM/dd/yyyy") : "";
+
+    let caseParties:CaseParty[] = this.case.caseParties.slice();
+    caseParties.push(caseParty);
+    this.case.caseParties = caseParties;
+
+    this.saveCase();
+
     this.hideModals();
   }
 
@@ -173,7 +200,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     return moment().diff(dob, 'years');
   }
 
+  requestDeleteParty(party:CaseParty):void{
+    this.selectedCaseParty = party;
+    this.showDeletePartyModal = true;
+  }
 
+  deleteParty():void{
+    CollectionUtil.removeArrayItem(this.case.caseParties, this.selectedCaseParty);
+    this.case.caseParties = this.case.caseParties.slice();
+    this.showDeletePartyModal = false;
+    this.saveCase(false);
+  }
 
   // -------------------------
   //   ADD CASE CHARGE MODAL
@@ -326,7 +363,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     CollectionUtil.removeArrayItem(this.case.caseCharges, this.selectedCharge);
     this.case.caseCharges = this.case.caseCharges.slice();
     this.showDeleteChargeModal = false;
-    this.saveCase();
+    this.saveCase(false);
   }
 
   // -------------------------
@@ -408,12 +445,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     // TODO: handle save
   }
 
-  saveCase(){
+  saveCase(shouldShowSuccessMessage:boolean = true){
     this.caseSvc
       .saveCourtCase(this.case)
       .subscribe(c => {
         this.case = c;
-        this.toastSvc.showSuccessMessage("Case Saved");
+        if(shouldShowSuccessMessage){
+          this.toastSvc.showSuccessMessage("Case Saved");
+        }
       });
   }
 

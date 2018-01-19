@@ -19,6 +19,7 @@ import { IccsCode } from '../../entities/IccsCode';
 import { DatePipe } from '@angular/common';
 import { CaseParty } from '../../entities/CaseParty';
 import { ChargeFactor } from '../../entities/ChargeFactor';
+import { CasePartyRole } from '../../entities/CasePartyRole';
 
 
 @Injectable()
@@ -240,7 +241,7 @@ export class CaseService extends HttpBaseService<Case> {
     if (data.caseParties.length > 0) {
         data.caseParties.forEach(value => {
             var party = {
-                partyRoleOID: value.role.casePartyRoleOID.toString(),
+                partyRoleOID: value.role ? value.role.casePartyRoleOID.toString() : null,
                 partyOID: value.caseParty.partyOID.toString(),
                 startDate: this.datePipe.transform(value.startDate, "yyyy-MM-dd"),
                 endDate: null
@@ -275,4 +276,10 @@ export class CaseService extends HttpBaseService<Case> {
       .map(c => this.convertDates(c)[0]);
   }
 
+  public fetchCasePartyRole():Observable<CasePartyRole[]>{
+    let url:string = `${super.getBaseUrl()}/FetchCasePartyRole`;
+
+    return this.http
+      .get<CasePartyRole[]>(url);
+  }
 }
