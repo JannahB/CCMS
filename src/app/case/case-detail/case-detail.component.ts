@@ -19,6 +19,7 @@ import { TaskType } from '../../common/entities/TaskType';
 import { IccsCode } from '../../common/entities/IccsCode';
 import { ChargeFactor } from '../../common/entities/ChargeFactor';
 import { ToastService } from '../../common/services/utility/toast.service';
+import { CollectionUtil } from '../../common/utils/collection-util';
 
 
 @Component({
@@ -120,6 +121,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showModalAddCaseTask = false;
     this.showModalAddJudge = false;
     this.showModalAddEvent = false;
+    this.showDeleteChargeModal = false;
   }
 
   // -------------------------
@@ -178,6 +180,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   // ------------------------=
 
   showModalAddCaseCharge: boolean = false;
+  showDeleteChargeModal:boolean = false;
 
   sectionTypes: IccsCode[];        // FetchICCSCategory GET
   selectedSectionType: IccsCode;
@@ -314,7 +317,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     return null;
   }
 
+  requestDeleteCharge(charge:CaseCharge):void{
+    this.selectedCharge = charge;
+    this.showDeleteChargeModal = true;
+  }
 
+  deleteCharge():void{
+    CollectionUtil.removeArrayItem(this.case.caseCharges, this.selectedCharge);
+    this.case.caseCharges = this.case.caseCharges.slice();
+    this.showDeleteChargeModal = false;
+    this.saveCase();
+  }
 
   // -------------------------
   //   ADD CASE TASK MODAL
