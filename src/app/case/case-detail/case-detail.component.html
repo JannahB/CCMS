@@ -563,7 +563,7 @@
           <button label="Add Case Party" type="submit" pButton icon="fa-check"
                   (click)="addPartyToCase()"
                   [disabled]="!casePartyForm.form.valid"></button>
-          <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close" (click)="hideModals()" ></button>
+          <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close" (click)="casePartyForm.reset(); hideModals()" ></button>
         </div>
       </p-footer>
     </form>
@@ -682,7 +682,7 @@
           <button label="Save" type="submit" pButton icon="fa-check"
                   (click)="saveCaseCharge()"
                   [disabled]="!caseChargeForm.form.valid"></button>
-          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="caseChargeForm.reset(); hideModals()" ></button>
         </div>
     </p-footer>
 
@@ -772,7 +772,7 @@
       <p-footer>
           <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
             <button label="Save Task" type="submit" pButton icon="fa-check" [disabled]="!caseTaskForm.form.valid"></button>
-            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="caseTaskForm.reset(); hideModals()" ></button>
           </div>
       </p-footer>
 
@@ -830,7 +830,7 @@
       <p-footer>
           <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
             <button label="Add Judge" type="submit" pButton icon="fa-check" [disabled]="!caseJudgeForm.form.valid"></button>
-            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="caseJudgeForm.reset(); hideModals()" ></button>
           </div>
       </p-footer>
 
@@ -901,8 +901,8 @@
 
       <p-footer>
           <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
-            <button label="Add Event" type="submit" pButton icon="fa-check" [disabled]="!caseEventForm.form.valid"></button>
-            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+            <button label="Add Event Task" type="submit" pButton icon="fa-check" [disabled]="!caseEventForm.form.valid"></button>
+            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="caseEventForm.reset(); hideModals()" ></button>
           </div>
       </p-footer>
 
