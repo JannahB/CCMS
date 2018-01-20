@@ -328,9 +328,9 @@
                     <!-- TODO: Get document types lookup data -->
                     <p-dropdown
                         placeholder="document type..."
-                        [options]=""
-                        [(ngModel)]="documentTemplateTypes"
-                        optionLabel="eventTypeName"
+                        [options]="documentTemplateTypes"
+                        [(ngModel)]="selectedDocumentTemplateType"
+                        optionLabel="documentName"
                         (onChange)="ddOnChange($event)"
                         styleClass="width-full">
                     </p-dropdown>

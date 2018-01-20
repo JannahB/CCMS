@@ -44,6 +44,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   selectedHearing: CaseHearing;
   selectedJudicialAssignment: any;
   documentTemplateTypes: DocTemplate[] = [];
+  selectedDocumentTemplateType: DocTemplate;
 
   datePipe:DatePipe = new DatePipe("en");
 
@@ -77,6 +78,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.case = kase;
     });
 
+    this.caseSvc
+      .fetchDocumentTemplate()
+      .subscribe(results => this.documentTemplateTypes = results);
   }
 
   ngOnDestroy() {
@@ -454,6 +458,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
           this.toastSvc.showSuccessMessage("Case Saved");
         }
       });
+  }
+
+  generateDoc():void{
+    this.caseSvc
+      .downloadCourtDocument(this.case.caseOID, this.selectedDocumentTemplateType.documentTemplateOID)
+      .subscribe();
   }
 
 
