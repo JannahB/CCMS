@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable, forwardRef, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
@@ -20,6 +20,9 @@ import { DatePipe } from '@angular/common';
 import { CaseParty } from '../../entities/CaseParty';
 import { ChargeFactor } from '../../entities/ChargeFactor';
 import { CasePartyRole } from '../../entities/CasePartyRole';
+import { DocTemplate } from '../../entities/DocTemplate';
+import { Http, RequestOptionsArgs, Headers } from '@angular/http';
+import { AuthorizationInterceptor } from '../../interceptors/authorization.interceptor';
 
 
 @Injectable()
@@ -35,6 +38,13 @@ export class CaseService extends HttpBaseService<Case> {
 
   protected getBaseMockUrl():string{
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
+  }
+
+  constructor(
+    @Inject(forwardRef(() => HttpClient)) protected http:HttpClient,
+    @Inject(forwardRef(() => Http)) protected classicHttp:Http
+  ){
+    super(http);
   }
 
 
@@ -281,5 +291,40 @@ export class CaseService extends HttpBaseService<Case> {
 
     return this.http
       .get<CasePartyRole[]>(url);
+  }
+
+  public fetchDocumentTemplate():Observable<DocTemplate[]>{
+    let url:string = `${super.getBaseUrl()}/FetchDocumentTemplate`;
+    
+    return this.http
+      .get<DocTemplate[]>(url);
+  }
+
+  public downloadCourtDocument(caseOID:number, documentTemplateOID:number):Observable<ArrayBuffer>{
+    let url:string = `${super.getBaseUrl()}/GenerateCourtDocument`;
+    let params:object = {
+      caseOID: caseOID.toString(),
+      documentTemplateOID: documentTemplateOID.toString()
+    };
+    
+    let options:RequestOptionsArgs = {}
+    let headers:Headers = new Headers();
+    
+    headers.append("token", AuthorizationInterceptor.authToken);
+    headers.append("Authorization", `Bearer ${AuthorizationInterceptor.authToken}`);
+
+    options.headers = headers;
+
+    return this.classicHttp
+      .post(url, params, options)
+      .map(response => {
+        let headers = response.headers;
+        let contentType = headers['Content-Type'];
+        let fileName = headers['Content-Disposition'].split('; ')[1].split('=')[1].replace(/"/g,'');
+        let result = response.arrayBuffer();
+        let data = new Blob([result], { type: contentType });
+        return result;
+      });
+
   }
 }
