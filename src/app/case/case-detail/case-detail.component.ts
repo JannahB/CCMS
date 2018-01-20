@@ -1,3 +1,5 @@
+import { SelectItem } from 'primeng/primeng';
+import { Pool } from './../../common/entities/Pool';
 import { EventType } from './../../common/entities/EventType';
 import { CasePartyRole } from './../../common/entities/CasePartyRole';
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -23,6 +25,8 @@ import { ToastService } from '../../common/services/utility/toast.service';
 import { CollectionUtil } from '../../common/utils/collection-util';
 import { PartyService } from '../../common/services/http/party.service';
 import { CaseParty } from '../../common/entities/CaseParty';
+import { LookupService } from '../../common/services/http/lookup.service';
+import { CaseTaskDTO } from '../../common/entities/CaseTaskDTO';
 
 
 @Component({
@@ -38,7 +42,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   selectedCharge: CaseCharge;
   selectedParty: Party;
-  selectedTask: CaseTask;
   selectedDoc: CaseDocument;
   selectedEvent: CaseEvent;
   selectedHearing: CaseHearing;
@@ -54,7 +57,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     private caseSvc: CaseService,
     private partySvc: PartyService,
     private router:Router,
-    private toastSvc:ToastService
+    private toastSvc:ToastService,
+    private lookupSvc: LookupService
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Case', routerLink: ['/case-detail'] }
@@ -71,7 +75,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.case = new Case();
 
       // this is temp until empty new Case()
-      
+
     }
 
     this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe (kase => {
@@ -107,9 +111,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   eventOnRowSelect(event) {
 
   }
-  taskOnRowSelect(event){
 
-  }
   docOnRowSelect(event){
 
   }
@@ -172,14 +174,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   searchPartyOnRowSelect(event){
     this.selectedSearchParty = event.data;
-    
+
     this.selectedSearchPartyRole = null;
     this.selectedSearchPartyStartDate = null;
     this.selectedSearchPartyEndDate = null;
   }
 
   searchPartyRoleTypeOnChange() {
-    
+
   }
 
   addPartyToCase() {
@@ -247,7 +249,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .subscribe(categories => {
         this.sectionTypes = categories;
       })
-    
+
     this.caseSvc
       .fetchChargeFactor()
       .subscribe(chargeFactors =>{
@@ -308,7 +310,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   saveCaseCharge(){
     let charge:CaseCharge;
-    
+
     if(this.selectedCharge){
       charge = this.selectedCharge;
     }else{
@@ -374,23 +376,58 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   //   ADD CASE TASK MODAL
   // ------------------------=
 
+  selectedCaseTask: CaseTask;
   showModalAddCaseTask: boolean = false;
   task: any = {};
   taskTypes: TaskType[];
-  priorityTypes: any[];
+  priorityTypes: SelectItem[] = [
+    { value: 0, label: 'N/A'},
+    { value: 1, label: 'Urgent' },
+    { value: 2, label: 'High' },
+    { value: 3, label: 'Normal' }
+  ];
   taskParties: Party[];
-  staffPools: any[];
+  staffPools: Pool[];
 
   onShowCaseTaskModal(){
     this.showModalAddCaseTask = true;
     // TODO: get lookup data
   }
 
+  taskOnRowSelect(event){
+    this.fetchCaseTaskLookups();
+    this.selectedCaseTask = event.data;
+    this.onShowCaseTaskModal();
+    console.log('taskOnRowSelect selected case task', this.selectedCaseTask)
+  }
+
+  beginAddCaseTask( taskTypeId? ) {
+    this.fetchCaseTaskLookups();
+    this.selectedCaseTask = new CaseTask();
+    this.onShowCaseTaskModal();
+    if(taskTypeId){
+      this.selectedCaseTask.taskType = this.taskTypes.find((task) => task.taskTypeOID == taskTypeId );
+    }
+  }
+
+  fetchCaseTaskLookups() {
+    this.partySvc.fetchAny({courtUser: "true"}).subscribe( results => {
+      this.taskParties = results;
+    });
+    this.lookupSvc.fetchLookup<TaskType>('FetchTaskType').subscribe( results => {
+      this.taskTypes = results;
+    })
+    this.lookupSvc.fetchLookup<Pool>('FetchStaffPool').subscribe( results => {
+      this.staffPools = results;
+    })
+  }
+
   taskTypeOnChange(event) {
     // TODO: handle change, may not be needed if binding to ngModel
   }
+
   priorityTypeOnChange(event){
-    // TODO: handle change, may not be needed if binding to ngModel
+    this.selectedCaseTask.taskPriorityCode = event.value;
   }
 
   assignedPersonTypeOnChange(event) {
@@ -401,8 +438,28 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     // TODO: handle change, may not be needed if binding to ngModel
   }
 
-  saveCaseTask(){
-    // TODO: handle save
+  onCancelCaseTask(form) {
+    this.selectedCaseTask = null;
+    form.reset();
+    this.hideModals();
+  }
+
+  saveCaseTask() {
+    let task = new CaseTaskDTO();
+    task.caseOID = this.case.caseOID.toString();
+    task.taskDetails = this.selectedCaseTask.details;
+    task.taskParty = this.selectedCaseTask.assignedParty.partyOID.toString();
+    task.taskPriorityCode = this.selectedCaseTask.taskPriorityCode.toString();
+    task.taskStaffPool = this.selectedCaseTask.assignedPool.poolOID.toString();
+    task.taskType = this.selectedCaseTask.taskType.taskTypeOID.toString();
+    task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.dueDate, "yyyy-MM-dd"); // taskDueDate:"2018-01-31"
+
+    this.caseSvc.saveCaseTask(task).subscribe( result => {
+      this.case.caseTasks.push(result);
+      this.toastSvc.showSuccessMessage('Your case task has been saved.', 'Task Saved');
+      this.hideModals();
+      this.selectedCaseTask = null;
+    });
   }
 
 
@@ -464,6 +521,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .downloadCourtDocument(this.case.caseOID, this.selectedDocumentTemplateType.documentTemplateOID)
       .subscribe();
+  }
+
+
+
+
+  // -------------------------
+  //   HEARING MODAL
+  // ------------------------=
+
+  addHearingTask(){
+    this.hideModals();
+    this.onShowCaseTaskModal()
+
+
   }
 
 
