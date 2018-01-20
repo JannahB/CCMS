@@ -19,32 +19,41 @@
     font-size: 2em;
     font-weight: 100;
     text-transform: uppercase;
-    color: #777777;
+    color: white;
   }
 
   .bg-img{
-    background: url('./../../assets/layout/images/login/children-cricket-2.jpg');
+    background: url('./../../assets/layout/images/login/children-cricket-9.jpg');
     background-repeat: no-repeat;
     background-size: cover;
-    background-position:center;
+    background-position:top;
   }
 
   .login-container{
-    background-color: rgba(255, 255, 255, 0.5);
+    // background-color: rgba(255, 255, 255, 0.5);
+    // background: linear-gradient( rgba(255,255,255,0.52), rgba(0,0,0,0.65));
+    background: linear-gradient( rgba(192, 45, 26, 0.75), rgba(100, 95, 94, 0.75));
   }
 
   input {
-    widows: 100%;
-    color: #3369b1;
+    width: 100%;
+    color: black;
     font-size: 1.5em;
     font-weight: 100;
     background-color: rgba(255, 255, 255, 0.5);
+    padding: 20px;
+  }
+
+  input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+    background-color: #BAD9F1 !important;
+    background-image: none !important;
+    color: #3369b1 !important;
   }
 
   .md-inputfield label {
 
     text-transform: uppercase;
-    color: #777777;
+    color: white;
     font-size: 0.85em;
     font-weight: 700;
     top: -15px;
@@ -53,6 +62,7 @@
   .ui-button {
     font-size: 1.4em;
     text-transform: uppercase;
+    height: 70px;
   }
 }
 
