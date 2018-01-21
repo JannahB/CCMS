@@ -28,7 +28,7 @@ import { Component, Input } from '@angular/core';
         position: absolute;
         top: 0;
         left: 0;
-        z-index: 9999;
+        z-index: 9;
       }
       .container {
         width: 100%;
@@ -37,7 +37,7 @@ import { Component, Input } from '@angular/core';
         padding-top: 0px;
         padding-bottom: 10px;
         background-color: rgba(255,255,255, 0.75);
-        top: 0px;
+        top: 2px;
         position: relative;
       }
       .load-bar {
