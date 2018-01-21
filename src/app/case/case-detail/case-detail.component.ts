@@ -28,6 +28,8 @@ import { PartyService } from '../../common/services/http/party.service';
 import { CaseParty } from '../../common/entities/CaseParty';
 import { LookupService } from '../../common/services/http/lookup.service';
 import { CaseTaskDTO } from '../../common/entities/CaseTaskDTO';
+import { JudicialAssignment } from '../../common/entities/JudicialAssignment';
+import { JudicialOfficer } from '../../common/entities/JudicialOfficer';
 
 
 @Component({
@@ -535,19 +537,50 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   // ------------------------=
 
   showModalAddJudge: boolean = false;
-  judges: any[];
-  judge: any = {};
+  judges: JudicialOfficer[];
+  judge: JudicialAssignment = new JudicialAssignment();
 
 
   onShowJudgeModal(){
     this.showModalAddJudge = true;
-    // TODO: get lookup data
+    
+    this.caseSvc
+      .fetchJudicialOfficer()
+      .subscribe(judges => {
+        this.judges = judges;
+
+        if(this.judge.judicialOfficial){
+          this.judge.judicialOfficial = judges
+            .find(j => j.partyOID == this.judge.judicialOfficial.partyOID);
+        }
+      });
   }
 
   saveJudge(){
-    // TODO: handle save
+    this.judge.caseOID = this.case.caseOID;
+
+    this.caseSvc
+      .saveJudicialAssignment(this.judge)
+      .subscribe(assignment =>{
+        let index:number = this.case.judicialAssignments
+          .find(a => a.judicialAssignmentOID == assignment.judicialAssignmentOID);
+
+        if(index >= 0){
+          this.case.judicialAssignments[index] = assignment;
+        }else{
+          this.case.judicialAssignments.push(assignment);
+          this.case.judicialAssignments = this.case.judicialAssignments.slice();
+        }
+      });
+
+      this.showModalAddJudge = false;
   }
 
+  requestViewJudicialAssignment(judge):void{
+    this.judge = judge;
+
+    this.onShowJudgeModal();
+  }
 
   // -------------------------
   //   ADD COMPLETED EVENT MODAL

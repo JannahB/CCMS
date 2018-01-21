@@ -401,7 +401,7 @@
                         <p-column field="courtLoc.locationID" header="Location" [style]="{'width':'17%'}"></p-column>
                         <p-column field="" header="Assigned" [style]="{'width':'17%'}">
                             <ng-template pTemplate="body" let-item="rowData">
-                                {{ item.judicialOfficer.firstName + ' ' + item.judicialOfficer.lastName }}
+                                {{ item.judicialOfficial?.firstName + ' ' + item.judicialOfficial?.lastName }}
                             </ng-template>
                         </p-column>
                         <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
@@ -447,7 +447,7 @@
                         </p-column>
                         <p-column field="" header="Assigned" [style]="{'width':'17%'}">
                             <ng-template pTemplate="body" let-item="rowData">
-                                {{ item.judicialOfficer?.firstName + ' ' + item.judicialOfficer?.lastName }}
+                                {{ item.judicialOfficial?.firstName + ' ' + item.judicialOfficial?.lastName }}
                             </ng-template>
                         </p-column>
                         <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
