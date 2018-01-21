@@ -14,25 +14,25 @@ import { LoginComponent } from './login/login.component';
 import { CanActivateAuthenticationGuard } from './common/guards/can-activate-authentication.guard';
 
 export const routes: Routes = [
-    // {path: '', component: DashboardComponent, canActivate: [CanActivateAuthenticationGuard]},
-    // {path: 'login', component: LoginComponent },
-    // {path: 'party-detail', component: PartyDetailComponent, canActivate: [CanActivateAuthenticationGuard]},
-    // {path: 'party-search', component: PartySearchComponent, canActivate: [CanActivateAuthenticationGuard]},
-    // {path: 'case', component: CaseDetailComponent, canActivate: [CanActivateAuthenticationGuard]},
-    // {path: 'case-search', component: CaseSearchComponent, canActivate: [CanActivateAuthenticationGuard]},
-    // {path: 'admin-data', component: AdminDataComponent, canActivate: [CanActivateAuthenticationGuard]},
-    // {path: 'admin-workflow', component: AdminWorkflowComponent, canActivate: [CanActivateAuthenticationGuard]},
-    // {path: 'admin-users', component: AdminUsersComponent, canActivate: [CanActivateAuthenticationGuard]},
-
-    {path: '', component: DashboardComponent},
+    {path: '', component: DashboardComponent, canActivate: [CanActivateAuthenticationGuard]},
     {path: 'login', component: LoginComponent },
-    {path: 'party-detail/:partyId', component: PartyDetailComponent},
-    {path: 'party-search', component: PartySearchComponent},
-    {path: 'case-detail/:caseId', component: CaseDetailComponent},
-    {path: 'case-search', component: CaseSearchComponent},
-    {path: 'admin-data', component: AdminDataComponent},
-    {path: 'admin-workflow', component: AdminWorkflowComponent},
-    {path: 'admin-users', component: AdminUsersComponent},
+    {path: 'party-detail/:partyId', component: PartyDetailComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'party-search', component: PartySearchComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'case-detail/:caseId', component: CaseDetailComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'case-search', component: CaseSearchComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'admin-data', component: AdminDataComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'admin-workflow', component: AdminWorkflowComponent, canActivate: [CanActivateAuthenticationGuard]},
+    {path: 'admin-users', component: AdminUsersComponent, canActivate: [CanActivateAuthenticationGuard]},
+
+    // {path: '', component: DashboardComponent},
+    // {path: 'login', component: LoginComponent },
+    // {path: 'party-detail/:partyId', component: PartyDetailComponent},
+    // {path: 'party-search', component: PartySearchComponent},
+    // {path: 'case-detail/:caseId', component: CaseDetailComponent},
+    // {path: 'case-search', component: CaseSearchComponent},
+    // {path: 'admin-data', component: AdminDataComponent},
+    // {path: 'admin-workflow', component: AdminWorkflowComponent},
+    // {path: 'admin-users', component: AdminUsersComponent},
 
 
 ];
