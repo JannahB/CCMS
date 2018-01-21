@@ -1,13 +1,14 @@
-import { SelectItem } from 'primeng/primeng';
-import { Pool } from './../../common/entities/Pool';
-import { EventType } from './../../common/entities/EventType';
-import { CasePartyRole } from './../../common/entities/CasePartyRole';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
+import { Observable } from 'rxjs/Observable';
+import { SelectItem } from 'primeng/primeng';
 
+import { Pool } from './../../common/entities/Pool';
+import { EventType } from './../../common/entities/EventType';
+import { CasePartyRole } from './../../common/entities/CasePartyRole';
 import { BreadcrumbService } from '../../breadcrumb.service';
 import { CaseHearing } from './../../common/entities/CaseHearing';
 import { CaseEvent } from './../../common/entities/CaseEvent';
@@ -36,10 +37,12 @@ import { CaseTaskDTO } from '../../common/entities/CaseTaskDTO';
 })
 export class CaseDetailComponent implements OnInit, OnDestroy {
 
+  activeTabIndex: number = 1;
   case: Case;
   caseSubscription: Subscription;
+  caseTaskSubscription: Subscription;
   caseWeightRanges: number[] = [1,10];
-
+  loadingCase: boolean = false;
   selectedCharge: CaseCharge;
   selectedParty: Party;
   selectedDoc: CaseDocument;
@@ -78,8 +81,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     }
 
+    this.loadingCase = true;
     this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe (kase => {
       this.case = kase;
+      this.loadingCase = false;
     });
 
     this.caseSvc
@@ -90,6 +95,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
 
     if (this.caseSubscription) this.caseSubscription.unsubscribe();
+    if( this.caseTaskSubscription ) this.caseTaskSubscription.unsubscribe();
 
   }
 
@@ -372,9 +378,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.saveCase(false);
   }
 
-  // -------------------------
+
+
+  // ------------------------------------------------
   //   ADD CASE TASK MODAL
-  // ------------------------=
+  // -----------------------------------------------=
 
   selectedCaseTask: CaseTask;
   showModalAddCaseTask: boolean = false;
@@ -388,60 +396,52 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   ];
   taskParties: Party[];
   staffPools: Pool[];
+  loadingCaseTaskLookups: boolean = false;
 
-  onShowCaseTaskModal(){
-    this.showModalAddCaseTask = true;
-    // TODO: get lookup data
+  createCaseTask( taskTypeId? ) {
+    this.selectedCaseTask = new CaseTask();
+    this.onShowCaseTaskModal(taskTypeId);
   }
 
   taskOnRowSelect(event){
-    this.fetchCaseTaskLookups();
     this.selectedCaseTask = event.data;
     this.onShowCaseTaskModal();
     console.log('taskOnRowSelect selected case task', this.selectedCaseTask)
   }
 
-  beginAddCaseTask( taskTypeId? ) {
-    this.fetchCaseTaskLookups();
-    this.selectedCaseTask = new CaseTask();
-    this.onShowCaseTaskModal();
+  onShowCaseTaskModal(taskTypeId?){
+    this.showModalAddCaseTask = true;
+    if(this.caseTaskSubscription) {
+      this.initCaseTaskModal(taskTypeId);
+      return;
+    }
+    this.loadingCaseTaskLookups = true;
+    var source = Observable.forkJoin<any>(
+      this.partySvc.fetchAny({courtUser: "true"}),
+      this.lookupSvc.fetchLookup<TaskType>('FetchTaskType'),
+      this.lookupSvc.fetchLookup<Pool>('FetchStaffPool')
+    );
+    this.caseTaskSubscription = source.subscribe(
+      results => {
+        this.taskParties = results[0] as Party[];
+        this.taskTypes = results[1] as TaskType[];
+        this.staffPools = results[2] as Pool[];
+
+        this.initCaseTaskModal(taskTypeId);
+      });
+  }
+
+  initCaseTaskModal(taskTypeId?) {
+    this.loadingCaseTaskLookups = false;
     if(taskTypeId){
       this.selectedCaseTask.taskType = this.taskTypes.find((task) => task.taskTypeOID == taskTypeId );
     }
   }
 
-  fetchCaseTaskLookups() {
-    this.partySvc.fetchAny({courtUser: "true"}).subscribe( results => {
-      this.taskParties = results;
-    });
-    this.lookupSvc.fetchLookup<TaskType>('FetchTaskType').subscribe( results => {
-      this.taskTypes = results;
-    })
-    this.lookupSvc.fetchLookup<Pool>('FetchStaffPool').subscribe( results => {
-      this.staffPools = results;
-    })
-  }
-
-  taskTypeOnChange(event) {
-    // TODO: handle change, may not be needed if binding to ngModel
-  }
-
-  priorityTypeOnChange(event){
-    this.selectedCaseTask.taskPriorityCode = event.value;
-  }
-
-  assignedPersonTypeOnChange(event) {
-    // TODO: handle change, may not be needed if binding to ngModel
-  }
-
-  staffPoolTypeOnChange(event) {
-    // TODO: handle change, may not be needed if binding to ngModel
-  }
-
   onCancelCaseTask(form) {
-    this.selectedCaseTask = null;
-    form.reset();
     this.hideModals();
+    // form.reset();  // this is deleting the selectedItem from the grid!!??~
+    this.selectedCaseTask = null;
   }
 
   saveCaseTask() {
@@ -455,11 +455,57 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.dueDate, "yyyy-MM-dd"); // taskDueDate:"2018-01-31"
 
     this.caseSvc.saveCaseTask(task).subscribe( result => {
-      this.case.caseTasks.push(result);
+      let task = result[0]
+      // see if item exists in list
+      let idx = this.case.caseTasks.findIndex( item => item.taskOID == task.CaseTaskDTO );
+
+      if(idx > -1) this.case.caseTasks[idx] = task;
+      else this.case.caseTasks.push(task);
+
+      // Refresh the grid --------
+      // this.case.caseTasks = this.case.caseTasks.slice();
+
       this.toastSvc.showSuccessMessage('Your case task has been saved.', 'Task Saved');
       this.hideModals();
       this.selectedCaseTask = null;
     });
+  }
+
+  taskTypeOnChange(event) {
+    this.selectedCaseTask.taskType = event.value;
+  }
+
+  priorityTypeOnChange(event){
+    this.selectedCaseTask.taskPriorityCode = event.value;
+  }
+
+  assignedPersonTypeOnChange(event) {
+    this.selectedCaseTask.assignedParty = event.value;
+  }
+
+  staffPoolTypeOnChange(event) {
+    this.selectedCaseTask.assignedPool = event.value;
+  }
+
+  dueDateOnChange(event){
+    this.selectedCaseTask.dueDate = event;
+  }
+
+  taskDetailsOnChange(event){
+    this.selectedCaseTask.details = event;
+  }
+
+
+  // -------------------------
+  //   HEARING MODAL
+  // ------------------------=
+
+  addHearingTask() {
+    console.log('activeTabIndex BEFORE', this.activeTabIndex)
+    this.activeTabIndex = 1;
+    console.log('activeTabIndex AFTER', this.activeTabIndex)
+    this.hideModals();
+    this.createCaseTask(1);
   }
 
 
@@ -521,20 +567,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .downloadCourtDocument(this.case.caseOID, this.selectedDocumentTemplateType.documentTemplateOID)
       .subscribe();
-  }
-
-
-
-
-  // -------------------------
-  //   HEARING MODAL
-  // ------------------------=
-
-  addHearingTask(){
-    this.hideModals();
-    this.onShowCaseTaskModal()
-
-
   }
 
 

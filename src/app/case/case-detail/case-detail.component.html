@@ -1,5 +1,7 @@
 <div class="ui-g">
 
+    <loading-bar [visible]="loadingCase" [message]="'loading case...'"></loading-bar>
+
   <!-- HEADER -->
   <div class="ui-g-12 pv-0">
     <label class="minimal block mb-0">Case:</label>
@@ -211,7 +213,7 @@
 
     <div *ngIf="case">
 
-      <p-tabView>
+      <p-tabView [activeIndex]="activeTabIndex">
 
         <!-- EVENTS TAB -->
 
@@ -288,10 +290,10 @@
                 <p-column field="taskPriorityCode" header="Priority" [style]="{'width':'12%'}"></p-column>
                 <p-column field="" header="Assigned" [style]="{'width':'30%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      <span *ngIf="item.assignedParty.partyOID">
+                      <span *ngIf="item.assignedParty?.partyOID">
                         {{ 'Party: ' + item.assignedParty.firstName + ' ' + item.assignedParty.lastName }}
                       </span>
-                      <span *ngIf="item.assignedPool.poolOID">
+                      <span *ngIf="item.assignedPool?.poolOID">
                         {{ 'Pool: ' + item.assignedPool.poolName }}
                       </span>
                   </ng-template>
@@ -307,7 +309,7 @@
             </div>
             <div class="ui-g-12">
               <button type="button"
-                  (click)="beginAddCaseTask()"
+                  (click)="createCaseTask()"
                   label="Add Case Task"
                   icon="ui-icon-add"
                   class="ui-button-secondary mr-15" pButton></button>
@@ -412,7 +414,7 @@
                 </div>
                 <div class="ui-g-12">
                     <button type="button"
-                        (click)="addHearingTask()"
+                        (click)="addHearingTask(1)"
                         label="Add Hearing Task"
                         icon="ui-icon-add"
                         class="ui-button-secondary mr-15" pButton></button>
@@ -716,13 +718,12 @@
 
 <!-- ADD CASE TASK MODAL -->
 
-<!-- [(visible)]="showModalAddCaseTask"
-  *ngIf="showModalAddCaseTask && selectedCaseTask"
--->
 <p-dialog header="Add Case Task" width="450" [(visible)]="showModalAddCaseTask" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-    <form (ngSubmit)="saveCaseTask()" #caseTaskForm="ngForm" novalidate>
+  <loading-bar [visible]="loadingCaseTaskLookups" [message]="'loading task data...'"></loading-bar>
+
+  <form (ngSubmit)="saveCaseTask()" #caseTaskForm="ngForm" novalidate>
       <div class="ui-g">
-        <div class="form-group" *ngIf="selectedCaseTask" >
+        <div class="form-group" >
 
           <div class="ui-g-12 mb-0">
             <label class="minimal primary block">Task Type</label>
@@ -730,7 +731,7 @@
                 [required]="true"
                 [options]="taskTypes"
                 optionLabel="name"
-                [(ngModel)]="selectedCaseTask.taskType"
+                [ngModel]="selectedCaseTask?.taskType"
                 (onChange)="taskTypeOnChange($event)"
                 styleClass="width-full">
             </p-dropdown>
@@ -744,12 +745,9 @@
               <label class="minimal primary block">Priority</label>
               <p-dropdown name="ddPriority" id="ddPriority" placeholder="choose Priority..."
                   [options]="priorityTypes"
-                  [(ngModel)]="selectedCaseTask.taskPriorityCode"
+                  [ngModel]="selectedCaseTask?.taskPriorityCode"
                   (onChange)="priorityTypeOnChange($event)"
                   styleClass="width-full">
-                  <!-- optionLabel="label"
-                       dataKey="value"
-                   -->
               </p-dropdown>
           </div>
 
@@ -758,7 +756,7 @@
             <p-dropdown name="ddAssignedPerson" id="ddAssignedPerson" placeholder="choose Assigned Person..."
                 [options]="taskParties"
                 optionLabel="lastName"
-                [(ngModel)]="selectedCaseTask.assignedParty"
+                [ngModel]="selectedCaseTask?.assignedParty"
                 (onChange)="assignedPersonTypeOnChange($event)"
                 styleClass="width-full">
             </p-dropdown>
@@ -769,7 +767,7 @@
             <p-dropdown name="ddStaffPool" placeholder="choose Staff Pool..."
                 [options]="staffPools"
                 optionLabel="poolName"
-                [(ngModel)]="selectedCaseTask.assignedPool"
+                [ngModel]="selectedCaseTask?.assignedPool"
                 (onChange)="staffPoolTypeOnChange($event)"
                 styleClass="width-full">
             </p-dropdown>
@@ -779,7 +777,8 @@
           <div class="ui-g-12">
             <label class="minimal primary block">Due Date</label>
             <p-calendar id="task_dueDate" name="task_dueDate" placeholder="Due Date"
-                [(ngModel)]="selectedCaseTask.dueDate"
+                [ngModel]="selectedCaseTask?.dueDate"
+                (ngModelChange)="dueDateOnChange($event)"
                 [showIcon]="true"
                 dateFormat="dd.mm.yy"
                 appendTo="body"></p-calendar>
@@ -788,7 +787,8 @@
           <div class="ui-g-12">
             <label class="minimal primary block" for="tiTaskDetails">Task Details</label>
             <textarea id="tiTaskDetails" name="tiTaskDetails"
-                      [(ngModel)]="selectedCaseTask.details"
+                      [ngModel]="selectedCaseTask?.details"
+                      (ngModelChange)="taskDetailsOnChange($event)"
                       [rows]="2"
                       pInputTextarea
                       autoResize="autoResize"
