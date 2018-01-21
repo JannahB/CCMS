@@ -436,6 +436,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if(taskTypeId){
       this.selectedCaseTask.taskType = this.taskTypes.find((task) => task.taskTypeOID == taskTypeId );
     }
+
+    if(this.selectedCaseTask.assignedParty){
+      this.selectedCaseTask.assignedParty = this.taskParties.find(p => p.partyOID == this.selectedCaseTask.assignedParty.partyOID);
+    }
+    
+    if(this.selectedCaseTask.assignedPool){
+      this.selectedCaseTask.assignedPool = this.staffPools.find(s => s.poolOID == this.selectedCaseTask.assignedPool.poolOID);
+    }
+    
   }
 
   onCancelCaseTask(form) {
@@ -455,12 +464,22 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.dueDate, "yyyy-MM-dd"); // taskDueDate:"2018-01-31"
 
     this.caseSvc.saveCaseTask(task).subscribe( result => {
-      let task = result[0]
+      let savedTask = result[0];
+
+      Object.assign(this.selectedCaseTask.assignedParty, savedTask.assignedParty);
+      Object.assign(this.selectedCaseTask.assignedPool, savedTask.assignedPool);
+      this.selectedCaseTask.taskOID = savedTask.taskOID;
+
+      let task = this.selectedCaseTask;
+
       // see if item exists in list
-      let idx = this.case.caseTasks.findIndex( item => item.taskOID == task.CaseTaskDTO );
+      let idx = this.case.caseTasks.findIndex( item => item.taskOID == task.taskOID );
 
       if(idx > -1) this.case.caseTasks[idx] = task;
-      else this.case.caseTasks.push(task);
+      else {
+        this.case.caseTasks.push(task);
+        this.case.caseTasks = this.case.caseTasks.slice();
+      }
 
       // Refresh the grid --------
       // this.case.caseTasks = this.case.caseTasks.slice();
