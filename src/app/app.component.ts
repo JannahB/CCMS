@@ -1,4 +1,5 @@
 import {Component, AfterViewInit, ElementRef, Renderer, ViewChild, OnDestroy} from '@angular/core';
+import { GlobalState } from './common/services/state/global.state';
 import {BreadcrumbService} from './breadcrumb.service';
 
 enum MenuOrientation {
@@ -18,46 +19,29 @@ declare var jQuery: any;
 export class AppComponent implements AfterViewInit, OnDestroy {
 
     layoutCompact = false;
-
     layoutMode: MenuOrientation = MenuOrientation.HORIZONTAL;
-
     darkMenu = false;
-
     profileMode = 'inline';
-
     rotateMenuButton: boolean;
-
     topbarMenuActive: boolean;
-
     overlayMenuActive: boolean;
-
     staticMenuDesktopInactive: boolean;
-
     staticMenuMobileActive: boolean;
-
     rightPanelActive: boolean;
-
     rightPanelClick: boolean;
-
     layoutContainer: HTMLDivElement;
-
     layoutMenuScroller: HTMLDivElement;
-
     menuClick: boolean;
-
     topbarItemClick: boolean;
-
     activeTopbarItem: any;
-
     resetMenu: boolean;
-
     menuHoverActive: boolean;
 
     @ViewChild('layoutContainer') layourContainerViewChild: ElementRef;
 
     @ViewChild('layoutMenuScroller') layoutMenuScrollerViewChild: ElementRef;
 
-    constructor(public renderer: Renderer) {}
+    constructor(public renderer: Renderer, private _state:GlobalState) {}
 
     ngAfterViewInit() {
         this.layoutContainer = <HTMLDivElement> this.layourContainerViewChild.nativeElement;
@@ -145,6 +129,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         this.rightPanelClick = true;
         this.rightPanelActive = !this.rightPanelActive;
         event.preventDefault();
+        if(this.rightPanelActive){
+          this._state.notifyDataChanged('rightpanel.active', this.rightPanelActive, true );
+        }
+
     }
 
     onRightPanelClick() {

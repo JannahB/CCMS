@@ -447,7 +447,7 @@
                         </p-column>
                         <p-column field="" header="Assigned" [style]="{'width':'17%'}">
                             <ng-template pTemplate="body" let-item="rowData">
-                                {{ item.judicialOfficer.firstName + ' ' + item.judicialOfficer.lastName }}
+                                {{ item.judicialOfficer?.firstName + ' ' + item.judicialOfficer?.lastName }}
                             </ng-template>
                         </p-column>
                         <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
@@ -759,6 +759,13 @@
                 [ngModel]="selectedCaseTask?.assignedParty"
                 (onChange)="assignedPersonTypeOnChange($event)"
                 styleClass="width-full">
+                <!-- <ng-template let-item pTemplate="selectedItem">
+                    <div>{{item.firstName}} {{item.lastName}}</div>
+                </ng-template>
+                <ng-template let-person pTemplate="item">
+                    <div>{{person.firstName}} {{person.lastName}}</div>
+
+                </ng-template> -->
             </p-dropdown>
           </div>
 

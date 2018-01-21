@@ -1,3 +1,4 @@
+import { GlobalState } from './../common/services/state/global.state';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -20,7 +21,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private authenticationService:AuthenticationService,
-    private router:Router
+    private router:Router,
+    private _state: GlobalState
   ) { }
 
   ngOnInit() {
@@ -64,6 +66,8 @@ export class LoginComponent implements OnInit {
   private handleAuthenticationComplete():void{
     this.hasLoginFailed = false;
     this.isAttemptingLogin = false;
+
+    this._state.notifyDataChanged('app.loggedIn', null, true );
 
     let url:string = "/";
 

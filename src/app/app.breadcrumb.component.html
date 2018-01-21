@@ -20,15 +20,15 @@
         <div class="pt-5">
             <p-dropdown styleClass="width-full"
                 class="court-dropdown"
-                [options]="[{'label':'North Children Court', 'value':1},{'label':'South Children Court', 'value':2},{'label':'East Children Court', 'value':3}]" 
+                [options]="[ {'label':'North Children Court', 'value':1} ]"
                 [(ngModel)]="selectedCourt">
             </p-dropdown>
         </div>
-        <!-- <button pButton type="button" 
+        <!-- <button pButton type="button"
             class="ui-button-secondary"
-            (click)="app.onRightPanelButtonClick($event)" 
+            (click)="app.onRightPanelButtonClick($event)"
             icon="ui-icon-timer" label="Tasks"></button> -->
-        
+
         <!-- <a routerLink="/" title="Tasks">
             <i class="material-icons">backup</i>
         </a>

@@ -1,5 +1,5 @@
 
-  .layout-rightpanel {    
+  .layout-rightpanel {
     .layout-rightpanel-header {
         background: url("../assets/layout/images/dashboard/sidebar-red.jpg") no-repeat;
         background-size: cover;
@@ -11,7 +11,7 @@
           margin: 0;
           font-weight: 300;
         }
-        
+
         .tasks-day, .tasks-date {
             color: #ffffff;
             left: 14px;
@@ -20,16 +20,16 @@
             padding-bottom: 4px;
         }
     }
-    
+
     .layout-rightpanel-content {
         padding: 14px;
         position: relative;
-        
+
         h1 {
             font-size: 24px;
             margin: 0 0 4px 0;
         }
-        
+
         h2 {
             font-size: 16px;
             margin: 0;
@@ -51,27 +51,27 @@
           font-size: 12px;
           line-height: 12px;
         }
-        
+
         .tasks-today {
             text-align: center;
             margin-top: 28px;
-            
+
             .tasks-today-value {
                 font-size: 36px;
                 vertical-align: middle;
                 margin-right: 14px;
             }
-            
+
             img {
                 vertical-align: middle;
             }
         }
-        
+
         .task-items {
             list-style-type: none;
             margin: 28px 0 0 0;
             padding: 0;
-            
+
             li {
                 padding: 8px 14px;
                 border-bottom: 1px solid #d8dae2;
@@ -79,12 +79,19 @@
 
                 .task-title{
                   margin: 0;
+                  // text-decoration: underline;
+                  color: #0277BD;
+
+                  :hover{
+                    background-color: #d8dae2;
+                  }
                 }
                 .task-subtitle{
                   margin: 0;
                   font-size: 0.8em;
+                  color: #0277BD;
                 }
-                                  
+
                 .task-date {
                     position: absolute;
                     right: 10px;
@@ -93,7 +100,7 @@
                 .task-done {
                   color: #0e7c5b;
                 }
-                
+
                 img {
                     width: 24px;
                     position: absolute;
