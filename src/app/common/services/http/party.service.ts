@@ -74,7 +74,7 @@ export class PartyService extends HttpBaseService<Party> {
 
   public saveParty(data:Party):Observable<Party>{
     //Generic object because some properties will be converted to string or number
-    //for save 
+    //for save
     let party:any = {
       firstName: '',
       lastName: '',
@@ -148,10 +148,10 @@ export class PartyService extends HttpBaseService<Party> {
             value.endDate = this.datePipe.transform(value.endDate, "yyyy-MM-dd");
         else
             value.endDate = '';
-            
+
         value.partyPhoneOID = value.partyPhoneOID ? value.partyPhoneOID.toString() : "0";
         value.partyOID = value.partyOID ? value.partyOID.toString() : "0";
-        
+
         party.phoneNumbers.push(value);
       });
     }
@@ -166,10 +166,10 @@ export class PartyService extends HttpBaseService<Party> {
             value.endDate = this.datePipe.transform(value.endDate, "yyyy-MM-dd");
         else
             value.endDate = '';
-             
+
         value.partyEmailOID = value.partyEmailOID ? value.partyEmailOID.toString() : "0";
         value.partyOID = value.partyOID ? value.partyOID.toString() : "0";
-         
+
         party.emails.push(value);
       });
     }
