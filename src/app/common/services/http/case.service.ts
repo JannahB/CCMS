@@ -24,6 +24,8 @@ import { CasePartyRole } from '../../entities/CasePartyRole';
 import { DocTemplate } from '../../entities/DocTemplate';
 import { Http, RequestOptionsArgs, Headers } from '@angular/http';
 import { AuthorizationInterceptor } from '../../interceptors/authorization.interceptor';
+import { JudicialOfficer } from '../../entities/JudicialOfficer';
+import { JudicialAssignment } from '../../entities/JudicialAssignment';
 
 
 @Injectable()
@@ -203,6 +205,10 @@ export class CaseService extends HttpBaseService<Case> {
         })
       }
 
+      if(kase.judicialAssignments){
+        kase.judicialAssignments = kase.judicialAssignments
+          .map(a => this.convertDatesForJudicialAssignment(a));
+      }
 
     })
     return cases;
@@ -340,5 +346,48 @@ export class CaseService extends HttpBaseService<Case> {
         return result;
       });
 
+  }
+
+  public fetchJudicialOfficer():Observable<JudicialOfficer[]>{
+    let url:string = `${super.getBaseUrl()}/FetchJudicialOfficer`;
+
+    return this.http
+      .get<JudicialOfficer[]>(url)
+      .map(judges => judges.map(this.mapToRealJudicialOfficer));
+  }
+
+  private mapToRealJudicialOfficer(judge:JudicialOfficer):JudicialOfficer{
+    return Object.assign(new JudicialOfficer(), judge);
+  }
+
+  public saveJudicialAssignment(data:JudicialAssignment):Observable<JudicialAssignment>{
+    let url:string = `${super.getBaseUrl()}/SaveJudicialAssignment`;
+
+    let assignment:any = {
+      caseOID: data.caseOID.toString(),
+      partyOID: data.judicialOfficial.partyOID.toString(),
+      startDate: this.datePipe.transform(data.startDate, "yyyy-MM-dd")
+    };
+    
+    if (data.endDate)
+      assignment.endDate = this.datePipe.transform(data.endDate, "yyyy-MM-dd");
+
+    if (data.judicialAssignmentOID)
+      assignment.judicialAssignmentOID = data.judicialAssignmentOID.toString();
+
+    return this.http
+      .post<JudicialAssignment[]>(url,assignment)
+      .map(j => this.convertDatesForJudicialAssignment(j[0]));
+  }
+
+  private convertDatesForJudicialAssignment(assignment:JudicialAssignment):JudicialAssignment{
+    let ref:any = assignment;
+    if(assignment.endDate){
+      assignment.endDate = DateConverter.convertDate(assignment.endDate);
+    }
+
+    assignment.startDate = DateConverter.convertDate(assignment.startDate);
+
+    return assignment;
   }
 }
