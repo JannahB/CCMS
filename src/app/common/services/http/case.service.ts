@@ -56,8 +56,8 @@ export class CaseService extends HttpBaseService<Case> {
 
     return this.http.post<Case[]>(url, obj)
       .map(res => {
-        let cases:Case[] = res;
-        return this.convertDates(cases);
+        let kases:Case[] = res;
+        return this.convertDates(kases);
       })
   }
 
@@ -67,9 +67,15 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http.post<Case>(url,
       { caseOID : id })
       .map(res => {
-        let kase:Case = res[0];
-        kase = this.convertDates([kase])[0];
-        return kase;
+        if(res[0] == undefined) {
+          // this handles server return of [undefined]
+          // an array populated with undefined
+          return new Case();
+        }else {
+          let kase:Case = res[0];
+          kase = this.convertDates([kase])[0];
+          return kase;
+        }
       })
   }
 
@@ -80,8 +86,8 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http.post<Case[]>(url, body,
     )
       .map(res => {
-        let cases:Case[] = res;
-        return this.convertDates(cases);
+        let kases:Case[] = res;
+        return this.convertDates(kases);
       })
   }
 
@@ -90,9 +96,9 @@ export class CaseService extends HttpBaseService<Case> {
 
     return this.http.get<Case[]>(url)
       .map(res => {
-        let cases:Case[] = res;
+        let kases:Case[] = res;
 
-        return this.convertDates(cases);
+        return this.convertDates(kases);
       });
   }
 
@@ -100,8 +106,8 @@ export class CaseService extends HttpBaseService<Case> {
     let url:string = this.getBaseMockUrl();
     return this.http.get<Case[]>(url)
       .map(res => {
-        let cases:Case[] = res;
-        return this.convertDates(cases);
+        let kases:Case[] = res;
+        return this.convertDates(kases);
       });
   }
 
@@ -109,17 +115,21 @@ export class CaseService extends HttpBaseService<Case> {
     let url:string = this.getBaseMockUrl();
     return this.http.get<Case[]>(url)
       .map(res => {
-        let cases:Case[] = res;
-        cases = this.convertDates(cases);
-        let kase:Case = cases[0];
+        let kases:Case[] = res;
+        kases = this.convertDates(kases);
+        let kase:Case = kases[0];
         return kase;
       });
   }
 
-  private convertDates(cases:Case[]){
-    if(!cases || Object.keys(cases).length === 0) return;
-    cases.forEach( kase => {
-      kase.caseFilingDate = DateConverter.convertDate(kase.caseFilingDate);
+  private convertDates(kases:Case[]){
+    if( !kases || !kases.length || Object.keys(kases).length === 0 || kases[0] == undefined){
+      return [];
+    }
+    kases.forEach( kase => {
+      if(kase.caseFilingDate){
+        kase.caseFilingDate = DateConverter.convertDate(kase.caseFilingDate);
+      }
 
       let caseDocs:CaseDocument[] = kase.caseDocs;
       if(caseDocs) {
@@ -211,7 +221,7 @@ export class CaseService extends HttpBaseService<Case> {
       }
 
     })
-    return cases;
+    return kases;
   }
 
   public fetchICCSCategory(iccsCodeOID:number = null):Observable<IccsCode[]>{
@@ -368,7 +378,7 @@ export class CaseService extends HttpBaseService<Case> {
       partyOID: data.judicialOfficial.partyOID.toString(),
       startDate: this.datePipe.transform(data.startDate, "yyyy-MM-dd")
     };
-    
+
     if (data.endDate)
       assignment.endDate = this.datePipe.transform(data.endDate, "yyyy-MM-dd");
 
