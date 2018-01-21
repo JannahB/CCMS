@@ -53,6 +53,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   selectedJudicialAssignment: any;
   documentTemplateTypes: DocTemplate[] = [];
   selectedDocumentTemplateType: DocTemplate;
+  routeSubscription: Subscription;
 
   datePipe:DatePipe = new DatePipe("en");
 
@@ -72,21 +73,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    let params:any = this.activatedRoute.params;
-    let caseId:string = params.value.caseId;
-    if(parseInt(caseId) == 0) {
-      // TODO: Create New Case with empty properties;
-      // new'ing doesn't bring properties w/o constructor on entity!?
-      this.case = new Case();
-
-      // this is temp until empty new Case()
-
-    }
-
-    this.loadingCase = true;
-    this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe (kase => {
-      this.case = kase;
-      this.loadingCase = false;
+    this.routeSubscription = this.activatedRoute.params.subscribe(params => {
+      const caseId = params['caseId'];
+      this.getCase(caseId);
     });
 
     this.caseSvc
@@ -98,7 +87,23 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     if (this.caseSubscription) this.caseSubscription.unsubscribe();
     if( this.caseTaskSubscription ) this.caseTaskSubscription.unsubscribe();
+    if(this.routeSubscription) this.routeSubscription.unsubscribe();
+  }
 
+  getCase(caseId) {
+    if(caseId == 0 ) {
+      this.case = new Case();
+      return;
+    }
+    this.loadingCase = true;
+    this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe (kase => {
+      this.loadingCase = false;
+      if(!kase.caseOID){
+        this.toastSvc.showWarnMessage('There is no case with caseOID of '+ caseId +'.', 'No Case Found');
+      } else {
+        this.case = kase;
+      }
+    });
   }
 
   addNewParty() {
@@ -442,11 +447,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if(this.selectedCaseTask.assignedParty){
       this.selectedCaseTask.assignedParty = this.taskParties.find(p => p.partyOID == this.selectedCaseTask.assignedParty.partyOID);
     }
-    
+
     if(this.selectedCaseTask.assignedPool){
       this.selectedCaseTask.assignedPool = this.staffPools.find(s => s.poolOID == this.selectedCaseTask.assignedPool.poolOID);
     }
-    
+
   }
 
   onCancelCaseTask(form) {
@@ -543,7 +548,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   onShowJudgeModal(){
     this.showModalAddJudge = true;
-    
+
     this.caseSvc
       .fetchJudicialOfficer()
       .subscribe(judges => {
