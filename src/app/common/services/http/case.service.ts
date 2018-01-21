@@ -319,8 +319,8 @@ export class CaseService extends HttpBaseService<Case> {
       .post(url, params, options)
       .map(response => {
         let headers = response.headers;
-        let contentType = headers['Content-Type'];
-        let fileName = headers['Content-Disposition'].split('; ')[1].split('=')[1].replace(/"/g,'');
+        let contentType = headers.get('content-type');
+        let fileName = headers.get('content-disposition').split('; ')[1].split('=')[1].replace(/"/g,'');
         let result = response.arrayBuffer();
         let data = new Blob([result], { type: contentType });
         return result;
