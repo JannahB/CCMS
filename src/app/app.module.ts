@@ -97,6 +97,7 @@ import { AuthorizationInterceptor } from './common/interceptors/authorization.in
 import { LoginComponent } from './login/login.component';
 import { CanActivateAuthenticationGuard } from './common/guards/can-activate-authentication.guard';
 import { AuthenticationService } from './common/services/http/authentication.service';
+import { LoadingBarComponent } from './common/components/loading-bar.component';
 
 
 @NgModule({
@@ -179,7 +180,8 @@ import { AuthenticationService } from './common/services/http/authentication.ser
         AdminDataComponent,
         AdminWorkflowComponent,
         AdminUsersComponent,
-        LoginComponent
+        LoginComponent,
+        LoadingBarComponent
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},

@@ -1,3 +1,4 @@
+import { CaseTaskDTO } from './../../entities/CaseTaskDTO';
 import { Injectable, forwardRef, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
@@ -50,7 +51,7 @@ export class CaseService extends HttpBaseService<Case> {
 
   public fetchAny(obj:any):Observable<Case[]>{
     let url: string = `${super.getBaseUrl()}/FetchCase`;
-    
+
     return this.http.post<Case[]>(url, obj)
       .map(res => {
         let cases:Case[] = res;
@@ -60,7 +61,7 @@ export class CaseService extends HttpBaseService<Case> {
 
   public fetchOne(id:string):Observable<Case>{
     let url: string = `${super.getBaseUrl()}/FetchCase`;
-    
+
     return this.http.post<Case>(url,
       { caseOID : id })
       .map(res => {
@@ -73,7 +74,7 @@ export class CaseService extends HttpBaseService<Case> {
 
   public fetch(body:any):Observable<Case[]>{
     let url: string = `${super.getBaseUrl()}/FetchCase`;
-    
+
     return this.http.post<Case[]>(url, body,
     )
       .map(res => {
@@ -209,9 +210,9 @@ export class CaseService extends HttpBaseService<Case> {
 
   public fetchICCSCategory(iccsCodeOID:number = null):Observable<IccsCode[]>{
     let url:string = `${super.getBaseUrl()}/FetchICCSCategory`;
-    
+
     let params:Object = "";
-    
+
     if(iccsCodeOID){
       params = { iccsCodeOID: iccsCodeOID.toString() };
     }
@@ -286,6 +287,19 @@ export class CaseService extends HttpBaseService<Case> {
       .map(c => this.convertDates(c)[0]);
   }
 
+  public saveCaseTask(data: CaseTaskDTO):Observable<CaseTask> {
+    let url:string = `${super.getBaseUrl()}/SaveCaseTask`;
+    return this.http
+      .post<CaseTask>(url, data)
+      .map(t => this.convertCaseTaskDates(t))
+  }
+
+  convertCaseTaskDates(ct){
+    ct.assignedDate = DateConverter.convertDate(ct.assignedDate);
+    ct.dueDate = DateConverter.convertDate(ct.dueDate);
+    return ct;
+  }
+
   public fetchCasePartyRole():Observable<CasePartyRole[]>{
     let url:string = `${super.getBaseUrl()}/FetchCasePartyRole`;
 
@@ -295,7 +309,7 @@ export class CaseService extends HttpBaseService<Case> {
 
   public fetchDocumentTemplate():Observable<DocTemplate[]>{
     let url:string = `${super.getBaseUrl()}/FetchDocumentTemplate`;
-    
+
     return this.http
       .get<DocTemplate[]>(url);
   }
@@ -306,10 +320,10 @@ export class CaseService extends HttpBaseService<Case> {
       caseOID: caseOID.toString(),
       documentTemplateOID: documentTemplateOID.toString()
     };
-    
+
     let options:RequestOptionsArgs = {}
     let headers:Headers = new Headers();
-    
+
     headers.append("token", AuthorizationInterceptor.authToken);
     headers.append("Authorization", `Bearer ${AuthorizationInterceptor.authToken}`);
 

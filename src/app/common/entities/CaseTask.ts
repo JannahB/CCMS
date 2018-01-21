@@ -6,17 +6,17 @@ import { DocTemplate } from './DocTemplate';
 
 export class CaseTask {
 
-  assignedDate: Date;
-  assignedParty: Party;
-  assignedPool: Pool;
-  associatedCase: AssociatedCase;
-  courtOID: number; 
-  details: string;
-  docTemplate: DocTemplate;
-  dueDate: Date;
-  notDoneReason: string;
-  taskOID: number; 
-  taskPriorityCode: number; 
-  taskType: TaskType;
-  
+  assignedDate: Date = null;
+  assignedParty: Party = new Party();
+  assignedPool: Pool = new Pool();
+  associatedCase: AssociatedCase = new AssociatedCase();
+  courtOID: number = null;
+  details: string = '';
+  docTemplate: DocTemplate = new DocTemplate();
+  dueDate: Date = null;
+  notDoneReason: string = '';
+  taskOID: number = 0;
+  taskPriorityCode: number = null;
+  taskType: TaskType = new TaskType();
+
 }

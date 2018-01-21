@@ -17,8 +17,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "gen-theme": "sass src/assets/theme/theme-tt2.scss src/assets/theme/theme-tt2.css",
-    "gen-layout": "sass src/assets/layout/css/layout-tt2.scss src/assets/layout/css/layout-tt2.css"
+    "gen-theme": "sass src/assets/theme/theme-tt.scss src/assets/theme/theme-tt.css",
+    "gen-layout": "sass src/assets/layout/css/layout-tt.scss src/assets/layout/css/layout-tt.css"
   },
   "private": true,
   "dependencies": {

@@ -85,16 +85,6 @@ export class AdminDataComponent implements OnInit {
       this.lookupSvc.fetchLookup<CaseEvent>('FetchEventType'),
       this.lookupSvc.fetchLookup<HearingType>('FetchHearingType'),
       this.lookupSvc.fetchLookup<CourtLocation>('FetchHearingLocation'),
-
-      // this.lookupSvc.getMock('case-types.json'),
-      // this.lookupSvc.getMock('case-phase-types.json'),
-      // this.lookupSvc.getMock('case-status-types.json'),
-      // this.lookupSvc.getMock('case-party-role-types.json'),
-      // this.lookupSvc.getMock('identifier-types-temp.json'),
-      // this.lookupSvc.getMock('iccs-code-types-temp.json'),
-      // this.lookupSvc.getMock('event-types.json'),
-      // this.lookupSvc.getMock('hearing-types.json'),
-      // this.lookupSvc.getMock('location-types.json'),
     );
 
     var subscription = source.subscribe(

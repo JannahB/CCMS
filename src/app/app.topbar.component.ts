@@ -58,7 +58,7 @@ import {AppComponent} from './app.component';
                                             <i class="material-icons">brush</i>
                                             <span>Red Theme</span>
                                         </a>
-                                    </li>                                        
+                                    </li>
                                 </ul>
                             </li>
                             <li role="menuitem">
@@ -68,14 +68,14 @@ import {AppComponent} from './app.component';
                                 </a>
                             </li>
                             <li role="menuitem">
-                                <a href="#">
+                                <a routerLink="/login">
                                     <i class="material-icons">power_settings_new</i>
                                     <span>Logout</span>
                                 </a>
                             </li>
                         </ul>
                     </li>
-                    
+
                     <li #messages [ngClass]="{'active-top-menu':app.activeTopbarItem === messages}">
                         <a href="#" (click)="app.onTopbarItemClick($event,messages)">
                             <i class="topbar-icon material-icons animated swing">message</i>
@@ -84,34 +84,34 @@ import {AppComponent} from './app.component';
                         </a>
                         <ul class="ultima-menu animated fadeInDown">
                             <li role="menuitem">
-                                <a href="#" class="topbar-message">                                    
+                                <a href="#" class="topbar-message">
                                     <p class="mb-0">Important Message </p>
                                     <p class="muted-label mt-0">Dec 31, 2017</p>
                                     <span class="muted-label">A message for all to see here. Very importantant announcement about an upcoming case. Read about the change here... </span>
                                 </a>
                             </li>
                             <li role="menuitem">
-                                <a href="#" class="topbar-message">                                    
+                                <a href="#" class="topbar-message">
                                     <p class="mb-0">Happy New Year </p>
                                     <p class="muted-label mt-0">Jan 1, 2017</p>
                                     <span class="muted-label">Happy new year to all our employees. Very importantant announcement about an upcoming case. Read about the change here... </span>
                                 </a>
                             </li>
                             <li role="menuitem">
-                                <a href="#" class="topbar-message">                                    
+                                <a href="#" class="topbar-message">
                                     <p class="mb-0">Procedure Change </p>
                                     <p class="muted-label mt-0">Jan 2, 2017</p>
                                     <span class="muted-label">We've made a change to the following procedure... </span>
                                 </a>
                             </li>
                             <li role="menuitem">
-                                <a href="#" class="topbar-message">                                    
+                                <a href="#" class="topbar-message">
                                     <p class="mb-0">Message </p>
                                     <p class="muted-label mt-0">Jan 3, 2017</p>
                                     <span class="muted-label">A message for all to see here. Very importantant announcement about an upcoming case. Read about the change here... </span>
                                 </a>
                             </li>
-                            
+
                         </ul>
                     </li>
                     <li #notifications [ngClass]="{'active-top-menu':app.activeTopbarItem === notifications}">
@@ -120,7 +120,7 @@ import {AppComponent} from './app.component';
                             <span class="topbar-badge animated rubberBand">10</span>
                             <span class="topbar-item-name">Tasks</span>
                         </a>
-                        
+
                     </li>
                     <!--
                     <li #search class="search-item" [ngClass]="{'active-top-menu':app.activeTopbarItem === search}"

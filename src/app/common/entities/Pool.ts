@@ -2,8 +2,9 @@ import { Party } from './Party';
 
 export class Pool {
 
-  courtOID: number; 
-  poolOID: number; 
-  poolStaffParties: Party[];
-  
+  poolOID: number;
+  poolName: string;
+  courtOID: number;
+  poolStaffParties: Party[] = [];
+
 }
