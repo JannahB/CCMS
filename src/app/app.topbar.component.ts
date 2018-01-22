@@ -5,6 +5,13 @@ import { AuthenticationService } from './common/services/http/authentication.ser
 
 @Component({
     selector: 'app-topbar',
+    styles: [`
+      .profile-icon{
+        font-size: 36px;
+        /*color: #BF2E1A; Brand Red*/
+        color: #707070;
+      }
+    `],
     template: `
         <div class="topbar clearfix" >
             <div class="topbar-left">
@@ -30,17 +37,19 @@ import { AuthenticationService } from './common/services/http/authentication.ser
                         [ngClass]="{'active-top-menu':app.activeTopbarItem === profile}">
 
                         <a href="#" (click)="app.onTopbarItemClick($event,profile)">
-                            <img class="profile-image" src="assets/layout/images/avatar.png" />
-                            <span class="topbar-item-name">Jane Williams</span>
+                          <i class="material-icons profile-icon">account_circle</i>
+                          <!-- <img class="profile-image" src="assets/layout/images/avatar.png" /> -->
+                          <span class="topbar-item-name">User</span>
                         </a>
 
                         <ul class="ultima-menu animated fadeInDown">
-                            <li role="menuitem">
+                          <!--
+                          <li role="menuitem">
                                 <a href="#">
                                     <i class="material-icons">person</i>
                                     <span>Profile</span>
                                 </a>
-                            </li>
+                            </li> -->
                             <li role="menuitem">
                                 <a href="#">
                                     <i class="material-icons">palette</i>
@@ -77,7 +86,7 @@ import { AuthenticationService } from './common/services/http/authentication.ser
                             </li>
                         </ul>
                     </li>
-
+                    <!--
                     <li #messages [ngClass]="{'active-top-menu':app.activeTopbarItem === messages}">
                         <a href="#" (click)="app.onTopbarItemClick($event,messages)">
                             <i class="topbar-icon material-icons animated swing">message</i>
@@ -115,7 +124,7 @@ import { AuthenticationService } from './common/services/http/authentication.ser
                             </li>
 
                         </ul>
-                    </li>
+                    </li> -->
                     <li #notifications [ngClass]="{'active-top-menu':app.activeTopbarItem === notifications}">
                         <a href="#" (click)="app.onRightPanelButtonClick($event)">
                             <i class="topbar-icon material-icons">timer</i>
