@@ -30,6 +30,9 @@ import { LookupService } from '../../common/services/http/lookup.service';
 import { CaseTaskDTO } from '../../common/entities/CaseTaskDTO';
 import { JudicialAssignment } from '../../common/entities/JudicialAssignment';
 import { JudicialOfficer } from '../../common/entities/JudicialOfficer';
+import { CaseType } from '../../common/entities/CaseType';
+import { CaseStatus } from '../../common/entities/CaseStatus';
+import { CasePhase } from '../../common/entities/CasePhase';
 
 
 @Component({
@@ -54,6 +57,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   documentTemplateTypes: DocTemplate[] = [];
   selectedDocumentTemplateType: DocTemplate;
   routeSubscription: Subscription;
+  caseTypes:CaseType[] = [];
+  caseStatuses:CaseStatus[] = [];
+  casePhases:CasePhase[] = [];
+
 
   datePipe:DatePipe = new DatePipe("en");
 
@@ -81,6 +88,18 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .fetchDocumentTemplate()
       .subscribe(results => this.documentTemplateTypes = results);
+
+    this.caseSvc
+      .fetchCaseType()
+      .subscribe(results => this.caseTypes = results);
+      
+    this.caseSvc
+      .fetchCaseStatus()
+      .subscribe(results => this.caseStatuses = results);
+    
+    this.caseSvc
+      .fetchEventType()
+      .subscribe(types => this.eventTypes = types);
   }
 
   ngOnDestroy() {
@@ -102,6 +121,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.toastSvc.showWarnMessage('There is no case with caseOID of '+ caseId +'.', 'No Case Found');
       } else {
         this.case = kase;
+
+        if(this.case.caseType){
+          this.caseSvc
+            .fetchPhaseByType(this.case.caseType.caseTypeOID)
+            .subscribe(results => this.casePhases = results);
+        }
+
+        this.filterCaseEvents();
       }
     });
   }
@@ -135,6 +162,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   }
 
+  caseTypeChange(event):void{
+    if(this.case.caseType){
+      this.caseSvc
+        .fetchPhaseByType(this.case.caseType.caseTypeOID)
+        .subscribe(results => this.casePhases = results);
+    }else{
+      this.casePhases = [];
+    }
+  }
 
 
   // MODALS --------------------------------------------
@@ -594,11 +630,30 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   showModalAddEvent: boolean = false;
   events: any[];
+  filteredEvents:CaseEvent[] = [];
   caseEvent: CaseEvent = new CaseEvent();
   eventTypes: EventType[]; // verify correct data type
   eventParties: Party[];   // verify correct data type
   documents: any[];
   selectedInitiatedByParty: CaseParty;
+  eventTypeFilter:EventType = null;
+
+  eventTypeFilterChange(event):void{
+    this.filterCaseEvents();
+  }
+
+  clearEventFilter():void{
+    this.eventTypeFilter = null;
+    this.filterCaseEvents();
+  }
+
+  caseEventOnRowSelect(event):void{
+    this.caseEvent = event.data;
+  }
+
+  requestViewCaseEvent(){
+    this.showEventModal();
+  }
 
   addCaseEventClicked(){
     this.caseEvent = new CaseEvent();
@@ -617,10 +672,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
 
     this.caseEvent.caseOID = this.case.caseOID;
-
-    this.caseSvc
-      .fetchEventType()
-      .subscribe(types => this.eventTypes = types);
   }
 
   saveEvent(){
@@ -630,6 +681,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .saveCaseEvent(this.caseEvent)
       .subscribe(savedCaseEvent => {
+        savedCaseEvent.eventType = this.eventTypes.find(e => e.eventTypeOID == savedCaseEvent.eventType.eventTypeOID);
+
         let index:number = this.case.caseEvents
           .findIndex(ce => ce.caseEventOID == savedCaseEvent.caseEventOID);
 
@@ -640,6 +693,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
           this.case.caseEvents = this.case.caseEvents.slice();
         }
       });
+
+    this.showModalAddEvent = false;
+  }
+
+  filterCaseEvents():void{
+    if(this.eventTypeFilter && this.case.caseEvents){
+      this.filteredEvents = this.case.caseEvents
+        .filter(e => e.eventType.eventTypeOID == this.eventTypeFilter.eventTypeOID);
+    }else{
+      this.filteredEvents = this.case.caseEvents;
+    }
   }
 
   saveCase(shouldShowSuccessMessage:boolean = true){

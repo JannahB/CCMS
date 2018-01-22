@@ -28,6 +28,9 @@ import { JudicialOfficer } from '../../entities/JudicialOfficer';
 import { JudicialAssignment } from '../../entities/JudicialAssignment';
 import { FileSaver } from '../utility/file-saver.service';
 import { EventType } from '../../entities/EventType';
+import { CaseType } from '../../entities/CaseType';
+import { CaseStatus } from '../../entities/CaseStatus';
+import { CasePhase } from '../../entities/CasePhase';
 
 
 @Injectable()
@@ -421,14 +424,19 @@ export class CaseService extends HttpBaseService<Case> {
         initiatedByPartyOID: '',
         eventTypeOID: '',
         durationTimeMin: '',
-        documentTemplateOID: undefined
+        documentTemplateOID: undefined,
+        caseEventOID: undefined
     };
 
     event.caseOID = data.caseOID.toString();
     event.initiatedByPartyOID = data.initiatedByParty.partyOID.toString();
     event.eventTypeOID = data.eventType.eventTypeOID.toString();
 
-    if (data.durationTimeMin !== null)
+    if(data.caseEventOID){
+      event.caseEventOID = data.caseEventOID.toString();
+    }
+
+    if (data.durationTimeMin || data.durationTimeMin === 0)
         event.durationTimeMin = data.durationTimeMin.toString();
 
     if (data.docTemplate)
@@ -440,4 +448,30 @@ export class CaseService extends HttpBaseService<Case> {
       .post<CaseEvent[]>(url, event)
       .map(e => e[0]);
   }
+
+  public fetchCaseType():Observable<CaseType[]>{
+    let url:string = `${super.getBaseUrl()}/FetchCaseType`;
+
+    return this.http
+      .get<CaseType[]>(url);
+  }
+
+  public fetchCaseStatus():Observable<CaseStatus[]>{
+    let url:string = `${super.getBaseUrl()}/FetchCaseStatus`;
+
+    return this.http
+      .get<CaseStatus[]>(url);
+  }
+  
+  public fetchPhaseByType(type:number):Observable<CasePhase[]>{
+    let url:string = `${super.getBaseUrl()}/FetchPhaseByType`;
+
+    let params:object = {
+      typeOID: type.toString()
+    }
+
+    return this.http
+      .post<CasePhase[]>(url, params);
+  }
+  
 }
