@@ -128,6 +128,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
             .subscribe(results => this.casePhases = results);
         }
 
+        this.eventTypeFilter = null;
         this.filterCaseEvents();
       }
     });
