@@ -1,6 +1,7 @@
 import { GlobalState } from './common/services/state/global.state';
 import {Component} from '@angular/core';
 import {AppComponent} from './app.component';
+import { AuthorizationInterceptor } from './common/interceptors/authorization.interceptor';
 
 @Component({
     selector: 'app-topbar',
@@ -68,7 +69,7 @@ import {AppComponent} from './app.component';
                                 </a>
                             </li>
                             <li role="menuitem">
-                                <a routerLink="/login">
+                                <a routerLink="/login" (click)="logout()">
                                     <i class="material-icons">power_settings_new</i>
                                     <span>Logout</span>
                                 </a>
@@ -139,10 +140,17 @@ import {AppComponent} from './app.component';
 })
 export class AppTopbarComponent {
 
-    constructor(public app: AppComponent, private _state:GlobalState) {}
+    constructor(
+        public app: AppComponent, 
+        private _state:GlobalState
+    ) {}
 
     sendThemeChange(theme:string) {
         this._state.notifyDataChanged('theme.change', theme, true );
+    }
+
+    public logout():void{
+        AuthorizationInterceptor.authToken = null;
     }
 
 }

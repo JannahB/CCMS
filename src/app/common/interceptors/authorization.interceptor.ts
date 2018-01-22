@@ -57,7 +57,8 @@ export class AuthorizationInterceptor implements HttpInterceptor {
                 event => event,
                 error => {
                     this.authenticationModel.returnUrl = this.router.url;
-
+                    AuthorizationInterceptor.authToken = null;
+                    
                     //This is difficult to test.  Just navigate to login on all errors for now
                     // if(error instanceof HttpErrorResponse && error.status == 401){
                     //     this.router.navigate(["login"]);
