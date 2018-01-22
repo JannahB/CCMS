@@ -22,10 +22,11 @@ import { CaseParty } from '../../entities/CaseParty';
 import { ChargeFactor } from '../../entities/ChargeFactor';
 import { CasePartyRole } from '../../entities/CasePartyRole';
 import { DocTemplate } from '../../entities/DocTemplate';
-import { Http, RequestOptionsArgs, Headers } from '@angular/http';
+import { Http, RequestOptionsArgs, Headers, ResponseContentType } from '@angular/http';
 import { AuthorizationInterceptor } from '../../interceptors/authorization.interceptor';
 import { JudicialOfficer } from '../../entities/JudicialOfficer';
 import { JudicialAssignment } from '../../entities/JudicialAssignment';
+import { FileSaver } from '../utility/file-saver.service';
 
 
 @Injectable()
@@ -344,6 +345,7 @@ export class CaseService extends HttpBaseService<Case> {
     headers.append("Authorization", `Bearer ${AuthorizationInterceptor.authToken}`);
 
     options.headers = headers;
+    options.responseType = ResponseContentType.Blob;
 
     return this.classicHttp
       .post(url, params, options)
@@ -352,7 +354,11 @@ export class CaseService extends HttpBaseService<Case> {
         let contentType = headers.get('content-type');
         let fileName = headers.get('content-disposition').split('; ')[1].split('=')[1].replace(/"/g,'');
         let result = response.arrayBuffer();
-        let data = new Blob([result], { type: contentType });
+        //let data = new Blob([result], { type: contentType });
+        let fileSaver:FileSaver = new FileSaver();
+
+        fileSaver.saveAs(response.blob(), fileName);
+
         return result;
       });
 

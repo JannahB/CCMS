@@ -626,5 +626,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  ddOnChange(event):void{
+    //This event handler is called multiple places but did not exist.
+    //Created as a placeholder.
+  }
 
 }
