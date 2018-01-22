@@ -2,8 +2,9 @@ import { AuthenticationService } from './common/services/http/authentication.ser
 import { Router } from '@angular/router';
 import { GlobalState } from './common/services/state/global.state';
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { SelectItem } from 'primeng/primeng';
 import { Subscription } from 'rxjs/Subscription';
+import * as moment from 'moment';
+import { SelectItem } from 'primeng/primeng';
 
 import {AppComponent} from './app.component';
 import { LookupService } from './common/services/http/lookup.service';
@@ -41,20 +42,25 @@ declare var jQuery: any;
                 <div class="task-date-range mt-10">
                   <p-calendar
                       [(ngModel)]="taskDateRange"
+                      (onSelect)="onTaskDateSelected($event)"
                       inputStyleClass="width-full"
                       showButtonBar="true"
                       selectionMode="range"
                       readonlyInput="true"
                       [showIcon]="true"
                       appendTo="body"
-                      placeholder="select date or range"
-                      >
+                      placeholder="select date or range">
                       <ng-template pTemplate="date" let-date>
-                          <span
-                              [ngStyle]="{backgroundColor: (date.day < 21 && date.day > 10) ? '#7cc67c' : 'inherit'}"
-                              style="border-radius:50%">{{date.day}}
-
+                          <span [ngStyle]="{backgroundColor: (isTaskOnThisDate(date)) ? '#7cc67c' : 'inherit'}"
+                              style="border-radius:50%">
+                                {{date.day}}
                           </span>
+                          <!--
+                          <span [ngStyle]="{backgroundColor: (date.day < 21 && date.day > 10) ? '#7cc67c' : 'inherit'}"
+                              style="border-radius:50%">
+                                {{date.day}}
+                          </span>
+                          -->
                       </ng-template>
                   </p-calendar>
                 </div>
@@ -161,6 +167,26 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
         else if(val == 2)
           this.filteredUserTasks = this.userTasks.filter( item => !item.doneDate);
         };
+    }
+
+    isTaskOnThisDate(date){
+      // console.log('Date', date);
+      // use moment here
+      return this.filteredUserTasks.findIndex( item => item.dueDate == date );
+    }
+
+    onTaskDateSelected(event) {
+      console.log('onTaskDateSelected', event);
+
+    }
+
+
+    dateRangeFilter(){
+      let startDate
+      let endDate
+      this.filteredUserTasks = this.filteredUserTasks.filter(
+        item => moment(item.dueDate) <= endDate && moment(item.dueDate) >= startDate
+      );
     }
 
 
