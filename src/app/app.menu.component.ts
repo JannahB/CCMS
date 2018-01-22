@@ -1,3 +1,4 @@
+import { AuthenticationService } from './common/services/http/authentication.service';
 import { GlobalState } from './common/services/state/global.state';
 import {Component, Input, OnInit} from '@angular/core';
 import {trigger, state, style, transition, animate} from '@angular/animations';
@@ -7,7 +8,9 @@ import {AppComponent} from './app.component';
 @Component({
     selector: 'app-menu',
     template: `
+    <div *ngIf="authSvc.isLoggedIn">
         <ul app-submenu [item]="model" root="true" class="ultima-menu ultima-main-menu clearfix" [reset]="reset" visible="true"></ul>
+    </div>
     `
 })
 export class AppMenuComponent implements OnInit {
@@ -16,7 +19,11 @@ export class AppMenuComponent implements OnInit {
 
     model: any[];
 
-    constructor(public app: AppComponent, private _state:GlobalState) {}
+    constructor(
+      public app: AppComponent,
+      private _state:GlobalState,
+      public authSvc: AuthenticationService
+    ) {}
 
     ngOnInit() {
 

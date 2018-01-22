@@ -1,16 +1,17 @@
 import { GlobalState } from './common/services/state/global.state';
 import {Component} from '@angular/core';
 import {AppComponent} from './app.component';
+import { AuthenticationService } from './common/services/http/authentication.service';
 
 @Component({
     selector: 'app-topbar',
     template: `
-        <div class="topbar clearfix">
+        <div class="topbar clearfix" >
             <div class="topbar-left">
                 <div class="logo"></div>
             </div>
 
-            <div class="topbar-right">
+            <div *ngIf="authSvc.isLoggedIn" class="topbar-right">
                 <a id="menu-button" href="#" (click)="app.onMenuButtonClick($event)">
                     <i></i>
                 </a>
@@ -61,12 +62,13 @@ import {AppComponent} from './app.component';
                                     </li>
                                 </ul>
                             </li>
+                            <!--
                             <li role="menuitem">
                                 <a href="#">
                                     <i class="material-icons">settings_applications</i>
                                     <span>Settings</span>
                                 </a>
-                            </li>
+                            </li> -->
                             <li role="menuitem">
                                 <a routerLink="/login">
                                     <i class="material-icons">power_settings_new</i>
@@ -139,7 +141,11 @@ import {AppComponent} from './app.component';
 })
 export class AppTopbarComponent {
 
-    constructor(public app: AppComponent, private _state:GlobalState) {}
+    constructor(
+      public app: AppComponent,
+      private _state:GlobalState,
+      private authSvc: AuthenticationService
+    ) {}
 
     sendThemeChange(theme:string) {
         this._state.notifyDataChanged('theme.change', theme, true );

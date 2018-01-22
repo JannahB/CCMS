@@ -1,3 +1,4 @@
+import { AuthenticationService } from './common/services/http/authentication.service';
 import {Component, AfterViewInit, ElementRef, Renderer, ViewChild, OnDestroy} from '@angular/core';
 import { GlobalState } from './common/services/state/global.state';
 import {BreadcrumbService} from './breadcrumb.service';
@@ -41,7 +42,11 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     @ViewChild('layoutMenuScroller') layoutMenuScrollerViewChild: ElementRef;
 
-    constructor(public renderer: Renderer, private _state:GlobalState) {}
+    constructor(
+      public renderer: Renderer,
+      private _state:GlobalState,
+      private authSvc: AuthenticationService
+    ) {}
 
     ngAfterViewInit() {
         this.layoutContainer = <HTMLDivElement> this.layourContainerViewChild.nativeElement;
