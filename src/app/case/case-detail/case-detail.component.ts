@@ -594,22 +594,52 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   showModalAddEvent: boolean = false;
   events: any[];
-  event: any = {};
+  caseEvent: CaseEvent = new CaseEvent();
   eventTypes: EventType[]; // verify correct data type
   eventParties: Party[];   // verify correct data type
   documents: any[];
+  selectedInitiatedByParty: CaseParty;
 
+  addCaseEventClicked(){
+    this.caseEvent = new CaseEvent();
 
-  onShowEventModal(){
+    this.showEventModal();
+  }
+
+  showEventModal(){
     this.showModalAddEvent = true;
     
+    if(this.caseEvent.initiatedByParty){
+      this.selectedInitiatedByParty = this.case.caseParties
+        .find(cp => cp.caseParty.partyOID == this.caseEvent.initiatedByParty.partyOID);
+    }else{
+      this.selectedInitiatedByParty = null;
+    }
+
+    this.caseEvent.caseOID = this.case.caseOID;
+
     this.caseSvc
       .fetchEventType()
       .subscribe(types => this.eventTypes = types);
   }
 
   saveEvent(){
-    // TODO: handle save
+    
+    this.caseEvent.initiatedByParty = this.selectedInitiatedByParty.caseParty;
+
+    this.caseSvc
+      .saveCaseEvent(this.caseEvent)
+      .subscribe(savedCaseEvent => {
+        let index:number = this.case.caseEvents
+          .findIndex(ce => ce.caseEventOID == savedCaseEvent.caseEventOID);
+
+        if(index >= 0){
+          this.case.caseEvents[index] = savedCaseEvent;
+        }else{
+          this.case.caseEvents.push(savedCaseEvent);
+          this.case.caseEvents = this.case.caseEvents.slice();
+        }
+      });
   }
 
   saveCase(shouldShowSuccessMessage:boolean = true){

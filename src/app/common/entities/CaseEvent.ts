@@ -1,6 +1,7 @@
 import { CaseDocument } from './CaseDocument';
 import { Party } from './Party';
 import { EventType } from './EventType';
+import { DocTemplate } from './DocTemplate';
 
 export class CaseEvent {
   caseEventOID: number; 
@@ -13,6 +14,7 @@ export class CaseEvent {
   eventDate: Date;
   eventType: EventType;
   initiatedByParty: Party;
-  documentTemplateOID: number;
+  //documentTemplateOID: number;
+  docTemplate:DocTemplate;
 
 }
