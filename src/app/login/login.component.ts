@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { environment } from '../../environments/environment';
 import { AuthenticationService } from '../common/services/http/authentication.service';
+import { AuthenticationModel } from '../common/model/authentication-model';
 
 @Component({
   selector: 'login',
@@ -22,7 +23,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private authenticationService:AuthenticationService,
     private router:Router,
-    private _state: GlobalState
+    private _state: GlobalState,
+    private authenticationModel:AuthenticationModel
   ) { }
 
   ngOnInit() {
@@ -70,6 +72,10 @@ export class LoginComponent implements OnInit {
     this._state.notifyDataChanged('app.loggedIn', null, true );
 
     let url:string = "/";
+
+    if(this.authenticationModel.returnUrl){
+      url = this.authenticationModel.returnUrl;
+    }
 
     this.router.navigateByUrl(url);
   }
