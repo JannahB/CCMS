@@ -22,10 +22,12 @@ import { CaseParty } from '../../entities/CaseParty';
 import { ChargeFactor } from '../../entities/ChargeFactor';
 import { CasePartyRole } from '../../entities/CasePartyRole';
 import { DocTemplate } from '../../entities/DocTemplate';
-import { Http, RequestOptionsArgs, Headers } from '@angular/http';
+import { Http, RequestOptionsArgs, Headers, ResponseContentType } from '@angular/http';
 import { AuthorizationInterceptor } from '../../interceptors/authorization.interceptor';
 import { JudicialOfficer } from '../../entities/JudicialOfficer';
 import { JudicialAssignment } from '../../entities/JudicialAssignment';
+import { FileSaver } from '../utility/file-saver.service';
+import { EventType } from '../../entities/EventType';
 
 
 @Injectable()
@@ -344,6 +346,7 @@ export class CaseService extends HttpBaseService<Case> {
     headers.append("Authorization", `Bearer ${AuthorizationInterceptor.authToken}`);
 
     options.headers = headers;
+    options.responseType = ResponseContentType.Blob;
 
     return this.classicHttp
       .post(url, params, options)
@@ -352,7 +355,11 @@ export class CaseService extends HttpBaseService<Case> {
         let contentType = headers.get('content-type');
         let fileName = headers.get('content-disposition').split('; ')[1].split('=')[1].replace(/"/g,'');
         let result = response.arrayBuffer();
-        let data = new Blob([result], { type: contentType });
+        //let data = new Blob([result], { type: contentType });
+        let fileSaver:FileSaver = new FileSaver();
+
+        fileSaver.saveAs(response.blob(), fileName);
+
         return result;
       });
 
@@ -399,5 +406,38 @@ export class CaseService extends HttpBaseService<Case> {
     assignment.startDate = DateConverter.convertDate(assignment.startDate);
 
     return assignment;
+  }
+
+  public fetchEventType():Observable<EventType[]>{
+    let url:string = `${super.getBaseUrl()}/FetchEventType`;
+
+    return this.http
+      .get<EventType[]>(url);
+  }
+
+  public saveCaseEvent(data:CaseEvent):Observable<CaseEvent>{
+    var event = {
+        caseOID: '',
+        initiatedByPartyOID: '',
+        eventTypeOID: '',
+        durationTimeMin: '',
+        documentTemplateOID: undefined
+    };
+
+    event.caseOID = data.caseOID.toString();
+    event.initiatedByPartyOID = data.initiatedByParty.partyOID.toString();
+    event.eventTypeOID = data.eventType[0].eventTypeOID;
+
+    if (data.durationTimeMin !== null)
+        event.durationTimeMin = data.durationTimeMin.toString();
+
+    if (data.documentTemplateOID)
+        event.documentTemplateOID = data.documentTemplateOID.toString();
+
+    let url:string = `${super.getBaseUrl()}/SaveCaseEvent`;
+
+    return this.http
+      .post<CaseEvent[]>(url, event)
+      .map(e => e[0]);
   }
 }

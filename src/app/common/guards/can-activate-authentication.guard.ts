@@ -3,12 +3,14 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from
 import { Observable } from 'rxjs/Observable';
 
 import { AuthenticationService } from '../services/http/authentication.service';
+import { AuthenticationModel } from '../model/authentication-model';
 
 @Injectable()
 export class CanActivateAuthenticationGuard implements CanActivate {
 
   constructor(
     private authenticationService:AuthenticationService,
+    private authenticationModel:AuthenticationModel,
     private router:Router
   ) {}
 
@@ -20,7 +22,9 @@ export class CanActivateAuthenticationGuard implements CanActivate {
         return true;
       }
 
-      this.router.navigateByUrl("/login");
+      this.authenticationModel.returnUrl = state.url;
+     
+      this.router.navigate(["login"]);
 
       return false;
   }

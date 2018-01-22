@@ -5,6 +5,6 @@
 
 export const environment = {
   production: false,
-  apiUrl: "http://<host unknown>/CCMS3",                // TRAINING
+  apiUrl: "https://traincms.ttlawcourts.org/CCMS3",                // TRAINING
   mockUrl: "assets/mockData/"
 };

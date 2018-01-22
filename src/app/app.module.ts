@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -98,6 +98,9 @@ import { LoginComponent } from './login/login.component';
 import { CanActivateAuthenticationGuard } from './common/guards/can-activate-authentication.guard';
 import { AuthenticationService } from './common/services/http/authentication.service';
 import { LoadingBarComponent } from './common/components/loading-bar.component';
+import { LocalStorageService } from './common/services/utility/local-storage.service';
+import { GlobalErrorHandlerService } from './common/services/utility/global-error-handler.service';
+import { AuthenticationModel } from './common/model/authentication-model';
 
 
 @NgModule({
@@ -201,7 +204,18 @@ import { LoadingBarComponent } from './common/components/loading-bar.component';
         LookupService,
         CanActivateAuthenticationGuard,
         AuthenticationService,
-        {provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true }
+        LocalStorageService,
+        {
+            provide: HTTP_INTERCEPTORS, 
+            useClass: AuthorizationInterceptor, 
+            multi: true 
+        },
+        {
+            provide: ErrorHandler,
+            useClass: GlobalErrorHandlerService
+        },
+        AuthenticationModel
+
     ],
     bootstrap: [AppComponent]
 })

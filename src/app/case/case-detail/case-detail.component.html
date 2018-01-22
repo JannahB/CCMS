@@ -887,7 +887,7 @@
             <p-dropdown name="ddEventId" id="ddEventId" placeholder="choose Event ID..." #ddEventId="ngModel"
                 [required]="true"
                 [options]="eventTypes"
-                optionLabel="name"
+                optionLabel="eventTypeName"
                 [(ngModel)]="event.eventType"
                 styleClass="width-full">
             </p-dropdown>
@@ -901,14 +901,14 @@
             <label class="minimal primary block">Event Initiated By</label>
             <p-dropdown name="ddInitiator" id="ddInitiator" placeholder="choose initiator..." #ddInitiator="ngModel"
                 [required]="true"
-                [options]="eventParties"
-                optionLabel="name"
+                [options]="case?.caseParties"
+                optionLabel="caseParty.lastName"
                 [(ngModel)]="event.initiatedByParty"
                 styleClass="width-full">
             </p-dropdown>
             <div class="ui-message ui-messages-error ui-corner-all"
                   *ngIf="ddInitiator.errors?.required && ddInitiator.touched" >
-                  Please Initiator of the Event
+                  Please select Initiator of the Event
             </div>
           </div>
 
@@ -922,10 +922,10 @@
 
           <div class="ui-g-12 mb-15">
             <label class="minimal primary block">Document</label>
-            <p-dropdown name="ddJudge" id="ddJudge" placeholder="choose Judge..."
+            <p-dropdown name="ddDocuments" id="ddDocuments" placeholder="choose Document..."
                 [required]="true"
-                [options]="documents"
-                optionLabel="name"
+                [options]="documentTemplateTypes"
+                optionLabel="documentName"
                 [(ngModel)]="event.documentTemplateOID"
                 styleClass="width-full">
             </p-dropdown>

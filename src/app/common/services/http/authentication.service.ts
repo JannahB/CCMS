@@ -13,6 +13,8 @@ export class AuthenticationService{
         return !!AuthorizationInterceptor.authToken;
     }
 
+    public returnUrl:string = null;
+    
     constructor(@Inject(forwardRef(() => HttpClient)) protected http:HttpClient){}
 
     public FetchLoginCredentials(userName:string, password:string):Observable<FetchLoginCredentialsResponse>{

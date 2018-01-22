@@ -602,7 +602,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   onShowEventModal(){
     this.showModalAddEvent = true;
-    // TODO: get lookup data
+    
+    this.caseSvc
+      .fetchEventType()
+      .subscribe(types => this.eventTypes = types);
   }
 
   saveEvent(){
@@ -626,5 +629,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  ddOnChange(event):void{
+    //This event handler is called multiple places but did not exist.
+    //Created as a placeholder.
+  }
 
 }
