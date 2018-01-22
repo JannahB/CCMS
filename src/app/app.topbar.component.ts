@@ -2,16 +2,17 @@ import { GlobalState } from './common/services/state/global.state';
 import {Component} from '@angular/core';
 import {AppComponent} from './app.component';
 import { AuthorizationInterceptor } from './common/interceptors/authorization.interceptor';
+import { AuthenticationService } from './common/services/http/authentication.service';
 
 @Component({
     selector: 'app-topbar',
     template: `
-        <div class="topbar clearfix">
+        <div class="topbar clearfix" >
             <div class="topbar-left">
                 <div class="logo"></div>
             </div>
 
-            <div class="topbar-right">
+            <div *ngIf="authSvc.isLoggedIn" class="topbar-right">
                 <a id="menu-button" href="#" (click)="app.onMenuButtonClick($event)">
                     <i></i>
                 </a>
@@ -62,12 +63,13 @@ import { AuthorizationInterceptor } from './common/interceptors/authorization.in
                                     </li>
                                 </ul>
                             </li>
+                            <!--
                             <li role="menuitem">
                                 <a href="#">
                                     <i class="material-icons">settings_applications</i>
                                     <span>Settings</span>
                                 </a>
-                            </li>
+                            </li> -->
                             <li role="menuitem">
                                 <a routerLink="/login" (click)="logout()">
                                     <i class="material-icons">power_settings_new</i>
@@ -141,8 +143,9 @@ import { AuthorizationInterceptor } from './common/interceptors/authorization.in
 export class AppTopbarComponent {
 
     constructor(
-        public app: AppComponent, 
-        private _state:GlobalState
+      public app: AppComponent,
+      private _state:GlobalState,
+      private authSvc: AuthenticationService
     ) {}
 
     sendThemeChange(theme:string) {
