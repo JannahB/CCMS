@@ -226,16 +226,17 @@
               <label class="minimal primary block">Category Filter</label>
               <p-dropdown
                   placeholder="category filter..."
-                  [options]="case.court.eventTypes"
-                  [(ngModel)]="case.eventType"
+                  [options]="eventTypes"
+                  [(ngModel)]="eventTypeFilter"
                   optionLabel="eventTypeName"
-                  (onChange)="ddOnChange($event)"
+                  (onChange)="eventTypeFilterChange($event)"
                   styleClass="width-full">
               </p-dropdown>
+              <button (click)="clearEventFilter()">Clear</button>
             </div>
 
             <div class="ui-g-12">
-              <p-dataTable [value]="case.caseEvents"
+              <p-dataTable [value]="filteredEvents"
                           selectionMode="single"
                           [(selection)]="caseEvent"
                           (onRowSelect)="caseEventOnRowSelect($event)"

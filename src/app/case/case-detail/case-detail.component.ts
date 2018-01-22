@@ -97,6 +97,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .fetchCaseStatus()
       .subscribe(results => this.caseStatuses = results);
     
+    this.caseSvc
+      .fetchEventType()
+      .subscribe(types => this.eventTypes = types);
   }
 
   ngOnDestroy() {
@@ -124,6 +127,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
             .fetchPhaseByType(this.case.caseType.caseTypeOID)
             .subscribe(results => this.casePhases = results);
         }
+
+        this.filterCaseEvents();
       }
     });
   }
@@ -625,11 +630,22 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   showModalAddEvent: boolean = false;
   events: any[];
+  filteredEvents:CaseEvent[] = [];
   caseEvent: CaseEvent = new CaseEvent();
   eventTypes: EventType[]; // verify correct data type
   eventParties: Party[];   // verify correct data type
   documents: any[];
   selectedInitiatedByParty: CaseParty;
+  eventTypeFilter:EventType = null;
+
+  eventTypeFilterChange(event):void{
+    this.filterCaseEvents();
+  }
+
+  clearEventFilter():void{
+    this.eventTypeFilter = null;
+    this.filterCaseEvents();
+  }
 
   caseEventOnRowSelect(event):void{
     this.caseEvent = event.data;
@@ -656,10 +672,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
 
     this.caseEvent.caseOID = this.case.caseOID;
-
-    this.caseSvc
-      .fetchEventType()
-      .subscribe(types => this.eventTypes = types);
   }
 
   saveEvent(){
@@ -683,6 +695,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       });
 
     this.showModalAddEvent = false;
+  }
+
+  filterCaseEvents():void{
+    if(this.eventTypeFilter && this.case.caseEvents){
+      this.filteredEvents = this.case.caseEvents
+        .filter(e => e.eventType.eventTypeOID == this.eventTypeFilter.eventTypeOID);
+    }else{
+      this.filteredEvents = this.case.caseEvents;
+    }
   }
 
   saveCase(shouldShowSuccessMessage:boolean = true){
