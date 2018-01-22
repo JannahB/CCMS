@@ -27,6 +27,7 @@ import { AuthorizationInterceptor } from '../../interceptors/authorization.inter
 import { JudicialOfficer } from '../../entities/JudicialOfficer';
 import { JudicialAssignment } from '../../entities/JudicialAssignment';
 import { FileSaver } from '../utility/file-saver.service';
+import { EventType } from '../../entities/EventType';
 
 
 @Injectable()
@@ -405,5 +406,38 @@ export class CaseService extends HttpBaseService<Case> {
     assignment.startDate = DateConverter.convertDate(assignment.startDate);
 
     return assignment;
+  }
+
+  public fetchEventType():Observable<EventType[]>{
+    let url:string = `${super.getBaseUrl()}/FetchEventType`;
+
+    return this.http
+      .get<EventType[]>(url);
+  }
+
+  public saveCaseEvent(data:CaseEvent):Observable<CaseEvent>{
+    var event = {
+        caseOID: '',
+        initiatedByPartyOID: '',
+        eventTypeOID: '',
+        durationTimeMin: '',
+        documentTemplateOID: undefined
+    };
+
+    event.caseOID = data.caseOID.toString();
+    event.initiatedByPartyOID = data.initiatedByParty.partyOID.toString();
+    event.eventTypeOID = data.eventType[0].eventTypeOID;
+
+    if (data.durationTimeMin !== null)
+        event.durationTimeMin = data.durationTimeMin.toString();
+
+    if (data.documentTemplateOID)
+        event.documentTemplateOID = data.documentTemplateOID.toString();
+
+    let url:string = `${super.getBaseUrl()}/SaveCaseEvent`;
+
+    return this.http
+      .post<CaseEvent[]>(url, event)
+      .map(e => e[0]);
   }
 }

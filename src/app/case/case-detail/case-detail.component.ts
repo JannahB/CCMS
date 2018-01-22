@@ -602,7 +602,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   onShowEventModal(){
     this.showModalAddEvent = true;
-    // TODO: get lookup data
+    
+    this.caseSvc
+      .fetchEventType()
+      .subscribe(types => this.eventTypes = types);
   }
 
   saveEvent(){

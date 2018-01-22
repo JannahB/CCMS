@@ -12,5 +12,7 @@ export class CaseEvent {
   enteringParty: Party;
   eventDate: Date;
   eventType: EventType;
+  initiatedByParty: Party;
+  documentTemplateOID: number;
 
 }
