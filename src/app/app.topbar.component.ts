@@ -1,6 +1,7 @@
 import { GlobalState } from './common/services/state/global.state';
 import {Component} from '@angular/core';
 import {AppComponent} from './app.component';
+import { AuthorizationInterceptor } from './common/interceptors/authorization.interceptor';
 import { AuthenticationService } from './common/services/http/authentication.service';
 
 @Component({
@@ -79,7 +80,7 @@ import { AuthenticationService } from './common/services/http/authentication.ser
                                 </a>
                             </li> -->
                             <li role="menuitem">
-                                <a routerLink="/login">
+                                <a routerLink="/login" (click)="logout()">
                                     <i class="material-icons">power_settings_new</i>
                                     <span>Logout</span>
                                 </a>
@@ -158,6 +159,10 @@ export class AppTopbarComponent {
 
     sendThemeChange(theme:string) {
         this._state.notifyDataChanged('theme.change', theme, true );
+    }
+
+    public logout():void{
+        AuthorizationInterceptor.authToken = null;
     }
 
 }
