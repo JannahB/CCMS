@@ -8,14 +8,15 @@ export class UserTask {
 
   assignedDate: Date;
   assignedParty: Party;
-  assignedPool: Pool; 
-  associatedCase: AssociatedCase; 
-  courtOID: number; 
-  details: string; 
+  assignedPool: Pool;
+  associatedCase: AssociatedCase;
+  courtOID: number;
+  details: string;
   docTemplate: DocTemplate;
   dueDate: Date;
-  notDoneReason: string; 
-  taskOID: number;  
+  doneDate: Date;
+  notDoneReason: string;
+  taskOID: number;
   taskPriorityCode: number;
   taskType: TaskType;
 
