@@ -1,3 +1,4 @@
+import { AuthenticationService } from './common/services/http/authentication.service';
 import { Router } from '@angular/router';
 import { GlobalState } from './common/services/state/global.state';
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
@@ -28,10 +29,12 @@ declare var jQuery: any;
                 <div class="task-multiselect">
                   <p-multiSelect styleClass="width-full"
                       [options]="taskStatus"
-                      [(ngModel)]="selectedTasks"
+                      [(ngModel)]="selectedTaskStatuses"
                       [showToggleAll]="true"
                       [filter]="false"
-                      defaultLabel="filter completeness"
+                      (onChange)="onFilterTasks($event)"
+
+                      defaultLabel="Show All"
                       >
                   </p-multiSelect>
                 </div>
@@ -60,7 +63,7 @@ declare var jQuery: any;
               <div>
                 <loading-bar [visible]="isLoadingTasks" [message]="'loading tasks...'"></loading-bar>
                 <ul class="task-items">
-                  <li *ngFor="let task of userTasks">
+                  <li *ngFor="let task of filteredUserTasks">
                     <a (click)="gotoCase($event, task)"><p class="task-title">{{task.taskType?.name}}</p></a>
                     <a (click)="gotoCase($event, task)"><p class="task-subtitle">{{task.associatedCase.caseNumber}}</p></a>
                       <i class="fa ui-icon-check task-done" *ngIf="task.doneDate"></i>
@@ -79,13 +82,14 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
 
     rightPanelMenuScroller: HTMLDivElement;
     taskStatus: SelectItem[] = [
-        {label:'Complete', value:1},
-        {label:'Incomplete', value:2}
+        {label:'Complete Tasks', value:1},
+        {label:'Incomplete Tasks', value:2}
     ];
-    selectedTasks: SelectItem[];
+    selectedTaskStatuses: SelectItem[];
     taskDateRange: Date[];
     today: Date = new Date();
     userTasks: UserTask[];
+    filteredUserTasks: UserTask[];
     taskSubscription: Subscription;
     isLoadingTasks: boolean = false;
 
@@ -95,16 +99,23 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       public app: AppComponent,
       private router: Router,
       private lookupSvc: LookupService,
-      private _state: GlobalState
+      private _state: GlobalState,
+      public authSvc: AuthenticationService
     ) {}
 
     ngOnInit() {
-      this._state.subscribe('app.loggedIn', () => {
+
+      if(this.authSvc.isLoggedIn) {
         this.getUserTasks();
-      });
+      }
+      // Now that right panel is blocked during login screen, this
+      // may not be needed. Keeping it until above replacement is tested.
+      // this._state.subscribe('app.loggedIn', () => {
+      //   this.getUserTasks();
+      // });
 
       this._state.subscribe('rightpanel.active', (isActive) => {
-        this.getUserTasks(true);
+        this.getUserTasks();
       });
 
     }
@@ -122,10 +133,11 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
         if(this.taskSubscription) this.taskSubscription.unsubscribe();
     }
 
-    getUserTasks(backgroundFetch?:boolean) {
-      this.isLoadingTasks = !backgroundFetch;
+    getUserTasks() {
+      // if we've already fetched once before then don't show loading bar
+      if(!this.userTasks) this.isLoadingTasks = true;
       this.taskSubscription = this.lookupSvc.fetchLookup<UserTask>('FetchUserTasks').subscribe(items => {
-        this.userTasks = items;
+        this.userTasks = this.filteredUserTasks = items;
         this.isLoadingTasks = false;
       });
     }
@@ -135,10 +147,21 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       this.router.navigate(['/case-detail', caseId ]);
     }
 
+    onFilterTasks(event) {
+      console.log(event);
+      // 1 = completed tasks
+      // 2 = incomplete tasks
 
-    // private buildSelectedTasks() {
-    //     this.tasks.forEach(task => {
-    //         this.selectedTasks.push(task);
-    //     });
-    // }
+      if(event.value.length == 0 || event.value.length == 2){
+        this.filteredUserTasks = this.userTasks;
+      } else if (event.value.length == 1) {
+        let val = event.value[0];
+        if(val == 1)
+          this.filteredUserTasks = this.userTasks.filter( item => item.doneDate);
+        else if(val == 2)
+          this.filteredUserTasks = this.userTasks.filter( item => !item.doneDate);
+        };
+    }
+
+
 }
