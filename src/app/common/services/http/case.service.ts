@@ -426,13 +426,13 @@ export class CaseService extends HttpBaseService<Case> {
 
     event.caseOID = data.caseOID.toString();
     event.initiatedByPartyOID = data.initiatedByParty.partyOID.toString();
-    event.eventTypeOID = data.eventType[0].eventTypeOID;
+    event.eventTypeOID = data.eventType.eventTypeOID.toString();
 
     if (data.durationTimeMin !== null)
         event.durationTimeMin = data.durationTimeMin.toString();
 
-    if (data.documentTemplateOID)
-        event.documentTemplateOID = data.documentTemplateOID.toString();
+    if (data.docTemplate)
+        event.documentTemplateOID = data.docTemplate.documentTemplateOID.toString();
 
     let url:string = `${super.getBaseUrl()}/SaveCaseEvent`;
 
