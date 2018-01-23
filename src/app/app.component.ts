@@ -44,8 +44,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     constructor(
       public renderer: Renderer,
-      private _state:GlobalState,
-      private authSvc: AuthenticationService
+      public _state:GlobalState,
+      public authSvc: AuthenticationService
     ) {}
 
     ngAfterViewInit() {

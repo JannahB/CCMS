@@ -153,8 +153,8 @@ export class AppTopbarComponent {
 
     constructor(
       public app: AppComponent,
-      private _state:GlobalState,
-      private authSvc: AuthenticationService
+      public _state:GlobalState,
+      public authSvc: AuthenticationService
     ) {}
 
     sendThemeChange(theme:string) {

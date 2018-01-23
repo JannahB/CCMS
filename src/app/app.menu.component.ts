@@ -21,7 +21,7 @@ export class AppMenuComponent implements OnInit {
 
     constructor(
       public app: AppComponent,
-      private _state:GlobalState,
+      public _state:GlobalState,
       public authSvc: AuthenticationService
     ) {}
 

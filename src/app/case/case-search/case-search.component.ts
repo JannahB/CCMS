@@ -26,6 +26,7 @@ export class CaseSearchComponent implements OnInit {
   selectedCasePhaseType: CasePhase;
   selectedCaseStatusType: CaseStatus;
   selectedCasePartyRoleType: CasePartyRole;
+  selectedCase: Case;
 
   caseResults: Case [];
   caseTypes: CaseType[];

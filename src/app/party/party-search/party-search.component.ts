@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
 export class PartySearchComponent implements OnInit {
 
   partyNameText:string = "";
-  partyResults: Party[]
+  partyResults: Party[];
+  selectedParty: Party;
 
   constructor(
     private partyService:PartyService,
@@ -36,6 +37,14 @@ export class PartySearchComponent implements OnInit {
 
     this.router.navigate(['party-detail', partyId ]);
 
+  }
+
+  onReset(){
+    // TODO: implement
+  }
+
+  onNewParty(){
+    this.router.navigate(['party-detail', 0 ]);
   }
 
 }

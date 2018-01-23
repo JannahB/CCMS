@@ -105,7 +105,7 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       public app: AppComponent,
       private router: Router,
       private lookupSvc: LookupService,
-      private _state: GlobalState,
+      public _state: GlobalState,
       public authSvc: AuthenticationService
     ) {}
 

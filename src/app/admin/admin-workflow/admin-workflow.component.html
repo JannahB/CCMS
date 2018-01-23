@@ -68,8 +68,8 @@
       <!-- SAVE / CANCEL BUTTONS -->
       <div class="ui-g-12 ta-r">
           <button type="button"
-                  (click)="deleteDataItemRequest()"
-                  [disabled]="!selectedItem"
+                  (click)="deleteWorkflowEventRequest($event)"
+                  [disabled]="!selectedEvent"
                   label="Delete"
                   icon="ui-icon-delete"
                   class="ui-button-danger fl" pButton></button>
@@ -79,7 +79,7 @@
                   icon="ui-icon-check"
                   class="secondary" pButton></button>
           <button type="button"
-                  (click)="tplForm.reset(); cancelWorkflowEdit()"
+                  (click)="cancelWorkflowEdit()"
                   label="Cancel"
                   icon="ui-icon-clear"
                   class="ui-button-secondary"
