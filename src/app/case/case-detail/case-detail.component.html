@@ -18,11 +18,13 @@
               id="filingDate"
               styleClass="width-full"
               [(ngModel)]="case.caseFilingDate"
-              (onSelect)="generalDetailsOnBlur($event)"
+
               dateFormat="mm/dd/yy"
               placeholder="Case Filing Date"
               [showIcon]="true"
+              yearRange="2000:2030"
               [yearNavigator]="true" ></p-calendar>
+              <!-- (onSelect)="generalDetailsOnBlur($event)" -->
       </div>
 
       <div class="ui-g-12 ui-md-3">
@@ -568,6 +570,7 @@
                     placeholder="Start Date"
                     [showIcon]="true"
                     [yearNavigator]="true"
+                    yearRange="2000:2030"
                     appendTo="body"></p-calendar>
             </div>
             <div class="ui-g-12 mb-0">
@@ -579,6 +582,7 @@
                     placeholder="End Date"
                     [showIcon]="true"
                     [yearNavigator]="true"
+                    yearRange="2000:2030"
                     appendTo="body"></p-calendar>
             </div>
           </div>

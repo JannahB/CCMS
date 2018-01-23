@@ -37,6 +37,16 @@ body .ui-widget-header .ui-inputtext, .ui-widget-content .ui-inputtext {
   }
 }
 
+// ------------------------
+// CALENDAR
+// ------------------------
+body .ui-datepicker .ui-datepicker-header select.ui-datepicker-month,
+body .ui-datepicker .ui-datepicker-header select.ui-datepicker-year {
+  font-size: 15px;
+  color: #444;
+  background-color: white;
+}
+
 .task-date-range{
   span.ui-calendar.ui-calendar-w-btn {
     width: 100%;
