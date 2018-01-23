@@ -11,6 +11,7 @@
     "build:test": "ng build --env=test",
     "build:training": "ng build --env=training",
     "build:prod": "ng build --env=prod",
+    "build:aot": "ng build --env=prod --prod --build-optimizer --vendor-chunk=true",
     "start:local": "ng serve --env=local --port 4800 --host 0.0.0.0",
     "start": "ng serve --port 4800 --host 0.0.0.0",
     "local": "ng serve --port 4800 --host 192.168.2.100 --public",
