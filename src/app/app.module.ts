@@ -36,6 +36,7 @@ import {LightboxModule} from 'primeng/primeng';
 import {ListboxModule} from 'primeng/primeng';
 import {MenuModule} from 'primeng/primeng';
 import {MenubarModule} from 'primeng/primeng';
+import {MessageModule} from 'primeng/primeng';
 import {MessagesModule} from 'primeng/primeng';
 import {MultiSelectModule} from 'primeng/primeng';
 import {OrderListModule} from 'primeng/primeng';
@@ -138,6 +139,7 @@ import { AuthenticationModel } from './common/model/authentication-model';
         ListboxModule,
         MenuModule,
         MenubarModule,
+        MessageModule,
         MessagesModule,
         MultiSelectModule,
         OrderListModule,
@@ -206,9 +208,9 @@ import { AuthenticationModel } from './common/model/authentication-model';
         AuthenticationService,
         LocalStorageService,
         {
-            provide: HTTP_INTERCEPTORS, 
-            useClass: AuthorizationInterceptor, 
-            multi: true 
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthorizationInterceptor,
+            multi: true
         },
         {
             provide: ErrorHandler,

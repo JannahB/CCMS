@@ -16,6 +16,9 @@
                   <input [(ngModel)]="partyNameText" name="tiName" type="text" class="width-full"  pInputText>
                   <label>First or Last Name (partial)</label>
               </span>
+              <div>
+                  <p-message severity="info" text="{{recordsFoundMessage}}" *ngIf="showRecordsFoundMessage"></p-message>
+              </div>
           </div>
 
 
