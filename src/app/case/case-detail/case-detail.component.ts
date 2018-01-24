@@ -33,6 +33,7 @@ import { JudicialOfficer } from '../../common/entities/JudicialOfficer';
 import { CaseType } from '../../common/entities/CaseType';
 import { CaseStatus } from '../../common/entities/CaseStatus';
 import { CasePhase } from '../../common/entities/CasePhase';
+import { environment } from '../../../environments/environment';
 
 
 @Component({
@@ -60,6 +61,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   caseTypes:CaseType[] = [];
   caseStatuses:CaseStatus[] = [];
   casePhases:CasePhase[] = [];
+  baseURL: string;
 
 
   datePipe:DatePipe = new DatePipe("en");
@@ -80,6 +82,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
+    this.baseURL = environment.apiUrl;
+
     this.routeSubscription = this.activatedRoute.params.subscribe(params => {
       const caseId = params['caseId'];
       this.getCase(caseId);
@@ -92,11 +96,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .fetchCaseType()
       .subscribe(results => this.caseTypes = results);
-      
+
     this.caseSvc
       .fetchCaseStatus()
       .subscribe(results => this.caseStatuses = results);
-    
+
     this.caseSvc
       .fetchEventType()
       .subscribe(types => this.eventTypes = types);
@@ -664,7 +668,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   showEventModal(){
     this.showModalAddEvent = true;
-    
+
     if(this.caseEvent.initiatedByParty){
       this.selectedInitiatedByParty = this.case.caseParties
         .find(cp => cp.caseParty.partyOID == this.caseEvent.initiatedByParty.partyOID);
@@ -676,7 +680,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   saveEvent(){
-    
+
     this.caseEvent.initiatedByParty = this.selectedInitiatedByParty.caseParty;
 
     this.caseSvc
