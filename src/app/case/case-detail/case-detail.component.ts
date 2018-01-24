@@ -239,6 +239,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   addPartyToCase() {
+    if(!this.selectedSearchParty){
+      return;
+    }
+    
     let caseParty:CaseParty = new CaseParty();
 
     caseParty.caseParty = this.selectedSearchParty;
