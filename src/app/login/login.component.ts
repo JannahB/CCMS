@@ -47,13 +47,13 @@ export class LoginComponent implements OnInit {
 
     this.authenticationService
       .FetchLoginCredentials(userName, password)
-      .subscribe(
-        (loginResult) => {
-          this.authenticationService
-            .FetchToken(userName, 5)
-            .subscribe(tokenResult => {
-              this.handleAuthenticationComplete();
-            });
+      .subscribe((loginResult) => {
+        this.handleAuthenticationComplete();
+          // this.authenticationService
+          //   .FetchToken(userName, 5)
+          //   .subscribe(tokenResult => {
+          //     this.handleAuthenticationComplete();
+          //   });
         },
         (error) => {
           this.hasLoginFailed = true;
@@ -74,7 +74,8 @@ export class LoginComponent implements OnInit {
     let url:string = "/";
 
     if(this.authenticationModel.returnUrl){
-      url = this.authenticationModel.returnUrl;
+      // prevent '/login' from being the returnUrl
+      url = this.authenticationModel.returnUrl == "/login" ? "/" : this.authenticationModel.returnUrl;
     }
 
     this.router.navigateByUrl(url);

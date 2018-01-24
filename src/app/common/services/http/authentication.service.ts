@@ -14,7 +14,7 @@ export class AuthenticationService{
     }
 
     public returnUrl:string = null;
-    
+
     constructor(@Inject(forwardRef(() => HttpClient)) protected http:HttpClient){}
 
     public FetchLoginCredentials(userName:string, password:string):Observable<FetchLoginCredentialsResponse>{
@@ -25,12 +25,17 @@ export class AuthenticationService{
             {
                 userName: userName,
                 password: password
+            })
+            .map(response => {
+              AuthorizationInterceptor.authToken = response.token;
+
+              return response;
             });
     }
 
     public FetchToken(userName:string, courtOID:number):Observable<FetchTokenResponse>{
         let url:string = `${environment.apiUrl}/FetchToken`;
-        
+
             return this.http
                 .post<FetchTokenResponse>(url,
                 {
@@ -39,8 +44,8 @@ export class AuthenticationService{
                 })
                 .map(response => {
                     AuthorizationInterceptor.authToken = response.token;
-    
-                    return response;  
+
+                    return response;
                 });
     }
 }
