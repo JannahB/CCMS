@@ -117,8 +117,8 @@
             class="ui-button-secondary " pButton></button>
       </div>
 
-      <!-- CHARGES TABLE -->
 
+      <!-- CHARGES TABLE -->
 
       <div class="ui-g-12 mt-30">
         <h2 class="mb-30">Charges</h2>
@@ -323,7 +323,7 @@
         <!-- DOCUMENTS TAB  -->
 
         <p-tabPanel header="Documents" leftIcon="ui-icon-insert-drive-file" >
-        <div class="ui-g">
+          <div class="ui-g">
             <div class="ui-g-12">
                 <h2>Documents</h2>
             </div>
@@ -364,16 +364,14 @@
                     <p-column field="" header="Document Name" [style]="{'width':'75%'}">
                         <ng-template pTemplate="body" let-item="rowData" styleClass="text-break">
                             <span>
-                                <a href="{{baseURL + 'GetDocument?' + item.documentURL}}" target="_blank">{{item.documentName}}</a>
+                                <a href="{{baseURL + '/GetDocument?' + item.documentURL}}" target="_blank">{{item.documentName}}</a>
                             </span>
                             <div style="font-size:10px">{{baseURL + 'GetDocument?' + item.documentURL}}</div>
                         </ng-template>
                     </p-column>
                 </p-dataTable>
-
             </div>
-
-        </div>
+          </div>
         </p-tabPanel>
 
         <!-- HEARINGS TAB -->
@@ -511,93 +509,249 @@
 
 <!-- ADD CASE PARTY MODAL -->
 
-<p-dialog header="Add Case Party" width="700" [(visible)]="showModalAddCaseParty" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-    <form #casePartyForm="ngForm" novalidate>
-      <div class="ui-g">
-        <div class="form-group" >
+<p-dialog header="Add Case Party" styleClass="casePartyModal" width="700" [(visible)]="showModalAddCaseParty" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
 
-          <div class="ui-g-12 ui-md-6">
-            <div class="ui-inputgroup">
-                <span class="md-inputfield">
-                    <input type="text" [(ngModel)]="partySearchText" name="tiPartySearch" pInputText>
-                    <label>Search party name</label>
-                </span>
-                <button pButton type="button" (click)="searchForParty()" icon="ui-icon-search"></button>
+  <p-tabView>
+
+    <!-- TAB 1 -->
+    <p-tabPanel header="Existing Party">
+      <form #casePartyForm="ngForm" novalidate>
+        <div class="ui-g">
+          <div class="form-group" >
+
+            <div class="ui-g-12 ui-md-6">
+              <div class="ui-inputgroup">
+                  <span class="md-inputfield">
+                      <input type="text" [(ngModel)]="partySearchText" name="tiPartySearch" pInputText>
+                      <label>Search party name</label>
+                  </span>
+                  <button pButton type="button" (click)="searchForParty()" icon="ui-icon-search"></button>
+              </div>
+            </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="searchPartyResults"
+                          selectionMode="single"
+                          [(selection)]="selectedSearchParty"
+                          (onRowSelect)="searchPartyOnRowSelect($event)"
+                          dataKey="partyOID" #dtSearchParty>
+                <p-column header="Select" field="" [style]="{'width':'7%'}"></p-column>
+                <p-column header="First Name" field="firstName" [style]="{'width':'15%'}"></p-column>
+                <p-column header="Last Name" field="lastName" [style]="{'width':'15%'}"></p-column>
+                <p-column header="DOB" field="dob" [style]="{'width':'15%'}"></p-column>
+                <p-column header="Age" field="" [style]="{'width':'15%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{ calculateAge(item) }}
+                    </ng-template>
+                </p-column>
+                <p-column header="Sex" field="sex" [style]="{'width':'7%'}"></p-column>
+              </p-dataTable>
+            </div>
+
+            <div *ngIf="selectedSearchParty">
+              <div class="ui-g-12 mb-0">
+                <h3 class="mb-0">{{selectedSearchParty.firstName}} {{selectedSearchParty.lastName}}</h3>
+              </div>
+              <div class="ui-g-12 mv-0">
+                <label class="minimal primary block">Party Role</label>
+                <p-dropdown name="ddPartyRole" id="ddPartyRole" #ddPartyRole="ngModel" placeholder="choose Party Role..."
+                    [required]="true"
+                    [options]="casePartyRoleTypes"
+                    optionLabel="name"
+                    [(ngModel)]="selectedSearchPartyRole"
+                    (onChange)="searchPartyRoleTypeOnChange($event)"
+                    styleClass="width-full">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                      *ngIf="ddPartyRole.errors?.required && ddPartyRole.touched" >
+                      Party Role is required
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-0 pl-0">
+                <div class="ui-g-12 ui-md-6 mb-0">
+                  <label class="minimal primary block">Start Date</label>
+                  <p-calendar id="dtStartDate" name="dtStartDate"
+                        inputStyleClass="width-full"
+                        [(ngModel)]="selectedSearchPartyStartDate"
+                        dateFormat="mm/dd/yy"
+                        placeholder="Start Date"
+                        [showIcon]="true"
+                        [yearNavigator]="true"
+                        yearRange="2000:2030"
+                        appendTo="body"></p-calendar>
+                </div>
+                <div class="ui-g-12 ui-md-6 mb-0">
+                  <label class="minimal primary block">End Date</label>
+                  <p-calendar id="dtEndDate" name="dtEndDate"
+                        inputStyleClass="width-full"
+                        [(ngModel)]="selectedSearchPartyEndDate"
+                        dateFormat="mm/dd/yy"
+                        placeholder="End Date"
+                        [showIcon]="true"
+                        [yearNavigator]="true"
+                        yearRange="2000:2030"
+                        appendTo="body"></p-calendar>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="ui-g-12">
-            <p-dataTable [value]="searchPartyResults"
-                        selectionMode="single"
-                        [(selection)]="selectedSearchParty"
-                        (onRowSelect)="searchPartyOnRowSelect($event)"
-                        dataKey="partyOID" #dtSearchParty>
-              <p-column header="Select" field="" [style]="{'width':'7%'}"></p-column>
-              <p-column header="First Name" field="firstName" [style]="{'width':'15%'}"></p-column>
-              <p-column header="Last Name" field="lastName" [style]="{'width':'15%'}"></p-column>
-              <p-column header="DOB" field="dob" [style]="{'width':'15%'}"></p-column>
-              <p-column header="Age" field="" [style]="{'width':'15%'}">
-                  <ng-template pTemplate="body" let-item="rowData">
-                      {{ calculateAge(item) }}
-                  </ng-template>
-              </p-column>
-              <p-column header="Sex" field="sex" [style]="{'width':'7%'}"></p-column>
-            </p-dataTable>
+        </div>
+        <p-footer>
+          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+            <button label="Add Party To Case" type="submit" pButton icon="fa-check"
+                    (click)="addPartyToCase()"
+                    [disabled]="!casePartyForm.form.valid || !selectedSearchParty"></button>
+            <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close" (click)="casePartyForm.reset(); hideModals()" ></button>
           </div>
+        </p-footer>
+      </form>
+    </p-tabPanel>
 
-          <div *ngIf="selectedSearchParty">
-            <div class="ui-g-12 mb-0">
-              <label class="minimal primary block">Party Role</label>
-              <p-dropdown name="ddPartyRole" id="ddPartyRole" #ddPartyRole="ngModel" placeholder="choose Party Role..."
-                  [required]="true"
-                  [options]="casePartyRoleTypes"
-                  optionLabel="name"
-                  [(ngModel)]="selectedSearchPartyRole"
-                  (onChange)="searchPartyRoleTypeOnChange($event)"
-                  styleClass="width-full">
-              </p-dropdown>
-              <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="ddPartyRole.errors?.required && ddPartyRole.touched" >
-                    Party Role is required
+
+    <!-- TAB 2
+     ------------ CREATE NEW PARTY ----------------
+    -->
+    <p-tabPanel header="Create New Party">
+      <form #newCasePartyForm="ngForm" novalidate>
+        <div class="ui-g form-group" novalidate>
+
+          <div  *ngIf="newCaseParty.party">
+
+            <!-- column 1 -->
+            <div class="ui-g-12">
+
+              <div class="ui-g-12 mb-20">
+                <span class="md-inputfield">
+                  <input pInputText type="text" #newCPfName="ngModel" required name="newCPfName"
+                         [(ngModel)]="newCaseParty.party.firstName">
+                  <label>First Name</label>
+                </span>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                      *ngIf="newCPfName.errors?.required && newCPfName.touched" >
+                      Please enter First Name
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-20">
+                <span class="md-inputfield">
+                  <input type="text" pInputText #newCPlName="ngModel" name="newCPlName" required
+                         [(ngModel)]="newCaseParty.party.lastName" >
+                  <label>Last Name</label>
+                </span>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                      *ngIf="newCPlName.errors?.required && newCPlName.touched" >
+                      Please enter Last Name
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-0">
+                <span class="md-inputfield">
+                  <input type="text" pInputText [(ngModel)]="newCaseParty.party.alternativeName">
+                  <label>Alternative Name</label>
+                </span>
               </div>
             </div>
 
             <div class="ui-g-12 mb-0">
-              <label class="minimal primary block">Start Date</label>
-              <p-calendar id="dtStartDate" name="dtStartDate"
+              <label class="minimal primary block">Date of Birth</label>
+              <p-calendar
+                    id="newCPdob"
+                    name="newCPdob"
+                    #newCPdob="ngModel"
                     inputStyleClass="width-full"
-                    [(ngModel)]="selectedSearchPartyStartDate"
+                    [(ngModel)]="newCaseParty.party.dob"
                     dateFormat="mm/dd/yy"
-                    placeholder="Start Date"
+                    placeholder="Date of Birth"
                     [showIcon]="true"
                     [yearNavigator]="true"
-                    yearRange="2000:2030"
-                    appendTo="body"></p-calendar>
+                    yearRange="1900:2020" ></p-calendar>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                   *ngIf="newCPdob.errors?.required && newCPdob.touched" >
+                Please enter a Date of Birth
+              </div>
             </div>
+
             <div class="ui-g-12 mb-0">
-              <label class="minimal primary block">End Date</label>
-              <p-calendar id="dtEndDate" name="dtEndDate"
-                    inputStyleClass="width-full"
-                    [(ngModel)]="selectedSearchPartyEndDate"
-                    dateFormat="mm/dd/yy"
-                    placeholder="End Date"
-                    [showIcon]="true"
-                    [yearNavigator]="true"
-                    yearRange="2000:2030"
-                    appendTo="body"></p-calendar>
+              <label class="minimal primary block">Sex</label>
+                <p-dropdown
+                    name="newCPsex"
+                    #newCPsex="ngModel"
+                    placeholder="choose gender"
+                    [options]="genderTypes"
+                    [(ngModel)]="newCaseParty.party.sex"
+                    (onChange)="genderTypesOnChange($event)">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                      *ngIf="newCPsex.errors?.required && newCPsex.touched" >
+                  Please enter a gender
+                </div>
+            </div>
+
+            <div class="ui-g-12 mb-0">
+                <label class="minimal primary block">Party Role</label>
+                <p-dropdown name="ddPartyRole2" id="ddPartyRole2" #ddPartyRole2="ngModel" placeholder="choose Party Role..."
+                    [required]="true"
+                    [options]="casePartyRoleTypes"
+                    optionLabel="name"
+                    [(ngModel)]="newCaseParty.role"
+                    (onChange)="newCasePartyRoleTypeOnChange($event)"
+                    styleClass="width-full">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                      *ngIf="ddPartyRole2.errors?.required && ddPartyRole2.touched" >
+                      Party Role is required
+                </div>
+            </div>
+
+            <!-- column 3 -->
+            <div class="ui-g-12 mb-0">
+              <div class="ui-g-12 ui-md-6 mb-0">
+                <label class="minimal primary block">Start Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate"
+                      inputStyleClass="width-full"
+                      [(ngModel)]="newCaseParty.startDate"
+                      dateFormat="mm/dd/yy"
+                      placeholder="Start Date"
+                      [showIcon]="true"
+                      [yearNavigator]="true"
+                      yearRange="2000:2030"
+                      appendTo="body"></p-calendar>
+              </div>
+              <div class="ui-g-12 ui-md-6 mb-0">
+                <label class="minimal primary block">End Date</label>
+                <p-calendar id="dtEndDate" name="dtEndDate"
+                      inputStyleClass="width-full"
+                      [(ngModel)]="newCaseParty.endDate"
+                      dateFormat="mm/dd/yy"
+                      placeholder="End Date"
+                      [showIcon]="true"
+                      [yearNavigator]="true"
+                      yearRange="2000:2030"
+                      appendTo="body"></p-calendar>
+              </div>
             </div>
           </div>
+
+          <p-footer>
+            <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30 ta-r">
+              <button label="Create and Add Party To Case" type="submit" pButton icon="fa-check"
+                      (click)="createAndAddPartyToCase()"
+                      [disabled]="!newCasePartyForm.form.valid || !newCaseParty"></button>
+              <button label="Cancel" type="button" class="ui-button-secondary mr-15" pButton icon="fa-close"
+                      (click)="newCasePartyForm.reset(); hideModals()" ></button>
+            </div>
+          </p-footer>
+
         </div>
-      </div>
-      <p-footer>
-        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
-          <button label="Add Case Party" type="submit" pButton icon="fa-check"
-                  (click)="addPartyToCase()"
-                  [disabled]="!casePartyForm.form.valid"></button>
-          <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close" (click)="casePartyForm.reset(); hideModals()" ></button>
-        </div>
-      </p-footer>
-    </form>
+
+      </form>
+    </p-tabPanel>
+  </p-tabView>
+
+
+
+
   </p-dialog>
 
 

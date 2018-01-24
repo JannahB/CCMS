@@ -205,6 +205,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   selectedSearchPartyEndDate:Date = null;
   selectedCaseParty:CaseParty = null;
 
+  newCaseParty:CaseParty = new CaseParty();
+
   showAddCaseParty(){
     this.showModalAddCaseParty = true;
     this.caseSvc
@@ -223,26 +225,24 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
           this.selectedSearchParty = results[0];
         }
       });
-
   }
 
   searchPartyOnRowSelect(event){
     this.selectedSearchParty = event.data;
-
     this.selectedSearchPartyRole = null;
     this.selectedSearchPartyStartDate = null;
     this.selectedSearchPartyEndDate = null;
   }
 
-  searchPartyRoleTypeOnChange() {
-
+  createCaseParty(){
+    // this.selectedSearchParty = new CaseParty();
   }
 
   addPartyToCase() {
     if(!this.selectedSearchParty){
       return;
     }
-    
+
     let caseParty:CaseParty = new CaseParty();
 
     caseParty.caseParty = this.selectedSearchParty;
@@ -257,6 +257,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.saveCase();
 
     this.hideModals();
+  }
+
+  createAndAddPartyToCase() {
+
+  }
+
+  newCasePartyRoleTypeOnChange(event) {
+
   }
 
   calculateAge(dob) {
@@ -275,6 +283,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showDeletePartyModal = false;
     this.saveCase(false);
   }
+
 
   // -------------------------
   //   ADD CASE CHARGE MODAL
