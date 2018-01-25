@@ -82,7 +82,11 @@
           <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
           <p-column field="caseParty.lastName" header="Last Name" [style]="{'width':'15%'}"></p-column>
           <p-column field="caseParty.sex" header="Sex" [style]="{'width':'7%'}"></p-column>
-          <p-column field="caseParty.dob" header="Date of Birth" [style]="{'width':'13%'}"></p-column>
+          <p-column field="caseParty.dob" header="Date of Birth" [style]="{'width':'13%'}">
+              <ng-template pTemplate="body" let-item="rowData">
+                  {{item.dob | date:'M/d/yyyy'}}
+              </ng-template>
+          </p-column>
           <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column>
           <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
               <ng-template pTemplate="body" let-item="rowData">

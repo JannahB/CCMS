@@ -15,7 +15,7 @@ export class Party extends LookupEntity {
   firstName: string = "";
   sex: string = "";
   password: string = "";
-  dob: Date = null;
+  dob: string = "";
   isCourtUser: boolean = false;
   anonymizationFlag: boolean = false;
   role: Role = new Role();
