@@ -25,7 +25,7 @@ export class LocalStorageService{
         let prefixedKey:string = this.getPrefixedKey(key);
         let serializedValue:string = this.storage.getItem(prefixedKey);
 
-        if(typeof serializedValue === "undefined"){
+        if(serializedValue === "undefined"){
             return null;
         }
 
@@ -36,7 +36,7 @@ export class LocalStorageService{
         let prefixedKey:string = this.getPrefixedKey(key);
         let serializedValue:string = this.storage.getItem(prefixedKey);
 
-        if(typeof serializedValue === "undefined"){
+        if(serializedValue === "undefined"){
             return false;
         }
 
