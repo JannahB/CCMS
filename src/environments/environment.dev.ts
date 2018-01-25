@@ -5,6 +5,6 @@
 
 export const environment = {
   production: false,
-  apiUrl: "http://209.10.74.232/CCMS3",                // DEV
+  apiUrl: "http://209.10.74.232/CCMS3/",                // DEV
   mockUrl: "assets/mockData/"
 };
