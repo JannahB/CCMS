@@ -1,214 +1,265 @@
 <div class="ui-g">
 
-    <loading-bar [visible]="loadingCase" [message]="'loading case...'"></loading-bar>
-
   <!-- HEADER -->
-  <div class="ui-g-12 pv-0">
-    <label class="minimal block mb-0">Case:</label>
-    <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>
+  <div class="ui-g-12 pv-0 pl-0">
+    <div class="ui-g-12 ui-md-8">
+      <label class="minimal block mb-0">Case:</label>
+      <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>
+    </div>
+
   </div>
 
   <!-- FIRST SECTION -->
   <div class="ui-g-12 card">
 
-    <div *ngIf="case">
-      <div class="ui-g-12 ui-md-3">
-        <label class="minimal primary block">Filing Date</label>
-        <p-calendar
-              id="filingDate"
-              styleClass="width-full"
-              [(ngModel)]="case.caseFilingDate"
+    <loading-bar [visible]="loadingCase" [message]="loadingCaseMessage"></loading-bar>
 
-              dateFormat="mm/dd/yy"
-              placeholder="Case Filing Date"
-              [showIcon]="true"
-              yearRange="2000:2030"
-              [yearNavigator]="true" ></p-calendar>
-              <!-- (onSelect)="generalDetailsOnBlur($event)" -->
+    <div class="ui-g-12 ph-10">
+      <div class="ui-g-12 ui-md-8">
+          <h2 class="mb-0">Case Details</h2>
       </div>
-
-      <div class="ui-g-12 ui-md-3">
-          <label class="minimal primary block">Case Type</label>
-          <p-dropdown
-              placeholder="case type..."
-              optionLabel="name"
-              [options]="caseTypes"
-              [(ngModel)]="case.caseType"
-              (onChange)="caseTypeChange($event)"
-              styleClass="width-full">
-          </p-dropdown>
-      </div>
-
-      <div class="ui-g-12 ui-md-3">
-          <label class="minimal primary block">Case Status</label>
-          <p-dropdown
-              placeholder="case status..."
-              optionLabel="name"
-              [options]="caseStatuses"
-              [(ngModel)]="case.caseStatus"
-              (onChange)="ddOnChange($event)"
-              styleClass="width-full">
-          </p-dropdown>
-      </div>
-
-      <div class="ui-g-12 ui-md-3">
-          <label class="minimal primary block">Case Phase</label>
-          <p-dropdown
-              placeholder="case phase..."
-              optionLabel="name"
-              [options]="casePhases"
-              [(ngModel)]="case.casePhase"
-              (onChange)="ddOnChange($event)"
-              styleClass="width-full">
-          </p-dropdown>
-      </div>
-
-      <div class="ui-g-12 ui-md-3">
-          <label class="minimal block primary">Case Weight</label>
-          <div class="mar-0">{{ case.caseWeight }}</div>
-          <p-slider [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10" [animate]="true"></p-slider>
-      </div>
-
-      <!-- CASE PARTIES TABLE -->
-
-      <div class="ui-g-12 mt-20">
-        <h2 class="mb-30">Case Parties</h2>
-        <p-dataTable [value]="case.caseParties"
-                    selectionMode="single"
-                    [(selection)]="selectedParty"
-                    (onRowSelect)="partyOnRowSelect($event)"
-                    dataKey="caseParty.partyOID" #dtParties>
-          <p-column field="role.name" header="Role" [style]="{'width':'10%'}"></p-column>
-          <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
-          <p-column field="caseParty.lastName" header="Last Name" [style]="{'width':'15%'}"></p-column>
-          <p-column field="caseParty.sex" header="Sex" [style]="{'width':'7%'}"></p-column>
-          <p-column field="caseParty.dob" header="Date of Birth" [style]="{'width':'13%'}">
-              <ng-template pTemplate="body" let-item="rowData">
-                  {{item.dob | date:'M/d/yyyy'}}
-              </ng-template>
-          </p-column>
-          <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column>
-          <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
-              <ng-template pTemplate="body" let-item="rowData">
-                  {{item.startDate | date:'M/d/yyyy'}}
-              </ng-template>
-          </p-column>
-          <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
-              <ng-template pTemplate="body" let-item="rowData">
-                  {{item.endDate | date:'M/d/yyyy'}}
-              </ng-template>
-          </p-column>
-          <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
-              <ng-template let-item="rowData" pTemplate="body">
-                  <i class="material-icons delete-icon" (click)="requestDeleteParty(item)">delete</i>
-              </ng-template>
-          </p-column>
-          </p-dataTable>
-
-      </div>
-
-      <div class="ui-g-12">
+      <div class="ui-g-12 ui-md-4 ta-r pb-0">
         <button type="button"
-            (click)="showAddCaseParty()"
-            label="Add Case Party"
-            icon="ui-icon-add"
-            class="ui-button-secondary mr-15" pButton></button>
-
-        <button type="button"
-            (click)="addNewParty()"
-            label="Create New Party"
-            icon="ui-icon-add"
-            class="ui-button-secondary " pButton></button>
+                (click)="saveCase()"
+                label="Save Case"
+                icon="ui-icon-check"
+                class="btn-big" pButton
+                [disabled]="!caseForm.form.valid"></button>
       </div>
+    </div>
 
+    <div class="ui-g-12 ">
+      <form #caseForm="ngForm" novalidate>
+        <div *ngIf="case">
 
-      <!-- CHARGES TABLE -->
+          <div class="ui-g-12 ui">
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Filing Date</label>
+              <p-calendar id="dtFilingDate" name="dtFilingDate" #dtFilingDate
+                    [required]="true"
 
-      <div class="ui-g-12 mt-30">
-        <h2 class="mb-30">Charges</h2>
+                    [(ngModel)]="case.caseFilingDate"
+                    dateFormat="mm/dd/yy"
+                    placeholder="Case Filing Date"
+                    [showIcon]="true"
+                    yearRange="2000:2030"
+                    [yearNavigator]="true"
+                    appendTo="body" ></p-calendar>
+                    <!-- (onSelect)="generalDetailsOnBlur($event)" -->
+              <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="dtFilingDate.errors?.required && dtFilingDate.touched" >
+                    Please choose a Filing Date
+              </div>
+            </div>
 
-        <!--
-          ******** NEW TABLE ***********
-          Waiting for Aaron to add the
-          dependency tree in case data
-          ******************************
-         -->
-        <!-- <p-dataTable [value]="case.caseCharges"
-                    selectionMode="single"
-                    [(selection)]="selectedCharge"
-                    (onRowSelect)="caseOnRowSelect($event)"
-                    dataKey="caseChargeOID" #dtCharges>
-          <p-column header="#" field="" [style]="{'width':'12%'}">
-            <ng-template pTemplate="body" let-n="rowIndex">
-              {{n+1}}
-            </ng-template>
-          </p-column>
-          <p-column header="Section" field="iccsCode.categoryIdentifier" [style]="{'width':'12%'}"></p-column>
-          <p-column header="Division" field="" [style]="{'width':'12%'}"></p-column>
-          <p-column header="Group" field="" [style]="{'width':'12%'}"></p-column>
-          <p-column header="Class" field="" [style]="{'width':'12%'}"></p-column>
-          <p-column header="Charge/Law" field="localCharge.localCharge" [style]="{'width':'30%'}"></p-column>
-          <p-column header="Lead Charge Description" field="leaChargingDetails" [style]="{'width':'15%'}"></p-column>
-          <p-column header="Charge Factors" field="" [style]="{'width':'25%'}">
-              <ng-template pTemplate="body" let-item="rowData">
-                <div *ngFor="let factor of item.chargeFactors; let i = index">
-                  {{i+1}}) {{factor.description}}
+            <div class="ui-g-12 ui-md-3">
+                <label class="minimal block primary">Case Weight</label>
+                <div class="mar-0">{{ case.caseWeight }}</div>
+                <p-slider name="slCaseWeight" [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10" [animate]="true"></p-slider>
+            </div>
+          </div>
+
+          <div class="ui-g-12 ui">
+
+            <div class="ui-g-12 ui-md-4">
+                <label class="minimal primary block">Case Type</label>
+                <p-dropdown name="ddCaseType" #ddCaseType placeholder="case type..."
+                    [required]="true"
+                    optionLabel="name"
+                    [options]="caseTypes"
+                    [(ngModel)]="case.caseType"
+                    (onChange)="caseTypeChange($event)"
+                    styleClass="width-full">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="ddCaseType.errors?.required && ddCaseType.touched" >
+                      Please choose a Case Type
                 </div>
-              </ng-template>
-          </p-column>
-          <p-column header="Start Date" field="" [style]="{'width':'12%'}"></p-column>
-          <p-column header="End Date"   field="" [style]="{'width':'12%'}"></p-column>
+            </div>
 
-          <p-column header="Delete" styleClass="col-button" [style]="{'width':'8%'}">
-              <ng-template let-item="rowData" pTemplate="body">
-                  <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
-              </ng-template>
-          </p-column>
-        </p-dataTable> -->
-
-
-        <p-dataTable [value]="case.caseCharges"
-                    selectionMode="single"
-                    [(selection)]="selectedCharge"
-                    (onRowSelect)="caseOnRowSelect($event)"
-                    dataKey="caseChargeOID" #dtCharges>
-          <p-column field="iccsCode.categoryIdentifier" header="UN Code" [style]="{'width':'7%'}"></p-column>
-          <p-column field="iccsCode.categoryName" header="Description" [style]="{'width':'15%'}"></p-column>
-          <p-column field="leaChargingDetails" header="Charge Description" [style]="{'width':'15%'}"></p-column>
-          <p-column field="" header="Charge Factors" [style]="{'width':'25%'}">
-              <ng-template pTemplate="body" let-item="rowData">
-                <div *ngFor="let factor of item.chargeFactors; let i = index">
-                  {{i+1}}) {{factor.description}}
+            <div class="ui-g-12 ui-md-4">
+                <label class="minimal primary block">Case Status</label>
+                <p-dropdown name="ddCaseStaus" #ddCaseStaus placeholder="case status..."
+                    [required]="true"
+                    optionLabel="name"
+                    [options]="caseStatuses"
+                    [(ngModel)]="case.caseStatus"
+                    (onChange)="ddOnChange($event)"
+                    styleClass="width-full">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="ddCaseStaus.errors?.required && ddCaseStaus.touched" >
+                      Please choose a Case Status
                 </div>
-              </ng-template>
-          </p-column>
-          <p-column field="localCharge.localCharge" header="Charge/Law" [style]="{'width':'30%'}"></p-column>
-          <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
-              <ng-template let-item="rowData" pTemplate="body">
-                  <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
-              </ng-template>
-          </p-column>
-        </p-dataTable>
+            </div>
 
-      </div>
+            <div class="ui-g-12 ui-md-4">
+                <label class="minimal primary block">Case Phase</label>
+                <p-dropdown name="ddCasePhase" #ddCasePhase placeholder="case phase..."
+                    [required]="true"
+                    optionLabel="name"
+                    [options]="casePhases"
+                    [(ngModel)]="case.casePhase"
+                    (onChange)="ddOnChange($event)"
+                    styleClass="width-full">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="ddCasePhase.errors?.required && ddCasePhase.touched" >
+                      Please choose a Case Phase
+                </div>
+            </div>
+        </div>
 
-      <div class="ui-g-12">
-        <button type="button"
-            (click)="onShowAddCaseChargeModal()"
-            label="Add Case Charge"
-            icon="ui-icon-add"
-            class="ui-button-secondary mr-15" pButton></button>
-      </div>
 
-      <!-- CASE SAVE BUTTON -->
-      <div class="ui-g-12 ta-r">
-        <button type="button"
-            (click)="saveCase()"
-            label="Save Case"
-            icon="ui-icon-check"
-            class="" pButton></button>
-      </div>
+          <!-- CASE PARTIES TABLE -->
 
+          <div class="ui-g-12 mt-20 ph-0">
+
+            <div class="ui-g-12 ui-md-6">
+              <h2 class="mb-10">Case Parties</h2>
+            </div>
+
+            <div class="ui-g-12 ui-md-6 ta-r">
+              <button type="button"
+                  (click)="showAddCaseParty();"
+                  label="Add Case Party"
+                  icon="ui-icon-add"
+                  class="ui-button-secondary mr-15" pButton></button>
+            </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.caseParties"
+                          selectionMode="single"
+                          [(selection)]="selectedParty"
+                          (onRowSelect)="partyOnRowSelect($event)"
+                          dataKey="caseParty.partyOID" #dtParties>
+                <p-column field="role.name" header="Role" [style]="{'width':'10%'}"></p-column>
+                <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
+                <p-column field="caseParty.lastName" header="Last Name" [style]="{'width':'15%'}"></p-column>
+                <p-column field="caseParty.sex" header="Sex" [style]="{'width':'7%'}"></p-column>
+                <p-column field="caseParty.dob" header="Date of Birth" [style]="{'width':'13%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.dob | date:'M/d/yyyy'}}
+                    </ng-template>
+                </p-column>
+                <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column>
+                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.startDate | date:'M/d/yyyy'}}
+                    </ng-template>
+                </p-column>
+                <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.endDate | date:'M/d/yyyy'}}
+                    </ng-template>
+                </p-column>
+                <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                    <ng-template let-item="rowData" pTemplate="body">
+                        <i class="material-icons delete-icon" (click)="requestDeleteParty(item)">delete</i>
+                    </ng-template>
+                </p-column>
+              </p-dataTable>
+            </div>
+          </div>
+
+
+
+
+          <!-- CHARGES TABLE -->
+
+          <div class="ui-g-12 mt-30">
+
+            <div class="ui-g-12 ui-md-6">
+              <h2 class="mb-10">Charges</h2>
+            </div>
+            <div class="ui-g-12 ui-md-6 ta-r">
+              <button type="button"
+                    (click)="onShowAddCaseChargeModal()"
+                    label="Add Case Charge"
+                    icon="ui-icon-add"
+                    class="ui-button-secondary mr-15" pButton></button>
+            </div>
+
+            <div class="ui-g-12">
+
+              <!--
+                ******** NEW TABLE ***********
+                Waiting for Aaron to add the
+                dependency tree in case data
+                ******************************
+              -->
+              <!-- <p-dataTable [value]="case.caseCharges"
+                          selectionMode="single"
+                          [(selection)]="selectedCharge"
+                          (onRowSelect)="caseOnRowSelect($event)"
+                          dataKey="caseChargeOID" #dtCharges>
+                <p-column header="#" field="" [style]="{'width':'12%'}">
+                  <ng-template pTemplate="body" let-n="rowIndex">
+                    {{n+1}}
+                  </ng-template>
+                </p-column>
+                <p-column header="Section" field="iccsCode.categoryIdentifier" [style]="{'width':'12%'}"></p-column>
+                <p-column header="Division" field="" [style]="{'width':'12%'}"></p-column>
+                <p-column header="Group" field="" [style]="{'width':'12%'}"></p-column>
+                <p-column header="Class" field="" [style]="{'width':'12%'}"></p-column>
+                <p-column header="Charge/Law" field="localCharge.localCharge" [style]="{'width':'30%'}"></p-column>
+                <p-column header="Lead Charge Description" field="leaChargingDetails" [style]="{'width':'15%'}"></p-column>
+                <p-column header="Charge Factors" field="" [style]="{'width':'25%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngFor="let factor of item.chargeFactors; let i = index">
+                        {{i+1}}) {{factor.description}}
+                      </div>
+                    </ng-template>
+                </p-column>
+                <p-column header="Start Date" field="" [style]="{'width':'12%'}"></p-column>
+                <p-column header="End Date"   field="" [style]="{'width':'12%'}"></p-column>
+
+                <p-column header="Delete" styleClass="col-button" [style]="{'width':'8%'}">
+                    <ng-template let-item="rowData" pTemplate="body">
+                        <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
+                    </ng-template>
+                </p-column>
+              </p-dataTable> -->
+
+
+              <p-dataTable [value]="case.caseCharges"
+                          selectionMode="single"
+                          [(selection)]="selectedCharge"
+                          (onRowSelect)="caseOnRowSelect($event)"
+                          dataKey="caseChargeOID" #dtCharges>
+                <p-column field="iccsCode.categoryIdentifier" header="UN Code" [style]="{'width':'7%'}"></p-column>
+                <p-column field="iccsCode.categoryName" header="Description" [style]="{'width':'15%'}"></p-column>
+                <p-column field="leaChargingDetails" header="Charge Description" [style]="{'width':'15%'}"></p-column>
+                <p-column field="" header="Charge Factors" [style]="{'width':'25%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngFor="let factor of item.chargeFactors; let i = index">
+                        {{i+1}}) {{factor.description}}
+                      </div>
+                    </ng-template>
+                </p-column>
+                <p-column field="localCharge.localCharge" header="Charge/Law" [style]="{'width':'30%'}"></p-column>
+                <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                    <ng-template let-item="rowData" pTemplate="body">
+                        <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
+                    </ng-template>
+                </p-column>
+              </p-dataTable>
+            </div>
+          </div>
+
+
+          <!-- CASE SAVE BUTTON -->
+          <div class="ui-g-12 ta-r">
+            <button type="button"
+                (click)="saveCase()"
+                label="Save Case"
+                icon="ui-icon-check"
+                class="btn-big" pButton
+                [disabled]="!caseForm.form.valid"></button>
+          </div>
+
+        </div>
+      </form>
     </div>
   </div>
   <!-- //END FISRT CARD -->
@@ -658,7 +709,7 @@
             <div class="ui-g-12 mb-0">
               <span class="md-inputfield">
                 <input type="text" pInputText name="newCPaltName"
-                        [ngModel]="newCaseParty.caseParty?.alternativeName" (ngModelChange)="newCPaltNameChange($event)">
+                        [ngModel]="newCaseParty.caseParty?.alternativeName" (ngModelChange)="newCPaltNameChanged($event)">
                 <label>Alternative Name</label>
               </span>
             </div>
@@ -676,7 +727,8 @@
                       placeholder="Date of Birth"
                       [showIcon]="true"
                       [yearNavigator]="true"
-                      yearRange="1900:2020" ></p-calendar>
+                      yearRange="1900:2020"
+                      appendTo="body"></p-calendar>
                 <div class="ui-message ui-messages-error ui-corner-all"
                     *ngIf="newCPdob.errors?.required && newCPdob.touched" >
                   Please enter a Date of Birth

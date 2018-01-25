@@ -49,6 +49,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   caseTaskSubscription: Subscription;
   caseWeightRanges: number[] = [1,10];
   loadingCase: boolean = false;
+  loadingCaseMessage: string = 'loading case...';
   selectedCharge: CaseCharge;
   selectedParty: Party;
   selectedDoc: CaseDocument;
@@ -117,6 +118,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.case = new Case();
       return;
     }
+    this.loadingCaseMessage = 'loading case...';
     this.loadingCase = true;
     this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe (kase => {
       this.loadingCase = false;
@@ -211,6 +213,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   showAddCaseParty(){
+
+    if(!this.case.caseOID || this.case.caseOID == 0) {
+      this.toastSvc.showInfoMessage('Please complete case details and Save Case before proceeding.', 'Case Details');
+      return;
+    }
+
     this.showModalAddCaseParty = true;
     this.caseSvc
       .fetchCasePartyRole()
@@ -279,41 +287,100 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   // new case party tab methods
   createAndAddPartyToCase() {
     let party:Party = this.newCaseParty.caseParty;
-    let caseParty:CaseParty = this.newCaseParty;
+
+    if(!this.case.caseOID || this.case.caseOID == 0 ){
+      // if court requires a child, validate child added
+      // save case first
+      // then save party
+      // then add party to caseParty
+      // then save case again with new caseParty
+    }
 
     party.courtOID = this.case.court.courtOID;
     party.dob = party.dob ? this.datePipe.transform(party.dob, "MM/dd/yyyy") : "";
-    caseParty.startDate = caseParty.startDate ? this.datePipe.transform(caseParty.startDate, "MM/dd/yyyy") : "";
-    caseParty.endDate = caseParty.endDate ? this.datePipe.transform(caseParty.endDate, "MM/dd/yyyy") : "";
 
-    let caseParties:CaseParty[] = this.case.caseParties.slice();
-    caseParties.push(caseParty);
-    this.case.caseParties = caseParties;
+    this.loadingCaseMessage = 'saving party...';
+    this.loadingCase = true;
 
-    this.partySvc.saveParty(party).subscribe(reslut => {
+    this.partySvc.saveParty(party).subscribe(result => {
+      this.loadingCase = false;
       this.toastSvc.showSuccessMessage('Party saved');
+
+      let caseParty:CaseParty = this.newCaseParty;
+      caseParty.startDate = caseParty.startDate ? this.datePipe.transform(caseParty.startDate, "MM/dd/yyyy") : "";
+      caseParty.endDate = caseParty.endDate ? this.datePipe.transform(caseParty.endDate, "MM/dd/yyyy") : "";
+      caseParty.caseParty = result;
+
+      let caseParties:CaseParty[] = this.case.caseParties.slice();
+      caseParties.push(caseParty);
+      this.case.caseParties =  caseParties;
 
       this.saveCase();
       this.hideModals();
 
     })
   }
+
+  saveCase(shouldShowSuccessMessage:boolean = true){
+
+    // TODO: Validate a there is a caseParty
+    // TODO: validate if court requires child party, there is one
+
+    // if( !this.case.caseParties.length || this.case.caseParties[0].caseParty.partyOID == 0 ) {
+    //   this.toastSvc.showWarnMessage('The case must have a Case Party assigned to it can be saved.', 'Case Party Needed');
+    //   return;
+    // }
+
+    if( !this.doesCasePartyContainChild() ) {
+      this.toastSvc.showWarnMessage('The case must have at least one Child Case Party assigned.', 'Child Needed');
+      return;
+    }
+
+    this.loadingCaseMessage = 'saving case...';
+    this.loadingCase = true;
+
+    let shouldRefreshURL:boolean = this.case.caseOID == 0;
+
+    this.caseSvc
+      .saveCourtCase(this.case)
+      .subscribe(c => {
+        this.loadingCase = false;
+        this.case = c;
+        if(shouldShowSuccessMessage){
+          this.toastSvc.showSuccessMessage("Case Saved");
+        }
+        if(shouldRefreshURL) {
+          this.router.navigate([ '/case-detail', this.case.caseOID ])
+        }
+      });
+  }
+
+  doesCasePartyContainChild():boolean {
+     return this.case.caseParties.findIndex( cp => cp.role.casePartyRoleOID == 1) > -1;
+  }
+
   newCPfNameChanged(event) {
     this.newCaseParty.caseParty.firstName = event;
   }
+
   newCPlNameChanged(event) {
     this.newCaseParty.caseParty.lastName = event;
   }
+
   newCPaltNameChanged(event) {
+    console.log('newCPaltNameChanged(event)', event)
     this.newCaseParty.caseParty.alternativeName = event;
   }
+
   newCPdobChange(event) {
     console.log(event);
     this.newCaseParty.caseParty.dob = event;
   }
+
   newCPsexChange(event) {
     this.newCaseParty.caseParty.sex = event;
   }
+
   newCasePartyRoleTypeOnChange(event){
     console.log(event);
     this.newCaseParty.role = event.value;
@@ -343,6 +410,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   lastSelectedTypeLocalCharges: any[] = [];
 
   onShowAddCaseChargeModal() {
+    if(!this.case.caseOID || this.case.caseOID == 0) {
+      this.toastSvc.showInfoMessage('Please complete case details and Save Case before proceeding.', 'Complete Case Details');
+      return;
+    }
+
     this.showModalAddCaseCharge = true;
 
     this.caseSvc
@@ -756,17 +828,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }else{
       this.filteredEvents = this.case.caseEvents;
     }
-  }
-
-  saveCase(shouldShowSuccessMessage:boolean = true){
-    this.caseSvc
-      .saveCourtCase(this.case)
-      .subscribe(c => {
-        this.case = c;
-        if(shouldShowSuccessMessage){
-          this.toastSvc.showSuccessMessage("Case Saved");
-        }
-      });
   }
 
   generateDoc():void{

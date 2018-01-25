@@ -188,3 +188,21 @@ body {
     padding-top: 30px;
   }
 }
+
+// BUTTONS -------------------------
+.btn-big.ui-button {
+  height: 50px;
+  border-radius: 0;
+  box-shadow: none;
+
+  .ui-button-text, .ui-button-icon-left {
+    font-weight: 300;
+    font-size: 1.25em;
+    line-height: 1em;
+  }
+
+  .ui-button-text{
+    text-transform: uppercase;
+  }
+
+}
