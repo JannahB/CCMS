@@ -63,7 +63,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   casePhases:CasePhase[] = [];
   baseURL: string;
 
-
   datePipe:DatePipe = new DatePipe("en");
 
   constructor(
@@ -204,8 +203,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   selectedSearchPartyStartDate:Date = null;
   selectedSearchPartyEndDate:Date = null;
   selectedCaseParty:CaseParty = null;
-
   newCaseParty:CaseParty = new CaseParty();
+  genderTypes:any = [{label:'M', value:'M'}, {label:'F', value:'F'},];
+
+  searchPartyRoleTypeOnChange(event){
+
+  }
 
   showAddCaseParty(){
     this.showModalAddCaseParty = true;
@@ -239,12 +242,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   addPartyToCase() {
-    if(!this.selectedSearchParty){
-      return;
-    }
+    if(!this.selectedSearchParty) return;
 
     let caseParty:CaseParty = new CaseParty();
-
     caseParty.caseParty = this.selectedSearchParty;
     caseParty.role = this.selectedSearchPartyRole;
     caseParty.startDate = this.selectedSearchPartyStartDate ? this.datePipe.transform(this.selectedSearchPartyStartDate, "MM/dd/yyyy") : "";
@@ -255,16 +255,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.case.caseParties = caseParties;
 
     this.saveCase();
-
     this.hideModals();
-  }
-
-  createAndAddPartyToCase() {
-
-  }
-
-  newCasePartyRoleTypeOnChange(event) {
-
   }
 
   calculateAge(dob) {
@@ -284,6 +275,49 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.saveCase(false);
   }
 
+
+  // new case party tab methods
+  createAndAddPartyToCase() {
+    let party:Party = this.newCaseParty.caseParty;
+    let caseParty:CaseParty = this.newCaseParty;
+
+    party.courtOID = this.case.court.courtOID;
+    party.dob = party.dob ? this.datePipe.transform(party.dob, "MM/dd/yyyy") : "";
+    caseParty.startDate = caseParty.startDate ? this.datePipe.transform(caseParty.startDate, "MM/dd/yyyy") : "";
+    caseParty.endDate = caseParty.endDate ? this.datePipe.transform(caseParty.endDate, "MM/dd/yyyy") : "";
+
+    let caseParties:CaseParty[] = this.case.caseParties.slice();
+    caseParties.push(caseParty);
+    this.case.caseParties = caseParties;
+
+    this.partySvc.saveParty(party).subscribe(reslut => {
+      this.toastSvc.showSuccessMessage('Party saved');
+
+      this.saveCase();
+      this.hideModals();
+
+    })
+  }
+  newCPfNameChanged(event) {
+    this.newCaseParty.caseParty.firstName = event;
+  }
+  newCPlNameChanged(event) {
+    this.newCaseParty.caseParty.lastName = event;
+  }
+  newCPaltNameChanged(event) {
+    this.newCaseParty.caseParty.alternativeName = event;
+  }
+  newCPdobChange(event) {
+    console.log(event);
+    this.newCaseParty.caseParty.dob = event;
+  }
+  newCPsexChange(event) {
+    this.newCaseParty.caseParty.sex = event;
+  }
+  newCasePartyRoleTypeOnChange(event){
+    console.log(event);
+    this.newCaseParty.role = event.value;
+  }
 
   // -------------------------
   //   ADD CASE CHARGE MODAL

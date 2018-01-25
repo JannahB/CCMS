@@ -169,8 +169,6 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   genderTypesOnChange(event) {
     this.party.sex = event.value;
-    // Persist party object
-    this.toastSvc.showSuccessMessage('Party Saved!')
   }
 
   getLangsToFilter(event) {
@@ -226,7 +224,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   deleteIdentifier() {
     this.showDeleteIdentifierModal = false;
-    
+
     CollectionUtil.removeArrayItem(this.party.identifiers, this.identifierToDelete);
     this.saveParty(false);
     this.identifierToDelete = null;
@@ -285,7 +283,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
     deleteEmail() {
       this.showDeleteEmailModal = false;
-      
+
       CollectionUtil.removeArrayItem(this.party.emails, this.emailToDelete);
       this.saveParty(false);
       this.emailToDelete = null;
@@ -342,7 +340,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     }
     deletePhone() {
       this.showDeletePhoneModal = false;
-      
+
       CollectionUtil.removeArrayItem(this.party.phoneNumbers, this.phoneToDelete);
       this.saveParty(false);
       this.phoneToDelete = null;
@@ -404,7 +402,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     }
     deleteAddress() {
       this.showDeleteAddressModal = false;
-      
+
       CollectionUtil.removeArrayItem(this.party.addresses, this.addressToDelete);
       this.saveParty(false);
       this.addressToDelete = null;
@@ -469,5 +467,5 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       });
   }
 
-  
+
 }

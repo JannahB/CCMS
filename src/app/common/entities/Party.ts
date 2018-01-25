@@ -9,26 +9,26 @@ import { Role } from './Role';
 
 export class Party extends LookupEntity {
 
-  partyOID: number = 0; 
-  courtOID: number = 0; 
-  lastName: string = ""; 
-  firstName: string = ""; 
-  sex: string = ""; 
-  password: string = ""; 
-  dob: Date = null; 
-  isCourtUser: boolean = false; 
-  anonymizationFlag: boolean = false; 
+  partyOID: number = 0;
+  courtOID: number = 0;
+  lastName: string = "";
+  firstName: string = "";
+  sex: string = "";
+  password: string = "";
+  dob: Date = null;
+  isCourtUser: boolean = false;
+  anonymizationFlag: boolean = false;
   role: Role = new Role();
-  notes: string = ""; 
+  notes: string = "";
   addresses: Address[] = [];
-  emails: Email[] = []; 
-  phoneNumbers: PhoneNumber[] = []; 
+  emails: Email[] = [];
+  phoneNumbers: PhoneNumber[] = [];
   identifiers: Identifier[] = [];
-  interpreterRequiredIndicator: boolean = false; 
+  interpreterRequiredIndicator: boolean = false;
   spokenLanguages: Language[] = [];
-  alternativeName: string = ""; 
-  authorizedCourts: AuthorizedCourt[] = []; 
-  queryName: string = ""; 
+  alternativeName: string = "";
+  authorizedCourts: AuthorizedCourt[] = [];
+  queryName: string = "";
 
   age:number = 0;
 }
