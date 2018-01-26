@@ -20,6 +20,9 @@
           <h2 class="mb-0">Case Details</h2>
       </div>
       <div class="ui-g-12 ui-md-4 ta-r pb-0">
+
+        <!-- <p-progressSpinner strokeWidth="4" [style]="{width: '30px', height: '30px'}"></p-progressSpinner> -->
+
         <button type="button"
                 (click)="saveCase()"
                 label="Save Case"
@@ -267,7 +270,7 @@
 
 
   <!-- SECOND CARD - TAB SECTION -->
-  <div class="ui-g-12 card">
+  <div class="ui-g-12 card" *ngIf="case && case.caseOID && case.caseOID > 0">
 
     <div *ngIf="case">
 
@@ -402,7 +405,18 @@
                         label="Generate"
                         icon="ui-icon-settings-applications"
                         class="ui-button-secondary inline" pButton></button>
+                </div>
 
+                <!-- FILE UPLOAD -->
+                <div class="ui-g-12 ui-md-6 pb-0 ta-r">
+                  <p-fileUpload name="theFiles[]" url="./upload.jsp" (onUpload)="onUpload($event)"
+                      multiple="multiple" accept=".doc, .docx, .pdf" maxFileSize="5000000">
+                      <ng-template pTemplate="content">
+                          <ul *ngIf="uploadedFiles.length">
+                              <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                          </ul>
+                      </ng-template>
+                  </p-fileUpload>
                 </div>
             </div>
 

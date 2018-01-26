@@ -48,7 +48,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   caseSubscription: Subscription;
   caseTaskSubscription: Subscription;
   caseWeightRanges: number[] = [1,10];
-  loadingCase: boolean = false;
+  loadingCase: boolean = true;
   loadingMessage: string = 'loading case...';
   selectedCharge: CaseCharge;
   selectedParty: Party;
@@ -351,6 +351,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     //   return;
     // }
 
+    if( this.case.caseWeight == 0 ) {
+      this.toastSvc.showWarnMessage('The Case Weight must be greater than 0', 'Case Weight Needed');
+      return;
+    }
     if( !this.doesCasePartyContainChild() ) {
       this.toastSvc.showWarnMessage('The case must have at least one Child Case Party assigned.', 'Child Needed');
       return;
@@ -852,10 +856,23 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  // -------------------------
+  //   DOCUMENTS TAB
+  //
+  // ------------------------=
   generateDoc():void{
     this.caseSvc
       .downloadCourtDocument(this.case.caseOID, this.selectedDocumentTemplateType.documentTemplateOID)
       .subscribe();
+  }
+
+  uploadedFiles: any[] = [];
+
+  onUpload(event) {
+    for(let file of event.files) {
+      this.uploadedFiles.push(file);
+    }
+    this.toastSvc.showSuccessMessage('File Uploaded');
   }
 
   ddOnChange(event):void{
