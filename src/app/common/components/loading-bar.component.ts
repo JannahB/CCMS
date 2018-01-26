@@ -12,6 +12,7 @@ import { Component, Input } from '@angular/core';
           </div>
           <div class="msg">{{message}}</div>
         </div>
+        <p-progressSpinner class="spinner" strokeWidth="4" [style]="{width: '40px', height: '40px'}"></p-progressSpinner>
       </div>
     `,
     styles: [
@@ -29,6 +30,11 @@ import { Component, Input } from '@angular/core';
         top: 0;
         left: 0;
         z-index: 9;
+      }
+      .spinner{
+        position: absolute;
+        top: 300px;
+        left: 49%;
       }
       .container {
         width: 100%;

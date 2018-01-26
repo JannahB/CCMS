@@ -46,6 +46,7 @@ import {PanelModule} from 'primeng/primeng';
 import {PanelMenuModule} from 'primeng/primeng';
 import {PasswordModule} from 'primeng/primeng';
 import {ProgressBarModule} from 'primeng/primeng';
+import {ProgressSpinnerModule} from 'primeng/primeng';
 import {RadioButtonModule} from 'primeng/primeng';
 import {RatingModule} from 'primeng/primeng';
 import {ScheduleModule} from 'primeng/primeng';
@@ -149,6 +150,7 @@ import { AuthenticationModel } from './common/model/authentication-model';
         PanelMenuModule,
         PasswordModule,
         ProgressBarModule,
+        ProgressSpinnerModule,
         RadioButtonModule,
         RatingModule,
         ScheduleModule,
