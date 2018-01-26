@@ -1,5 +1,6 @@
-<div class="ui-g">
+<p-message *ngIf="staticMessage.visible" severity="{{staticMessage.severity}}" text="{{staticMessage.message}}"></p-message>
 
+<div class="ui-g">
   <!-- HEADER -->
   <div class="ui-g-12 pv-0 pl-0">
     <div class="ui-g-12 ui-md-8">
@@ -12,7 +13,7 @@
   <!-- FIRST SECTION -->
   <div class="ui-g-12 card">
 
-    <loading-bar [visible]="loadingCase" [message]="loadingCaseMessage"></loading-bar>
+    <loading-bar [visible]="loadingCase" [message]="loadingMessage"></loading-bar>
 
     <div class="ui-g-12 ph-10">
       <div class="ui-g-12 ui-md-8">
@@ -663,7 +664,7 @@
         <p-footer>
           <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
             <button label="Add Party To Case" type="submit" pButton icon="fa-check"
-                    (click)="addPartyToCase()"
+                    (click)="addPartyToCase(caseForm)"
                     [disabled]="!casePartyForm.form.valid || !selectedSearchParty"></button>
             <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
                     (click)="casePartyForm.reset(); hideModals()" ></button>
@@ -799,7 +800,7 @@
         <p-footer>
           <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30 ta-r">
             <button label="Create and Add Party To Case" type="submit" pButton icon="fa-check"
-                    (click)="createAndAddPartyToCase()"
+                    (click)="createAndAddPartyToCase(caseForm)"
                     [disabled]="!newCasePartyForm.form.valid || !newCaseParty"></button>
             <button label="Cancel" type="button" class="ui-button-secondary mr-15" pButton icon="fa-close"
                     (click)="hideModals()" ></button>

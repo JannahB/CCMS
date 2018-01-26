@@ -49,7 +49,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   caseTaskSubscription: Subscription;
   caseWeightRanges: number[] = [1,10];
   loadingCase: boolean = false;
-  loadingCaseMessage: string = 'loading case...';
+  loadingMessage: string = 'loading case...';
   selectedCharge: CaseCharge;
   selectedParty: Party;
   selectedDoc: CaseDocument;
@@ -113,12 +113,24 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if(this.routeSubscription) this.routeSubscription.unsubscribe();
   }
 
+  staticMessage:any = {};
+
+  showStaticMessage(showIt:boolean, severity?:string, detail?:string, summary?:string) {
+    // info
+    // success
+    // warn
+    // error
+    this.staticMessage.visible = showIt;
+    this.staticMessage.severity = severity;
+    this.staticMessage.message = summary+' : '+ detail;
+  }
+
   getCase(caseId) {
     if(caseId == 0 ) {
       this.case = new Case();
       return;
     }
-    this.loadingCaseMessage = 'loading case...';
+    this.loadingMessage = 'loading case...';
     this.loadingCase = true;
     this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe (kase => {
       this.loadingCase = false;
@@ -202,7 +214,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   casePartyRoleTypes: CasePartyRole[];
   selectedSearchParty: Party;
   selectedSearchPartyRole: CasePartyRole = null;
-  selectedSearchPartyStartDate:Date = null;
+  selectedSearchPartyStartDate:Date;
   selectedSearchPartyEndDate:Date = null;
   selectedCaseParty:CaseParty = null;
   newCaseParty:CaseParty = new CaseParty();
@@ -214,12 +226,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   showAddCaseParty(){
 
-    if(!this.case.caseOID || this.case.caseOID == 0) {
-      this.toastSvc.showInfoMessage('Please complete case details and Save Case before proceeding.', 'Case Details');
-      return;
-    }
+    // if(!this.case.caseOID || this.case.caseOID == 0) {
+    //   this.toastSvc.showInfoMessage('Please complete case details and Save Case before proceeding.', 'Case Details');
+    //   return;
+    // }
 
+    this.newCaseParty.startDate =  this.datePipe.transform(new Date(), "MM/dd/yyyy");
+    this.selectedSearchPartyStartDate = new Date();
     this.showModalAddCaseParty = true;
+
     this.caseSvc
       .fetchCasePartyRole()
       .subscribe( roles => this.casePartyRoleTypes = roles );
@@ -249,7 +264,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     // this.selectedSearchParty = new CaseParty();
   }
 
-  addPartyToCase() {
+  addPartyToCase(caseForm) {
     if(!this.selectedSearchParty) return;
 
     let caseParty:CaseParty = new CaseParty();
@@ -262,7 +277,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     caseParties.push(caseParty);
     this.case.caseParties = caseParties;
 
-    this.saveCase();
+    if(caseForm.valid) {
+      this.saveCase();
+    } else {
+      this.showStaticMessage(true, 'warn', 'Please complete Case Details and click Save Case to complete.', 'Complete Case Details');
+    }
+    // TODO: tell the user to save the case??
     this.hideModals();
   }
 
@@ -285,37 +305,37 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
 
   // new case party tab methods
-  createAndAddPartyToCase() {
-    let party:Party = this.newCaseParty.caseParty;
-
-    if(!this.case.caseOID || this.case.caseOID == 0 ){
-      // if court requires a child, validate child added
-      // save case first
-      // then save party
-      // then add party to caseParty
-      // then save case again with new caseParty
-    }
-
-    party.courtOID = this.case.court.courtOID;
-    party.dob = party.dob ? this.datePipe.transform(party.dob, "MM/dd/yyyy") : "";
-
-    this.loadingCaseMessage = 'saving party...';
+  createAndAddPartyToCase(caseForm) {
+    this.loadingMessage = 'saving party...';
     this.loadingCase = true;
 
+    // CREATE LOCAL PARTY
+    let party:Party = this.newCaseParty.caseParty;
+    party.dob = party.dob ? this.datePipe.transform(party.dob, "MM/dd/yyyy") : "";
+
+    // SAVE THE PARTY
     this.partySvc.saveParty(party).subscribe(result => {
+
       this.loadingCase = false;
       this.toastSvc.showSuccessMessage('Party saved');
 
+      // CREATE LOCAL CASE PARTY
       let caseParty:CaseParty = this.newCaseParty;
       caseParty.startDate = caseParty.startDate ? this.datePipe.transform(caseParty.startDate, "MM/dd/yyyy") : "";
       caseParty.endDate = caseParty.endDate ? this.datePipe.transform(caseParty.endDate, "MM/dd/yyyy") : "";
       caseParty.caseParty = result;
 
+      // ADD CASE PARTY TO CASE PARTIES
       let caseParties:CaseParty[] = this.case.caseParties.slice();
       caseParties.push(caseParty);
       this.case.caseParties =  caseParties;
 
-      this.saveCase();
+      // SAVE OR NOT
+      if(caseForm.valid) {
+        this.saveCase();
+      } else {
+        this.showStaticMessage(true, 'warn', 'Please complete Case Details and click Save Case to complete.', 'Complete Case Details');
+      }
       this.hideModals();
 
     })
@@ -336,7 +356,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.loadingCaseMessage = 'saving case...';
+    this.loadingMessage = 'saving case...';
     this.loadingCase = true;
 
     let shouldRefreshURL:boolean = this.case.caseOID == 0;
@@ -345,6 +365,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .saveCourtCase(this.case)
       .subscribe(c => {
         this.loadingCase = false;
+        this.showStaticMessage(false);
         this.case = c;
         if(shouldShowSuccessMessage){
           this.toastSvc.showSuccessMessage("Case Saved");
@@ -511,6 +532,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.case.caseCharges = this.case.caseCharges.slice();
 
     this.hideModals();
+    this.showStaticMessage(true, 'warn', 'Click "Save Case" to save Charges to the Case.', 'Unsaved Values');
   }
 
   private getIccsCode():IccsCode{
