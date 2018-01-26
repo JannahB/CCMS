@@ -11,6 +11,10 @@ export class LocalStorageService{
     }
 
     public setValue<T>(key:string, value:T):void{
+        if(typeof value === "undefined"){
+            return;
+        }
+
         let serializedValue:string = JSON.stringify(value);
         let prefixedKey:string = this.getPrefixedKey(key);
 
@@ -21,12 +25,20 @@ export class LocalStorageService{
         let prefixedKey:string = this.getPrefixedKey(key);
         let serializedValue:string = this.storage.getItem(prefixedKey);
 
+        if(serializedValue === "undefined"){
+            return null;
+        }
+
         return JSON.parse(serializedValue) as T;
     }
 
     public hasValue(key:string):boolean{
         let prefixedKey:string = this.getPrefixedKey(key);
         let serializedValue:string = this.storage.getItem(prefixedKey);
+
+        if(serializedValue === "undefined"){
+            return false;
+        }
 
         return serializedValue != null;
     }
