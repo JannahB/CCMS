@@ -986,33 +986,11 @@
 
           <div class="ui-g-12 mb-0">
             <label class="minimal primary block">Assigned Person</label>
-            <p-dropdown name="ddAssignedPerson" id="ddAssignedPerson" placeholder="choose Assigned Person..."
-                [options]="taskParties | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : '...choose'"
-
-
+            <p-dropdown name="ddAssignedPerson" id="ddAssignedPerson"
+                [options]="taskParties | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Assigned Person...'"
+                [ngModel]="selectedCaseTask?.assignedParty"
                 (onChange)="assignedPersonTypeOnChange($event)"
                 styleClass="width-full">
-
-                <!-- [ngModel]="selectedCaseTask?.assignedParty"
-                optionLabel="lastName" -->
-
-
-                <!-- <ng-template let-item pTemplate="selectedItem">
-                    <div>{{item.firstName}} {{item.lastName}}</div>
-                </ng-template>
-                <ng-template let-person pTemplate="item">
-                    <div>{{person.firstName}} {{person.lastName}}</div>
-                </ng-template> -->
-
-                <!-- <ng-template let-item pTemplate="selectedItem">
-                    <span>{{item.firstName}} {{item.lastName}}</span>
-                </ng-template>
-                <ng-template let-person pTemplate="item">
-                  <div>
-                      {{person.firstName}} {{person.lastName}}
-                  </div>
-                </ng-template> -->
-
             </p-dropdown>
           </div>
 

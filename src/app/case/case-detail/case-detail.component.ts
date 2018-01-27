@@ -6,9 +6,6 @@ import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { SelectItem } from 'primeng/primeng';
 
-
-
-import { DropdownPipe } from './../../common/pipes/dropdown.pipe';
 import { Pool } from './../../common/entities/Pool';
 import { EventType } from './../../common/entities/EventType';
 import { CasePartyRole } from './../../common/entities/CasePartyRole';
@@ -37,6 +34,7 @@ import { CaseType } from '../../common/entities/CaseType';
 import { CaseStatus } from '../../common/entities/CaseStatus';
 import { CasePhase } from '../../common/entities/CasePhase';
 import { environment } from '../../../environments/environment';
+import { DropdownPipe } from './../../common/pipes/dropdown.pipe';
 
 
 @Component({
