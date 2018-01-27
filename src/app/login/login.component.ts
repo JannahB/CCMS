@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { AuthenticationService } from '../common/services/http/authentication.service';
 import { AuthenticationModel } from '../common/model/authentication-model';
+import { Party } from '../common/entities/Party';
 
 @Component({
   selector: 'login',
@@ -48,7 +49,7 @@ export class LoginComponent implements OnInit {
     this.authenticationService
       .FetchLoginCredentials(userName, password)
       .subscribe((loginResult) => {
-        this.handleAuthenticationComplete();
+        this.handleAuthenticationComplete(loginResult);
           // this.authenticationService
           //   .FetchToken(userName, 5)
           //   .subscribe(tokenResult => {
@@ -65,11 +66,11 @@ export class LoginComponent implements OnInit {
       );
   }
 
-  private handleAuthenticationComplete():void{
+  private handleAuthenticationComplete(loginResult):void{
     this.hasLoginFailed = false;
     this.isAttemptingLogin = false;
 
-    this._state.notifyDataChanged('app.loggedIn', null, true );
+    this._state.notifyDataChanged('app.loggedIn', loginResult, true );
 
     let url:string = "/";
 

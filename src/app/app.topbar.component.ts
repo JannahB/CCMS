@@ -1,8 +1,10 @@
-import { GlobalState } from './common/services/state/global.state';
-import {Component} from '@angular/core';
+import { UserService } from './common/services/utility/user.service';
+import {Component, OnInit} from '@angular/core';
 import {AppComponent} from './app.component';
 import { AuthorizationInterceptor } from './common/interceptors/authorization.interceptor';
 import { AuthenticationService } from './common/services/http/authentication.service';
+import { Party } from './common/entities/Party';
+import { GlobalState } from './common/services/state/global.state';
 
 @Component({
     selector: 'app-topbar',
@@ -40,17 +42,17 @@ import { AuthenticationService } from './common/services/http/authentication.ser
                         <a href="#" (click)="app.onTopbarItemClick($event,profile)">
                           <i class="material-icons profile-icon">account_circle</i>
                           <!-- <img class="profile-image" src="assets/layout/images/avatar.png" /> -->
-                          <span class="topbar-item-name">User</span>
+                          <span class="">{{loggedInUser?.firstName}} {{loggedInUser?.lastName}}</span>
                         </a>
 
                         <ul class="ultima-menu animated fadeInDown">
-                          <!--
+
                           <li role="menuitem">
-                                <a href="#">
-                                    <i class="material-icons">person</i>
-                                    <span>Profile</span>
-                                </a>
-                            </li> -->
+                            <a href="#">
+                                <i class="material-icons">person</i>
+                                <span>{{loggedInUser?.firstName}} {{loggedInUser?.lastName}} </span>
+                              </a>
+                            </li>
                             <li role="menuitem">
                                 <a href="#">
                                     <i class="material-icons">palette</i>
@@ -151,11 +153,23 @@ import { AuthenticationService } from './common/services/http/authentication.ser
 })
 export class AppTopbarComponent {
 
+  loggedInUser: Party;
+
     constructor(
       public app: AppComponent,
       public _state:GlobalState,
-      public authSvc: AuthenticationService
-    ) {}
+      public authSvc: AuthenticationService,
+      public userSvc: UserService
+    ) { }
+
+    ngOnInit() {
+
+      this._state.subscribe('app.loggedIn', (user) => {
+        this.loggedInUser = user;
+      });
+
+      this.loggedInUser = this.userSvc.loggedInUser;
+    }
 
     sendThemeChange(theme:string) {
         this._state.notifyDataChanged('theme.change', theme, true );
