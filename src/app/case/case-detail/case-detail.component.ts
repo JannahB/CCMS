@@ -269,6 +269,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   addPartyToCase(caseForm) {
     if(!this.selectedSearchParty) return;
 
+    // Check for duplicate party
+    let isPartyOnCase = this.case.caseParties.findIndex( item => item.caseParty.partyOID == this.selectedSearchParty.partyOID) > -1;
+    if( isPartyOnCase ) {
+      this.toastSvc.showWarnMessage('A party can only be added to the case once.', 'Duplicate Party');
+      return;
+    }
+
     let caseParty:CaseParty = new CaseParty();
     caseParty.caseParty = this.selectedSearchParty;
     caseParty.role = this.selectedSearchPartyRole;
