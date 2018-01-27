@@ -658,20 +658,30 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   saveCaseTask() {
+
+    if(!this.selectedCaseTask.assignedPool && !this.selectedCaseTask.assignedParty) {
+      this.toastSvc.showWarnMessage('Task must be assigned to Staff, Pool or both.', 'Not Assigned');
+      return;
+    }
+
     let task = new CaseTaskDTO();
     task.caseOID = this.case.caseOID.toString();
     task.taskDetails = this.selectedCaseTask.details;
-    task.taskParty = this.selectedCaseTask.assignedParty.partyOID.toString();
     task.taskPriorityCode = this.selectedCaseTask.taskPriorityCode.toString();
-    task.taskStaffPool = this.selectedCaseTask.assignedPool.poolOID.toString();
+    task.taskParty =  this.selectedCaseTask.assignedParty ? this.selectedCaseTask.assignedParty.partyOID.toString() : null;
+    task.taskStaffPool = this.selectedCaseTask.assignedPool ? this.selectedCaseTask.assignedPool.poolOID.toString() : null;
     task.taskType = this.selectedCaseTask.taskType.taskTypeOID.toString();
     task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.dueDate, "yyyy-MM-dd"); // taskDueDate:"2018-01-31"
 
     this.caseSvc.saveCaseTask(task).subscribe( result => {
       let savedTask = result[0];
 
-      Object.assign(this.selectedCaseTask.assignedParty, savedTask.assignedParty);
-      Object.assign(this.selectedCaseTask.assignedPool, savedTask.assignedPool);
+      if(this.selectedCaseTask.assignedParty)
+        Object.assign(this.selectedCaseTask.assignedParty, savedTask.assignedParty);
+
+      if(this.selectedCaseTask.assignedPool)
+        Object.assign(this.selectedCaseTask.assignedPool, savedTask.assignedPool);
+
       this.selectedCaseTask.taskOID = savedTask.taskOID;
 
       let task = this.selectedCaseTask;
