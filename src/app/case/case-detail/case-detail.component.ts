@@ -159,12 +159,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   partyOnRowSelect(event) {
     // this.showModalAddCaseParty = true;
-
   }
 
   caseOnRowSelect(event) {
     // this.showModalAddCaseCharge = true;
-
   }
 
   chargeOnRowSelect(event){
@@ -181,7 +179,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   }
   judicialAssignmentOnRowSelect(event) {
-
+    this.showModalAddJudge = true;
   }
 
   caseTypeChange(event):void{
@@ -776,6 +774,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   saveJudge(){
+
+    // Check for duplicate
+    let isJudgeOnCase = this.judges.findIndex( item => item.partyOID == this.judge.judicialOfficial.partyOID) > -1;
+    if( isJudgeOnCase ) {
+      this.toastSvc.showWarnMessage('A judge can only be added to the case once.', 'Duplicate Judge');
+      return;
+    }
+
     this.judge.caseOID = this.case.caseOID;
 
     this.caseSvc
@@ -784,15 +790,18 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         let index:number = this.case.judicialAssignments
           .find(a => a.judicialAssignmentOID == assignment.judicialAssignmentOID);
 
-        if(index >= 0){
-          this.case.judicialAssignments[index] = assignment;
-        }else{
-          this.case.judicialAssignments.push(assignment);
-          this.case.judicialAssignments = this.case.judicialAssignments.slice();
-        }
-      });
+      if(index >= 0){
+        this.case.judicialAssignments[index] = assignment;
+      }else{
+        this.case.judicialAssignments.push(assignment);
+        this.case.judicialAssignments = this.case.judicialAssignments.slice();
+      }
 
-      this.showModalAddJudge = false;
+      this.toastSvc.showSuccessMessage('Judge Saved');
+
+    });
+
+    this.showModalAddJudge = false;
   }
 
   requestViewJudicialAssignment(judge):void{
@@ -827,6 +836,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   caseEventOnRowSelect(event):void{
     this.caseEvent = event.data;
+    this.showModalAddEvent = true;
   }
 
   requestViewCaseEvent(){
