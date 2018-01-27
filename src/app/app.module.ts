@@ -103,6 +103,9 @@ import { LoadingBarComponent } from './common/components/loading-bar.component';
 import { LocalStorageService } from './common/services/utility/local-storage.service';
 import { GlobalErrorHandlerService } from './common/services/utility/global-error-handler.service';
 import { AuthenticationModel } from './common/model/authentication-model';
+import { UserService } from './common/services/utility/user.service';
+
+
 
 
 @NgModule({
@@ -209,6 +212,7 @@ import { AuthenticationModel } from './common/model/authentication-model';
         CanActivateAuthenticationGuard,
         AuthenticationService,
         LocalStorageService,
+        UserService,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthorizationInterceptor,
