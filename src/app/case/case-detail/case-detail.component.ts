@@ -6,6 +6,9 @@ import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { SelectItem } from 'primeng/primeng';
 
+
+
+import { DropdownPipe } from './../../common/pipes/dropdown.pipe';
 import { Pool } from './../../common/entities/Pool';
 import { EventType } from './../../common/entities/EventType';
 import { CasePartyRole } from './../../common/entities/CasePartyRole';
@@ -701,7 +704,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   assignedPersonTypeOnChange(event) {
-    this.selectedCaseTask.assignedParty = event.value;
+    this.selectedCaseTask.assignedParty = this.taskParties.find(item => item.partyOID == event.value);
   }
 
   staffPoolTypeOnChange(event) {
