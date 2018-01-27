@@ -14,6 +14,7 @@ export class CaseTask {
   details: string = '';
   docTemplate: DocTemplate = new DocTemplate();
   dueDate: Date = null;
+  doneDate: Date = null;
   notDoneReason: string = '';
   taskOID: number = 0;
   taskPriorityCode: number = null;

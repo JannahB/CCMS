@@ -353,12 +353,12 @@
                 <p-column field="taskPriorityCode" header="Priority" [style]="{'width':'12%'}"></p-column>
                 <p-column field="" header="Assigned" [style]="{'width':'30%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      <span *ngIf="item.assignedParty?.partyOID">
+                      <div *ngIf="item.assignedParty?.partyOID">
                         {{ 'Party: ' + item.assignedParty.firstName + ' ' + item.assignedParty.lastName }}
-                      </span>
-                      <span *ngIf="item.assignedPool?.poolOID">
+                      </div>
+                      <div *ngIf="item.assignedPool?.poolOID">
                         {{ 'Pool: ' + item.assignedPool.poolName }}
-                      </span>
+                      </div>
                   </ng-template>
                 </p-column>
                 <p-column field="taskType.name" header="Task Type" [style]="{'width':'38%'}"></p-column>
@@ -1012,7 +1012,18 @@
                 [ngModel]="selectedCaseTask?.dueDate"
                 (ngModelChange)="dueDateOnChange($event)"
                 [showIcon]="true"
-                dateFormat="dd.mm.yy"
+                dateFormat="mm/dd/yy"
+                appendTo="body"></p-calendar>
+          </div>
+
+          <!-- DUE DATE -->
+          <div class="ui-g-12" *ngIf="selectedCaseTask && selectedCaseTask.taskOID > 0">
+            <label class="minimal primary block">Done Date</label>
+            <p-calendar id="task_doneDate" name="task_doneDate" placeholder="Done Date"
+                [ngModel]="selectedCaseTask?.doneDate"
+                (ngModelChange)="doneDateOnChange($event)"
+                [showIcon]="true"
+                dateFormat="mm/dd/yy"
                 appendTo="body"></p-calendar>
           </div>
 
@@ -1068,7 +1079,7 @@
             <p-calendar id="dtStartDate" name="dtStartDate" placeholder="Start Date" #dtStartDate="ngModel"
                 [(ngModel)]="judge.startDate"
                 [showIcon]="true"
-                dateFormat="dd.mm.yy"
+                dateFormat="mm/dd/yy"
                 appendTo="body"></p-calendar>
             <div class="ui-message ui-messages-error ui-corner-all"
                   *ngIf="dtStartDate.errors?.required && dtStartDate.touched" >
@@ -1081,7 +1092,7 @@
             <p-calendar id="dtEndDate" name="dtEndDate" placeholder="End Date" #dtEndDate="ngModel"
                 [(ngModel)]="judge.endDate"
                 [showIcon]="true"
-                dateFormat="dd.mm.yy"
+                dateFormat="mm/dd/yy"
                 appendTo="body"></p-calendar>
           </div>
 

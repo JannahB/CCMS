@@ -724,6 +724,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedCaseTask.dueDate = event;
   }
 
+  doneDateOnChange(event){
+    this.selectedCaseTask.doneDate = event;
+  }
+
   taskDetailsOnChange(event){
     this.selectedCaseTask.details = event;
   }
