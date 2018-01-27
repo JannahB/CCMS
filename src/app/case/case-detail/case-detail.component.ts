@@ -49,7 +49,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   caseSubscription: Subscription;
   caseTaskSubscription: Subscription;
   caseWeightRanges: number[] = [1,10];
-  loadingCase: boolean = true;
+  loadingCase: boolean = false;
   loadingMessage: string = 'loading case...';
   selectedCharge: CaseCharge;
   selectedParty: Party;
@@ -129,6 +129,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   getCase(caseId) {
     if(caseId == 0 ) {
       this.case = new Case();
+      this.loadingCase = false;
       return;
     }
     this.loadingMessage = 'loading case...';
