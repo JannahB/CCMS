@@ -44,6 +44,7 @@ export class CaseSearchComponent implements OnInit {
   caseStatusTypesSubscription: Subscription;
   casePartyRoleTypesSubscription: Subscription;
 
+  isSearcing:boolean = false;
 
   constructor(
     private caseSvc: CaseService,
@@ -79,6 +80,9 @@ export class CaseSearchComponent implements OnInit {
   }
 
   onSearch() {
+    this.isSearcing = true;
+    this.caseResults = null;
+
     let obj = {};
     if(this.caseNumberText && this.caseNumberText != '') obj = {...obj, caseNumber: this.caseNumberText };
     if(this.casePartyNameText && this.casePartyNameText != '') obj = {...obj, casePartyName: this.casePartyNameText};
@@ -95,6 +99,7 @@ export class CaseSearchComponent implements OnInit {
     this.caseSvc
       .fetchAny(obj)
       .subscribe((result) => {
+        this.isSearcing = false;
         if(!result) {
           this.toastSvc.showInfoMessage('Please alter search criteria and try again.', 'No Results');
         }

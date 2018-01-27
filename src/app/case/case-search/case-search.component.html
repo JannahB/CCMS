@@ -70,7 +70,8 @@
     </form>
     <!-- CASE PARTIES TABLE -->
 
-    <div class="ui-g-12 mv-20">
+    <div class="ui-g-12 mv-20 pos-relative">
+        <loading-bar [visible]="isSearcing" [message]="'searching...'"></loading-bar>
       <h2>Search Case Results</h2>
       <p-dataTable [value]="caseResults" selectionMode="single" [(selection)]="selectedCase" (onRowSelect)="caseOnRowSelect($event)"
         dataKey="caseOID" #dtCaseResults>
