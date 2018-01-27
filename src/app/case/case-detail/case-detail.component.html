@@ -41,7 +41,7 @@
               <label class="minimal primary block">Filing Date</label>
               <p-calendar id="dtFilingDate" name="dtFilingDate" #dtFilingDate
                     [required]="true"
-
+                    [disabled]="case.caseOID != 0"
                     [(ngModel)]="case.caseFilingDate"
                     dateFormat="mm/dd/yy"
                     placeholder="Case Filing Date"
@@ -69,6 +69,7 @@
                 <label class="minimal primary block">Case Type</label>
                 <p-dropdown name="ddCaseType" #ddCaseType placeholder="case type..."
                     [required]="true"
+                    [disabled]="case.caseOID != 0"
                     optionLabel="name"
                     [options]="caseTypes"
                     [(ngModel)]="case.caseType"
@@ -157,11 +158,11 @@
                         {{item.endDate | date:'M/d/yyyy'}}
                     </ng-template>
                 </p-column>
-                <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons delete-icon" (click)="requestDeleteParty(item)">delete</i>
                     </ng-template>
-                </p-column>
+                </p-column> -->
               </p-dataTable>
             </div>
           </div>
@@ -242,11 +243,11 @@
                     </ng-template>
                 </p-column>
                 <p-column field="localCharge.localCharge" header="Charge/Law" [style]="{'width':'30%'}"></p-column>
-                <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
                     </ng-template>
-                </p-column>
+                </p-column> -->
               </p-dataTable>
             </div>
           </div>

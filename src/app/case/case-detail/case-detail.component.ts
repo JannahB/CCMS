@@ -156,10 +156,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   partyOnRowSelect(event) {
+    // this.showModalAddCaseParty = true;
 
   }
 
   caseOnRowSelect(event) {
+    // this.showModalAddCaseCharge = true;
 
   }
 
