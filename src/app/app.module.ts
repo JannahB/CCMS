@@ -104,6 +104,7 @@ import { LocalStorageService } from './common/services/utility/local-storage.ser
 import { GlobalErrorHandlerService } from './common/services/utility/global-error-handler.service';
 import { AuthenticationModel } from './common/model/authentication-model';
 import { UserService } from './common/services/utility/user.service';
+import { DropdownPipe } from './common/pipes/dropdown.pipe';
 
 
 
@@ -191,7 +192,8 @@ import { UserService } from './common/services/utility/user.service';
         AdminWorkflowComponent,
         AdminUsersComponent,
         LoginComponent,
-        LoadingBarComponent
+        LoadingBarComponent,
+        DropdownPipe
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
@@ -213,6 +215,7 @@ import { UserService } from './common/services/utility/user.service';
         AuthenticationService,
         LocalStorageService,
         UserService,
+        DropdownPipe,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthorizationInterceptor,
