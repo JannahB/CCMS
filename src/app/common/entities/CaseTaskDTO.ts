@@ -11,5 +11,6 @@ export class CaseTaskDTO {
   taskPriorityCode:string; // "1"
   taskStaffPool:string;    // "501"
   taskType:string;         // "832960474289411"
+  doneDate:string;         // "2018-01-31"
 
 }

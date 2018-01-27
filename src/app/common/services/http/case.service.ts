@@ -217,6 +217,7 @@ export class CaseService extends HttpBaseService<Case> {
         caseTasks.forEach( ct => {
           ct.assignedDate = DateConverter.convertDate(ct.assignedDate);
           ct.dueDate = DateConverter.convertDate(ct.dueDate);
+          ct.doneDate = DateConverter.convertDate(ct.doneDate);
         })
       }
 
@@ -318,6 +319,7 @@ export class CaseService extends HttpBaseService<Case> {
   convertCaseTaskDates(ct){
     ct.assignedDate = DateConverter.convertDate(ct.assignedDate);
     ct.dueDate = DateConverter.convertDate(ct.dueDate);
+    ct.doneDate = DateConverter.convertDate(ct.doneDate);
     return ct;
   }
 
@@ -462,7 +464,7 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http
       .get<CaseStatus[]>(url);
   }
-  
+
   public fetchPhaseByType(type:number):Observable<CasePhase[]>{
     let url:string = `${super.getBaseUrl()}/FetchPhaseByType`;
 
@@ -473,5 +475,5 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http
       .post<CasePhase[]>(url, params);
   }
-  
+
 }

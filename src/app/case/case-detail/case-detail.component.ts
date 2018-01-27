@@ -672,6 +672,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     task.taskStaffPool = this.selectedCaseTask.assignedPool ? this.selectedCaseTask.assignedPool.poolOID.toString() : null;
     task.taskType = this.selectedCaseTask.taskType.taskTypeOID.toString();
     task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.dueDate, "yyyy-MM-dd"); // taskDueDate:"2018-01-31"
+    if (this.selectedCaseTask.doneDate)
+      task.doneDate = this.datePipe.transform(this.selectedCaseTask.doneDate, "yyyy-MM-dd"); // taskDueDate:"2018-01-31"
+
 
     this.caseSvc.saveCaseTask(task).subscribe( result => {
       let savedTask = result[0];
