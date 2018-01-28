@@ -203,6 +203,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showModalAddEvent = false;
     this.showDeleteChargeModal = false;
     this.showDeletePartyModal = false;
+    this.showModalAddHearing = false;
   }
 
   // -------------------------
@@ -738,12 +739,52 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   //   HEARING MODAL
   // ------------------------=
 
+  showModalAddHearing:boolean = false;
+  loadingHearingLookups:boolean = false;
+
   addHearingTask() {
-    console.log('activeTabIndex BEFORE', this.activeTabIndex)
-    this.activeTabIndex = 1;
-    console.log('activeTabIndex AFTER', this.activeTabIndex)
-    this.hideModals();
-    this.createCaseTask(1);
+    this.showModalAddHearing = true;
+    // FetchJudicialOfficer GET
+    // FetchHearingType GET
+    // FetchHearingLocation GET
+  }
+
+  hearingDateOnChange(event){
+    // FetchHearing POST {hearingQueryDate: "2018-01-06"}
+
+  }
+
+  hearingJudgeOnChange(event){
+    // FetchHearing POST {hearingQueryDate: "2018-01-06"}
+
+  }
+
+  hearingLocationOnChange(event){
+    // FetchHearing POST {hearingQueryDate: "2018-01-09", courtLoc: "1"}
+
+  }
+
+  hearingStartTimeOnChange(event) {
+
+  }
+
+  hearingEndTimeOnChange(event) {
+
+  }
+
+  hearingTypeOnChange(event) {
+
+  }
+
+  hearingDescriptionOnChange(event) {
+
+  }
+
+
+  //{hearingQueryDate: "2018-01-09", courtLoc: "1"}
+
+  saveHearing() {
+
   }
 
 

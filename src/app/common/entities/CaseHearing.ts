@@ -4,13 +4,15 @@ import { HearingType } from './HearingType';
 
 export class CaseHearing {
 
-  caseHearingOID: number; 
+  caseHearingOID: number;
   caseOID: number;
   courtLoc: CourtLocation;
-  courtOID: number; 
+  courtOID: number;
   endDateTime: Date;
   hearingType: HearingType;
   judicialOfficer: Party;
   startDateTime: Date;
+
+  description: string; //?? TODO: CONFIRM if this on obj coming from server
 
 }
