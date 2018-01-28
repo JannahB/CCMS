@@ -859,8 +859,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   }
 
-
-  //{hearingQueryDate: "2018-01-09", courtLoc: "1"}
+  onCancelHearing(hearingForm) {
+    hearingForm.reset();
+    this.hideModals();
+  }
 
   saveHearing() {
 
