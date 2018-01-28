@@ -1,3 +1,4 @@
+import { CourtLocation } from './../../common/entities/CourtLocation';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -35,6 +36,8 @@ import { CaseStatus } from '../../common/entities/CaseStatus';
 import { CasePhase } from '../../common/entities/CasePhase';
 import { environment } from '../../../environments/environment';
 import { DropdownPipe } from './../../common/pipes/dropdown.pipe';
+import { HearingType } from '../../common/entities/HearingType';
+import { CaseHearings } from '../../common/entities/CaseHearings';
 
 
 @Component({
@@ -55,7 +58,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   selectedParty: Party;
   selectedDoc: CaseDocument;
   selectedEvent: CaseEvent;
-  selectedHearing: CaseHearing;
   selectedJudicialAssignment: any;
   documentTemplateTypes: DocTemplate[] = [];
   selectedDocumentTemplateType: DocTemplate;
@@ -739,32 +741,109 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   //   HEARING MODAL
   // ------------------------=
 
+  selectedHearing:CaseHearing;
   showModalAddHearing:boolean = false;
   loadingHearingLookups:boolean = false;
+  hearingLocations: CourtLocation[];
+  hearingTypes: HearingType[];
+  hearingSubscription: Subscription;
+  hearingConflicts:CaseHearing[];
+  loadingConflicts:boolean = false;
 
-  addHearingTask() {
+  createHearing() {
+    this.selectedHearing = new CaseHearing();
+    this.onShowHearingModal();
+  }
+
+  onShowHearingModal() {
     this.showModalAddHearing = true;
     // FetchJudicialOfficer GET
     // FetchHearingType GET
     // FetchHearingLocation GET
+    this.loadingHearingLookups = true;
+    var source = Observable.forkJoin<any>(
+      this.lookupSvc.fetchLookup<JudicialOfficer>('FetchJudicialOfficer'),
+      this.lookupSvc.fetchLookup<CourtLocation>('FetchHearingLocation'),
+      this.lookupSvc.fetchLookup<HearingType>('FetchHearingType')
+    );
+    this.hearingSubscription = source.subscribe(
+      results => {
+        this.judges = results[0] as JudicialOfficer[];
+        this.hearingLocations = results[1] as CourtLocation[];
+        this.hearingTypes = results[2] as HearingType[];
+
+        this.initHearingModal();
+      });
+  }
+
+  initHearingModal() {
+    this.loadingHearingLookups = false;
+
+    // Pre-select Dropdowns
+    if(this.selectedHearing.judicialOfficer){
+      this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == this.selectedHearing.judicialOfficer.partyOID);
+    }
+
+    if(this.selectedHearing.courtLoc){
+      this.selectedHearing.courtLoc = this.hearingLocations.find(h => h.locationOID == this.selectedHearing.courtLoc.locationOID);
+    }
+
+    if(this.selectedHearing.hearingType){
+      this.selectedHearing.hearingType = this.hearingTypes.find(ht => ht.hearingTypeOID == this.selectedHearing.hearingType.hearingTypeOID);
+    }
   }
 
   hearingDateOnChange(event){
-    // FetchHearing POST {hearingQueryDate: "2018-01-06"}
-
+    this.selectedHearing.startDateTime = event;
+    this.fetchMatchingHearings();
   }
 
   hearingJudgeOnChange(event){
-    // FetchHearing POST {hearingQueryDate: "2018-01-06"}
-
+    this.selectedHearing.judicialOfficer = event.value;
+    this.fetchMatchingHearings();
   }
 
   hearingLocationOnChange(event){
+    this.selectedHearing.courtLoc = event.value;
+    this.fetchMatchingHearings();
+  }
+
+  fetchMatchingHearings(){
+    if( !this.selectedHearing.startDateTime ) return;
+
     // FetchHearing POST {hearingQueryDate: "2018-01-09", courtLoc: "1"}
+    let data = {};
+    let hearingDateString: string = this.datePipe.transform(this.selectedHearing.startDateTime, "yyyy-MM-dd");
+    data = Object.assign(data, {hearingQueryDate: hearingDateString} );
+
+    if( this.selectedHearing.courtLoc ) {
+      let hearingLocString: string = this.selectedHearing.courtLoc.locationOID.toString();
+      data = Object.assign(data, {courtLoc: hearingLocString} );
+    }
+    // TODO: ADD JUDGE to QUERY *********
+    if( this.selectedHearing.judicialOfficer ) {
+      let judgeString: string = this.selectedHearing.judicialOfficer.partyOID.toString();
+      // data = Object.assign(data, {partyOID: judgeString} );
+    }
+
+
+    // MAKE THE CALL
+    this.loadingConflicts = true;
+    this.caseSvc.fetchHearing(data).subscribe(results => {
+      this.hearingConflicts = results;
+    },
+    (error) => {
+      this.loadingConflicts = false;
+      this.toastSvc.showErrorMessage('There was an error while searching hearings.')
+    },
+    () => {
+      this.loadingConflicts = false;
+    })
 
   }
 
   hearingStartTimeOnChange(event) {
+    // IF END DATE !touched, then set it to the same value as the StartTime
 
   }
 

@@ -476,4 +476,11 @@ export class CaseService extends HttpBaseService<Case> {
       .post<CasePhase[]>(url, params);
   }
 
+  public fetchHearing(data:any):Observable<CaseHearing[]>{
+    let url:string = `${super.getBaseUrl()}/FetchHearing`;
+
+    return this.http
+      .post<CaseHearing[]>(url, data);
+  }
+
 }

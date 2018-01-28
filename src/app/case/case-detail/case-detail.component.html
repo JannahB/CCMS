@@ -487,7 +487,7 @@
                 </div>
                 <div class="ui-g-12">
                     <button type="button"
-                        (click)="addHearingTask(1)"
+                        (click)="createHearing()"
                         label="Add Hearing Task"
                         icon="ui-icon-add"
                         class="ui-button-secondary mr-15" pButton></button>
@@ -1238,11 +1238,11 @@
         <div class="form-group" >
 
           <div class="ui-g-12">
-            <div class="ui-g-12">
+            <div class="ui-g-6">
               <!-- HEARING DATE -->
                 <label class="minimal primary block">Hearing Date</label>
                 <p-calendar id="hearingDate" name="hearingDate" #hearingDate="ngModel" placeholder="Hearing Date"
-                    [ngModel]="selectedHearing?.dueDate"
+                    [ngModel]="selectedHearing?.startDateTime"
                     (ngModelChange)="hearingDateOnChange($event)"
                     [showIcon]="true"
                     dateFormat="mm/dd/yy"
@@ -1252,7 +1252,17 @@
                      Please choose a Hearing Date
                 </div>
             </div>
+            <div class="ui-g-6">
+              <div *ngIf="loadingConflicts" class="mt-15">
+                <p-progressSpinner class="spinner" strokeWidth="3" [style]="{width: '24px', height: '24px'}"></p-progressSpinner>
+              </div>
+              <div *ngIf="hearingConflicts && !loadingConflicts" class="mt-20 primary">
+                {{hearingConflicts.length}} Potential Schedule Conflicts
+              </div>
+            </div>
+            </div>
 
+            <div class="ui-g-12">
             <div class="ui-g-12 ui-md-6">
                 <label class="minimal primary block">Start Time</label>
                 <p-calendar id="hearingStartTime" name="hearingStartTime" #hearingStartTime="ngModel" placeholder="Start Time"
@@ -1260,7 +1270,8 @@
                     (ngModelChange)="hearingStartTimeOnChange($event)"
                     [inline]="true"
                     hourFormat="12"
-                    [timeOnly]="true"></p-calendar>
+                    [timeOnly]="true"
+                    class="time-picker"></p-calendar>
                 <div class="ui-message ui-messages-error ui-corner-all"
                      *ngIf="hearingStartTime.errors?.required && hearingStartTime.touched" >
                      Please choose a Start Time
@@ -1274,10 +1285,11 @@
                   (ngModelChange)="hearingEndTimeOnChange($event)"
                   [inline]="true"
                   hourFormat="12"
-                  [timeOnly]="true"></p-calendar>
+                  [timeOnly]="true"
+                  class="time-picker"></p-calendar>
               <div class="ui-message ui-messages-error ui-corner-all"
-                   *ngIf="hearingStartTime.errors?.required && hearingStartTime.touched" >
-                   Please choose a Start Time
+                   *ngIf="hearingEndTime.errors?.required && hearingEndTime.touched" >
+                   Please choose a End Time
               </div>
             </div>
           </div>
@@ -1288,7 +1300,7 @@
                 [required]="true"
                 [options]="judges"
                 optionLabel="name"
-                [ngModel]="selectedHearing?.judicialOfficial"
+                [ngModel]="selectedHearing?.judicialOfficer"
                 (onChange)="hearingJudgeOnChange($event)"
                 styleClass="width-full">
             </p-dropdown>
