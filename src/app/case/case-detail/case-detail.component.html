@@ -1057,6 +1057,7 @@
   <!-- ADD JUDICIAL ASSIGNMENT MODAL -->
 
   <p-dialog header="Add Judicial Assignment" width="450" [(visible)]="showModalAddJudge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <loading-bar [visible]="loadingJudgeLookups" [message]="'loading judicial data...'"></loading-bar>
     <form (ngSubmit)="saveJudge()" #caseJudgeForm="ngForm" novalidate>
       <div class="ui-g">
         <div class="form-group" >
