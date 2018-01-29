@@ -410,8 +410,9 @@
 
                 <!-- FILE UPLOAD -->
                 <div class="ui-g-12 ui-md-6 pb-0 ta-r">
-                  <p-fileUpload name="theFiles[]" url="./upload.jsp" (onUpload)="onUpload($event)"
-                      multiple="multiple" accept=".doc, .docx, .pdf" maxFileSize="5000000">
+                  <p-fileUpload name="theFiles[]" url="./GetAttachment" (onUpload)="onUpload($event)"
+                      multiple="multiple"  maxFileSize="5000000">
+                      <!-- accept="*.doc, *.docx, *.pdf" -->
                       <ng-template pTemplate="content">
                           <ul *ngIf="uploadedFiles.length">
                               <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
