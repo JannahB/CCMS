@@ -633,6 +633,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.staffPools = results[2] as Pool[];
 
         this.initCaseTaskModal(taskTypeId);
+      },
+      (error) => {
+        this.loadingCaseTaskLookups = false;
+        this.toastSvc.showErrorMessage('There was an error fetching task reference data.')
+      },
+      () => {
+        this.loadingCaseTaskLookups = false;
       });
   }
 
@@ -773,6 +780,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.hearingTypes = results[2] as HearingType[];
 
         this.initHearingModal();
+      },
+      (error) => {
+        this.loadingHearingLookups = false;
+        this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
+      },
+      () => {
+        this.loadingHearingLookups = false;
       });
   }
 
@@ -878,27 +892,38 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   showModalAddJudge: boolean = false;
   judges: JudicialOfficer[];
   judge: JudicialAssignment = new JudicialAssignment();
+  loadingJudgeLookups: boolean = false;
 
 
   onShowJudgeModal(){
     this.showModalAddJudge = true;
+    this.loadingJudgeLookups = true;
 
     this.caseSvc
       .fetchJudicialOfficer()
       .subscribe(judges => {
+        this.loadingJudgeLookups = false;
         this.judges = judges;
 
         if(this.judge.judicialOfficial){
           this.judge.judicialOfficial = judges
             .find(j => j.partyOID == this.judge.judicialOfficial.partyOID);
         }
+      },
+      (error) => {
+        this.loadingJudgeLookups = false;
+        this.toastSvc.showErrorMessage('There was an error fetching judicial data.')
+      },
+      () => {
+        this.loadingJudgeLookups = false;
       });
   }
 
   saveJudge(){
 
     // Check for duplicate
-    let isJudgeOnCase = this.judges.findIndex( item => item.partyOID == this.judge.judicialOfficial.partyOID) > -1;
+    let isJudgeOnCase = this.case.judicialAssignments
+      .findIndex( item => item.judicialOfficial.partyOID == this.judge.judicialOfficial.partyOID) > -1;
     if( isJudgeOnCase ) {
       this.toastSvc.showWarnMessage('A judge can only be added to the case once.', 'Duplicate Judge');
       return;
