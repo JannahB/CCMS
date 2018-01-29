@@ -180,9 +180,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   hearingOnRowSelect(event){
 
   }
-  judicialAssignmentOnRowSelect(event) {
-    this.showModalAddJudge = true;
-  }
 
   caseTypeChange(event):void{
     if(this.case.caseType){
@@ -895,6 +892,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   loadingJudgeLookups: boolean = false;
 
 
+  judicialAssignmentOnRowSelect(event) {
+    this.onShowJudgeModal();
+    this.judge = event.data;
+  }
+
   onShowJudgeModal(){
     this.showModalAddJudge = true;
     this.loadingJudgeLookups = true;
@@ -905,6 +907,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.loadingJudgeLookups = false;
         this.judges = judges;
 
+        // Pre-set the dropdown
         if(this.judge.judicialOfficial){
           this.judge.judicialOfficial = judges
             .find(j => j.partyOID == this.judge.judicialOfficial.partyOID);
@@ -921,12 +924,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   saveJudge(){
 
-    // Check for duplicate
-    let isJudgeOnCase = this.case.judicialAssignments
-      .findIndex( item => item.judicialOfficial.partyOID == this.judge.judicialOfficial.partyOID) > -1;
-    if( isJudgeOnCase ) {
-      this.toastSvc.showWarnMessage('A judge can only be added to the case once.', 'Duplicate Judge');
-      return;
+    // If this a new Judicical Assignment
+    if(!this.judge.judicialAssignmentOID || this.judge.judicialAssignmentOID == 0) {
+      // Check for duplicate
+      let isJudgeOnCase = this.case.judicialAssignments
+        .findIndex( item => item.judicialOfficial.partyOID == this.judge.judicialOfficial.partyOID) > -1;
+      if( isJudgeOnCase ) {
+        this.toastSvc.showWarnMessage('A judge can only be added to the case once.', 'Duplicate Judge');
+        return;
+      }
     }
 
     this.judge.caseOID = this.case.caseOID;
