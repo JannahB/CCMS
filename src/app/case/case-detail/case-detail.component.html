@@ -1064,16 +1064,20 @@
 
           <div class="ui-g-12 mb-15">
             <label class="minimal primary block">Judge</label>
-            <p-dropdown name="ddJudge" id="ddJudge" placeholder="choose Judge..." #ddJudge="ngModel"
-                [required]="true"
-                [options]="judges"
-                optionLabel="name"
-                [(ngModel)]="judge.judicialOfficial"
-                styleClass="width-full">
-            </p-dropdown>
-            <div class="ui-message ui-messages-error ui-corner-all"
-                  *ngIf="ddJudge.errors?.required && ddJudge.touched" >
-                  Please select a Judge
+            <div *ngIf="judge.judicialAssignmentOID > 0">{{judge.judicialOfficial.name}}</div>
+            <div *ngIf="!judge.judicialAssignmentOID || judge.judicialAssignmentOID == 0">
+              <p-dropdown name="ddJudge" id="ddJudge" placeholder="choose Judge..." #ddJudge="ngModel"
+                  [required]="true"
+                  [options]="judges"
+                  optionLabel="name"
+                  [(ngModel)]="judge.judicialOfficial"
+                  [disabled]="judge.judicialAssignmentOID > 0"
+                  styleClass="width-full">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="ddJudge.errors?.required && ddJudge.touched" >
+                    Please select a Judge
+              </div>
             </div>
           </div>
 
