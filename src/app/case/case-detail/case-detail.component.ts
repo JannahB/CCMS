@@ -892,9 +892,22 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   loadingJudgeLookups: boolean = false;
 
 
+  // Handles a row click
   judicialAssignmentOnRowSelect(event) {
     this.onShowJudgeModal();
     this.judge = event.data;
+  }
+
+  // Handles Magnify/View Icon click
+  requestViewJudicialAssignment(judge):void{
+    this.judge = judge;
+    this.onShowJudgeModal();
+  }
+
+  // Handles Add Judge button click
+  onAddJudge() {
+    this.judge = new JudicialAssignment();
+    this.onShowJudgeModal();
   }
 
   onShowJudgeModal(){
@@ -957,11 +970,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showModalAddJudge = false;
   }
 
-  requestViewJudicialAssignment(judge):void{
-    this.judge = judge;
-
-    this.onShowJudgeModal();
-  }
 
   // -------------------------
   //   ADD COMPLETED EVENT MODAL
