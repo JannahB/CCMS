@@ -941,7 +941,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .saveJudicialAssignment(this.judge)
       .subscribe(assignment =>{
         let index:number = this.case.judicialAssignments
-          .find(a => a.judicialAssignmentOID == assignment.judicialAssignmentOID);
+          .findIndex(a => a.judicialAssignmentOID == assignment.judicialAssignmentOID);
 
       if(index >= 0){
         this.case.judicialAssignments[index] = assignment;
