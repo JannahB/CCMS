@@ -160,10 +160,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/party-detail', 0 ]);
   }
 
-  partyOnRowSelect(event) {
-    // this.showModalAddCaseParty = true;
-  }
-
   caseOnRowSelect(event) {
     // this.showModalAddCaseCharge = true;
   }
@@ -201,6 +197,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showDeleteChargeModal = false;
     this.showDeletePartyModal = false;
     this.showModalAddHearing = false;
+    this.showModalEditCaseParty = false;
   }
 
   // -------------------------
@@ -209,6 +206,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   showModalAddCaseParty: boolean = false;
   showDeletePartyModal: boolean = false;
+  showModalEditCaseParty: boolean = false;
   partySearchText: string;
   searchPartyResults: Party[];
   casePartyRoleTypes: CasePartyRole[];
@@ -224,13 +222,22 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   }
 
-  showAddCaseParty(){
+  partyOnRowSelect(event) {
+    this.selectedCaseParty = event.data;
+    this.showModalEditCaseParty = true;
+    // TODO: SHOW DROPDOWNS AS TEXT IN FORM
+    // ONLY START AND END DATE CAN BE EDITED
+  }
 
-    // if(!this.case.caseOID || this.case.caseOID == 0) {
-    //   this.toastSvc.showInfoMessage('Please complete case details and Save Case before proceeding.', 'Case Details');
-    //   return;
-    // }
+  editParty(){
+    this.toastSvc.showInfoMessage('Update existing party not functional yet.')
 
+    // M
+    // TODO: Create DTO to send to server
+
+  }
+
+  showAddCaseParty() {
     this.newCaseParty.startDate =  this.datePipe.transform(new Date(), "MM/dd/yyyy");
     this.selectedSearchPartyStartDate = new Date();
     this.showModalAddCaseParty = true;
@@ -258,10 +265,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedSearchPartyRole = null;
     this.selectedSearchPartyStartDate = null;
     this.selectedSearchPartyEndDate = null;
-  }
-
-  createCaseParty(){
-    // this.selectedSearchParty = new CaseParty();
   }
 
   addPartyToCase(caseForm) {

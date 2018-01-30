@@ -837,7 +837,145 @@
 
       </form>
     </p-tabPanel>
+
   </p-tabView>
+</p-dialog>
+
+<!-- DIALOG CASE PARTY
+  ------------ EDIT PARTY ----------------
+-->
+<p-dialog header="Edit Party" width="450" [(visible)]="showModalEditCaseParty" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <form #editCasePartyForm="ngForm" novalidate>
+      <div class="ui-g form-group" novalidate>
+
+        <div  *ngIf="selectedCaseParty">
+
+          <div class="ui-g-12 mb-20">
+            <span class="md-inputfield">
+              <input pInputText type="text" #editCPfName="ngModel" required name="editCPfName"
+                      [ngModel]="selectedCaseParty.caseParty?.firstName" (ngModelChange)="editCPfNameChanged($event)">
+              <label>First Name</label>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="editCPfName.errors?.required && editCPfName.touched" >
+                  Please enter First Name
+            </div>
+          </div>
+
+          <div class="ui-g-12 mb-20">
+            <span class="md-inputfield">
+              <input type="text" pInputText #editCPlName="ngModel" name="editCPlName" required
+                      [ngModel]="selectedCaseParty.caseParty?.lastName"  (ngModelChange)="editCPlNameChanged($event)">
+              <label>Last Name</label>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="editCPlName.errors?.required && editCPlName.touched" >
+                  Please enter Last Name
+            </div>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <span class="md-inputfield">
+              <input type="text" pInputText name="editCPaltName"
+                      [ngModel]="selectedCaseParty.caseParty?.alternativeName" (ngModelChange)="editCPaltNameChanged($event)">
+              <label>Alternative Name</label>
+            </span>
+          </div>
+
+
+          <div class="ui-g-12 mb-0 pl-0">
+            <div class="ui-g-12 ui-md-6 mb-0">
+              <label class="minimal primary block">Date of Birth</label>
+              <p-calendar id="editCPdob" name="editCPdob" #editCPdob="ngModel"
+                    [required]="true"
+                    inputStyleClass="width-full"
+                    [ngModel]="selectedCaseParty.caseParty?.dob"
+                    (ngModelChange)="editCPdobChange($event)"
+                    dateFormat="mm/dd/yy"
+                    placeholder="Date of Birth"
+                    [showIcon]="true"
+                    [yearNavigator]="true"
+                    yearRange="1900:2020"
+                    appendTo="body"></p-calendar>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="editCPdob.errors?.required && editCPdob.touched" >
+                Please enter a Date of Birth
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-6 mb-0">
+              <label class="minimal primary block">Sex</label>
+                <p-dropdown name="editCPsex" #editCPsex="ngModel" placeholder="choose gender"
+                    [required]="true"
+                    [options]="genderTypes"
+                    [ngModel]="selectedCaseParty.caseParty?.sex"
+                    (ngModelChange)="editCPsexChange($event)"
+                    styleClass="width-auto">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                      *ngIf="editCPsex.errors?.required && editCPsex.touched" >
+                  Please enter a gender
+                </div>
+            </div>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Party Role</label>
+              <p-dropdown name="ddNewPartyRole" #ddNewPartyRole="ngModel" placeholder="choose Party Role..."
+                  [required]="true"
+                  [options]="casePartyRoleTypes"
+                  optionLabel="name"
+                  [(ngModel)]="selectedCaseParty.role"
+                  (onChange)="editCasePartyRoleTypeOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="ddNewPartyRole.errors?.required && ddNewPartyRole.touched" >
+                    Party Role is required
+              </div>
+          </div>
+
+          <!-- column 3 -->
+          <div class="ui-g-12 mb-0 pl-0">
+            <div class="ui-g-12 ui-md-6 mb-0">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="dtStartDate" name="dtStartDate"
+                    inputStyleClass="width-full"
+                    [(ngModel)]="selectedCaseParty.startDate"
+                    dateFormat="mm/dd/yy"
+                    placeholder="Start Date"
+                    [showIcon]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2030"
+                    appendTo="body"></p-calendar>
+            </div>
+            <div class="ui-g-12 ui-md-6 mb-0">
+              <label class="minimal primary block">End Date</label>
+              <p-calendar id="dtEndDate" name="dtEndDate"
+                    inputStyleClass="width-full"
+                    [(ngModel)]="selectedCaseParty.endDate"
+                    dateFormat="mm/dd/yy"
+                    placeholder="End Date"
+                    [showIcon]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2030"
+                    appendTo="body"></p-calendar>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30 ta-r">
+          <button label="Edit Party" type="submit" pButton icon="fa-check"
+                  (click)="editParty(caseForm)"
+                  [disabled]="!editCasePartyForm.form.valid || !selectedCaseParty"></button>
+          <button label="Cancel" type="button" class="ui-button-secondary mr-15" pButton icon="fa-close"
+                  (click)="hideModals()" ></button>
+        </div>
+      </p-footer>
+
+    </form>
+
 </p-dialog>
 
 
