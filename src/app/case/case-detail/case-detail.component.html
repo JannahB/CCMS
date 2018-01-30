@@ -292,9 +292,9 @@
                   [(ngModel)]="eventTypeFilter"
                   optionLabel="eventTypeName"
                   (onChange)="eventTypeFilterChange($event)"
-                  styleClass="width-full">
+                  styleClass="width-auto">
               </p-dropdown>
-              <button label="Clear" type="button" class="ui-button-secondary" pButton icon="fa-close" (click)="clearEventFilter()"></button>
+              <button label="" type="button" class="ml-10 ui-button-secondary ui-button-icon-only clear-btn inline" pButton icon="fa-close" (click)="clearEventFilter()"></button>
             </div>
 
             <div class="ui-g-12">

@@ -12,6 +12,16 @@
   padding: 0 !important;
 }
 
+::ng-deep .clear-btn.ui-button.ui-button.ui-button-icon-only {
+  width: 2em;
+  height: 2em;
+  box-shadow: none;
+  background: #f1f1f1;
+  &.ui-button-text-icon-left{
+    padding-left: 1.4em;
+  }
+}
+
 .card h2 {
   font-weight: 300;
   text-transform: uppercase;
