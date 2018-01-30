@@ -38,6 +38,7 @@ import { environment } from '../../../environments/environment';
 import { DropdownPipe } from './../../common/pipes/dropdown.pipe';
 import { HearingType } from '../../common/entities/HearingType';
 import { CaseHearings } from '../../common/entities/CaseHearings';
+import { CaseHearingDTO } from '../../common/entities/CaseHearingDTO';
 
 
 @Component({
@@ -175,9 +176,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   docOnRowSelect(event){
-
-  }
-  hearingOnRowSelect(event){
 
   }
 
@@ -760,6 +758,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.onShowHearingModal();
   }
 
+  hearingOnRowSelect(event){
+    this.selectedHearing = event.data;
+    this.onShowHearingModal();
+  }
+
   onShowHearingModal() {
     this.showModalAddHearing = true;
     // FetchJudicialOfficer GET
@@ -806,21 +809,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  hearingDateOnChange(event){
-    this.selectedHearing.startDateTime = event;
-    this.fetchMatchingHearings();
-  }
-
-  hearingJudgeOnChange(event){
-    this.selectedHearing.judicialOfficer = event.value;
-    this.fetchMatchingHearings();
-  }
-
-  hearingLocationOnChange(event){
-    this.selectedHearing.courtLoc = event.value;
-    this.fetchMatchingHearings();
-  }
-
   fetchMatchingHearings(){
     if( !this.selectedHearing.startDateTime || !this.selectedHearing.judicialOfficer ) return;
     this.hearingConflicts = [];
@@ -830,19 +818,18 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     let hearingDateString: string = this.datePipe.transform(this.selectedHearing.startDateTime, "yyyy-MM-dd");
     data = Object.assign(data, {hearingQueryDate: hearingDateString} );
 
-    if( this.selectedHearing.courtLoc ) {
-      let hearingLocString: string = this.selectedHearing.courtLoc.locationOID.toString();
-      data = Object.assign(data, {courtLoc: hearingLocString} );
-    }
-    // TODO: ADD JUDGE to QUERY *********
+    // CONCAT LOCATION TO QUERY OBJECT
+    // if( this.selectedHearing.courtLoc ) {
+    //   let hearingLocString: string = this.selectedHearing.courtLoc.locationOID.toString();
+    //   data = Object.assign(data, {courtLoc: hearingLocString} );
+    // }
+
+    // CONCAT JUDGE TO QUERY OBJECT
     if( this.selectedHearing.judicialOfficer ) {
-      // let judgeString: string = this.selectedHearing.judicialOfficer.partyOID.toString();
+      // Note: The value of `selectedHearing.judicialOfficer` is indeed portyOID since using dropdownPipe
       let judgeParam = { judicialOfficer: { partyOID: this.selectedHearing.judicialOfficer.toString() } }
-      // let judicialOfficer = { partyOID: this.selectedHearing.judicialOfficer.toString() }
       data = Object.assign(data, judgeParam );
-
     }
-
 
     // MAKE THE CALL
     this.loadingConflicts = true;
@@ -860,29 +847,100 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   }
 
+  hearingDateOnChange(event){
+    this.selectedHearing.startDateTime = event;
+
+    let start = moment(this.selectedHearing.startDateTime);
+    this.selectedHearing.endDateTime = start.add(1, 'hour').toDate();
+
+    this.fetchMatchingHearings();
+  }
+
+  hearingJudgeOnChange(event){
+    this.selectedHearing.judicialOfficer = event.value;
+    this.fetchMatchingHearings();
+  }
+
+  hearingLocationOnChange(event){
+    this.selectedHearing.courtLoc = event.value;
+    this.fetchMatchingHearings();
+  }
+
   hearingStartTimeOnChange(event) {
     // IF END DATE !touched, then set it to the same value as the StartTime
-
+    this.selectedHearing.startDateTime = event;
   }
 
   hearingEndTimeOnChange(event) {
-
+    this.selectedHearing.endDateTime = event;
   }
 
   hearingTypeOnChange(event) {
-
+    this.selectedHearing.hearingType = event.value;
   }
 
   hearingDescriptionOnChange(event) {
-
+    this.selectedHearing.description = event;
   }
 
   onCancelHearing(hearingForm) {
-    hearingForm.reset();
+    // hearingForm.reset();
     this.hideModals();
   }
 
   saveHearing() {
+    let hearing: CaseHearingDTO = new CaseHearingDTO();
+    let sch:CaseHearing = this.selectedHearing;
+
+    // validate
+    // Start Time before End Time
+    if(sch.startDateTime.valueOf() >= sch.endDateTime.valueOf()){
+      this.toastSvc.showWarnMessage('End Time must be after Start Time');
+      return;
+    }
+
+    // Is Hearing Type and Time unique
+    let dup: boolean = this.case.caseHearings
+        .findIndex( h =>
+          (h.hearingType.hearingTypeOID == sch.hearingType.hearingTypeOID) &&
+          (moment(h.startDateTime).isSame(sch.startDateTime, 'hour') )) > -1;
+    if( dup ) {
+      this.toastSvc.showWarnMessage('A hearing of this type and at this time has already been added to the case.', 'Duplicate Hearing');
+      return;
+    }
+
+    hearing.caseOID = this.case.caseOID.toString();
+    hearing.courtLoc = sch.courtLoc.locationOID.toString();
+    hearing.description = sch.description;
+    hearing.endDateTime = this.datePipe.transform(sch.endDateTime, "yyyy-MM-dd HH:mm");
+    hearing.hearingType = sch.hearingType.hearingTypeOID.toString();
+    hearing.judicialOfficer = sch.judicialOfficer.toString(); // this is portyOID since using dropdownPipe
+    hearing.startDateTime = this.datePipe.transform(sch.startDateTime, "yyyy-MM-dd HH:mm");
+
+    this.caseSvc
+      .saveCaseHearing(hearing)
+      .subscribe(resultHearing =>{
+        let index:number = this.case.caseHearings
+          .findIndex(a => a.caseHearingOID == resultHearing.caseHearingOID);
+
+      if(index >= 0){
+        this.case.caseHearings[index] = resultHearing;
+      }else{
+        this.case.caseHearings.push(resultHearing);
+        this.case.caseHearings = this.case.caseHearings.slice();
+      }
+
+      this.toastSvc.showSuccessMessage('Hearing Saved');
+      this.showModalAddHearing = false;
+    },
+    (error) => {
+      console.log(error);
+      this.showModalAddHearing = false;
+      this.toastSvc.showErrorMessage('There was an error while saving hearings.')
+    },
+    () => {
+      this.showModalAddHearing = false;
+    });
 
   }
 

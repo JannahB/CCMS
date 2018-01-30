@@ -31,6 +31,7 @@ import { EventType } from '../../entities/EventType';
 import { CaseType } from '../../entities/CaseType';
 import { CaseStatus } from '../../entities/CaseStatus';
 import { CasePhase } from '../../entities/CasePhase';
+import { CaseHearingDTO } from '../../entities/CaseHearingDTO';
 
 
 @Injectable()
@@ -335,6 +336,19 @@ export class CaseService extends HttpBaseService<Case> {
 
     return this.http
       .get<DocTemplate[]>(url);
+  }
+
+  public saveCaseHearing(data: CaseHearingDTO):Observable<CaseHearing> {
+    let url:string = `${super.getBaseUrl()}/SaveCaseHearing`;
+    return this.http
+      .post<CaseHearing>(url, data)
+      .map(h => this.convertHearingDates(h))
+  }
+
+  convertHearingDates(item:CaseHearing){
+    // item.startDateTime = DateConverter.convertDate(item.startDateTime);
+    // item.endDateTime = DateConverter.convertDate(item.endDateTime);
+    return item;
   }
 
   public downloadCourtDocument(caseOID:number, documentTemplateOID:number):Observable<ArrayBuffer>{

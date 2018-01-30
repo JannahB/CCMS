@@ -411,8 +411,8 @@
                 <!-- FILE UPLOAD -->
                 <div class="ui-g-12 ui-md-6 pb-0 ta-r">
                   <p-fileUpload name="theFiles[]" url="./GetAttachment" (onUpload)="onUpload($event)"
-                      multiple="multiple"  maxFileSize="5000000">
-                      <!-- accept="*.doc, *.docx, *.pdf" -->
+                      multiple="multiple" accept="application/pdf" maxFileSize="5000000">
+                      <!-- accept="*.doc, *.docx, application/pdf" -->
                       <ng-template pTemplate="content">
                           <ul *ngIf="uploadedFiles.length">
                               <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
@@ -449,51 +449,51 @@
         <!-- HEARINGS TAB -->
 
         <p-tabPanel header="Hearings" leftIcon="ui-icon-gavel" >
-            <div class="ui-g">
-                <div class="ui-g-12">
-                    <h2>Hearings</h2>
-                </div>
-
-                <div class="ui-g-12">
-                    <p-dataTable [value]="case.caseHearings"
-                                selectionMode="single"
-                                [(selection)]="selectedHearing"
-                                (onRowSelect)="hearingOnRowSelect($event)"
-                                dataKey="caseHearingOID" #dtHearings>
-                        <p-column field="startDateTime" header="Start Date/Time" [style]="{'width':'20%'}">
-                            <ng-template pTemplate="body" let-item="rowData">
-                                {{item.startDateTime | date:'medium'}}
-                            </ng-template>
-                        </p-column>
-                        <p-column field="endDateTime" header="End Date/Time" [style]="{'width':'20%'}">
-                            <ng-template pTemplate="body" let-item="rowData">
-                                {{item.endDateTime | date:'medium'}}
-                            </ng-template>
-                        </p-column>
-
-                        <p-column field="hearingType.hearingName" header="Hearing Type" [style]="{'width':'20%'}"></p-column>
-                        <p-column field="courtLoc.locationID" header="Location" [style]="{'width':'17%'}"></p-column>
-                        <p-column field="" header="Assigned" [style]="{'width':'17%'}">
-                            <ng-template pTemplate="body" let-item="rowData">
-                                {{ item.judicialOfficial?.firstName + ' ' + item.judicialOfficial?.lastName }}
-                            </ng-template>
-                        </p-column>
-                        <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
-                            <ng-template let-item="rowData" pTemplate="body">
-                                <i class="material-icons" (click)="requestViewHearing(item)">search</i>
-                            </ng-template>
-                        </p-column>
-                    </p-dataTable>
-
-                </div>
-                <div class="ui-g-12">
-                    <button type="button"
-                        (click)="createHearing()"
-                        label="Add Hearing Task"
-                        icon="ui-icon-add"
-                        class="ui-button-secondary mr-15" pButton></button>
-                </div>
+          <div class="ui-g">
+            <div class="ui-g-12">
+                <h2>Hearings</h2>
             </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.caseHearings"
+                          selectionMode="single"
+                          [(selection)]="selectedHearing"
+                          (onRowSelect)="hearingOnRowSelect($event)"
+                          dataKey="caseHearingOID" #dtHearings>
+                  <p-column field="startDateTime" header="Start Date/Time" [style]="{'width':'20%'}">
+                      <ng-template pTemplate="body" let-item="rowData">
+                          {{item.startDateTime | date:'medium'}}
+                      </ng-template>
+                  </p-column>
+                  <p-column field="endDateTime" header="End Date/Time" [style]="{'width':'20%'}">
+                      <ng-template pTemplate="body" let-item="rowData">
+                          {{item.endDateTime | date:'medium'}}
+                      </ng-template>
+                  </p-column>
+
+                  <p-column field="hearingType.hearingName" header="Hearing Type" [style]="{'width':'20%'}"></p-column>
+                  <p-column field="courtLoc.locationID" header="Location" [style]="{'width':'17%'}"></p-column>
+                  <p-column field="" header="Assigned" [style]="{'width':'17%'}">
+                      <ng-template pTemplate="body" let-item="rowData">
+                          {{ item.judicialOfficer?.firstName + ' ' + item.judicialOfficer?.lastName }}
+                      </ng-template>
+                  </p-column>
+                  <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
+                      <ng-template let-item="rowData" pTemplate="body">
+                          <i class="material-icons" (click)="requestViewHearing(item)">search</i>
+                      </ng-template>
+                  </p-column>
+              </p-dataTable>
+
+            </div>
+            <div class="ui-g-12">
+                <button type="button"
+                    (click)="createHearing()"
+                    label="Add Hearing Task"
+                    icon="ui-icon-add"
+                    class="ui-button-secondary mr-15" pButton></button>
+            </div>
+          </div>
         </p-tabPanel>
 
         <!-- JUDICIAL ASSIGNMENTS TAB -->
@@ -695,7 +695,7 @@
                     (click)="addPartyToCase(caseForm)"
                     [disabled]="!casePartyForm.form.valid || !selectedSearchParty"></button>
             <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
-                    (click)="casePartyForm.reset(); hideModals()" ></button>
+                    (click)="hideModals()" ></button>
           </div>
         </p-footer>
       </form>
@@ -953,7 +953,7 @@
           <button label="Save" type="submit" pButton icon="fa-check"
                   (click)="saveCaseCharge()"
                   [disabled]="!caseChargeForm.form.valid"></button>
-          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="caseChargeForm.reset(); hideModals()" ></button>
+          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
         </div>
     </p-footer>
 
@@ -1322,8 +1322,6 @@
               </p-dataTable>
             </p-panel>
           </div>
-
-
 
           <div class="ui-g-12 ph-0">
             <div class="ui-g-12 ui-md-6 ta-r">

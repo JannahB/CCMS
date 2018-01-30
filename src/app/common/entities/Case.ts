@@ -10,29 +10,30 @@ import { CaseTask } from './CaseTask';
 import { CaseHearings } from './CaseHearings';
 import { CaseCharge } from './CaseCharge';
 import { CaseParty } from './CaseParty';
+import { CaseHearing } from './CaseHearing';
 
 export class Case extends LookupEntity {
 
   // Following 5 properties are not no an "AssociatedCase"
-  caseCaption: string = ""; 
+  caseCaption: string = "";
   caseFilingDate: Date = null;
   casePhase: CasePhase = null;
   caseStatus: CaseStatus = null;
   caseType: CaseType = null;
 
-  caseCharges: CaseCharge[] = []; 
+  caseCharges: CaseCharge[] = [];
   caseDocs: CaseDocument[] = [];
   caseEvents: CaseEvent[] = [];
 
-  caseHearings: CaseHearings[] = [];      // Needs modifications on server side to work properly //
-  
-  caseNumber: string = ""; 
-  caseOID: number = 0; 
+  caseHearings: CaseHearing[] = [];      // Needs modifications on server side to work properly //
+
+  caseNumber: string = "";
+  caseOID: number = 0;
   caseParties: CaseParty[] = [];
-  caseTasks: CaseTask[] = []; 
-  caseWeight: number = 0; 
+  caseTasks: CaseTask[] = [];
+  caseWeight: number = 0;
   court: Court = null;
   judicialAssignments: any[] = [];        // Entity NEEDED //
-  searchCasePartyRoleOID: number = 0; 
-  
+  searchCasePartyRoleOID: number = 0;
+
 }
