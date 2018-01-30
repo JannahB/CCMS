@@ -79,6 +79,12 @@ export class CaseSearchComponent implements OnInit {
 
   }
 
+  casePhaseOnFocus(){
+    if(!this.selectedCaseType){
+      this.toastSvc.showInfoMessage('Please choose a "Case Type" first');
+    }
+  }
+
   onSearch() {
     this.isSearcing = true;
     this.caseResults = null;

@@ -47,6 +47,7 @@
           <label class="minimal primary block">Case Phase</label>
           <p-dropdown placeholder="case phase..." name="ddCasePhase" optionLabel="name" [options]="casePhaseTypes"
               [(ngModel)]="selectedCasePhaseType"
+              (onFocus)="casePhaseOnFocus()"
               styleClass="width-full">
           </p-dropdown>
         </div>
