@@ -1,3 +1,17 @@
+::ng-deep p-dialog .ui-dialog {
+  overflow: scroll;
+  max-height: 80%;
+}
+
+::ng-deep p-datatable .ui-datatable {
+  overflow: scroll;
+  max-height: 280px;
+}
+
+::ng-deep p-panel.conflict-table .ui-panel .ui-panel-content  {
+  padding: 0 !important;
+}
+
 .card h2 {
   font-weight: 300;
   text-transform: uppercase;

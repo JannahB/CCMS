@@ -632,6 +632,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.initCaseTaskModal(taskTypeId);
       },
       (error) => {
+        console.log(error);
         this.loadingCaseTaskLookups = false;
         this.toastSvc.showErrorMessage('There was an error fetching task reference data.')
       },
@@ -779,6 +780,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.initHearingModal();
       },
       (error) => {
+        console.log(error);
         this.loadingHearingLookups = false;
         this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
       },
@@ -820,7 +822,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   fetchMatchingHearings(){
-    if( !this.selectedHearing.startDateTime ) return;
+    if( !this.selectedHearing.startDateTime || !this.selectedHearing.judicialOfficer ) return;
+    this.hearingConflicts = [];
 
     // FetchHearing POST {hearingQueryDate: "2018-01-09", courtLoc: "1"}
     let data = {};
@@ -833,8 +836,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
     // TODO: ADD JUDGE to QUERY *********
     if( this.selectedHearing.judicialOfficer ) {
-      let judgeString: string = this.selectedHearing.judicialOfficer.partyOID.toString();
-      // data = Object.assign(data, {partyOID: judgeString} );
+      // let judgeString: string = this.selectedHearing.judicialOfficer.partyOID.toString();
+      let judgeParam = { judicialOfficer: { partyOID: this.selectedHearing.judicialOfficer.toString() } }
+      // let judicialOfficer = { partyOID: this.selectedHearing.judicialOfficer.toString() }
+      data = Object.assign(data, judgeParam );
+
     }
 
 
@@ -844,6 +850,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.hearingConflicts = results;
     },
     (error) => {
+      console.log(error);
       this.loadingConflicts = false;
       this.toastSvc.showErrorMessage('There was an error while searching hearings.')
     },
@@ -927,6 +934,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         }
       },
       (error) => {
+        console.log(error);
         this.loadingJudgeLookups = false;
         this.toastSvc.showErrorMessage('There was an error fetching judicial data.')
       },

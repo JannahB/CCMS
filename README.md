@@ -8,7 +8,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 - `git clone https://<yourusername>@bitbucket.org/reurgency/ccms-fe2.git`
 - cd into the project dir
 - `npm intall` to install dependencies
-- `npm start` to run app locally and the API resolve on the remote DEV server
+- `npm start` to run app locally and API resolves to the remote DEV server
 - `npm run start:local` to run the app locally and API resolves locally on http://127.0.0.1:8080/CCMS3/
 
 Run `ng serve` for a DEV server. Navigate to `http://localhost:4800/`. The app will automatically reload if you change any of the source files.
