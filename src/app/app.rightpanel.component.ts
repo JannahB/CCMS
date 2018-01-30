@@ -75,8 +75,8 @@ declare var jQuery: any;
                 <loading-bar [visible]="isLoadingTasks" [message]="'loading tasks...'"></loading-bar>
                 <ul class="task-items">
                   <li *ngFor="let task of filteredUserTasks">
-                    <a (click)="gotoCase($event, task)"><p class="task-title">{{task.taskType?.name}}</p></a>
-                    <a (click)="gotoCase($event, task)"><p class="task-subtitle">{{task.associatedCase.caseNumber}}</p></a>
+                    <a href="#" (click)="gotoCase($event, task)"><p class="task-title">{{task.taskType?.name}}</p></a>
+                    <a href="#" (click)="gotoCase($event, task)"><p class="task-subtitle">{{task.associatedCase.caseNumber}}</p></a>
                       <i class="fa ui-icon-check task-done" *ngIf="task.doneDate"></i>
                       <i class="fa ui-icon-close"*ngIf="!task.doneDate"></i>
                       <!-- <i class="fa ui-icon-check-box-outline-blank"*ngIf="!task.doneDate"></i> -->
@@ -157,6 +157,7 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     gotoCase(event, task:UserTask) {
       let caseId = task.associatedCase.caseOID;
       this.router.navigate(['/case-detail', caseId ]);
+      event.preventDefault();
     }
 
     onFilterTasks(event) {
