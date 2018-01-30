@@ -22,13 +22,13 @@ export class AuthorizationInterceptor implements HttpInterceptor {
         AuthorizationInterceptor.staticLocalStorageService
             .setValue(AuthorizationInterceptor.AUTH_TOKEN, value);
     }
-    
+
     constructor(
         private localStorageService:LocalStorageService,
         private router:Router,
         private authenticationModel:AuthenticationModel
     ){
-        
+
         AuthorizationInterceptor.staticLocalStorageService = localStorageService;
 
         if(localStorageService.hasValue(AuthorizationInterceptor.AUTH_TOKEN)){
@@ -49,21 +49,21 @@ export class AuthorizationInterceptor implements HttpInterceptor {
             setHeaders: {
                 token: AuthorizationInterceptor.authToken,
                 Authorization: `Bearer ${AuthorizationInterceptor.authToken}`
-            } 
+            }
         });
 
         return next.handle(request)
-            .do( 
+            .do(
                 event => event,
                 error => {
                     this.authenticationModel.returnUrl = this.router.url;
                     AuthorizationInterceptor.authToken = null;
-                    
+
                     //This is difficult to test.  Just navigate to login on all errors for now
-                    // if(error instanceof HttpErrorResponse && error.status == 401){
-                    //     this.router.navigate(["login"]);
-                    // }
-                    this.router.navigate(["login"]);
+                    if(error instanceof HttpErrorResponse && error.status == 401){
+                        this.router.navigate(["login"]);
+                    }
+                    // this.router.navigate(["login"]);
                 }
             );
     }
