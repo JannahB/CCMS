@@ -1,5 +1,19 @@
 
   .layout-rightpanel {
+    .handle {
+      position: absolute;
+      left:-35px;
+      top: 40px;
+      background-color: #BF2E1A;
+      width: 40px;
+      height: 50px;
+      border-radius: 4px 0 0 4px;
+
+      i {
+        color: white;
+        margin: 12px 6px;
+      }
+    }
     .layout-rightpanel-header {
         background: url("../assets/layout/images/dashboard/sidebar-red.jpg") no-repeat;
         background-size: cover;

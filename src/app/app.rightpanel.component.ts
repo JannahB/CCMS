@@ -16,6 +16,11 @@ declare var jQuery: any;
     styleUrls: ['./app.rightpanel.component.scss'],
     template: `
       <div class="layout-rightpanel" [ngClass]="{'layout-rightpanel-active': app.rightPanelActive}" (click)="app.onRightPanelClick()">
+        <div class="handle">
+          <a href="#" (click)="app.onRightPanelButtonClick($event)">
+            <i class="fa ui-icon-timer"></i>
+          </a>
+        </div>
         <div #rightPanelMenuScroller class="nano">
           <div class="nano-content right-panel-scroll-content">
             <div class="layout-rightpanel-header">
@@ -26,7 +31,7 @@ declare var jQuery: any;
             <div class="layout-rightpanel-content">
               <div class="card pad-5" style="background-color: #E6EFF6;">
                 <div>Filters</div>
-                <div class="muted-label">Showing: 12 of 28</div>
+                <div class="muted-label">Showing: {{filteredUserTasks?.length}} of {{userTasks?.length}}</div>
                 <div class="task-multiselect">
                   <p-multiSelect styleClass="width-full"
                       [options]="taskStatus"
@@ -73,7 +78,8 @@ declare var jQuery: any;
                     <a (click)="gotoCase($event, task)"><p class="task-title">{{task.taskType?.name}}</p></a>
                     <a (click)="gotoCase($event, task)"><p class="task-subtitle">{{task.associatedCase.caseNumber}}</p></a>
                       <i class="fa ui-icon-check task-done" *ngIf="task.doneDate"></i>
-                      <i class="fa ui-icon-check-box-outline-blank"*ngIf="!task.doneDate"></i>
+                      <i class="fa ui-icon-close"*ngIf="!task.doneDate"></i>
+                      <!-- <i class="fa ui-icon-check-box-outline-blank"*ngIf="!task.doneDate"></i> -->
                       <span class="task-date">{{ task.dueDate | date:'MMM d, y' }}</span>
                   </li>
                 </ul>
