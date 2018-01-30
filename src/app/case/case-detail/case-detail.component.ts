@@ -669,6 +669,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
 
     let task = new CaseTaskDTO();
+    if(this.selectedCaseTask.taskOID) task.taskOID = this.selectedCaseTask.taskOID.toString();
     task.caseOID = this.case.caseOID.toString();
     task.taskDetails = this.selectedCaseTask.details;
     task.taskPriorityCode = this.selectedCaseTask.taskPriorityCode.toString();

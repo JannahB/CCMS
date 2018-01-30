@@ -4,6 +4,7 @@
 
 export class CaseTaskDTO {
 
+  taskOID:string;
   caseOID:string;          // "5344330627072059"
   taskDetails:string;      // "Something..."
   taskDueDate:string;      // "2018-01-31"
