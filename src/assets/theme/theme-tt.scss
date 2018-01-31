@@ -10,5 +10,15 @@ $buttonColor: #25BF6B;
 $buttonHover: #0e7c5b;
 $brandColor: #BF2E1A;
 
-@import '../../assets/layout/css/layout-tt.scss';
+// these 4 are copied from _variables
+/* Common */
+$textColor:#1c333d;
+$textSecondaryColor:#354850;
+$fontSize:16px;
+$lineHeight:1.5em;
+$transitionDuration:.3s;
+$borderRadius:3px;
+
+
+// @import '../../assets/layout/css/layout-tt.scss';
 @import '../sass/theme/_theme';
