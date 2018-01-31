@@ -1,5 +1,4 @@
-import { CourtLocation } from './../../common/entities/CourtLocation';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
@@ -7,6 +6,7 @@ import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { SelectItem } from 'primeng/primeng';
 
+import { CourtLocation } from './../../common/entities/CourtLocation';
 import { Pool } from './../../common/entities/Pool';
 import { EventType } from './../../common/entities/EventType';
 import { CasePartyRole } from './../../common/entities/CasePartyRole';
@@ -47,6 +47,8 @@ import { CaseHearingDTO } from '../../common/entities/CaseHearingDTO';
   styleUrls: ['./case-detail.component.scss']
 })
 export class CaseDetailComponent implements OnInit, OnDestroy {
+
+  @ViewChild('caseForm') caseForm: any;
 
   activeTabIndex: number = 1;
   case: Case;
@@ -130,6 +132,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   getCase(caseId) {
+    this.caseForm.reset();
     if(caseId == 0 ) {
       this.case = new Case();
       this.loadingCase = false;
@@ -185,6 +188,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  isCaseTypeSelected($event){
+     if(!this.case.caseType)
+       this.toastSvc.showWarnMessage('Please choose Case Type first')
+  }
+
 
   // MODALS --------------------------------------------
 
@@ -230,7 +238,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   showAddCaseParty() {
-    this.newCaseParty.startDate =  this.datePipe.transform(new Date(), "MM/dd/yyyy");
+    // this.newCaseParty.startDate =  this.datePipe.transform(new Date(), "MM/dd/yyyy");
+    this.newCaseParty.startDate =  new Date();
     this.selectedSearchPartyStartDate = new Date();
     this.showModalAddCaseParty = true;
 
@@ -457,11 +466,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   filteredChargeFactorTypes: ChargeFactor[];
   lastSelectedTypeLocalCharges: any[] = [];
 
-  onShowAddCaseChargeModal() {
+  onAddCaseCharge(caseChargeForm) {
     if(!this.case.caseOID || this.case.caseOID == 0) {
       this.toastSvc.showInfoMessage('Please complete case details and Save Case before proceeding.', 'Complete Case Details');
       return;
     }
+
+    this.selectedCharge = new CaseCharge();
+    caseChargeForm.reset();
 
     this.showModalAddCaseCharge = true;
 
