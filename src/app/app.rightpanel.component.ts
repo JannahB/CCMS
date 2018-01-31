@@ -44,6 +44,8 @@ declare var jQuery: any;
                       >
                   </p-multiSelect>
                 </div>
+
+                <!--
                 <div class="task-date-range mt-10">
                   <p-calendar
                       [(ngModel)]="taskDateRange"
@@ -65,10 +67,10 @@ declare var jQuery: any;
                               style="border-radius:50%">
                                 {{date.day}}
                           </span>
-                          -->
+
                       </ng-template>
                   </p-calendar>
-                </div>
+                </div> -->
               </div>
 
               <div>
