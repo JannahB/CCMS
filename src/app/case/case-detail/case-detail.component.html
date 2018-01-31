@@ -59,61 +59,67 @@
             <div class="ui-g-12 ui-md-3">
                 <label class="minimal block primary">Case Weight</label>
                 <div class="mar-0">{{ case.caseWeight }}</div>
-                <p-slider name="slCaseWeight" [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10" [animate]="true"></p-slider>
+                <p-slider name="slCaseWeight" #slCaseWeight="ngModel" [required]="true" min="1" [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10" [animate]="true"></p-slider>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="slCaseWeight.errors?.min && slCaseWeight.touched" >
+                      Please choose a Case Weight
+                </div>
             </div>
           </div>
 
           <div class="ui-g-12 ui">
 
             <div class="ui-g-12 ui-md-4">
-                <label class="minimal primary block">Case Type</label>
-                <p-dropdown name="ddCaseType" #ddCaseType placeholder="case type..."
-                    [required]="true"
-                    [disabled]="case.caseOID != 0"
-                    optionLabel="name"
-                    [options]="caseTypes"
-                    [(ngModel)]="case.caseType"
-                    (onChange)="caseTypeChange($event)"
-                    styleClass="width-full">
-                </p-dropdown>
-                <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="ddCaseType.errors?.required && ddCaseType.touched" >
-                      Please choose a Case Type
-                </div>
+              <label class="minimal primary block">Case Status</label>
+              <p-dropdown name="ddCaseStaus" #ddCaseStaus placeholder="case status..."
+                  [required]="true"
+                  optionLabel="name"
+                  [options]="caseStatuses"
+                  [(ngModel)]="case.caseStatus"
+                  (onChange)="ddOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddCaseStaus.errors?.required && ddCaseStaus.touched" >
+                    Please choose a Case Status
+              </div>
             </div>
 
             <div class="ui-g-12 ui-md-4">
-                <label class="minimal primary block">Case Status</label>
-                <p-dropdown name="ddCaseStaus" #ddCaseStaus placeholder="case status..."
-                    [required]="true"
-                    optionLabel="name"
-                    [options]="caseStatuses"
-                    [(ngModel)]="case.caseStatus"
-                    (onChange)="ddOnChange($event)"
-                    styleClass="width-full">
-                </p-dropdown>
-                <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="ddCaseStaus.errors?.required && ddCaseStaus.touched" >
-                      Please choose a Case Status
-                </div>
+              <label class="minimal primary block">Case Type</label>
+              <p-dropdown name="ddCaseType" #ddCaseType placeholder="case type..."
+                  [required]="true"
+                  [disabled]="case.caseOID != 0"
+                  optionLabel="name"
+                  [options]="caseTypes"
+                  [(ngModel)]="case.caseType"
+                  (onChange)="caseTypeChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddCaseType.errors?.required && ddCaseType.touched" >
+                    Please choose a Case Type
+              </div>
             </div>
 
             <div class="ui-g-12 ui-md-4">
-                <label class="minimal primary block">Case Phase</label>
-                <p-dropdown name="ddCasePhase" #ddCasePhase placeholder="case phase..."
-                    [required]="true"
-                    optionLabel="name"
-                    [options]="casePhases"
-                    [(ngModel)]="case.casePhase"
-                    (onChange)="ddOnChange($event)"
-                    styleClass="width-full">
-                </p-dropdown>
-                <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="ddCasePhase.errors?.required && ddCasePhase.touched" >
-                      Please choose a Case Phase
-                </div>
+              <label class="minimal primary block">Case Phase</label>
+              <p-dropdown name="ddCasePhase" #ddCasePhase placeholder="case phase..."
+                  [required]="true"
+                  [disabled]="!casePhases || !case.caseType || case.caseOID != 0"
+                  (click)="isCaseTypeSelected($event)"
+                  optionLabel="name"
+                  [options]="casePhases"
+                  [(ngModel)]="case.casePhase"
+                  (onChange)="ddOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddCasePhase.errors?.required && ddCasePhase.touched" >
+                    Please choose a Case Phase
+              </div>
             </div>
-        </div>
+          </div>
 
 
           <!-- CASE PARTIES TABLE -->
@@ -179,7 +185,7 @@
             </div>
             <div class="ui-g-12 ui-md-6 ta-r">
               <button type="button"
-                    (click)="onShowAddCaseChargeModal()"
+                    (click)="onAddCaseCharge(caseChargeForm)"
                     label="Add Case Charge"
                     icon="ui-icon-add"
                     class="ui-button-secondary mr-15" pButton></button>
@@ -981,7 +987,7 @@
 
 <!-- ADD CASE CHARGE MODAL -->
 
-<p-dialog header="Add Case Charge" width="450" [(visible)]="showModalAddCaseCharge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+<p-dialog header="Add Case Charge" width="580" [(visible)]="showModalAddCaseCharge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
   <form  #caseChargeForm="ngForm" novalidate><!-- (ngSubmit)="saveCaseCharge()" -->
     <div class="ui-g">
       <div class="form-group" >
@@ -1078,6 +1084,7 @@
                 [minLength]="1"
                 placeholder="select Charge Factors"
                 [dropdown]="true"
+                appendTo="body"
                 [multiple]="true">
             </p-autoComplete>
           </span>
