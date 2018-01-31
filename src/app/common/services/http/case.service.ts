@@ -153,13 +153,17 @@ export class CaseService extends HttpBaseService<Case> {
         })
       }
 
-      // TODO: This needs work after CaseHearings entity changes are made
-      // let caseHearings: CaseHearing[] = kase.caseHearings.hearing;
-
-
       let caseParties: CaseParty[] = kase.caseParties;
       if(caseParties) {
         caseParties.forEach( cp => {
+
+          // Convert the Dates on the Root of the Object
+          let startDate = cp.startDate;
+          if(startDate) cp.startDate = DateConverter.convertDate(cp.startDate);
+          let endDate = cp.endDate;
+          if(endDate) cp.endDate = DateConverter.convertDate(cp.endDate);
+
+          // Get at the Nested CaseParty --
           let caseParty = cp.caseParty;
 
           caseParty.dob = DateConverter.convertDate(caseParty.dob);
