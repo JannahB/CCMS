@@ -229,14 +229,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     // ONLY START AND END DATE CAN BE EDITED
   }
 
-  editParty(){
-    this.toastSvc.showInfoMessage('Update existing party not functional yet.')
-
-    // M
-    // TODO: Create DTO to send to server
-
-  }
-
   showAddCaseParty() {
     this.newCaseParty.startDate =  this.datePipe.transform(new Date(), "MM/dd/yyyy");
     this.selectedSearchPartyStartDate = new Date();
@@ -313,8 +305,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.saveCase(false);
   }
 
-
-  // new case party tab methods
   createAndAddPartyToCase(caseForm) {
     this.loadingMessage = 'saving party...';
     this.loadingCase = true;
@@ -351,15 +341,38 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     })
   }
 
+  editParty() {
+    this.loadingMessage = 'saving party...';
+    this.loadingCase = true;
+
+    // CREATE LOCAL PARTY
+    let party:Party = this.selectedCaseParty.caseParty;
+    party.dob = party.dob ? this.datePipe.transform(party.dob, "MM/dd/yyyy") : "";
+
+    // SAVE THE PARTY
+    this.partySvc.saveParty(party).subscribe(result => {
+
+      this.loadingCase = false;
+      this.toastSvc.showSuccessMessage('Party saved');
+
+      // CREATE LOCAL CASE PARTY
+      let caseParty:CaseParty = this.selectedCaseParty;
+      caseParty.startDate = caseParty.startDate ? this.datePipe.transform(caseParty.startDate, "MM/dd/yyyy") : "";
+      caseParty.endDate = caseParty.endDate ? this.datePipe.transform(caseParty.endDate, "MM/dd/yyyy") : "";
+      caseParty.caseParty = result;
+
+      // ADD CASE PARTY TO CASE PARTIES
+      // let caseParties:CaseParty[] = this.case.caseParties.slice();
+      // caseParties.push(caseParty);
+      // this.case.caseParties =  caseParties;
+
+      this.saveCase();
+      this.hideModals();
+
+    })
+  }
+
   saveCase(shouldShowSuccessMessage:boolean = true){
-
-    // TODO: Validate a there is a caseParty
-    // TODO: validate if court requires child party, there is one
-
-    // if( !this.case.caseParties.length || this.case.caseParties[0].caseParty.partyOID == 0 ) {
-    //   this.toastSvc.showWarnMessage('The case must have a Case Party assigned to it can be saved.', 'Case Party Needed');
-    //   return;
-    // }
 
     if( this.case.caseWeight == 0 ) {
       this.toastSvc.showWarnMessage('The Case Weight must be greater than 0', 'Case Weight Needed');
@@ -757,8 +770,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   hearingConflicts:CaseHearing[];
   loadingConflicts:boolean = false;
 
-  createHearing() {
+  createHearing(hearingForm) {
     this.selectedHearing = new CaseHearing();
+    hearingForm.reset();
     this.onShowHearingModal();
   }
 
@@ -801,7 +815,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     // Pre-select Dropdowns
     if(this.selectedHearing.judicialOfficer){
-      this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == this.selectedHearing.judicialOfficer.partyOID);
+      let matchingJudge = this.judges.find(j => j.partyOID == this.selectedHearing.judicialOfficer.partyOID);
+      // This a crazy hack - have to assign the JudicialOfficer to partyOID b/c we're using the dropdownPipe
+      this.selectedHearing.judicialOfficer = matchingJudge.partyOID;
     }
 
     if(this.selectedHearing.courtLoc){
@@ -904,15 +920,19 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
 
     // Is Hearing Type and Time unique
-    let dup: boolean = this.case.caseHearings
-        .findIndex( h =>
-          (h.hearingType.hearingTypeOID == sch.hearingType.hearingTypeOID) &&
-          (moment(h.startDateTime).isSame(sch.startDateTime, 'hour') )) > -1;
-    if( dup ) {
-      this.toastSvc.showWarnMessage('A hearing of this type and at this time has already been added to the case.', 'Duplicate Hearing');
-      return;
-    }
+    // TODO: this needs to be refined
+    // if(!sch.caseHearingOID || sch.caseHearingOID == 0) {
+    //   let dup: boolean = this.case.caseHearings
+    //       .findIndex( h =>
+    //         (h.hearingType.hearingTypeOID == sch.hearingType.hearingTypeOID) &&
+    //         (moment(h.startDateTime).isSame(sch.startDateTime, 'hour') )) > -1;
+    //   if( dup ) {
+    //     this.toastSvc.showWarnMessage('A hearing of this type and at this time has already been added to the case.', 'Duplicate Hearing');
+    //     return;
+    //   }
+    // }
 
+    // CREATE DTO
     hearing.caseOID = this.case.caseOID.toString();
     hearing.courtLoc = sch.courtLoc.locationOID.toString();
     hearing.description = sch.description;
@@ -923,7 +943,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     this.caseSvc
       .saveCaseHearing(hearing)
-      .subscribe(resultHearing =>{
+      .subscribe(result =>{
+        let resultHearing = result[0];
         let index:number = this.case.caseHearings
           .findIndex(a => a.caseHearingOID == resultHearing.caseHearingOID);
 
@@ -933,6 +954,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.case.caseHearings.push(resultHearing);
         this.case.caseHearings = this.case.caseHearings.slice();
       }
+
+      console.log('caseHearings', this.case.caseHearings);
 
       this.toastSvc.showSuccessMessage('Hearing Saved');
       this.showModalAddHearing = false;

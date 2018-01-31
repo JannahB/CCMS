@@ -222,6 +222,14 @@ export class CaseService extends HttpBaseService<Case> {
         })
       }
 
+      let caseHearings: CaseHearing[] = kase.caseHearings;
+      if(caseHearings) {
+        caseHearings.forEach( ch => {
+          ch.startDateTime = DateConverter.convertDate(ch.startDateTime);
+          ch.endDateTime = DateConverter.convertDate(ch.endDateTime);
+        })
+      }
+
       if(kase.judicialAssignments){
         kase.judicialAssignments = kase.judicialAssignments
           .map(a => this.convertDatesForJudicialAssignment(a));
@@ -346,8 +354,8 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   convertHearingDates(item:CaseHearing){
-    // item.startDateTime = DateConverter.convertDate(item.startDateTime);
-    // item.endDateTime = DateConverter.convertDate(item.endDateTime);
+    item.startDateTime = DateConverter.convertDate(item.startDateTime);
+    item.endDateTime = DateConverter.convertDate(item.endDateTime);
     return item;
   }
 

@@ -488,8 +488,8 @@
             </div>
             <div class="ui-g-12">
                 <button type="button"
-                    (click)="createHearing()"
-                    label="Add Hearing Task"
+                    (click)="createHearing(hearingForm)"
+                    label="Add Hearing"
                     icon="ui-icon-add"
                     class="ui-button-secondary mr-15" pButton></button>
             </div>
@@ -967,7 +967,7 @@
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30 ta-r">
           <button label="Edit Party" type="submit" pButton icon="fa-check"
-                  (click)="editParty(caseForm)"
+                  (click)="editParty()"
                   [disabled]="!editCasePartyForm.form.valid || !selectedCaseParty"></button>
           <button label="Cancel" type="button" class="ui-button-secondary mr-15" pButton icon="fa-close"
                   (click)="hideModals()" ></button>
@@ -1529,7 +1529,7 @@
           <div class="ui-g-12">
             <label class="minimal primary block">Description</label>
             <textarea name="tiHearingDescription"
-                      [ngModel]="selectedHearing?.details"
+                      [ngModel]="selectedHearing?.description"
                       (ngModelChange)="hearingDescriptionOnChange($event)"
                       [rows]="2"
                       pInputTextarea
