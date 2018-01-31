@@ -460,20 +460,20 @@
                           [(selection)]="selectedHearing"
                           (onRowSelect)="hearingOnRowSelect($event)"
                           dataKey="caseHearingOID" #dtHearings>
-                  <p-column field="startDateTime" header="Start Date/Time" [style]="{'width':'20%'}">
+                  <p-column field="startDateTime" header="Start Date/Time" [style]="{'width':'17%'}">
                       <ng-template pTemplate="body" let-item="rowData">
-                          {{item.startDateTime | date:'medium'}}
+                          {{item.startDateTime | date:'MM/dd/yy hh:mm a'}}
                       </ng-template>
                   </p-column>
-                  <p-column field="endDateTime" header="End Date/Time" [style]="{'width':'20%'}">
+                  <p-column field="endDateTime" header="End Date/Time" [style]="{'width':'17%'}">
                       <ng-template pTemplate="body" let-item="rowData">
-                          {{item.endDateTime | date:'medium'}}
+                          {{item.endDateTime | date:'MM/dd/yy hh:mm a'}}
                       </ng-template>
                   </p-column>
 
-                  <p-column field="hearingType.hearingName" header="Hearing Type" [style]="{'width':'20%'}"></p-column>
-                  <p-column field="courtLoc.locationID" header="Location" [style]="{'width':'17%'}"></p-column>
-                  <p-column field="" header="Assigned" [style]="{'width':'17%'}">
+                  <p-column field="hearingType.hearingName" header="Hearing Type" [style]="{'width':'25%'}"></p-column>
+                  <p-column field="courtLoc.locationID" header="Location" [style]="{'width':'15%'}"></p-column>
+                  <p-column field="" header="Assigned" [style]="{'width':'20%'}">
                       <ng-template pTemplate="body" let-item="rowData">
                           {{ item.judicialOfficer?.firstName + ' ' + item.judicialOfficer?.lastName }}
                       </ng-template>
@@ -1413,7 +1413,7 @@
               <p-dropdown name="ddHearingJudge" id="ddHearingJudge" #ddHearingJudge="ngModel" placeholder="choose Judgicial Officer..."
                   [required]="true"
                   [options]="judges | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Judge...'"
-                  [ngModel]="selectedHearing?.judicialOfficer"
+                  [ngModel]="selectedHearing?.judicialOfficer?.partyOID"
                   (onChange)="hearingJudgeOnChange($event)"
                   styleClass="width-full">
               </p-dropdown>

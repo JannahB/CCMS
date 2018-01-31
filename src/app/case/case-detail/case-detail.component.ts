@@ -815,9 +815,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     // Pre-select Dropdowns
     if(this.selectedHearing.judicialOfficer){
-      let matchingJudge = this.judges.find(j => j.partyOID == this.selectedHearing.judicialOfficer.partyOID);
-      // This a crazy hack - have to assign the JudicialOfficer to partyOID b/c we're using the dropdownPipe
-      this.selectedHearing.judicialOfficer = matchingJudge.partyOID;
+      this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == this.selectedHearing.judicialOfficer.partyOID);
     }
 
     if(this.selectedHearing.courtLoc){
@@ -838,6 +836,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     let hearingDateString: string = this.datePipe.transform(this.selectedHearing.startDateTime, "yyyy-MM-dd");
     data = Object.assign(data, {hearingQueryDate: hearingDateString} );
 
+    // ?? DOES THE SEARCH NEED TO INCLUDE LOCATION ?? //
     // CONCAT LOCATION TO QUERY OBJECT
     // if( this.selectedHearing.courtLoc ) {
     //   let hearingLocString: string = this.selectedHearing.courtLoc.locationOID.toString();
@@ -847,7 +846,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     // CONCAT JUDGE TO QUERY OBJECT
     if( this.selectedHearing.judicialOfficer ) {
       // Note: The value of `selectedHearing.judicialOfficer` is indeed portyOID since using dropdownPipe
-      let judgeParam = { judicialOfficer: { partyOID: this.selectedHearing.judicialOfficer.toString() } }
+      let judgeParam = { judicialOfficer: { partyOID: this.selectedHearing.judicialOfficer.partyOID.toString() } }
       data = Object.assign(data, judgeParam );
     }
 
@@ -877,7 +876,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   hearingJudgeOnChange(event){
-    this.selectedHearing.judicialOfficer = event.value;
+    this.selectedHearing.judicialOfficer = this.judges.find( j => j.partyOID == event.value );
     this.fetchMatchingHearings();
   }
 
@@ -938,7 +937,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     hearing.description = sch.description;
     hearing.endDateTime = this.datePipe.transform(sch.endDateTime, "yyyy-MM-dd HH:mm");
     hearing.hearingType = sch.hearingType.hearingTypeOID.toString();
-    hearing.judicialOfficer = sch.judicialOfficer.toString(); // this is portyOID since using dropdownPipe
+    hearing.judicialOfficer = sch.judicialOfficer.partyOID.toString(); // this is portyOID since using dropdownPipe
     hearing.startDateTime = this.datePipe.transform(sch.startDateTime, "yyyy-MM-dd HH:mm");
 
     this.caseSvc
