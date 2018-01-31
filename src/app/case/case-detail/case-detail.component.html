@@ -859,7 +859,8 @@
           <div class="ui-g-12 mb-20">
             <span class="md-inputfield">
               <input pInputText type="text" #editCPfName="ngModel" required name="editCPfName"
-                      [ngModel]="selectedCaseParty.caseParty?.firstName" (ngModelChange)="editCPfNameChanged($event)">
+                    [disabled]="true"
+                    [ngModel]="selectedCaseParty.caseParty?.firstName" (ngModelChange)="editCPfNameChanged($event)">
               <label>First Name</label>
             </span>
             <div class="ui-message ui-messages-error ui-corner-all"
@@ -871,6 +872,7 @@
           <div class="ui-g-12 mb-20">
             <span class="md-inputfield">
               <input type="text" pInputText #editCPlName="ngModel" name="editCPlName" required
+                      [disabled]="true"
                       [ngModel]="selectedCaseParty.caseParty?.lastName"  (ngModelChange)="editCPlNameChanged($event)">
               <label>Last Name</label>
             </span>
@@ -883,6 +885,7 @@
           <div class="ui-g-12 mb-0">
             <span class="md-inputfield">
               <input type="text" pInputText name="editCPaltName"
+                      [disabled]="true"
                       [ngModel]="selectedCaseParty.caseParty?.alternativeName" (ngModelChange)="editCPaltNameChanged($event)">
               <label>Alternative Name</label>
             </span>
@@ -893,6 +896,7 @@
             <div class="ui-g-12 ui-md-6 mb-0">
               <label class="minimal primary block">Date of Birth</label>
               <p-calendar id="editCPdob" name="editCPdob" #editCPdob="ngModel"
+                    [disabled]="true"
                     [required]="true"
                     inputStyleClass="width-full"
                     [ngModel]="selectedCaseParty.caseParty?.dob"
@@ -912,6 +916,7 @@
             <div class="ui-g-12 ui-md-6 mb-0">
               <label class="minimal primary block">Sex</label>
                 <p-dropdown name="editCPsex" #editCPsex="ngModel" placeholder="choose gender"
+                    [disabled]="true"
                     [required]="true"
                     [options]="genderTypes"
                     [ngModel]="selectedCaseParty.caseParty?.sex"
@@ -928,6 +933,7 @@
           <div class="ui-g-12 mb-0">
               <label class="minimal primary block">Party Role</label>
               <p-dropdown name="ddNewPartyRole" #ddNewPartyRole="ngModel" placeholder="choose Party Role..."
+                  [disabled]="true"
                   [required]="true"
                   [options]="casePartyRoleTypes"
                   optionLabel="name"
@@ -946,6 +952,7 @@
             <div class="ui-g-12 ui-md-6 mb-0">
               <label class="minimal primary block">Start Date</label>
               <p-calendar id="dtStartDate" name="dtStartDate"
+                    [disabled]="true"
                     inputStyleClass="width-full"
                     [(ngModel)]="selectedCaseParty.startDate"
                     dateFormat="mm/dd/yy"
