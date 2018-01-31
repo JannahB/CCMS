@@ -59,11 +59,13 @@ export class AuthorizationInterceptor implements HttpInterceptor {
                     this.authenticationModel.returnUrl = this.router.url;
                     AuthorizationInterceptor.authToken = null;
 
-                    //This is difficult to test.  Just navigate to login on all errors for now
-                    if(error instanceof HttpErrorResponse && error.status == 401){
-                        this.router.navigate(["login"]);
-                    }
-                    // this.router.navigate(["login"]);
+                    // This is difficult to test.  Just navigate to login on all errors for now
+                    // Until the server sends a 401 status code, leave this commented
+                    // Otherwise it hangs when refreshing a page when token is expired
+                    // if(error instanceof HttpErrorResponse && error.status == 401){
+                    //     this.router.navigate(["login"]);
+                    // }
+                    this.router.navigate(["login"]);
                 }
             );
     }
