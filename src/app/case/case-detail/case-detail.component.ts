@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { SelectItem } from 'primeng/primeng';
+import { ObjectUtils } from './../../common/utils/object-utils';
 
 import { CourtLocation } from './../../common/entities/CourtLocation';
 import { Pool } from './../../common/entities/Pool';
@@ -234,7 +235,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedCaseParty = event.data;
     this.showModalEditCaseParty = true;
     // TODO: SHOW DROPDOWNS AS TEXT IN FORM
-    // ONLY START AND END DATE CAN BE EDITED
+    // ONLY END DATE CAN BE EDITED
   }
 
   showAddCaseParty() {
@@ -409,6 +410,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         if(shouldRefreshURL) {
           this.router.navigate([ '/case-detail', this.case.caseOID ])
         }
+      },
+      (error) => {
+        console.log(error);
+        this.loadingCase = false;
+        this.toastSvc.showErrorMessage('There was an error saving the case.')
+      },
+      () => {
+        this.loadingCase = false;
       });
   }
 
@@ -474,6 +483,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     this.selectedCharge = new CaseCharge();
     caseChargeForm.reset();
+    this.resetIccsCodes();
 
     this.showModalAddCaseCharge = true;
 
@@ -489,6 +499,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.chargeFactorTypes = chargeFactors;
         this.filteredChargeFactorTypes = chargeFactors;
       })
+  }
+
+  resetIccsCodes() {
+    this.selectedSectionType = null;
+    this.selectedDivisionType = null;
+    this.selectedGroupType = null;
+    this.selectedClassType = null;
+    this.selectedChargeLawType = null;
+
+    // keep  -> sectionTypes
+    this.divisionTypes = null;
+    this.groupTypes = null;
+    this.classTypes = null;
+    this.chargeLawTypes = null;
   }
 
   sectionTypeOnChange(event){
@@ -550,7 +574,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       charge = new CaseCharge();
     }
 
-    let iccsCode:IccsCode = this.getIccsCode();
+    let iccsCode:IccsCode = this.setIccsCodes();
+
+    // CHECK FOR DUPLICATE CHARGE
+    if( this.checkForDupCharge(iccsCode)) {
+      this.toastSvc.showWarnMessage('Duplicate charges are not permitted.', 'Duplicate Charge')
+      return;
+    }
 
     charge.caseOID = this.case.caseOID;
     charge.courtOID = this.case.court.courtOID;
@@ -574,7 +604,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showStaticMessage(true, 'warn', 'Click "Save Case" to save Charges to the Case.', 'Unsaved Values');
   }
 
-  private getIccsCode():IccsCode{
+  private setIccsCodes():IccsCode{
     if(this.selectedClassType){
       return this.selectedClassType;
     }
@@ -592,6 +622,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
 
     return null;
+  }
+
+  checkForDupCharge(iccsCode) {
+    let charges:CaseCharge[] = this.case.caseCharges;
+    let idx:number = charges.findIndex(c => ObjectUtils.areObjectsEqualDeep( c.iccsCode, iccsCode));
+    return idx > -1;
   }
 
   requestDeleteCharge(charge:CaseCharge):void{
@@ -1163,13 +1199,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   //   DOCUMENTS TAB
   //
   // ------------------------=
+  uploadedFiles: any[] = [];
+
   generateDoc():void{
     this.caseSvc
       .downloadCourtDocument(this.case.caseOID, this.selectedDocumentTemplateType.documentTemplateOID)
       .subscribe();
   }
-
-  uploadedFiles: any[] = [];
 
   onUpload(event) {
     for(let file of event.files) {

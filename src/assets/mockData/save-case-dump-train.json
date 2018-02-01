@@ -1,0 +1,57 @@
+{
+  "caseFilingDate": "2017-10-30",
+  "caseType": "4",
+  "caseStatus": "7",
+  "casePhase": "5",
+  "caseWeight": "3",
+  "caseParties": [
+    {
+      "partyRoleOID": "12",
+      "partyOID": "8443983363370155",
+      "startDate": "2017-10-30",
+      "endDate": null
+    },
+    {
+      "partyRoleOID": "2",
+      "partyOID": "8443983363370155",
+      "startDate": "2017-11-01",
+      "endDate": null
+    },
+    {
+      "partyRoleOID": "3",
+      "partyOID": "7053301950588920",
+      "startDate": "2018-01-27",
+      "endDate": null
+    },
+    {
+      "partyRoleOID": "3",
+      "partyOID": "7053301950588920",
+      "startDate": "2018-01-25",
+      "endDate": null
+    },
+    {
+      "partyRoleOID": "1",
+      "partyOID": "4424862495964419",
+      "startDate": "2018-01-25",
+      "endDate": null
+    }
+  ],
+  "caseCharges": [
+    {
+      "iccsCodeOID": "8543953772003356",
+      "lea": "Burglary",
+      "factors": [
+        "3"
+      ]
+    },
+    {
+      "iccsCodeOID": "6669601380955949",
+      "lea": "notes",
+      "factors": [
+        "1"
+      ],
+      "localChargeOID": "79462418"
+    }
+  ],
+  "caseOID": "2114380247483867"
+}

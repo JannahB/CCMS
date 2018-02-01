@@ -1,0 +1,34 @@
+{
+  "caseFilingDate": "2018-01-31",
+  "caseType": "1",
+  "caseStatus": "2",
+  "casePhase": "1",
+  "caseWeight": "1",
+  "caseParties": [
+    {
+      "partyRoleOID": "1",
+      "partyOID": "6809660395519744",
+      "startDate": "2018-01-31",
+      "endDate": null
+    }
+  ],
+  "caseCharges": [
+    {
+      "iccsCodeOID": "4488168467067864",
+      "lea": "notes",
+      "factors": [
+        "1"
+      ],
+      "localChargeOID": "330081440"
+    },
+    {
+      "iccsCodeOID": "6669601380955949",
+      "lea": "more notes",
+      "factors": [
+        "1"
+      ],
+      "localChargeOID": "79462418"
+    }
+  ],
+  "caseOID": "2968432514163320"
+}
