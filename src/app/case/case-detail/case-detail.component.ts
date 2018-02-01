@@ -5,8 +5,8 @@ import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { SelectItem } from 'primeng/primeng';
-import { ObjectUtils } from './../../common/utils/object-utils';
 
+import { ObjectUtils } from './../../common/utils/object-utils';
 import { CourtLocation } from './../../common/entities/CourtLocation';
 import { Pool } from './../../common/entities/Pool';
 import { EventType } from './../../common/entities/EventType';
@@ -40,6 +40,7 @@ import { DropdownPipe } from './../../common/pipes/dropdown.pipe';
 import { HearingType } from '../../common/entities/HearingType';
 import { CaseHearings } from '../../common/entities/CaseHearings';
 import { CaseHearingDTO } from '../../common/entities/CaseHearingDTO';
+import { LocalStorageService } from './../../common/services/utility/local-storage.service';
 
 
 @Component({
@@ -51,6 +52,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   @ViewChild('caseForm') caseForm: any;
 
+  authToken: string;
   activeTabIndex: number = 1;
   case: Case;
   caseSubscription: Subscription;
@@ -80,12 +82,19 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     private partySvc: PartyService,
     private router:Router,
     private toastSvc:ToastService,
-    private lookupSvc: LookupService
+    private lookupSvc: LookupService,
+    private localStorageService:LocalStorageService,
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Case', routerLink: ['/case-detail'] }
     ]);
+
+    if(localStorageService.hasValue('AUTH_TOKEN')){
+      this.authToken = localStorageService.getValue('AUTH_TOKEN');
+    }
   }
+
+
 
   ngOnInit() {
 
@@ -1221,6 +1230,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.uploadedFiles.push(file);
     }
     this.toastSvc.showSuccessMessage('File Uploaded');
+  }
+
+  onBeforeSendFile(event) {
+      event.xhr.setRequestHeader("caseOID", this.case.caseOID);
+      event.xhr.setRequestHeader("Authorization", "Bearer " + this.authToken );
+      event.xhr.setRequestHeader("token", this.authToken );
   }
 
   ddOnChange(event):void{

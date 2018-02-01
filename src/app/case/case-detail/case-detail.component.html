@@ -418,6 +418,7 @@
                 <!-- FILE UPLOAD -->
                 <div class="ui-g-12 ui-md-6 pb-0 ta-r">
                   <p-fileUpload name="theFiles[]" url="{{baseURL}}GetAttachment" (onUpload)="onUpload($event)"
+                      (onBeforeSend)="onBeforeSendFile($event)"
                       multiple="multiple" accept="application/pdf" maxFileSize="5000000">
                       <!-- accept="*.doc, *.docx, application/pdf" -->
                       <ng-template pTemplate="content">
