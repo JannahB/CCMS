@@ -150,7 +150,7 @@
                 <p-column field="caseParty.sex" header="Sex" [style]="{'width':'7%'}"></p-column>
                 <p-column field="caseParty.dob" header="Date of Birth" [style]="{'width':'13%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.dob | date:'M/d/yyyy'}}
+                        {{item.dob | date:'MM/dd/yyyy'}}
                     </ng-template>
                 </p-column>
                 <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column>
@@ -1082,7 +1082,8 @@
         <div class="ui-g-12 ">
           <label class="minimal primary block">Charge Factors</label>
           <span class="ui-fluid">
-            <p-autoComplete name="acChargeFactors"
+            <p-autoComplete name="acChargeFactors" #acChargeFactors="ngModel"
+                [required]="true"
                 field="description"
                 [(ngModel)]="selectedChargeFactors"
                 [suggestions]="filteredChargeFactorTypes"
@@ -1095,6 +1096,10 @@
                 [multiple]="true">
             </p-autoComplete>
           </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="acChargeFactors.errors?.required && acChargeFactors.touched" >
+                One or more Charge Factors are required.
+          </div>
         </div>
 
       </div>
