@@ -154,6 +154,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
             .subscribe(results => this.casePhases = results);
         }
 
+        if(this.case.caseParties.length > 0){
+          this.case.caseParties.map( cp => {
+            cp.caseParty.age = this.calculateAge(cp.caseParty.dob);
+          })
+        }
+
         this.eventTypeFilter = null;
         this.filterCaseEvents();
       }
@@ -259,6 +265,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         if(results.length){
           this.selectedSearchParty = results[0];
         }
+        this.searchPartyResults.map( cp => {
+          cp.age = this.calculateAge(cp.dob);
+        })
       });
   }
 

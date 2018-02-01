@@ -148,9 +148,9 @@
                 <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
                 <p-column field="caseParty.lastName" header="Last Name" [style]="{'width':'15%'}"></p-column>
                 <p-column field="caseParty.sex" header="Sex" [style]="{'width':'7%'}"></p-column>
-                <p-column field="caseParty.dob" header="Date of Birth" [style]="{'width':'13%'}">
+                <p-column header="Date of Birth" [style]="{'width':'13%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.dob | date:'MM/dd/yyyy'}}
+                        {{ item.caseParty.dob | date:'M/d/yyyy' }}
                     </ng-template>
                 </p-column>
                 <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column>
@@ -258,6 +258,7 @@
             </div>
           </div>
 
+          <p-message *ngIf="staticMessage.visible" severity="{{staticMessage.severity}}" text="{{staticMessage.message}}"></p-message>
 
           <!-- CASE SAVE BUTTON -->
           <div class="ui-g-12 ta-r">
@@ -629,19 +630,14 @@
                           [scrollable]="true"
                           (onRowSelect)="searchPartyOnRowSelect($event)"
                           dataKey="partyOID" #dtSearchParty>
-                <!-- <p-column header="Select" field="" [style]="{'width':'7%'}"></p-column> -->
-                <p-column header="First Name" field="firstName" [style]="{'width':'15%'}"></p-column>
-                <p-column header="Last Name" field="lastName" [style]="{'width':'15%'}"></p-column>
+                <p-column header="First Name" field="firstName" [style]="{'width':'25%'}"></p-column>
+                <p-column header="Last Name" field="lastName" [style]="{'width':'25%'}"></p-column>
                 <p-column header="DOB" field="dob" [style]="{'width':'15%'}">
                   <ng-template pTemplate="body" let-item="rowData">
                       {{item.dob | date:'M/d/yyyy'}}
                   </ng-template>
                 </p-column>
-                <p-column header="Age" field="" [style]="{'width':'15%'}">
-                    <ng-template pTemplate="body" let-item="rowData">
-                        {{ calculateAge(item) }}
-                    </ng-template>
-                </p-column>
+                <p-column header="Age" field="age" [style]="{'width':'10%'}"></p-column>
                 <p-column header="Sex" field="sex" [style]="{'width':'7%'}"></p-column>
               </p-dataTable>
             </div>
