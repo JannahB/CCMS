@@ -131,7 +131,7 @@ import { GlobalState } from './common/services/state/global.state';
                     <li #notifications [ngClass]="{'active-top-menu':app.activeTopbarItem === notifications}">
                         <a href="#" (click)="app.onRightPanelButtonClick($event)">
                             <i class="topbar-icon material-icons">timer</i>
-                            <span class="topbar-badge animated rubberBand">10</span>
+                            <span class="topbar-badge animated rubberBand">{{userTaskCount}}</span>
                             <span class="topbar-item-name">Tasks</span>
                         </a>
 
@@ -154,6 +154,7 @@ import { GlobalState } from './common/services/state/global.state';
 export class AppTopbarComponent {
 
   loggedInUser: Party;
+  userTaskCount: number;
 
     constructor(
       public app: AppComponent,
@@ -167,6 +168,10 @@ export class AppTopbarComponent {
       this._state.subscribe('app.loggedIn', (user) => {
         this.loggedInUser = user;
       });
+
+      this._state.subscribe('userTasks.count', (count) => {
+        this.userTaskCount = count;
+      })
 
       this.loggedInUser = this.userSvc.loggedInUser;
     }
