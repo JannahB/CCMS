@@ -85,6 +85,13 @@ export class CaseSearchComponent implements OnInit {
     }
   }
 
+  casePartyTypeOnChange(event) {
+    if(!this.casePartyNameText || !this.casePartyNameText.length){
+      this.selectedCasePartyRoleType = null;
+      this.toastSvc.showInfoMessage('Please enter "Case Party Name" text before selecting "Case Party Type".', 'Case Party Name Needed');
+    }
+  }
+
   onSearch() {
     this.isSearcing = true;
     this.caseResults = null;

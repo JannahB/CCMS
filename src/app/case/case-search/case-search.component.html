@@ -25,18 +25,18 @@
             </span>
         </div>
 
-
         <div class="ui-g-12 ui-md-3">
           <label class="minimal primary block">Case Party Type</label>
-          <p-dropdown placeholder="case party type..." name="ddRoleType" optionLabel="name" [options]="casePartyRoleTypes"
+          <p-dropdown placeholder="-" name="ddRoleType" optionLabel="name" [options]="casePartyRoleTypes"
               [(ngModel)]="selectedCasePartyRoleType"
+              (onChange)="casePartyTypeOnChange($event)"
               styleClass="width-full">
           </p-dropdown>
         </div>
 
         <div class="ui-g-12 ui-md-3">
           <label class="minimal primary block">Case Type</label>
-          <p-dropdown placeholder="case type..." name="ddCaseType" optionLabel="name" [options]="caseTypes"
+          <p-dropdown placeholder="-" name="ddCaseType" optionLabel="name" [options]="caseTypes"
               [(ngModel)]="selectedCaseType"
               (onChange)="onCaseTypeSelect($event)"
               styleClass="width-full">
@@ -45,7 +45,7 @@
 
         <div class="ui-g-12 ui-md-3">
           <label class="minimal primary block">Case Phase</label>
-          <p-dropdown placeholder="case phase..." name="ddCasePhase" optionLabel="name" [options]="casePhaseTypes"
+          <p-dropdown placeholder="-" name="ddCasePhase" optionLabel="name" [options]="casePhaseTypes"
               [(ngModel)]="selectedCasePhaseType"
               (onFocus)="casePhaseOnFocus()"
               styleClass="width-full">
@@ -54,7 +54,7 @@
 
         <div class="ui-g-12 ui-md-3">
           <label class="minimal primary block">Case Status</label>
-          <p-dropdown placeholder="case status..." name="ddCaseStatus" optionLabel="name" [options]="caseStatusTypes"
+          <p-dropdown placeholder="-" name="ddCaseStatus" optionLabel="name" [options]="caseStatusTypes"
               [(ngModel)]="selectedCaseStatusType"
               styleClass="width-full">
           </p-dropdown>
