@@ -31,7 +31,6 @@ declare var jQuery: any;
             <div class="layout-rightpanel-content">
               <div class="card pad-5" style="background-color: #E6EFF6;">
                 <div>Filters</div>
-                <div class="muted-label">Showing: {{filteredUserTasks?.length}} of {{userTasks?.length}}</div>
                 <div class="task-multiselect">
                   <p-multiSelect styleClass="width-full"
                       [options]="taskStatus"
@@ -39,9 +38,8 @@ declare var jQuery: any;
                       [showToggleAll]="true"
                       [filter]="false"
                       (onChange)="onFilterTasks($event)"
-
-                      defaultLabel="Show All"
                       >
+                      <!-- defaultLabel="Show All" -->
                   </p-multiSelect>
                 </div>
 
@@ -71,7 +69,15 @@ declare var jQuery: any;
                       </ng-template>
                   </p-calendar>
                 </div> -->
+
+                <div>
+                  <button label="" type="button"
+                          class="ui-button-secondary ui-button-icon-only refresh-btn inline"
+                          pButton icon="ui-icon-refresh" (click)="refreshUserTasks()"></button>
+                    <span class="muted-label">Showing: {{filteredUserTasks?.length}} of {{userTasks?.length}}</span>
+                </div>
               </div>
+
 
               <div>
                 <loading-bar [visible]="isLoadingTasks" [message]="'loading tasks...'"></loading-bar>
@@ -106,6 +112,7 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     filteredUserTasks: UserTask[];
     taskSubscription: Subscription;
     isLoadingTasks: boolean = false;
+    currentFilter: any;
 
     @ViewChild('rightPanelMenuScroller') rightPanelMenuScrollerViewChild: ElementRef;
 
@@ -147,14 +154,26 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
         if(this.taskSubscription) this.taskSubscription.unsubscribe();
     }
 
-    getUserTasks() {
+    refreshUserTasks(){
+      this.getUserTasks(true);
+      this.selectedTaskStatuses = this.taskStatus;
+    }
+
+    getUserTasks(userRefresh:boolean = false) {
       // if we've already fetched once before then don't show loading bar
-      if(!this.userTasks) this.isLoadingTasks = true;
+      console.log('selectedTaskStatuses BEFORE fetch', this.selectedTaskStatuses );
+      if(!this.userTasks || userRefresh) this.isLoadingTasks = true;
       this.taskSubscription = this.lookupSvc.fetchLookup<UserTask>('FetchUserTasks').subscribe(items => {
         this.userTasks = this.filteredUserTasks = items;
         this.isLoadingTasks = false;
         this._state.notifyDataChanged('userTasks.count', items.length);
+
+        if(userRefresh) {
+          this.selectedTaskStatuses = null;
+          this.onFilterTasks( { value:  this.currentFilter } );
+        }
       });
+      console.log('selectedTaskStatuses AFTER fetch', this.selectedTaskStatuses );
     }
 
     gotoCase(event, task:UserTask) {
@@ -164,9 +183,12 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     }
 
     onFilterTasks(event) {
-      console.log(event);
+      console.log('event.value', event.value);
+      console.log('selectedTaskStatuses', this.selectedTaskStatuses );
       // 1 = completed tasks
       // 2 = incomplete tasks
+
+      this.currentFilter = event.value;
 
       if(event.value.length == 0 || event.value.length == 2){
         this.filteredUserTasks = this.userTasks;
