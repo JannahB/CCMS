@@ -998,6 +998,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     // }
 
     // CREATE DTO
+    hearing.caseHearingOID = sch.caseHearingOID ? sch.caseHearingOID.toString() : null;
     hearing.caseOID = this.case.caseOID.toString();
     hearing.courtLoc = sch.courtLoc.locationOID.toString();
     hearing.description = sch.description;
@@ -1010,15 +1011,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .saveCaseHearing(hearing)
       .subscribe(result =>{
         let resultHearing = result[0];
+
+        // Check if existing or new hearing
         let index:number = this.case.caseHearings
           .findIndex(a => a.caseHearingOID == resultHearing.caseHearingOID);
 
-      if(index >= 0){
-        this.case.caseHearings[index] = resultHearing;
-      }else{
-        this.case.caseHearings.push(resultHearing);
-        this.case.caseHearings = this.case.caseHearings.slice();
-      }
+        if(index >= 0){
+          this.case.caseHearings[index] = resultHearing;
+        }else{
+          this.case.caseHearings.push(resultHearing);
+          this.case.caseHearings = this.case.caseHearings.slice();
+        }
 
       console.log('caseHearings', this.case.caseHearings);
 
