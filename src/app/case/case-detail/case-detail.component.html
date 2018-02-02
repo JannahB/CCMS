@@ -519,12 +519,12 @@
                           dataKey="judicialAssignmentOID" #dtJudicialAssignment>
                 <p-column field="" header="Start Date/Time" [style]="{'width':'20%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.startDate | date:'medium'}}
+                        {{item.startDate | date:'MM/dd/yyyy hh:mm a'}}
                     </ng-template>
                 </p-column>
                 <p-column field="" header="End Date/Time" [style]="{'width':'20%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.endDate | date:'medium'}}
+                        {{item.endDate | date:'MM/dd/yyyy hh:mm a'}}
                     </ng-template>
                 </p-column>
                 <p-column field="" header="Assigned" [style]="{'width':'17%'}">
@@ -1221,347 +1221,359 @@
 
 
 
-  <!-- ADD JUDICIAL ASSIGNMENT MODAL -->
+<!-- ADD JUDICIAL ASSIGNMENT MODAL -->
 
-  <p-dialog header="Add Judicial Assignment" width="450" [(visible)]="showModalAddJudge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-    <loading-bar [visible]="loadingJudgeLookups" [message]="'loading judicial data...'"></loading-bar>
-    <form (ngSubmit)="saveJudge()" #caseJudgeForm="ngForm" novalidate>
-      <div class="ui-g">
-        <div class="form-group" >
+<p-dialog width="450" [(visible)]="showModalAddJudge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+  <p-header>
+    {{ judge?.judicialAssignmentOID ? 'Edit' : 'Save' }}  Judicial Assignment
+  </p-header>
+  <loading-bar [visible]="loadingJudgeLookups" [message]="'loading judicial data...'"></loading-bar>
+  <form (ngSubmit)="saveJudge()" #caseJudgeForm="ngForm" novalidate>
+    <div class="ui-g">
+      <div class="form-group" >
 
-          <div class="ui-g-12 mb-15">
-            <label class="minimal primary block">Judge</label>
-            <div *ngIf="judge.judicialAssignmentOID > 0">{{judge.judicialOfficial.name}}</div>
-            <div *ngIf="!judge.judicialAssignmentOID || judge.judicialAssignmentOID == 0">
-              <p-dropdown name="ddJudge" id="ddJudge" placeholder="choose Judge..." #ddJudge="ngModel"
-                  [required]="true"
-                  [options]="judges"
-                  optionLabel="name"
-                  [(ngModel)]="judge.judicialOfficial"
-                  [disabled]="judge.judicialAssignmentOID > 0"
-                  styleClass="width-full">
-              </p-dropdown>
-              <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="ddJudge.errors?.required && ddJudge.touched" >
-                    Please select a Judge
-              </div>
-            </div>
-          </div>
-
-          <!-- START DATE -->
-          <div class="ui-g-12 mb-15">
-            <p-calendar id="dtStartDate" name="dtStartDate" placeholder="Start Date" #dtStartDate="ngModel"
-                [(ngModel)]="judge.startDate"
-                [showIcon]="true"
-                dateFormat="mm/dd/yy"
-                appendTo="body"></p-calendar>
+        <div class="ui-g-12 mb-15">
+          <label class="minimal primary block">Judge</label>
+          <div *ngIf="judge.judicialAssignmentOID > 0">{{judge.judicialOfficial.name}}</div>
+          <div *ngIf="!judge.judicialAssignmentOID || judge.judicialAssignmentOID == 0">
+            <p-dropdown name="ddJudge" id="ddJudge" placeholder="choose Judge..." #ddJudge="ngModel"
+                [required]="true"
+                [options]="judges"
+                optionLabel="name"
+                [(ngModel)]="judge.judicialOfficial"
+                [disabled]="judge.judicialAssignmentOID > 0"
+                styleClass="width-full">
+            </p-dropdown>
             <div class="ui-message ui-messages-error ui-corner-all"
-                  *ngIf="dtStartDate.errors?.required && dtStartDate.touched" >
-                  Please select a start date
+                  *ngIf="ddJudge.errors?.required && ddJudge.touched" >
+                  Please select a Judge
             </div>
           </div>
-
-          <!-- END DATE -->
-          <div class="ui-g-12">
-            <p-calendar id="dtEndDate" name="dtEndDate" placeholder="End Date" #dtEndDate="ngModel"
-                [(ngModel)]="judge.endDate"
-                [showIcon]="true"
-                dateFormat="mm/dd/yy"
-                appendTo="body"></p-calendar>
-          </div>
-
         </div>
-      </div>
 
-      <p-footer>
-          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
-            <button label="Add Judge" type="submit" pButton icon="fa-check" [disabled]="!caseJudgeForm.form.valid"></button>
-            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+        <!-- START DATE -->
+        <div class="ui-g-12 mb-15">
+          <p-calendar id="dtStartDate" name="dtStartDate" placeholder="Start Date" #dtStartDate="ngModel"
+              [(ngModel)]="judge.startDate"
+              [showIcon]="true"
+              dateFormat="mm/dd/yy"
+              appendTo="body"></p-calendar>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="dtStartDate.errors?.required && dtStartDate.touched" >
+                Please select a start date
           </div>
-      </p-footer>
-
-    </form>
-  </p-dialog>
-
-
-
-  <!-- ADD EVENT MODAL -->
-
-  <p-dialog header="Add Completed Event" width="450" [(visible)]="showModalAddEvent" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-    <form (ngSubmit)="saveEvent()" #caseEventForm="ngForm" novalidate>
-      <div class="ui-g">
-        <div class="form-group" >
-
-          <!-- EVENT DATE -->
-          <div class="ui-g-12">
-            <label class="minimal primary block">Event ID</label>
-            <p-calendar id="dtEventDate" name="dtEventDate" placeholder="Event Date" #dtEventDate="ngModel"
-                [(ngModel)]="caseEvent.eventDate"
-                [showIcon]="true"
-                dateFormat="mm/dd/yy"
-                [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
-                appendTo="body"></p-calendar>
-            <div class="ui-message ui-messages-error ui-corner-all"
-                  *ngIf="dtEventDate.errors?.required && dtEventDate.touched" >
-                  Please select a event date
-            </div>
-          </div>
-
-          <!-- EVENT ID -->
-          <div class="ui-g-12 mb-15">
-            <label class="minimal primary block">Event ID</label>
-            <p-dropdown name="ddEventId" id="ddEventId" placeholder="choose Event ID..." #ddEventId="ngModel"
-                [required]="true"
-                [options]="eventTypes"
-                optionLabel="eventTypeName"
-                [(ngModel)]="caseEvent.eventType"
-                [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
-                styleClass="width-full">
-            </p-dropdown>
-            <div class="ui-message ui-messages-error ui-corner-all"
-                  *ngIf="ddEventId.errors?.required && ddEventId.touched" >
-                  Please select an Event
-            </div>
-          </div>
-
-          <div class="ui-md-12" *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
-            <label class="minimal primary block">Event Category</label>
-            <div>{{caseEvent.eventType?.eventCategoryText}}</div>
-          </div>
-
-          <!-- INITIATED BY -->
-          <div class="ui-g-12">
-            <label class="minimal primary block">Event Initiated By</label>
-            <p-dropdown name="ddInitiator" id="ddInitiator" placeholder="choose initiator..." #ddInitiator="ngModel"
-                [required]="true"
-                [options]="case?.caseParties"
-                optionLabel="caseParty.lastName"
-                [(ngModel)]="selectedInitiatedByParty"
-                [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
-                styleClass="width-full">
-            </p-dropdown>
-            <label class="minimal block"
-                 *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
-                      [Awaiting property 'initatedBy' on Case > CaseEvent returned from server]
-            </label>
-            <div class="ui-message ui-messages-error ui-corner-all"
-                  *ngIf="ddInitiator.errors?.required && ddInitiator.touched" >
-                  Please select Initiator of the Event
-            </div>
-          </div>
-
-          <!-- ENTERED BY -->
-          <div class="ui-g-12 mb-15" *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
-            <label class="minimal primary block">Event Entered by:</label>
-            <div>{{caseEvent.enteringParty?.firstName}} {{caseEvent.enteringParty?.lastName}}</div>
-          </div>
-
-          <!-- DURATION -->
-          <div class="ui-g-12 mt-15">
-            <span class="md-inputfield">
-              <input pInputText id="tiEventDuration" name="tiEventDuration" class="width-full"
-                      [(ngModel)]="caseEvent.durationTimeMin"/>
-              <label>Event Duration (Min)</label>
-            </span>
-          </div>
-
-          <!-- EVENT DOCUMENT -->
-          <div class="ui-g-12">
-            <label class="minimal primary block">Document</label>
-            <p-dropdown name="ddDocuments" id="ddDocuments" placeholder="choose Document..."
-                [required]="true"
-                [options]="documentTemplateTypes"
-                optionLabel="documentName"
-                [(ngModel)]="caseEvent.docTemplate"
-                styleClass="width-full">
-            </p-dropdown>
-          </div>
-
-          <!-- EVENT DETAILS  -->
-          <div class="ui-g-12 mt-15">
-            <span class="md-inputfield">
-              <input pInputText id="tiEventDesc" name="tiEventDesc" class="width-full"
-                      [(ngModel)]="caseEvent.description"/>
-              <label>Event Details</label>
-            </span>
-          </div>
-
         </div>
+
+        <!-- END DATE -->
+        <div class="ui-g-12">
+          <p-calendar id="dtEndDate" name="dtEndDate" placeholder="End Date" #dtEndDate="ngModel"
+              [(ngModel)]="judge.endDate"
+              [showIcon]="true"
+              dateFormat="mm/dd/yy"
+              appendTo="body"></p-calendar>
+        </div>
+
       </div>
+    </div>
 
-      <p-footer>
-          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
-            <button label="Add Case Event" type="submit" pButton icon="fa-check" [disabled]="!caseEventForm.form.valid" ></button>
-            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="{{ judge?.judicialAssignmentOID ? 'Edit' : 'Save' }}  Judge" type="submit" pButton icon="fa-check" [disabled]="!caseJudgeForm.form.valid"></button>
+          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+        </div>
+    </p-footer>
+
+  </form>
+</p-dialog>
+
+
+
+<!-- ADD EVENT MODAL -->
+
+<p-dialog header="Add Completed Event" width="450" [(visible)]="showModalAddEvent" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+  <form (ngSubmit)="saveEvent()" #caseEventForm="ngForm" novalidate>
+    <div class="ui-g">
+      <div class="form-group" >
+
+        <!-- EVENT DATE -->
+        <div class="ui-g-12">
+          <label class="minimal primary block">Event ID</label>
+          <p-calendar id="dtEventDate" name="dtEventDate" placeholder="Event Date" #dtEventDate="ngModel"
+              [(ngModel)]="caseEvent.eventDate"
+              [showIcon]="true"
+              dateFormat="mm/dd/yy"
+              [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
+              appendTo="body"></p-calendar>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="dtEventDate.errors?.required && dtEventDate.touched" >
+                Please select a event date
           </div>
-      </p-footer>
+        </div>
 
-    </form>
-  </p-dialog>
+        <!-- EVENT ID -->
+        <div class="ui-g-12 mb-15">
+          <label class="minimal primary block">Event ID</label>
+          <p-dropdown name="ddEventId" id="ddEventId" placeholder="choose Event ID..." #ddEventId="ngModel"
+              [required]="true"
+              [options]="eventTypes"
+              optionLabel="eventTypeName"
+              [(ngModel)]="caseEvent.eventType"
+              [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
+              styleClass="width-full">
+          </p-dropdown>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddEventId.errors?.required && ddEventId.touched" >
+                Please select an Event
+          </div>
+        </div>
+
+        <div class="ui-md-12" *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
+          <label class="minimal primary block">Event Category</label>
+          <div>{{caseEvent.eventType?.eventCategoryText}}</div>
+        </div>
+
+        <!-- INITIATED BY -->
+        <div class="ui-g-12">
+          <label class="minimal primary block">Event Initiated By</label>
+          <p-dropdown name="ddInitiator" id="ddInitiator" placeholder="choose initiator..." #ddInitiator="ngModel"
+              [required]="true"
+              [options]="case?.caseParties"
+              optionLabel="caseParty.lastName"
+              [(ngModel)]="selectedInitiatedByParty"
+              [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
+              styleClass="width-full">
+          </p-dropdown>
+          <label class="minimal block"
+                *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
+                    [Awaiting property 'initatedBy' on Case > CaseEvent returned from server]
+          </label>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddInitiator.errors?.required && ddInitiator.touched" >
+                Please select Initiator of the Event
+          </div>
+        </div>
+
+        <!-- ENTERED BY -->
+        <div class="ui-g-12 mb-15" *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
+          <label class="minimal primary block">Event Entered by:</label>
+          <div>{{caseEvent.enteringParty?.firstName}} {{caseEvent.enteringParty?.lastName}}</div>
+        </div>
+
+        <!-- DURATION -->
+        <div class="ui-g-12 mt-15">
+          <span class="md-inputfield">
+            <input pInputText id="tiEventDuration" name="tiEventDuration" class="width-full"
+                    [(ngModel)]="caseEvent.durationTimeMin"/>
+            <label>Event Duration (Min)</label>
+          </span>
+        </div>
+
+        <!-- EVENT DOCUMENT -->
+        <div class="ui-g-12">
+          <label class="minimal primary block">Document</label>
+          <p-dropdown name="ddDocuments" id="ddDocuments" placeholder="choose Document..."
+              [required]="true"
+              [options]="documentTemplateTypes"
+              optionLabel="documentName"
+              [(ngModel)]="caseEvent.docTemplate"
+              styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+        <!-- EVENT DETAILS  -->
+        <div class="ui-g-12 mt-15">
+          <span class="md-inputfield">
+            <input pInputText id="tiEventDesc" name="tiEventDesc" class="width-full"
+                    [(ngModel)]="caseEvent.description"/>
+            <label>Event Details</label>
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="Add Case Event" type="submit" pButton icon="fa-check" [disabled]="!caseEventForm.form.valid" ></button>
+          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+        </div>
+    </p-footer>
+
+  </form>
+</p-dialog>
 
 
-  <!-- ADD HEARING MODAL -->
+<!-- ADD HEARING MODAL -->
 
-  <p-dialog header="Add Hearing" width="600" [(visible)]="showModalAddHearing" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false" [blockScroll]="true">
-    <loading-bar [visible]="loadingHearingLookups" [message]="'loading hearing data...'"></loading-bar>
+<p-dialog header="Add Hearing" width="600" [(visible)]="showModalAddHearing" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false" [blockScroll]="true">
+  <loading-bar [visible]="loadingHearingLookups" [message]="'loading hearing data...'"></loading-bar>
 
-    <form (ngSubmit)="saveHearing()" #hearingForm="ngForm" novalidate>
-      <div class="ui-g">
-        <div class="form-group" >
+  <form (ngSubmit)="saveHearing()" #hearingForm="ngForm" novalidate>
+    <div class="ui-g">
+      <div class="form-group" >
 
-          <div class="ui-g-12 ph-0">
-            <div class="ui-g-5">
-              <!-- HEARING DATE -->
-                <label class="minimal primary block">Hearing Date</label>
-                <p-calendar id="hearingDate" name="hearingDate" #hearingDate="ngModel" placeholder="Hearing Date"
-                    [ngModel]="selectedHearing?.startDateTime"
-                    (ngModelChange)="hearingDateOnChange($event)"
-                    [showIcon]="true"
-                    dateFormat="mm/dd/yy"
-                    appendTo="body"></p-calendar>
-                <div class="ui-message ui-messages-error ui-corner-all"
-                     *ngIf="hearingDate.errors?.required && hearingDate.touched" >
-                     Please choose a Hearing Date
-                </div>
-            </div>
-            <div class="ui-g-7">
-              <label class="minimal primary block">Judicial Officer</label>
-              <p-dropdown name="ddHearingJudge" id="ddHearingJudge" #ddHearingJudge="ngModel" placeholder="choose Judgicial Officer..."
-                  [required]="true"
-                  [options]="judges | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Judge...'"
-                  [ngModel]="selectedHearing?.judicialOfficer?.partyOID"
-                  (onChange)="hearingJudgeOnChange($event)"
-                  styleClass="width-full">
-              </p-dropdown>
+        <div class="ui-g-12 ph-0">
+          <div class="ui-g-5">
+            <!-- HEARING DATE -->
+              <label class="minimal primary block">Hearing Date</label>
+              <p-calendar id="hearingDate" name="hearingDate" #hearingDate="ngModel" placeholder="Hearing Date"
+                  [ngModel]="selectedHearing?.startDateTime"
+                  (ngModelChange)="hearingDateOnChange($event)"
+                  [showIcon]="true"
+                  dateFormat="mm/dd/yy"
+                  appendTo="body"></p-calendar>
               <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="ddHearingJudge.errors?.required && ddHearingJudge.touched" >
-                    Please select a Judicial Officer
+                    *ngIf="hearingDate.errors?.required && hearingDate.touched" >
+                    Please choose a Hearing Date
               </div>
+          </div>
+          <div class="ui-g-7">
+            <label class="minimal primary block">Judicial Officer</label>
+            <p-dropdown name="ddHearingJudge" id="ddHearingJudge" #ddHearingJudge="ngModel" placeholder="choose Judgicial Officer..."
+                [required]="true"
+                [options]="judges | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Judge...'"
+                [ngModel]="selectedHearing?.judicialOfficer?.partyOID"
+                (onChange)="hearingJudgeOnChange($event)"
+                styleClass="width-full">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddHearingJudge.errors?.required && ddHearingJudge.touched" >
+                  Please select a Judicial Officer
             </div>
           </div>
+        </div>
 
-          <!-- CONFLICT TABLE HERE -->
+        <!-- CONFLICT TABLE HERE -->
 
-          <div class="ui-g-12">
-            <p-panel [toggleable]="true" [collapsed]="!hearingConflicts || hearingConflicts.length < 1" class="conflict-table">
-              <p-header >
-                <span>
-                  {{ hearingConflicts?.length || 0 }} Potential Schedule Conflicts: {{selectedHearing?.startDateTime | date: 'MM/dd/yy' }}
-                </span>
-                <span *ngIf="loadingConflicts" class="mt-10">
-                    <p-progressSpinner strokeWidth="3" [style]="{width: '24px', height: '24px'}"></p-progressSpinner>
-                </span>
-              </p-header>
-              <p-dataTable [value]="hearingConflicts"
-                  selectionMode="single"
-                  [(selection)]="selectedHearing"
-                  (onRowSelect)="hearingConflictsOnRowSelect($event)"
-                  dataKey="caseOID" #dtHearingResults>
+        <div class="ui-g-12">
+          <p-panel [toggleable]="true" [collapsed]="!hearingConflicts || hearingConflicts.length < 1" class="conflict-table">
+            <p-header >
+              <span>
+                {{ hearingConflicts?.length || 0 }} Potential Schedule Conflicts: {{selectedHearing?.startDateTime | date: 'MM/dd/yy' }}
+              </span>
+              <span *ngIf="loadingConflicts" class="mt-10">
+                  <p-progressSpinner strokeWidth="3" [style]="{width: '24px', height: '24px'}"></p-progressSpinner>
+              </span>
+            </p-header>
+            <p-dataTable [value]="hearingConflicts"
+                selectionMode="single"
+                [(selection)]="selectedHearing"
+                (onRowSelect)="hearingConflictsOnRowSelect($event)"
+                dataKey="caseOID" #dtHearingResults>
 
-                <p-column header="Start/End Times" [style]="{'width':'30%'}">
-                    <ng-template let-item="rowData" pTemplate="body">
-                      <div>{{item.startDateTime | date: 'MM/dd/yy hh:mm a'}}</div>
-                      <div>{{item.endDateTime | date: 'MM/dd/yy hh:mm a'}}</div>
-                    </ng-template>
-                  </p-column>
+              <p-column header="Start/End Times" [style]="{'width':'30%'}">
+                <ng-template let-item="rowData" pTemplate="body">
+                  <div>{{item.startDateTime | date: 'MM/dd/yy hh:mm a'}}</div>
+                  <div>{{item.endDateTime | date: 'MM/dd/yy hh:mm a'}}</div>
+                </ng-template>
+              </p-column>
 
-                <p-column header="Case Number" field="associatedCase.caseNumber" [style]="{'width':'20%'}"></p-column>
-                <p-column header="Hearing Type" field="hearingType.hearingName" [style]="{'width':'15%'}"></p-column>
-                <p-column header="Location" field="courtLoc.locationID" [style]="{'width':'15%'}"></p-column>
-                <p-column header="Assigned" [style]="{'width':'20%'}">
-                  <ng-template let-item="rowData" pTemplate="body">
-                    {{item.judicialOfficer?.firstName}} {{item.judicialOfficer?.lastName}}
-                  </ng-template>
-                </p-column>
-              </p-dataTable>
-            </p-panel>
-          </div>
+              <p-column header="Case Number" field="associatedCase.caseNumber" [style]="{'width':'28%'}"></p-column>
 
-          <div class="ui-g-12 ph-0">
-            <div class="ui-g-12 ui-md-6 ta-r">
-                <label class="minimal primary block ta-c">Start Time</label>
-                <p-calendar id="hearingStartTime" name="hearingStartTime" #hearingStartTime="ngModel" placeholder="Start Time"
-                    [ngModel]="selectedHearing?.startDateTime"
-                    (ngModelChange)="hearingStartTimeOnChange($event)"
-                    [inline]="true"
-                    hourFormat="12"
-                    [timeOnly]="true"
-                    class="time-picker"></p-calendar>
-                <div class="ui-message ui-messages-error ui-corner-all"
-                     *ngIf="hearingStartTime.errors?.required && hearingStartTime.touched" >
-                     Please choose a Start Time
-                </div>
-            </div>
+              <p-column header="Hearing Type/Location" [style]="{'width':'22%'}">
+                <ng-template let-item="rowData" pTemplate="body">
+                  <div>{{item.hearingType.hearingName }}</div>
+                  <div>{{item.courtLoc.locationID }}</div>
+                </ng-template>
+              </p-column>
 
-            <div class="ui-g-12 ui-md-6">
-              <label class="minimal primary block ta-c">End Time</label>
-              <p-calendar id="hearingEndTime" name="hearingEndTime" #hearingEndTime="ngModel" placeholder="End Time"
-                  [ngModel]="selectedHearing?.endDateTime"
-                  (ngModelChange)="hearingEndTimeOnChange($event)"
+              <!-- <p-column header="Hearing Type" field="hearingType.hearingName" [style]="{'width':'15%'}"></p-column>
+              <p-column header="Location" field="courtLoc.locationID" [style]="{'width':'15%'}"></p-column> -->
+
+              <p-column header="Assigned" [style]="{'width':'20%'}">
+                <ng-template let-item="rowData" pTemplate="body">
+                  {{item.judicialOfficer?.firstName}} {{item.judicialOfficer?.lastName}}
+                </ng-template>
+              </p-column>
+            </p-dataTable>
+          </p-panel>
+        </div>
+
+        <div class="ui-g-12 ph-0">
+          <div class="ui-g-12 ui-md-6 ta-r">
+              <label class="minimal primary block ta-c">Start Time</label>
+              <p-calendar id="hearingStartTime" name="hearingStartTime" #hearingStartTime="ngModel" placeholder="Start Time"
+                  [ngModel]="selectedHearing?.startDateTime"
+                  (ngModelChange)="hearingStartTimeOnChange($event)"
                   [inline]="true"
                   hourFormat="12"
                   [timeOnly]="true"
                   class="time-picker"></p-calendar>
               <div class="ui-message ui-messages-error ui-corner-all"
-                   *ngIf="hearingEndTime.errors?.required && hearingEndTime.touched" >
-                   Please choose a End Time
+                    *ngIf="hearingStartTime.errors?.required && hearingStartTime.touched" >
+                    Please choose a Start Time
               </div>
-            </div>
           </div>
 
-          <div class="ui-g-12 pd-v-0">
-            <div class="ui-g-6 mb-0">
-              <label class="minimal primary block">Hearing Location</label>
-              <p-dropdown name="ddHearingLocation" id="ddHearingLocation" #ddHearingLocation="ngModel" placeholder="choose Hearing Location..."
-                  [required]="true"
-                  [options]="hearingLocations"
-                  optionLabel="locationID"
-                  [ngModel]="selectedHearing?.courtLoc"
-                  (onChange)="hearingLocationOnChange($event)"
-                  styleClass="width-full">
-              </p-dropdown>
-              <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="ddHearingLocation.errors?.required && ddHearingLocation.touched" >
-                    Please choose a Hearing Location
-              </div>
+          <div class="ui-g-12 ui-md-6">
+            <label class="minimal primary block ta-c">End Time</label>
+            <p-calendar id="hearingEndTime" name="hearingEndTime" #hearingEndTime="ngModel" placeholder="End Time"
+                [ngModel]="selectedHearing?.endDateTime"
+                (ngModelChange)="hearingEndTimeOnChange($event)"
+                [inline]="true"
+                hourFormat="12"
+                [timeOnly]="true"
+                class="time-picker"></p-calendar>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="hearingEndTime.errors?.required && hearingEndTime.touched" >
+                  Please choose a End Time
             </div>
-            <div class="ui-g-6 mb-0">
-              <label class="minimal primary block">Hearing Type</label>
-              <p-dropdown name="ddHearingType" id="ddHearingType" #ddHearingType="ngModel" placeholder="choose Hearing Type..."
-                  [required]="true"
-                  [options]="hearingTypes"
-                  optionLabel="hearingName"
-                  [ngModel]="selectedHearing?.hearingType"
-                  (onChange)="hearingTypeOnChange($event)"
-                  styleClass="width-full">
-              </p-dropdown>
-              <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="ddHearingType.errors?.required && ddHearingType.touched" >
-                    Please choose a Hearing Location
-              </div>
-            </div>
-          </div>
-
-          <div class="ui-g-12">
-            <label class="minimal primary block">Description</label>
-            <textarea name="tiHearingDescription"
-                      [ngModel]="selectedHearing?.description"
-                      (ngModelChange)="hearingDescriptionOnChange($event)"
-                      [rows]="2"
-                      pInputTextarea
-                      autoResize="autoResize"
-                      class="width-full"></textarea>
           </div>
         </div>
-      </div>
 
-      <p-footer>
-          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
-            <button label="Save Hearing" type="submit" pButton icon="fa-check" [disabled]="!hearingForm.form.valid"></button>
-            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
-                    (click)="onCancelHearing(hearingForm)" ></button>
+        <div class="ui-g-12 pd-v-0">
+          <div class="ui-g-6 mb-0">
+            <label class="minimal primary block">Hearing Location</label>
+            <p-dropdown name="ddHearingLocation" id="ddHearingLocation" #ddHearingLocation="ngModel" placeholder="choose Hearing Location..."
+                [required]="true"
+                [options]="hearingLocations"
+                optionLabel="locationID"
+                [ngModel]="selectedHearing?.courtLoc"
+                (onChange)="hearingLocationOnChange($event)"
+                styleClass="width-full">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddHearingLocation.errors?.required && ddHearingLocation.touched" >
+                  Please choose a Hearing Location
+            </div>
           </div>
-      </p-footer>
+          <div class="ui-g-6 mb-0">
+            <label class="minimal primary block">Hearing Type</label>
+            <p-dropdown name="ddHearingType" id="ddHearingType" #ddHearingType="ngModel" placeholder="choose Hearing Type..."
+                [required]="true"
+                [options]="hearingTypes"
+                optionLabel="hearingName"
+                [ngModel]="selectedHearing?.hearingType"
+                (onChange)="hearingTypeOnChange($event)"
+                styleClass="width-full">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddHearingType.errors?.required && ddHearingType.touched" >
+                  Please choose a Hearing Location
+            </div>
+          </div>
+        </div>
 
-    </form>
-  </p-dialog>
+        <div class="ui-g-12">
+          <label class="minimal primary block">Description</label>
+          <textarea name="tiHearingDescription"
+                    [ngModel]="selectedHearing?.description"
+                    (ngModelChange)="hearingDescriptionOnChange($event)"
+                    [rows]="2"
+                    pInputTextarea
+                    autoResize="autoResize"
+                    class="width-full"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="Save Hearing" type="submit" pButton icon="fa-check" [disabled]="!hearingForm.form.valid"></button>
+          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+                  (click)="onCancelHearing(hearingForm)" ></button>
+        </div>
+    </p-footer>
+
+  </form>
+</p-dialog>

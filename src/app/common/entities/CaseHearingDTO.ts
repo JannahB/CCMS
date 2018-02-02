@@ -20,6 +20,7 @@ export class CaseHearingDTO {
 
   // associatedCase: AssociatedCase;
   // courtOID: string;
+  caseHearingOID: string;
   caseOID: string;
   courtLoc: string;      // locationOID
   description: string;          // "text"
