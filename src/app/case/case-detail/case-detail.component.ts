@@ -41,6 +41,7 @@ import { HearingType } from '../../common/entities/HearingType';
 import { CaseHearings } from '../../common/entities/CaseHearings';
 import { CaseHearingDTO } from '../../common/entities/CaseHearingDTO';
 import { LocalStorageService } from './../../common/services/utility/local-storage.service';
+import { DateUtils } from '../../common/utils/date-utils';
 
 
 @Component({
@@ -317,8 +318,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   calculateAge(dob) {
-    if(!dob) return;
-    return moment().diff(dob, 'years');
+    return DateUtils.calculateAge(dob);
   }
 
   requestDeleteParty(party:CaseParty):void{

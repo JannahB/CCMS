@@ -40,13 +40,13 @@
             dataKey="partyOID" #dtPartyResults>
             <p-column field="firstName" header="First Name" [style]="{'width':'13%'}"></p-column>
             <p-column field="lastName" header="Last Name" [style]="{'width':'25%'}"></p-column>
-            <p-column field="dob" header="DOB" [style]="{'width':'15%'}">
+            <p-column field="dob" header="DOB" styleClass="ta-c" [style]="{'width':'15%'}">
                 <ng-template pTemplate="body" let-item="rowData">
                     {{item.dob | date:'M/d/yyyy'}}
                 </ng-template>
             </p-column>
-            <p-column field="age" header="Age" [style]="{'width':'15%'}"></p-column>
-            <p-column field="sex" header="Sex" [style]="{'width':'15%'}"></p-column>
+            <p-column field="age" header="Age" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>
+            <p-column field="sex" header="Sex" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>
             <p-column styleClass="col-button" header="View" [style]="{'width':'8%'}">
               <ng-template let-item="rowData" pTemplate="body">
                 <i class="material-icons" (click)="requestViewParty(item)">search</i>

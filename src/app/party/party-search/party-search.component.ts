@@ -4,6 +4,7 @@ import { Party } from '../../common/entities/Party';
 import { Router } from '@angular/router';
 
 import {Message} from 'primeng/components/common/api';
+import { DateUtils } from '../../common/utils/date-utils';
 
 
 @Component({
@@ -36,7 +37,18 @@ export class PartySearchComponent implements OnInit {
       .subscribe((result) => {
         this.partyResults = result;
         this.showNumberOfRecordsFound(result.length);
+
+        this.setPartiesAge();
+
       });
+  }
+
+  setPartiesAge(){
+    if(this.partyResults.length > 0){
+      this.partyResults.map( p => {
+        p.age = DateUtils.calculateAge(p.dob);
+      })
+    }
   }
 
   showNumberOfRecordsFound(num){
