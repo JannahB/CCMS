@@ -237,6 +237,7 @@
 
     <!-- EMAILS  -->
     <p-fieldset legend="Emails" toggleable="true" collapsed="true">
+
       <div class="ui-g form-group" *ngIf="party">
         <div class="ui-g-12">
           <p-dataTable [value]="party?.emails"
@@ -272,72 +273,95 @@
         </div>
 
         <div class="ui-g-12" *ngIf="selectedEmail">
-          <h3 class="mt-0">{{ newEmailMode ? 'New' : 'Edit'}} Email</h3>
+          <form #emailForm="ngForm" novalidate>
 
-          <div class="ui-g-12 ui-md-6">
-            <div class="ui-g-12 mb-20">
-              <label class="minimal primary block">Email Type</label>
-              <p-dropdown
-                  placeholder="choose type"
-                  styleClass="width-full"
-                  [options]="emailTypes"
-                  [(ngModel)]="selectedEmail.emailAddressType"
-                  (onChange)="emailTypeOnChange($event)">
-              </p-dropdown>
+            <h3 class="mt-0">{{ newEmailMode ? 'New' : 'Edit'}} Email</h3>
+            <div class="ui-g-12 ui-md-6">
+              <div class="ui-g-12 mb-20">
+                <label class="minimal primary block">Email Type</label>
+                <p-dropdown name="ddEmailType" #ddEmailType="ngModel"
+                    placeholder="choose type"
+                    styleClass="width-full"
+                    [required]="true"
+                    [options]="emailTypes"
+                    [(ngModel)]="selectedEmail.emailAddressType"
+                    (onChange)="emailTypeOnChange($event)">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="ddEmailType.errors?.required && ddEmailType.touched" >
+                      Please choose a Email Type
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-20">
+                <span class="md-inputfield">
+                    <input type="email" name="tiEmail" #tiEmail="ngModel"
+                          [required]="true"
+                          [email]="true"
+                          [(ngModel)]="selectedEmail.emailAddress"
+                          type="text" pInputText>
+                    <label>Email Address</label>
+                </span>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="tiEmail.errors?.required && tiEmail.touched" >
+                      Please enter an email address
+                </div>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="tiEmail.errors?.email && tiEmail.touched" >
+                      Please enter a valid email address
+                </div>
+              </div>
             </div>
 
-            <div class="ui-g-12 mb-20">
-              <span class="md-inputfield">
-                  <input [(ngModel)]="selectedEmail.emailAddress"
-                        type="text" pInputText>
-                  <label>Email Address</label>
-              </span>
-            </div>
+            <div class="ui-g-12 ui-md-6">
 
-          </div>
-
-          <div class="ui-g-12 ui-md-6">
-
-            <div class="ui-g-12 mb-0">
-              <label class="minimal primary block">Start Date</label>
-              <p-calendar id="emailStartDate"
-                placeholder="Start Date"
-                [(ngModel)]="selectedEmail.startDate"
-                [yearNavigator]="true"
-                yearRange="2000:2030"
-                [showIcon]="true">
-              </p-calendar>
-            </div>
-
-            <div class="ui-g-12  mb-0">
-              <label class="minimal primary block">End Date</label>
-              <p-calendar id="emailEndDate"
-                  placeholder="End Date"
-                  [(ngModel)]="selectedEmail.endDate"
+              <div class="ui-g-12 mb-0">
+                <label class="minimal primary block">Start Date</label>
+                <p-calendar id="emailStartDate" name="emailStartDate" #emailStartDate="ngModel"
+                  placeholder="Start Date"
+                  [required]="true"
+                  [(ngModel)]="selectedEmail.startDate"
                   [yearNavigator]="true"
                   yearRange="2000:2030"
                   [showIcon]="true">
                 </p-calendar>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="emailStartDate.errors?.required && emailStartDate.touched" >
+                      Please choose a Start Date
+                </div>
+              </div>
+
+              <div class="ui-g-12  mb-0">
+                <label class="minimal primary block">End Date</label>
+                <p-calendar id="emailEndDate" name="emailEndDate" #emailEndDate="ngModel"
+                    placeholder="End Date"
+                    [(ngModel)]="selectedEmail.endDate"
+                    [yearNavigator]="true"
+                    yearRange="2000:2030"
+                    [showIcon]="true">
+                  </p-calendar>
+              </div>
+
             </div>
+            <div class="ui-g-12 ta-r">
 
-          </div>
-          <div class="ui-g-12 ta-r">
-
-            <button type="button"
-                    label="Cancel"
-                    class="ui-button-secondary mr-15"
-                    (click)="cancelEmailEdit()"
-                    icon="ui-icon-clear"
-                    pButton></button>
-            <button type="button"
-                    label="Save"
-                    class=""
-                    (click)="saveEmail()"
-                    icon="ui-icon-check"
-                    pButton></button>
-          </div>
+              <button type="button"
+                      label="Cancel"
+                      class="ui-button-secondary mr-15"
+                      (click)="cancelEmailEdit()"
+                      icon="ui-icon-clear"
+                      pButton></button>
+              <button type="button"
+                      label="Save"
+                      class=""
+                      (click)="saveEmail()"
+                      icon="ui-icon-check"
+                      pButton></button>
+            </div>
+          </form>
         </div>
       </div>
+
     </p-fieldset>
 
     <!-- PHONES -->
