@@ -16,6 +16,8 @@ import { LookupService } from '../../common/services/http/lookup.service';
 import { EventType } from '../../common/entities/EventType';
 import { CourtLocation } from '../../common/entities/CourtLocation';
 import { CaseEvent } from '../../common/entities/CaseEvent';
+import { AdminService } from '../../common/services/http/admin.service';
+import { ToastService } from '../../common/services/utility/toast.service';
 
 @Component({
   selector: 'app-admin-data',
@@ -24,7 +26,7 @@ import { CaseEvent } from '../../common/entities/CaseEvent';
 })
 export class AdminDataComponent implements OnInit {
 
-  iSaySo:boolean = true;
+  itemsListVisible:boolean = true;
 
   refDataTables: any[];
   selectedTable: any;
@@ -59,7 +61,9 @@ export class AdminDataComponent implements OnInit {
 
   constructor(
     private breadCrumbSvc:BreadcrumbService,
-    private lookupSvc: LookupService
+    private lookupSvc: LookupService,
+    private adminSvc: AdminService,
+    private toastSvc: ToastService
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Admin Table Maintenance', routerLink: ['/admin-data'] }
@@ -93,7 +97,7 @@ export class AdminDataComponent implements OnInit {
         this.casePhaseTypes = results[1] as CasePhase[];
         this.caseStatusTypes = results[2] as CaseStatus[];
         this.casePartyRoleTypes = results[3] as CasePartyRole[];
-        this.identifierTypes = results[4] as any[];
+        this.identifierTypes = results[4] as Identifier[];
         this.iccsCodeTypes = results[5] as IccsCode[];
         this.eventTypes = results[6] as EventType[];
         this.hearingTypes = results[7] as HearingType[];
@@ -102,16 +106,15 @@ export class AdminDataComponent implements OnInit {
 
 
     this.refDataTables = [
-      { value: 1, label: "Case Type", data: 'caseTypes', idField:'caseTypeOID', tpl: this.tpl1 },
-      { value: 2, label: "Case Phase Type", data: 'casePhaseTypes', idField:'casePhaseOID', tpl: this.tpl2 },
-      { value: 3, label: "Case Status Type", data:'caseStatusTypes', idField:'statusOID', tpl: this.tpl1 },
-      { value: 4, label: "Case Party Role Type", data:'casePartyRoleTypes', idField:'casePartyRoleOID', tpl: this.tpl3 },
-      { value: 5, label: "Party Identifier Type", data:'identifierTypes', idField:'id', tpl: this.tpl1 },
-      { value: 6, label: "ICCS Code", data:'iccsCodeTypes', idField:'iccsCodeOID', tpl: this.tpl4 },
-      { value: 7, label: "Event Type", data: 'eventTypes', idField:'eventTypeOID', tpl: this.tpl5 },
-      { value: 8, label: "Hearing Type", data:'hearingTypes', idField:'hearingTypeOID', tpl: this.tpl6 },
-      { value: 9, label: "Court Location", data:'locationTypes', idField:'locationOID', tpl: this.tpl1 }
-
+      { value: 1, tpl: this.tpl1, label: "Case Type", data: 'caseTypes', idField:'caseTypeOID', dataType: new CaseType(), saveEP:'saveCaseType', fetchEP:'FetchCaseType' },
+      { value: 2, tpl: this.tpl2, label: "Case Phase Type", data: 'casePhaseTypes', idField:'casePhaseOID', dataType: new CasePhase(), saveEP:'saveCasePhase', fetchEP:'FetchPhaseByType' },
+      { value: 3, tpl: this.tpl1, label: "Case Status Type", data:'caseStatusTypes', idField:'statusOID', dataType: new CaseStatus(), saveEP:'saveCaseStatus', fetchEP:'FetchCaseStatus' },
+      { value: 4, tpl: this.tpl3, label: "Case Party Role Type", data:'casePartyRoleTypes', idField:'casePartyRoleOID', dataType: new CasePartyRole(), saveEP:'saveCasePartyRole', fetchEP:'FetchCasePartyRole' },
+      { value: 5, tpl: this.tpl1, label: "Party Identifier Type", data:'identifierTypes', idField:'id', dataType: new Identifier(), saveEP:'savePersonalIdentifier', fetchEP:'FetchPersonIdentificationType' },
+      { value: 6, tpl: this.tpl4, label: "ICCS Code", data:'iccsCodeTypes', idField:'iccsCodeOID', dataType: new IccsCode(), saveEP:'saveICCSCode', fetchEP:'FetchICCSCodeParent' },
+      { value: 7, tpl: this.tpl5, label: "Event Type", data: 'eventTypes', idField:'eventTypeOID', dataType: new EventType(), saveEP:'saveEventType', fetchEP:'FetchEventType' },
+      { value: 8, tpl: this.tpl6, label: "Hearing Type", data:'hearingTypes', idField:'hearingTypeOID', dataType: new HearingType(), saveEP:'saveHearingType', fetchEP:'FetchHearingType' },
+      { value: 9, tpl: this.tpl1, label: "Court Location", data:'locationTypes', idField:'locationOID', dataType: new CourtLocation(), saveEP:'saveCourtLocationType', fetchEP:'FetchHearingLocation' },
     ];
   }
 
@@ -119,10 +122,11 @@ export class AdminDataComponent implements OnInit {
     this.selectedTableId = event.value;
     this.selectedTable = this.refDataTables.find((type) => type.value ==  event.value);
     this.selectedTableIdField = this.selectedTable['idField'];
-    this.selectedTableItems = this[this.selectedTable.data];
-    this.selectedItem = this.selectedTableItems[0];
     this.selectedTableLabel = this.selectedTable['label'];
     this.selectedTemplate = this.selectedTable['tpl'];
+    this.selectedTableItems = this[this.selectedTable.data];
+
+    this.selectedItem = this.selectedTableItems[0];
 
     console.log('selectedTable', this.selectedTable);
     console.log('selectedTableItems', this.selectedTableItems);
@@ -146,10 +150,45 @@ export class AdminDataComponent implements OnInit {
 
   }
 
+  createNewItem() {
+    this.selectedItem = this.selectedTable['dataType'];
+  }
+
   saveDataItem(){
+
+    let ep = this.selectedTable['saveEP'];
+    this.adminSvc[ep](this.selectedItem).subscribe( result => {
+      console.log('result', result);
+      this.refreshList();
+      this.toastSvc.showSuccessMessage('Item Saved');
+    },
+    (error) => {
+      console.log(error);
+      this.toastSvc.showErrorMessage('There was an error saving the item.');
+    },
+    () => {
+      // final
+    })
 
   }
 
+  refreshList() {
+    let fetchEP = this.selectedTable['fetchEP'];
+    this.itemsListVisible = false;
+    this.lookupSvc.fetchLookup(fetchEP).subscribe(result => {
+      this.selectedTableItems = result;
+      this.selectedTable['data'] = result;
+      this.itemsListVisible = true;
+    },
+    (error) => {
+      console.log(error);
+      this.toastSvc.showErrorMessage('There was an error fetching items.');
+      this.itemsListVisible = true;
+    },
+    () => {
+      this.itemsListVisible = true;
+    })
+  }
 
 
   // -------------------

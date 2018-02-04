@@ -30,7 +30,7 @@
         <p *ngIf="!selectedItem && selectedTableItems && selectedTableItems.length"
             class="muted-label uc">Choose a Data Item below</p>
         <p-listbox
-            *ngIf="iSaySo"
+            *ngIf="itemsListVisible"
             styleClass="data-items-listbox"
             [options]="selectedTableItems"
             optionLabel="name"
@@ -42,7 +42,7 @@
               type="button" pButton
               *ngIf="selectedTable"
               class="secondary width-full outline mt-5"
-              (click)="newRefDataItem()"
+              (click)="createNewItem()"
               icon="ui-icon-add"></button>
       </div>
 
