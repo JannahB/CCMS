@@ -105,6 +105,7 @@ import { GlobalErrorHandlerService } from './common/services/utility/global-erro
 import { AuthenticationModel } from './common/model/authentication-model';
 import { UserService } from './common/services/utility/user.service';
 import { DropdownPipe } from './common/pipes/dropdown.pipe';
+import { AdminService } from './common/services/http/admin.service';
 
 
 
@@ -216,6 +217,7 @@ import { DropdownPipe } from './common/pipes/dropdown.pipe';
         LocalStorageService,
         UserService,
         DropdownPipe,
+        AdminService,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthorizationInterceptor,
