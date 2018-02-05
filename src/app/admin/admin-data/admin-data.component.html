@@ -33,8 +33,8 @@
             *ngIf="itemsListVisible"
             styleClass="data-items-listbox"
             [options]="selectedTableItems"
-            optionLabel="name"
-            dataKey="{{selectedTableIdField}}"
+            optionLabel="{{selectedItemLabelField}}"
+            dataKey="{{selectedItemIdField}}"
             [(ngModel)]="selectedItem"
             (onChange)="selectedItemChanged($event)">
         </p-listbox>
@@ -82,12 +82,26 @@
       <div class="ui-g-12">
         <span class="md-inputfield">
           <input pInputText id="tiName" name="tiName" #tiName="ngModel" class="width-full"
+                  [required]="true"
                   [(ngModel)]="selectedItem.name"/>
           <label for="tiName">Name</label>
         </span>
         <div class="ui-message ui-messages-error ui-corner-all"
               *ngIf="tiName.errors?.required && tiName.touched" >
               Please enter a type Name
+        </div>
+      </div>
+
+      <!-- SHORT NAME -->
+      <div class="ui-g-12">
+        <span class="md-inputfield">
+          <input pInputText id="tiShortName" name="tiShortName" #tiShortName="ngModel" class="width-full"
+                  [(ngModel)]="selectedItem.shortName"/>
+          <label for="tiName">Short Name</label>
+        </span>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiShortName.errors?.required && tiShortName.touched" >
+              Please enter a Short Name
         </div>
       </div>
 
@@ -168,6 +182,19 @@
         <div class="ui-message ui-messages-error ui-corner-all"
               *ngIf="tiName.errors?.required && tiName.touched" >
               Please enter a type Name
+        </div>
+      </div>
+
+      <!-- SHORT NAME -->
+      <div class="ui-g-12">
+        <span class="md-inputfield">
+          <input pInputText id="tiShortName" name="tiShortName" #tiShortName="ngModel" class="width-full"
+                  [(ngModel)]="selectedItem.shortName"/>
+          <label for="tiName">Short Name</label>
+        </span>
+        <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiShortName.errors?.required && tiShortName.touched" >
+              Please enter a Short Name
         </div>
       </div>
 
@@ -294,7 +321,7 @@
       <div class="ui-g-12">
         <span class="md-inputfield">
           <input pInputText id="tiName" name="tiName" #tiName="ngModel" class="width-full"
-                  [(ngModel)]="selectedItem.name"/>
+                  [(ngModel)]="selectedItem[selectedItemLabelField]"/>
           <label for="tiName">Category Name</label>
         </span>
         <div class="ui-message ui-messages-error ui-corner-all"
@@ -309,7 +336,7 @@
         <p-dropdown name="ddCategoryType" id="ddCategoryType" #ddCategoryType="ngModel" placeholder="choose Category Type..."
                     [required]="true"
                     [options]="iccsCodeTypes"
-                    optionLabel="name"
+                    optionLabel="selectedItem[selectedItemLabelField]"
                     [(ngModel)]="selectedItem.iccsCodeOID"
                     (onChange)="onCategoryTypeChanged($event)"
                     styleClass="width-full">
