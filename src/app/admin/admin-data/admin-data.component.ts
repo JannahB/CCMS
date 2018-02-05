@@ -31,9 +31,10 @@ export class AdminDataComponent implements OnInit {
   refDataTables: any[];
   selectedTable: any;
   selectedTableId: number;
-  selectedTableIdField: string;
+  selectedItemIdField: string;
   selectedTableItems: any[];
   selectedItem: any;
+  selectedItemLabelField: string;
   selectedItemCopy: any;
   selectedTableLabel: string;
 
@@ -106,29 +107,31 @@ export class AdminDataComponent implements OnInit {
 
 
     this.refDataTables = [
-      { value: 1, tpl: this.tpl1, label: "Case Type", data: 'caseTypes', idField:'caseTypeOID', dataType: new CaseType(), saveEP:'saveCaseType', fetchEP:'FetchCaseType' },
-      { value: 2, tpl: this.tpl2, label: "Case Phase Type", data: 'casePhaseTypes', idField:'casePhaseOID', dataType: new CasePhase(), saveEP:'saveCasePhase', fetchEP:'FetchPhaseByType' },
-      { value: 3, tpl: this.tpl1, label: "Case Status Type", data:'caseStatusTypes', idField:'statusOID', dataType: new CaseStatus(), saveEP:'saveCaseStatus', fetchEP:'FetchCaseStatus' },
-      { value: 4, tpl: this.tpl3, label: "Case Party Role Type", data:'casePartyRoleTypes', idField:'casePartyRoleOID', dataType: new CasePartyRole(), saveEP:'saveCasePartyRole', fetchEP:'FetchCasePartyRole' },
-      { value: 5, tpl: this.tpl1, label: "Party Identifier Type", data:'identifierTypes', idField:'id', dataType: new Identifier(), saveEP:'savePersonalIdentifier', fetchEP:'FetchPersonIdentificationType' },
-      { value: 6, tpl: this.tpl4, label: "ICCS Code", data:'iccsCodeTypes', idField:'iccsCodeOID', dataType: new IccsCode(), saveEP:'saveICCSCode', fetchEP:'FetchICCSCodeParent' },
-      { value: 7, tpl: this.tpl5, label: "Event Type", data: 'eventTypes', idField:'eventTypeOID', dataType: new EventType(), saveEP:'saveEventType', fetchEP:'FetchEventType' },
-      { value: 8, tpl: this.tpl6, label: "Hearing Type", data:'hearingTypes', idField:'hearingTypeOID', dataType: new HearingType(), saveEP:'saveHearingType', fetchEP:'FetchHearingType' },
-      { value: 9, tpl: this.tpl1, label: "Court Location", data:'locationTypes', idField:'locationOID', dataType: new CourtLocation(), saveEP:'saveCourtLocationType', fetchEP:'FetchHearingLocation' },
+      { value: 1, tpl: this.tpl1, label: "Case Type", data: 'caseTypes', labelField:'name', idField:'caseTypeOID', dataType: new CaseType(), saveEP:'saveCaseType', fetchEP:'FetchCaseType' },
+      { value: 2, tpl: this.tpl2, label: "Case Phase Type", data: 'casePhaseTypes', labelField:'name', idField:'casePhaseOID', dataType: new CasePhase(), saveEP:'saveCasePhase', fetchEP:'FetchPhaseByType' },
+      { value: 3, tpl: this.tpl1, label: "Case Status Type", data:'caseStatusTypes', labelField:'name', idField:'statusOID', dataType: new CaseStatus(), saveEP:'saveCaseStatus', fetchEP:'FetchCaseStatus' },
+      { value: 4, tpl: this.tpl3, label: "Case Party Role Type", data:'casePartyRoleTypes', labelField:'name', idField:'casePartyRoleOID', dataType: new CasePartyRole(), saveEP:'saveCasePartyRole', fetchEP:'FetchCasePartyRole' },
+      { value: 5, tpl: this.tpl1, label: "Party Identifier Type", data:'identifierTypes', labelField:'name', idField:'id', dataType: new Identifier(), saveEP:'savePersonalIdentifier', fetchEP:'FetchPersonIdentificationType' },
+      { value: 6, tpl: this.tpl4, label: "ICCS Code", data:'iccsCodeTypes', labelField:'categoryName', idField:'iccsCodeOID', dataType: new IccsCode(), saveEP:'saveICCSCode', fetchEP:'FetchICCSCodeParent' },
+      { value: 7, tpl: this.tpl5, label: "Event Type", data: 'eventTypes', labelField:'eventTypeName', idField:'eventTypeOID', dataType: new EventType(), saveEP:'saveEventType', fetchEP:'FetchEventType' },
+      { value: 8, tpl: this.tpl6, label: "Hearing Type", data:'hearingTypes', labelField:'hearingName', idField:'hearingTypeOID', dataType: new HearingType(), saveEP:'saveHearingType', fetchEP:'FetchHearingType' },
+      { value: 9, tpl: this.tpl1, label: "Court Location", data:'locationTypes', labelField:'locationID', idField:'locationOID', dataType: new CourtLocation(), saveEP:'saveCourtLocationType', fetchEP:'FetchHearingLocation' },
     ];
   }
 
   refTableSelected(event) {
     this.selectedTableId = event.value;
     this.selectedTable = this.refDataTables.find((type) => type.value ==  event.value);
-    this.selectedTableIdField = this.selectedTable['idField'];
+    this.selectedItemIdField = this.selectedTable['idField'];
     this.selectedTableLabel = this.selectedTable['label'];
     this.selectedTemplate = this.selectedTable['tpl'];
     this.selectedTableItems = this[this.selectedTable.data];
 
     this.selectedItem = this.selectedTableItems[0];
+    this.selectedItemLabelField = this.selectedTable['labelField']
 
-    console.log('selectedTable', this.selectedTable);
+
+    // console.log('selectedTable', this.selectedTable);
     console.log('selectedTableItems', this.selectedTableItems);
   }
 
