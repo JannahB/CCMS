@@ -1,3 +1,210 @@
-<p>
-  admin-users works!
-</p>
+<div class="ui-g">
+
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0">
+    <h1 class="page-header mt-0">User Management</h1>
+  </div>
+
+  <!-- FIRST SECTION -->
+  <div class="ui-g-12 card">
+    <form (ngSubmit)="onAddNewUser()" #addUserForm="ngForm" novalidate>
+
+      <div class="form-group">
+
+        <div class="ui-g-12 ph-10">
+          <div class="ui-g-12 ui-md-8">
+              <h2 class="mb-0">User Details</h2>
+          </div>
+          <div class="ui-g-12 ui-md-4 ta-r pb-0">
+            <button type="button"
+                    (click)="saveUser()"
+                    label="Save User"
+                    icon="ui-icon-check"
+                    class="btn-big" pButton
+                    [disabled]="!addUserForm.form.valid"></button>
+          </div>
+        </div>
+
+        <!-- FIRST NAME -->
+        <div class="ui-g-12 ui-md-6 pad-20">
+          <span class="md-inputfield">
+            <input name="tiFirstName" #tiFirstName="ngModel" class="width-full"
+                [(ngModel)]="user.firstName" [required]="true" type="text"
+                pInputText>
+            <label>First Name</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiFirstName.errors?.required && tiFirstName.touched">
+            Please enter a First Name
+          </div>
+        </div>
+
+        <!-- LAST NAME -->
+        <div class="ui-g-12 ui-md-6 pad-20">
+          <span class="md-inputfield">
+            <input name="tiLastName" #tiLastName="ngModel" class="width-full"
+                [(ngModel)]="user.lastName" [required]="true" type="text"
+                pInputText>
+            <label>Last Name</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiLastName.errors?.required && tiLastName.touched">
+            Please enter a Last Name
+          </div>
+        </div>
+
+        <!-- EMAIL ADDRESS -->
+        <div class="ui-g-12 ui-md-6 pad-20">
+          <span class="md-inputfield">
+            <input type="email" name="tiEmail" #tiEmail="ngModel" class="width-full"
+                [required]="true" [email]="true" [(ngModel)]="user.emailAddress" type="text"
+                pInputText>
+            <label>Email Address</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiEmail.errors?.required && tiEmail.touched">
+            Please enter an email address
+          </div>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiEmail.errors?.email && tiEmail.touched">
+            Please enter a valid email address
+          </div>
+        </div>
+
+
+        <!-- USER NAME -->
+        <div class="ui-g-12 ui-md-6 pad-20">
+          <span class="md-inputfield">
+            <input name="tiUserName" #tiUserName="ngModel" class="width-full"
+                [(ngModel)]="user.username" [required]="true" type="text"
+                pInputText>
+            <label>User Name</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiUserName.errors?.required && tiUserName.touched">
+            Please enter a User Name
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="ui-g-12 ui-md-6 pad-20">
+          <span class="md-inputfield">
+            <input name="tiUserPwd" #tiUserPwd="ngModel" class="width-full"
+                [(ngModel)]="user.password" [required]="true" type="password"
+                pInputText>
+            <label>Password</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiUserPwd.errors?.required && tiUserPwd.touched">
+            Please enter a Password for the User
+          </div>
+        </div>
+
+        <!-- PASSWORD CONFIRM -->
+        <div class="ui-g-12 ui-md-6 pad-20">
+          <span class="md-inputfield">
+            <input name="tiUserPwd2" #tiUserPwd2="ngModel" class="width-full" [(ngModel)]="user.password2"
+                [required]="true" type="password"
+                pInputText>
+            <label>Confirm Password</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiUserPwd2.errors?.required && tiUserPwd2.touched">
+            Please enter a Confirmation Password for the User
+          </div>
+        </div>
+
+
+        <!-- ADD COURTS & ROLES SECTION  -->
+
+        <div class="ui-g-12 mt-0">
+          <div class="ui-g-12 ui-md-6">
+            <h2 class="mb-10">Courts &amp; Roles</h2>
+          </div>
+          <div class="ui-g-12 ui-md-6 ta-r mt-20">
+            <button type="button" (click)="addUserCourt();" label="Add Court &amp; Role"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+                pButton></button>
+          </div>
+
+          <!-- COURTS & ROLES -->
+
+          <div class="ui-g-12" *ngFor="let court of user.authorizedCourts; let i = index">
+            <div class="ui-g-5">
+              <label class="minimal primary block">Court</label>
+              <p-dropdown placeholder="-" name="ddCourt" #ddCourt="ngModel"
+                  optionLabel="courtName"
+                  [options]="courts"
+                  [(ngModel)]="selectedCourt"
+                  (onChange)="courtOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+            </div>
+            <div class="ui-g-5">
+              <label class="minimal primary block">Staff Roles</label>
+              <p-multiSelect name="msStaffRoles" #msStaffRoles="ngModel"
+                  [options]="staffRoles"
+                  optionLabel="staffRoleName"
+                  [(ngModel)]="selectedStaffRoles"
+                  (onChange)="onFilterStaffRoles($event)"
+                  [showToggleAll]="false"
+                  [filter]="false"
+                  styleClass="width-full">
+                  <!-- defaultLabel="Show All" -->
+              </p-multiSelect>
+            </div>
+            <div class="ui-g-2 ta-r mt-15">
+              <i class="material-icons delete-icon" (click)="requestDeleteCourt(i)">delete</i>
+            </div>
+          </div>
+
+          <button type="button" (click)="addUserCourt();" label="Add Court &amp; Role"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+                pButton></button>
+
+        </div>
+
+        <!-- SAVE BUTTON -->
+        <div class="ui-g-12 ph-10">
+          <div class="ui-g-12 ta-r">
+            <button type="button"
+                    (click)="saveUser()"
+                    label="Save User"
+                    icon="ui-icon-check"
+                    class="btn-big" pButton
+                    [disabled]="!addUserForm.form.valid"></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+
+  <!-- SEARCH USER SECTION -->
+  <div class="ui-g-12 card">
+
+    <div class="ui-g-12 mt-20 ta-c">
+      <button type="submit" label="Search" icon="ui-icon-search" class="mr-20" pButton></button>
+      <button type="button" (click)="onReset()" label="Reset" icon="ui-icon-autorenew" class="ui-button-secondary " pButton></button>
+    </div>
+
+    <div class="ui-g-12 mv-20 pos-relative">
+      <loading-bar [visible]="isSearcing" [message]="'searching...'"></loading-bar>
+      <h2>Search Case Results</h2>
+      <p-dataTable [value]="caseResults" selectionMode="single" [(selection)]="selectedCase" (onRowSelect)="caseOnRowSelect($event)"
+        dataKey="caseOID" #dtCaseResults>
+        <p-column field="caseNumber" header="Case Number" [style]="{'width':'13%'}"></p-column>
+        <p-column field="caseCaption" header="Caption" [style]="{'width':'25%'}"></p-column>
+        <p-column field="caseType.name" header="Case Type" [style]="{'width':'15%'}"></p-column>
+        <p-column field="caseStatus.name" header="Case Status" [style]="{'width':'15%'}"></p-column>
+        <p-column field="casePhase.name" header="Case Phase" [style]="{'width':'15%'}"></p-column>
+        <p-column styleClass="col-button" header="View" [style]="{'width':'8%'}">
+          <ng-template let-item="rowData" pTemplate="body">
+            <i class="material-icons" (click)="caseOnRowSelect(item)">search</i>
+          </ng-template>
+        </p-column>
+      </p-dataTable>
+    </div>
+  </div>
+  <!-- //END SECOND CARD -->
+</div>
