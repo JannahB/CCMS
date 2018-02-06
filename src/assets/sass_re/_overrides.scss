@@ -72,7 +72,7 @@ body .ui-datepicker .ui-datepicker-header select.ui-datepicker-year {
 // Remove L/R gutters on phone
 @media (max-width: 600px) {
 
-  .layout-container .layout-main {
+  .layout-container .layout-main .layout-content{
     padding-left: 2px;
     padding-right: 2px;
   }
