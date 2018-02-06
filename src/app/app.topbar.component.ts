@@ -32,7 +32,7 @@ import { GlobalState } from './common/services/state/global.state';
                 </a>
                 -->
                 <a id="topbar-menu-button" href="#" (click)="app.onTopbarMenuButtonClick($event)">
-                    <i class="material-icons">menu</i>
+                    <i class="material-icons">more_vert</i>
                 </a>
 
                 <ul class="topbar-items animated fadeInDown" [ngClass]="{'topbar-items-visible': app.topbarMenuActive}">
