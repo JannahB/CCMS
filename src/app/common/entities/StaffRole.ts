@@ -2,10 +2,10 @@ import { Party } from './Party';
 
 export class StaffRole {
 
-  courtOID: number; 
-  ccmsAdmin: boolean; 
-  judicialOfficer: boolean; 
-  staffRoleName: string;
-  staffRoleOID: number; 
-  
+  courtOID: number = 0;
+  ccmsAdmin: boolean = false;
+  judicialOfficer: boolean = false;
+  staffRoleName: string = "";
+  staffRoleOID: number = 0;
+
 }
