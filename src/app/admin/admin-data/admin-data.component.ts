@@ -16,7 +16,7 @@ import { LookupService } from '../../common/services/http/lookup.service';
 import { EventType } from '../../common/entities/EventType';
 import { CourtLocation } from '../../common/entities/CourtLocation';
 import { CaseEvent } from '../../common/entities/CaseEvent';
-import { AdminService } from '../../common/services/http/admin.service';
+import { AdminDataService } from '../../common/services/http/admin-data.service';
 import { ToastService } from '../../common/services/utility/toast.service';
 
 @Component({
@@ -63,7 +63,7 @@ export class AdminDataComponent implements OnInit {
   constructor(
     private breadCrumbSvc:BreadcrumbService,
     private lookupSvc: LookupService,
-    private adminSvc: AdminService,
+    private adminSvc: AdminDataService,
     private toastSvc: ToastService
   ) {
     this.breadCrumbSvc.setItems([

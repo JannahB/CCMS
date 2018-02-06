@@ -17,7 +17,7 @@ import { HearingType } from '../../entities/HearingType';
 
 
 @Injectable()
-export class AdminService {
+export class AdminDataService {
 
   public static authenticationToken:string = null;
 
