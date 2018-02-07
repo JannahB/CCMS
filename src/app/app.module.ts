@@ -109,6 +109,7 @@ import { UserService } from './common/services/utility/user.service';
 import { DropdownPipe } from './common/pipes/dropdown.pipe';
 import { AdminDataService } from './common/services/http/admin-data.service';
 import { AdminUserService } from './common/services/http/admin-user.service';
+import { CourtService } from './common/services/http/court.service';
 
 
 
@@ -223,6 +224,7 @@ import { AdminUserService } from './common/services/http/admin-user.service';
         DropdownPipe,
         AdminDataService,
         AdminUserService,
+        CourtService,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthorizationInterceptor,
