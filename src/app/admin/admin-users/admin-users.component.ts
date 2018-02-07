@@ -141,13 +141,12 @@ export class AdminUsersComponent implements OnInit {
         console.log('user', user);
       },
       (error) => {
-        console.log(error);
+        console.error(error);
         this.loadingUser = false;
         this.toastSvc.showErrorMessage('There was an error saving the user.')
       },
       () => {
         this.loadingUser = false;
-
       });
     }
   }

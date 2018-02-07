@@ -21,7 +21,6 @@ import { CourtService } from './common/services/http/court.service';
 export class AppBreadcrumbComponent implements OnDestroy {
 
   loggedInUser: Party;
-
   subscription: Subscription;
   items: MenuItem[];
   selectedCourt:AuthorizedCourt;
