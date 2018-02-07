@@ -141,6 +141,19 @@ export class AdminDataComponent implements OnInit {
     console.log('selecteRefDataItem', this.selectedItem);
   }
 
+  refreshLookups() {
+    this.adminSvc.refreshLookupTables().subscribe( result => {
+      this.toastSvc.showSuccessMessage('Lookup Tables Refreshed');
+    },
+    (error) => {
+      console.error(error);
+      this.toastSvc.showErrorMessage('There was an error refreshing lookup tables.')
+    },
+    () => {
+      // finally
+    })
+  }
+
   resetAllForms(){
 
   }
