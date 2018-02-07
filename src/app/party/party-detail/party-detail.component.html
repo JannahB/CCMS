@@ -237,7 +237,6 @@
 
     <!-- EMAILS  -->
     <p-fieldset legend="Emails" toggleable="true" collapsed="true">
-
       <div class="ui-g form-group" *ngIf="party">
         <div class="ui-g-12">
           <p-dataTable [value]="party?.emails"
@@ -356,6 +355,7 @@
                       class=""
                       (click)="saveEmail()"
                       icon="ui-icon-check"
+                      [disabled]="!emailForm.form.valid"
                       pButton></button>
             </div>
           </form>
