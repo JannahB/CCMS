@@ -38,6 +38,17 @@ export class AdminDataService {
     return this.http.get<T[]>(url);
   }
 
+  refreshLookupTables() {
+    let url: string = this.getBaseUrl() + '/RefreshLookupTables';
+
+    return this.http.post(
+      url,
+      { headers:
+        { uiVersion: "2" }
+      }
+    );
+  }
+
   fetchPhaseByTypeLookup<T>(caseTypeOID):Observable<T[]> {
     let url: string = this.getBaseUrl() + '/FetchPhaseByType';
 

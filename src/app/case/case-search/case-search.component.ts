@@ -151,11 +151,11 @@ export class CaseSearchComponent implements OnInit {
 
   createAssocatedCase(event, item) {
     this.preventNavToCase = true;
-
-    event.preventDefault();
+    //event.preventDefault();
 
     this.caseSvc.createAssociatedCase(item.caseOID).subscribe( (result) => {
-      this.toastSvc.showSuccessMessage('Associated Case created.');
+      let assocCase:Case = result[0];
+      this.toastSvc.showSuccessMessage('Case:'+ assocCase.caseNumber , 'Associated Case Created.');
       this.preventNavToCase = false;
     },
     (error) => {
