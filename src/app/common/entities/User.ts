@@ -19,7 +19,7 @@ export class User {
   roles: StaffRole[] = [];
   notes: string = "";
   addresses: Address[] = [];
-  emails: Email[] = [];
+  emails: Email[] = [new Email()];
   phoneNumbers: PhoneNumber[] = [];
   identifiers: Identifier[] = [];
   interpreterRequiredIndicator: boolean = false;
