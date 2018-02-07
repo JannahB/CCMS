@@ -24,7 +24,8 @@ export class AdminUsersComponent implements OnInit {
   lookupSubscription: Subscription;
   user: User;
   selectedStaffRoles: StaffRole[];
-  selectedCourt: AuthorizedCourt;
+  selectedAuthCourt: AuthorizedCourt;
+  password2: string;
 
   constructor(
     private breadCrumbSvc:BreadcrumbService,
@@ -64,36 +65,108 @@ export class AdminUsersComponent implements OnInit {
   }
 
   /* User
-   -- roles: StaffRole[]
-   StaffRole
-   -- staffRoleOID: number;
-   -- courtOID: number;
-   -- staffRoleName: string;
-   -- judicialOfficer: boolean;
-   -- ccmsAdmin: boolean;
+   -- authorizedCourts
+     -- courtOID: number = 0;
+     -- locationCode: string = "";
+     -- courtName: string = "";
+     -- staffRoles: StaffRole[]
+         -- staffRoleOID: number;
+         -- courtOID: number;
+         -- staffRoleName: string;
+         -- judicialOfficer: boolean;
+         -- ccmsAdmin: boolean;
   */
   addNewUser() {
     this.user = new User();
     this.user.authorizedCourts = [];
-    this.addUserCourt();
+    this.addAuthCourt();
   }
 
-  addUserCourt() {
-    let courtLen = this.user.authorizedCourts.push(new AuthorizedCourt());
-    this.user.authorizedCourts[courtLen-1].staffRoles.push(new StaffRole());
+  addAuthCourt() {
+    let authCourtsLen = this.user.authorizedCourts.push(new AuthorizedCourt());
+    this.user.authorizedCourts[authCourtsLen-1].staffRoles.push(new StaffRole());
+    this.selectedAuthCourt = this.user.authorizedCourts[authCourtsLen-1];
+    console.log('this.user.authorizedCourts', this.user.authorizedCourts);
   }
 
-  courtOnChange(event) {
-    console.log('onChange', event);
+  courtOnChange(event, authCourtIdx) {
+    console.log('onChange', event, authCourtIdx);
+    // Set the OUTER selected AuthorizedCourt
+    this.selectedAuthCourt = this.user.authorizedCourts[authCourtIdx];
+    // Set the courtOID on the User object
+    this.user.authorizedCourts[authCourtIdx].courtOID = event.value.courtOID;
+    this.user.authorizedCourts[authCourtIdx].courtName = event.value.courtName;
+    this.user.authorizedCourts[authCourtIdx].locationCode = event.value.locationCode;
+
   }
 
-  onFilterStaffRoles(event) {
-    console.log('onFilterStaffRoles', event);
+  staffRolesOnChange(event, authCourtIdx) {
+    console.log('onFilterStaffRoles', event, authCourtIdx);
+    // Set the OUTER selected AuthorizedCourt
+    this.selectedAuthCourt = this.user.authorizedCourts[authCourtIdx];
+    this.user.authorizedCourts[authCourtIdx].staffRoles = event.value;
   }
 
-  requestDeleteCourt(idx){
-    console.log('requestDeleteCourt', idx)
-    this.user.authorizedCourts.splice(idx, 1);
+  getStaffRoleNames(staffRoles:StaffRole[]) {
+    let text:string = "";
+    staffRoles.map( staffRole => {
+      text += staffRole.staffRoleName +', ';
+    })
+    let lastCommaIdx = text.lastIndexOf(', ');
+    text = text.slice(0, lastCommaIdx);
+    return text;
+  }
+
+  requestDeleteAuthCourt(authCourtIdx){
+    console.log('requestDeleteCourt', authCourtIdx)
+    this.user.authorizedCourts.splice(authCourtIdx, 1);
+  }
+
+  saveUser(){
+    if(this.validateAuthCourts() && this.emailsSame()) {
+      console.log('Lets save the user');
+    }
+  }
+
+  private emailsSame():boolean {
+    if (this.user.password != this.password2){
+      this.toastSvc.showWarnMessage('Passwords must match.');
+      return false;
+    }
+    return true;
+  }
+
+  private validateAuthCourts():boolean {
+    let acs:AuthorizedCourt[] = this.user.authorizedCourts;
+    let courtOIDs = [];
+    if(!acs || acs.length < 1) {
+      this.toastSvc.showWarnMessage('Please add a court and role(s).');
+      return false;
+    }
+    acs.forEach(ac => {
+      if(!ac.courtOID || !ac.staffRoles.length){
+        this.toastSvc.showWarnMessage('One of your Authorized Courts needs a Court and/or Role selection.');
+        return false;
+      }
+      ac.staffRoles.forEach( sr => {
+        if(!sr.staffRoleOID) {
+          this.toastSvc.showWarnMessage('One of your Authorized Courts needs a Role selection.');
+          return false;
+        }
+      })
+
+      let idx:number = courtOIDs.findIndex( id => id == ac.courtOID);
+      if(idx > -1) {
+        this.toastSvc.showWarnMessage('Each Court can only be used once.', 'Duplicate Court');
+        return false;
+      }
+      courtOIDs.push(ac.courtOID);
+
+    });
+
+    console.log('We got clean courts!');
+    return true;
+
   }
 
 }

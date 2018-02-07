@@ -166,7 +166,8 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       this.taskSubscription = this.lookupSvc.fetchLookup<UserTask>('FetchUserTasks').subscribe(items => {
         this.userTasks = this.filteredUserTasks = items;
         this.isLoadingTasks = false;
-        this._state.notifyDataChanged('userTasks.count', items.length);
+        if(items)
+          this._state.notifyDataChanged('userTasks.count', items.length);
 
         if(userRefresh) {
           this.selectedTaskStatuses = null;

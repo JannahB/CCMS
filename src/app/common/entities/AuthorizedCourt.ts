@@ -15,9 +15,9 @@ import { CourtLocation } from './CourtLocation';
 
 export class AuthorizedCourt extends LookupEntity {
 
-  courtOID: number;
-  locationCode: string;
-  courtName: string;
+  courtOID: number = 0;
+  locationCode: string = "";
+  courtName: string = "";
   casePhases: CasePhase[];
   caseStatuses: CaseStatus[];
   caseTypes: CaseType[];
@@ -27,7 +27,7 @@ export class AuthorizedCourt extends LookupEntity {
   iccsCodes: IccsCode[];
   eventTypes: CaseEvent[];
   chargeFactors: ChargeFactor[];
-  courtLocations: CourtLocation[];
+  courtLocations: CourtLocation[] = [];
   staffRoles: StaffRole[] = [];
   personIDTypes: Identifier[];
   roles: Role[];
