@@ -5,7 +5,7 @@ export class UserDTO {
   lastName: string = "";
   password: string = "";
   userName: string = "";
-  email: string = "";
+  emails: any[] = [];          // [{emailAddress:"foo@bar.com"}]
   authorizedCourts:any[] // [{ "courtOID":"5", "roles":[ {"staffRoleOID":"1"} ]} ]}
 
 }

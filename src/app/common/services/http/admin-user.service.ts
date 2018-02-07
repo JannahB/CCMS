@@ -63,7 +63,7 @@ export class AdminUserService {
     userDTO.lastName = data.lastName;
     userDTO.userName = data.userName;
     userDTO.password = data.password;
-    userDTO.email = data.emails[0].emailAddress; // activate this when Aaron adds prop to DB
+    userDTO.emails = data.emails; // .push( {emailAddress: data.emails[0]}) //  data.emails[0].emailAddress; // activate this when Aaron adds prop to DB
     userDTO.authorizedCourts = this.convertCourts(data.authorizedCourts);
 
     return this.http.post<User>(
