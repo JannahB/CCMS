@@ -64,6 +64,8 @@ import {ToolbarModule} from 'primeng/primeng';
 import {TooltipModule} from 'primeng/primeng';
 import {TreeModule} from 'primeng/primeng';
 import {TreeTableModule} from 'primeng/primeng';
+import { CustomMaterialModule } from './common/modules/customMaterial.module';
+
 
 import {AppComponent} from './app.component';
 import {AppMenuComponent, AppSubMenuComponent} from './app.menu.component';
@@ -174,7 +176,8 @@ import { AdminUserService } from './common/services/http/admin-user.service';
         TooltipModule,
         TreeModule,
         TreeTableModule,
-        HttpClientModule
+        HttpClientModule,
+        CustomMaterialModule
     ],
     declarations: [
         AppComponent,
