@@ -7,7 +7,9 @@
 
   <!-- FIRST SECTION -->
   <div class="ui-g-12 card">
-    <form (ngSubmit)="onAddNewUser()" #addUserForm="ngForm" novalidate>
+    <loading-bar [visible]="loadingUser" [message]="loadingMessage"></loading-bar>
+
+    <form #addUserForm="ngForm" novalidate>
 
       <div class="form-group">
 
@@ -54,20 +56,24 @@
         </div>
 
         <!-- EMAIL ADDRESS -->
-        <div class="ui-g-12 ui-md-6 pad-20">
-          <span class="md-inputfield">
-            <input type="email" name="tiEmail" #tiEmail="ngModel" class="width-full"
-                [required]="true" [email]="true" [(ngModel)]="user.emailAddress" type="text"
-                pInputText>
-            <label>Email Address</label>
-          </span>
-          <div class="ui-message ui-messages-error ui-corner-all"
-              *ngIf="tiEmail.errors?.required && tiEmail.touched">
-            Please enter an email address
-          </div>
-          <div class="ui-message ui-messages-error ui-corner-all"
-              *ngIf="tiEmail.errors?.email && tiEmail.touched">
-            Please enter a valid email address
+        <div class="ui-g-12 ui-md-6 pad-20" >
+          <div *ngIf="user.emails.length">
+            <span class="md-inputfield">
+              <input type="text" type="email" name="tiEmail" #tiEmail="ngModel" class="width-full"
+                  [required]="true" [email]="true"
+                  [(ngModel)]="user.emails[0].emailAddress"
+                  (onChange)="emailChanged($event)"
+                  pInputText>
+              <label>Email Address</label>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiEmail.errors?.required && tiEmail.touched">
+              Please enter an email address
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiEmail.errors?.email && tiEmail.touched">
+              Please enter a valid email address
+            </div>
           </div>
         </div>
 
@@ -76,7 +82,7 @@
         <div class="ui-g-12 ui-md-6 pad-20">
           <span class="md-inputfield">
             <input name="tiUserName" #tiUserName="ngModel" class="width-full"
-                [(ngModel)]="user.username" [required]="true" type="text"
+                [(ngModel)]="user.userName" [required]="true" type="text"
                 pInputText>
             <label>User Name</label>
           </span>
@@ -121,7 +127,7 @@
             Password must be a minimum of 6 characters
           </div>
           <div class="ui-message ui-messages-error ui-corner-all"
-              *ngIf="user.password != password2 && tiUserPwd.touched">
+              *ngIf="password2?.length >= user.password?.length && user.password != password2 && tiUserPwd.touched">
             Passwords must be the same
           </div>
         </div>
@@ -182,7 +188,7 @@
         <div class="ui-g-12 ph-10">
           <div class="ui-g-12 ta-r">
             <button type="button"
-                    (click)="saveUser()"
+                    (click)="saveUser(addUserForm)"
                     label="Save User"
                     icon="ui-icon-check"
                     class="btn-big" pButton
