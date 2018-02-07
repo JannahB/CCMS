@@ -117,6 +117,14 @@ export class CaseSearchComponent implements OnInit {
           this.toastSvc.showInfoMessage('Please alter search criteria and try again.', 'No Results');
         }
         this.caseResults = result;
+      },
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error searching cases.');
+        this.isSearcing = false;
+      },
+      () => {
+        this.isSearcing = false;
       });
 
   }
@@ -130,12 +138,34 @@ export class CaseSearchComponent implements OnInit {
     this.selectedCasePartyRoleType = null;
   }
 
+  preventNavToCase:boolean = false;
+
   caseOnRowSelect(event) {
     console.log(event)
+    if(this.preventNavToCase) return;
+
     let caseId = event.data.caseOID;
-
     this.router.navigate(['/case-detail', caseId ]);
+  }
 
+
+  createAssocatedCase(event, item) {
+    this.preventNavToCase = true;
+
+    event.preventDefault();
+
+    this.caseSvc.createAssociatedCase(item.caseOID).subscribe( (result) => {
+      this.toastSvc.showSuccessMessage('Associated Case created.');
+      this.preventNavToCase = false;
+    },
+    (error) => {
+      console.log(error);
+      this.toastSvc.showErrorMessage('There was an error saving the item.');
+      this.preventNavToCase = false;
+    },
+    () => {
+      this.preventNavToCase = false;
+    })
   }
 
 }

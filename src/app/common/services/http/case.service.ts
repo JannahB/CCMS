@@ -128,6 +128,17 @@ export class CaseService extends HttpBaseService<Case> {
       });
   }
 
+  createAssociatedCase(caseOID: number){
+    let url: string = `${super.getBaseUrl()}/CreateAssociatedCase`;
+    let body: any = { caseOID: caseOID.toString()};
+
+    return this.http.post<Case>(url, body )
+      .map(res => {
+        let kase:Case = res;
+        return this.convertDates([kase]);
+      })
+  }
+
   private convertDates(kases:Case[]){
     if( !kases || !kases.length || Object.keys(kases).length === 0 || kases[0] == undefined){
       return [];

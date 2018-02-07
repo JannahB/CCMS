@@ -81,9 +81,9 @@
         <p-column field="caseType.name" header="Case Type" [style]="{'width':'15%'}"></p-column>
         <p-column field="caseStatus.name" header="Case Status" [style]="{'width':'15%'}"></p-column>
         <p-column field="casePhase.name" header="Case Phase" [style]="{'width':'15%'}"></p-column>
-        <p-column styleClass="col-button" header="View" [style]="{'width':'8%'}">
+        <p-column styleClass="col-button" header="Create Assoc Case" [style]="{'width':'8%'}">
           <ng-template let-item="rowData" pTemplate="body">
-            <i class="material-icons" (click)="caseOnRowSelect(item)">search</i>
+            <i class="material-icons" (click)="createAssocatedCase($event, item)">library_books</i>
           </ng-template>
         </p-column>
       </p-dataTable>
