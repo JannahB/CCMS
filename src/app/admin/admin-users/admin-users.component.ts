@@ -1,16 +1,16 @@
-import { AuthorizedCourt } from './../../common/entities/AuthorizedCourt';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import "rxjs/add/observable/forkJoin";
 
-import { AdminDataService } from '../../common/services/http/admin-data.service';
+import { AuthorizedCourt } from './../../common/entities/AuthorizedCourt';
 import { LookupService } from './../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../breadcrumb.service';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { Court } from '../../common/entities/Court';
 import { StaffRole } from '../../common/entities/StaffRole';
 import { User } from './../../common/entities/User';
+import { AdminUserService } from '../../common/services/http/admin-user.service';
 
 @Component({
   selector: 'app-admin-users',
@@ -26,11 +26,13 @@ export class AdminUsersComponent implements OnInit {
   selectedStaffRoles: StaffRole[];
   selectedAuthCourt: AuthorizedCourt;
   password2: string;
+  loadingUser: boolean = false;
+  loadingMessage: string = 'Loading user';
 
   constructor(
     private breadCrumbSvc:BreadcrumbService,
     private lookupSvc: LookupService,
-    private adminSvc: AdminDataService,
+    private adminSvc: AdminUserService,
     private toastSvc: ToastService
   ) {
     this.breadCrumbSvc.setItems([
@@ -86,28 +88,32 @@ export class AdminUsersComponent implements OnInit {
     let authCourtsLen = this.user.authorizedCourts.push(new AuthorizedCourt());
     this.user.authorizedCourts[authCourtsLen-1].staffRoles.push(new StaffRole());
     this.selectedAuthCourt = this.user.authorizedCourts[authCourtsLen-1];
-    console.log('this.user.authorizedCourts', this.user.authorizedCourts);
+    // console.log('this.user.authorizedCourts', this.user.authorizedCourts);
   }
 
   courtOnChange(event, authCourtIdx) {
-    console.log('onChange', event, authCourtIdx);
+    // console.log('onChange', event, authCourtIdx);
     // Set the OUTER selected AuthorizedCourt
     this.selectedAuthCourt = this.user.authorizedCourts[authCourtIdx];
     // Set the courtOID on the User object
     this.user.authorizedCourts[authCourtIdx].courtOID = event.value.courtOID;
     this.user.authorizedCourts[authCourtIdx].courtName = event.value.courtName;
     this.user.authorizedCourts[authCourtIdx].locationCode = event.value.locationCode;
-
   }
 
   staffRolesOnChange(event, authCourtIdx) {
-    console.log('onFilterStaffRoles', event, authCourtIdx);
+    // console.log('onFilterStaffRoles', event, authCourtIdx);
     // Set the OUTER selected AuthorizedCourt
     this.selectedAuthCourt = this.user.authorizedCourts[authCourtIdx];
     this.user.authorizedCourts[authCourtIdx].staffRoles = event.value;
   }
 
+  emailChanged(event){
+    this.user.emails[0].emailAddress = event.value;
+  }
+
   getStaffRoleNames(staffRoles:StaffRole[]) {
+    if(!staffRoles) return;
     let text:string = "";
     staffRoles.map( staffRole => {
       text += staffRole.staffRoleName +', ';
@@ -118,13 +124,31 @@ export class AdminUsersComponent implements OnInit {
   }
 
   requestDeleteAuthCourt(authCourtIdx){
-    console.log('requestDeleteCourt', authCourtIdx)
     this.user.authorizedCourts.splice(authCourtIdx, 1);
   }
 
-  saveUser(){
+  saveUser(addUserForm){
     if(this.validateAuthCourts() && this.emailsSame()) {
-      console.log('Lets save the user');
+      this.loadingMessage = 'Saving User';
+      this.loadingUser = true;
+
+      this.adminSvc
+      .saveUser(this.user)
+      .subscribe(user => {
+        this.loadingUser = false;
+        this.user = user[0];
+        this.toastSvc.showSuccessMessage('User '+user.firstName+' '+user.lastName+' saved.', 'User Saved!');
+        console.log('user', user);
+      },
+      (error) => {
+        console.log(error);
+        this.loadingUser = false;
+        this.toastSvc.showErrorMessage('There was an error saving the user.')
+      },
+      () => {
+        this.loadingUser = false;
+
+      });
     }
   }
 
@@ -164,10 +188,10 @@ export class AdminUsersComponent implements OnInit {
 
     });
 
-    console.log('We got clean courts!');
     return true;
-
   }
+
+
 
 }
 

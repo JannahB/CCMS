@@ -58,12 +58,12 @@ export class AdminUserService {
     let url: string = this.getBaseUrl() +'/SaveStaffParty';
 
     let userDTO: UserDTO = new UserDTO();
-    userDTO.partyOID = "0"
+    userDTO.partyOID = data.partyOID ? data.partyOID.toString() : "0";
     userDTO.firstName = data.firstName;
     userDTO.lastName = data.lastName;
     userDTO.userName = data.userName;
     userDTO.password = data.password;
-    // userDTO.email = data.emails[0].emailAddress; // activate this when Aaron adds prop to DB
+    userDTO.email = data.emails[0].emailAddress; // activate this when Aaron adds prop to DB
     userDTO.authorizedCourts = this.convertCourts(data.authorizedCourts);
 
     return this.http.post<User>(
@@ -79,7 +79,7 @@ export class AdminUserService {
     authCourts = courts.map(c => {
       return {
         courtOID: c.courtOID.toString(),
-        roles: c.roles.map( r => {
+        roles: c.staffRoles.map( r => {
           return { staffRoleOID: r.staffRoleOID.toString() }
         })
       }
