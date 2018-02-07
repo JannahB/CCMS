@@ -64,7 +64,7 @@ export class AppBreadcrumbComponent implements OnDestroy {
 
     // Call FetchCourt with courtOID
     let courtOID = event.value.courtOID;
-    this.courtSvc.fetchCourt(courtOID).subscribe( court => {
+    this.courtSvc.updateSelectedCourt(courtOID).subscribe( court => {
       this.selectedCourt = this.courts.find( ct => ct.courtOID == courtOID );
 
       this.toastSvc.showSuccessMessage('Changed to '+ this.selectedCourt.courtName+' '+this.selectedCourt.locationCode);

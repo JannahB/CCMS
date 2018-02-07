@@ -20,10 +20,10 @@ export class CourtService {
   constructor(@Inject(forwardRef(() => HttpClient)) protected http:HttpClient){}
 
 
-  public fetchCourt<T>(courtOID):Observable<T> {
+  public updateSelectedCourt<T>(courtOID):Observable<T> {
     if(!courtOID) return;
 
-    let url: string = this.getBaseUrl() + '/FetchCourt';
+    let url: string = this.getBaseUrl() + '/UpdateSelectedCourt';
 
     return this.http.post<T>(
       url,
