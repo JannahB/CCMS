@@ -319,11 +319,11 @@
                 <p-column field="eventType.eventTypeName" header="Event ID" [style]="{'width':'8%'}"></p-column>
                 <p-column field="eventType.description" header="Event Description" [style]="{'width':'25%'}"></p-column>
                 <p-column field="document.documentName" header="Document" styleClass="text-break" [style]="{'width':'35%'}"></p-column>
-                <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
+                <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons" (click)="requestViewCaseEvent(item)">search</i>
                     </ng-template>
-                </p-column>
+                </p-column> -->
               </p-dataTable>
 
             </div>
@@ -369,11 +369,11 @@
                   </ng-template>
                 </p-column>
                 <p-column field="taskType.name" header="Task Type" [style]="{'width':'38%'}"></p-column>
-                <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
+                <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons" (click)="requestViewTask(item)">search</i>
                     </ng-template>
-                </p-column>
+                </p-column> -->
               </p-dataTable>
 
             </div>
@@ -486,11 +486,11 @@
                           {{ item.judicialOfficer?.firstName + ' ' + item.judicialOfficer?.lastName }}
                       </ng-template>
                   </p-column>
-                  <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
+                  <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
                       <ng-template let-item="rowData" pTemplate="body">
                           <i class="material-icons" (click)="requestViewHearing(item)">search</i>
                       </ng-template>
-                  </p-column>
+                  </p-column> -->
               </p-dataTable>
 
             </div>
@@ -532,11 +532,11 @@
                         {{ item.judicialOfficial?.firstName + ' ' + item.judicialOfficial?.lastName }}
                     </ng-template>
                 </p-column>
-                <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
+                <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons" (click)="requestViewJudicialAssignment(item)">search</i>
                     </ng-template>
-                </p-column>
+                </p-column> -->
               </p-dataTable>
             </div>
             <div class="ui-g-12">
