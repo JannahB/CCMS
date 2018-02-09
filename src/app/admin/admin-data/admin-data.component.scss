@@ -2,3 +2,8 @@
   font-weight: 300;
   text-transform: uppercase;
 }
+
+::ng-deep p-datatable .ui-datatable {
+  overflow: scroll;
+  max-height: 280px;
+}
