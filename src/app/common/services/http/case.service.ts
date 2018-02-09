@@ -468,7 +468,7 @@ export class CaseService extends HttpBaseService<Case> {
     };
 
     event.caseOID = data.caseOID.toString();
-    event.initiatedByPartyOID = data.initiatedByParty.partyOID.toString();
+    event.initiatedByPartyOID = data.initiatedByParty ? data.initiatedByParty.partyOID.toString() : null;
     event.eventTypeOID = data.eventType.eventTypeOID.toString();
 
     if(data.caseEventOID){

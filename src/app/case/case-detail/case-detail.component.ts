@@ -1186,7 +1186,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   saveEvent(){
 
-    this.caseEvent.initiatedByParty = this.selectedInitiatedByParty.caseParty;
+    this.caseEvent.initiatedByParty = this.selectedInitiatedByParty && this.selectedInitiatedByParty.caseParty ? this.selectedInitiatedByParty.caseParty : null;
 
     this.caseSvc
       .saveCaseEvent(this.caseEvent)
