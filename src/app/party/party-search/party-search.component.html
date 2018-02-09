@@ -12,13 +12,13 @@
 
         <div class="form-group mt-20" >
           <div class="ui-g-12 ph-30 big-search">
-              <span class="md-inputfield">
-                  <input [(ngModel)]="partyNameText" name="tiName" type="text" class="width-full"  pInputText>
-                  <label>First or Last Name (partial)</label>
-              </span>
-              <div>
-                  <p-message severity="info" text="{{recordsFoundMessage}}" *ngIf="showRecordsFoundMessage"></p-message>
-              </div>
+            <span class="md-inputfield">
+              <input [(ngModel)]="partyNameText" name="tiName" type="text" class="width-full"  pInputText>
+              <label>First or Last Name (partial)</label>
+            </span>
+            <div>
+              <p-message severity="info" text="{{recordsFoundMessage}}" *ngIf="showRecordsFoundMessage"></p-message>
+            </div>
           </div>
 
 
@@ -35,29 +35,29 @@
       <!-- CASE PARTIES TABLE -->
 
       <div class="ui-g-12 mv-20">
-          <h2>Search Party Results</h2>
-          <p-dataTable [value]="partyResults" selectionMode="single" [(selection)]="selectedParty" (onRowSelect)="partyOnRowSelect($event)"
-            dataKey="partyOID" #dtPartyResults>
-            <p-column field="firstName" header="First Name" [style]="{'width':'13%'}"></p-column>
-            <p-column field="lastName" header="Last Name" [style]="{'width':'25%'}"></p-column>
-            <p-column field="dob" header="DOB" styleClass="ta-c" [style]="{'width':'15%'}">
-                <ng-template pTemplate="body" let-item="rowData">
-                    {{item.dob | date:'M/d/yyyy'}}
-                </ng-template>
-            </p-column>
-            <p-column field="age" header="Age" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>
-            <p-column field="sex" header="Sex" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>
-            <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'8%'}">
-              <ng-template let-item="rowData" pTemplate="body">
-                <i class="material-icons" (click)="requestViewParty(item)">search</i>
+        <h2>Search Party Results</h2>
+        <p-dataTable [value]="partyResults" selectionMode="single" [(selection)]="selectedParty" (onRowSelect)="partyOnRowSelect($event)"
+          dataKey="partyOID" #dtPartyResults>
+          <p-column field="firstName" header="First Name" [style]="{'width':'13%'}"></p-column>
+          <p-column field="lastName" header="Last Name" [style]="{'width':'25%'}"></p-column>
+          <p-column field="dob" header="DOB" styleClass="ta-c" [style]="{'width':'15%'}">
+              <ng-template pTemplate="body" let-item="rowData">
+                  {{item.dob | date:'M/d/yyyy'}}
               </ng-template>
-            </p-column> -->
-          </p-dataTable>
-        </div>
+          </p-column>
+          <p-column field="age" header="Age" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>
+          <p-column field="sex" header="Sex" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>
+          <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'8%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+              <i class="material-icons" (click)="requestViewParty(item)">search</i>
+            </ng-template>
+          </p-column> -->
+        </p-dataTable>
+      </div>
 
-        <div class="ui-g-12 mt-20 ta-c">
-          <button type="button" (click)="onNewParty()" label="New Party" icon="ui-icon-add" pButton></button>
-        </div>
+      <div class="ui-g-12 mt-20 ta-c">
+        <button type="button" (click)="onNewParty()" label="New Party" icon="ui-icon-add" pButton></button>
+      </div>
 
     </div>
     <!-- //END FISRT CARD -->

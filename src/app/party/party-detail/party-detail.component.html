@@ -140,11 +140,11 @@
                       {{item.endDate | date:'M/d/yyyy'}}
                   </ng-template>
               </p-column>
-              <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                   <ng-template let-identifier="rowData" pTemplate="body">
                       <i class="material-icons delete-icon" (click)="requestDeleteIdentifier(identifier)">delete</i>
                   </ng-template>
-              </p-column>
+              </p-column> -->
           </p-dataTable>
         </div>
         <div class="ui-g-12" *ngIf="!newIdentifierMode">
@@ -256,11 +256,11 @@
                       {{item.endDate | date:'M/d/yyyy'}}
                   </ng-template>
               </p-column>
-              <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                   <ng-template let-item="rowData" pTemplate="body">
                       <i class="material-icons delete-icon" (click)="requestDeleteEmail(item)">delete</i>
                   </ng-template>
-              </p-column>
+              </p-column> -->
           </p-dataTable>
         </div>
         <div class="ui-g-12" *ngIf="!newEmailMode">
@@ -387,11 +387,11 @@
                       {{item.endDate | date:'M/d/yyyy'}}
                   </ng-template>
               </p-column>
-              <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                   <ng-template let-item="rowData" pTemplate="body">
                       <i class="material-icons delete-icon" (click)="requestDeletePhone(item)">delete</i>
                   </ng-template>
-              </p-column>
+              </p-column> -->
           </p-dataTable>
         </div>
         <div class="ui-g-12" *ngIf="!newPhoneMode">
@@ -495,11 +495,11 @@
                       {{item.endDate | date:'M/d/yyyy'}}
                   </ng-template>
               </p-column>
-              <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                   <ng-template let-item="rowData" pTemplate="body">
                       <i class="material-icons delete-icon" (click)="requestDeleteAddress(item)">delete</i>
                   </ng-template>
-              </p-column>
+              </p-column> -->
           </p-dataTable>
         </div>
         <div class="ui-g-12" *ngIf="!newAddressMode">
