@@ -1297,7 +1297,7 @@
 
         <!-- EVENT DATE -->
         <div class="ui-g-12">
-          <label class="minimal primary block">Event ID</label>
+          <label class="minimal primary block">Event Date</label>
           <p-calendar id="dtEventDate" name="dtEventDate" placeholder="Event Date" #dtEventDate="ngModel"
               [(ngModel)]="caseEvent.eventDate"
               [showIcon]="true"
@@ -1327,13 +1327,15 @@
           </div>
         </div>
 
-        <div class="ui-md-12" *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
+        <div class="ui-md-12 mb-15" *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
           <label class="minimal primary block">Event Category</label>
           <div>{{caseEvent.eventType?.eventCategoryText}}</div>
         </div>
 
-        <!-- INITIATED BY -->
-        <div class="ui-g-12">
+        <!-- INITIATED BY
+          REMOVED ON 2/8/2018 PER AG
+        -->
+        <!-- <div class="ui-g-12">
           <label class="minimal primary block">Event Initiated By</label>
           <p-dropdown name="ddInitiator" id="ddInitiator" placeholder="choose initiator..." #ddInitiator="ngModel"
               [required]="true"
@@ -1351,7 +1353,7 @@
                 *ngIf="ddInitiator.errors?.required && ddInitiator.touched" >
                 Please select Initiator of the Event
           </div>
-        </div>
+        </div> -->
 
         <!-- ENTERED BY -->
         <div class="ui-g-12 mb-15" *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
@@ -1381,14 +1383,24 @@
         </div>
 
         <!-- EVENT DETAILS  -->
-        <div class="ui-g-12 mt-15">
+
+        <!-- <div class="ui-g-12 mt-15">
           <span class="md-inputfield">
             <input pInputText id="tiEventDesc" name="tiEventDesc" class="width-full"
                     [(ngModel)]="caseEvent.description"/>
             <label>Event Details</label>
           </span>
-        </div>
+        </div> -->
 
+        <div class="ui-g-12 mt-15">
+          <label class="minimal primary block" for="taDesc">Event Details</label>
+          <textarea id="tiEventDesc" name="tiEventDesc"
+                    [(ngModel)]="caseEvent.description"
+                    [rows]="2"
+                    pInputTextarea
+                    autoResize="autoResize"
+                    class="width-full"></textarea>
+        </div>
       </div>
     </div>
 
