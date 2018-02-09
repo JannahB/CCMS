@@ -8,7 +8,7 @@
         <div class="ui-g-12 ta-c">
           <img src="./../../assets/layout/images/logo/logo-white-200.png" class="login-logo">
         </div>
-        <form #loginForm="ngForm">
+        <form #loginForm="ngForm" (ngSubmit)="loginClicked()">
             <h1 class="ta-c">Login</h1>
 
           <!-- USER NAME -->
@@ -66,7 +66,7 @@
 
 
           <div class="ui-g-12 mv-20 ui-fluid">
-            <button pButton type="button" label="Log In" (click)="loginClicked()" class="ui-button ui-button-secondary"
+            <button pButton type="submit" label="Log In" (click)="loginClicked()" class="ui-button ui-button-secondary"
                     [disabled]="isAttemptingLogin || !loginForm.form.valid"></button>
 
             <!-- <button pButton type="button" label="Inline Button" style="margin-bottom:10px;width:auto" styleClass="flat"></button> -->
