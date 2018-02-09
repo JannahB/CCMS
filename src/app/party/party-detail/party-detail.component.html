@@ -297,18 +297,17 @@
                     <input type="email" name="tiEmail" #tiEmail="ngModel"
                           [required]="true"
                           [email]="true"
-
+                          pattern="^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$"
                           [(ngModel)]="selectedEmail.emailAddress"
                           type="text" pInputText>
                     <label>Email Address</label>
                 </span>
-                <!-- pattern="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$" -->
                 <div class="ui-message ui-messages-error ui-corner-all"
                     *ngIf="tiEmail.errors?.required && tiEmail.touched" >
                       Please enter an email address
                 </div>
                 <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="tiEmail.errors?.email && tiEmail.touched" >
+                    *ngIf="tiEmail.errors?.pattern && tiEmail.touched" >
                       Please enter a valid email address
                 </div>
               </div>
