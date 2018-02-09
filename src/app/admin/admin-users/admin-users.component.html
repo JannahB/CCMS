@@ -5,7 +5,44 @@
     <h1 class="page-header mt-0">User Management</h1>
   </div>
 
-  <!-- FIRST SECTION -->
+  <!-- SEARCH USER CARD -->
+  <div class="ui-g-12 card">
+    <form (ngSubmit)="onSearch()" #searchForm="ngForm" novalidate>
+      <div class="form-group mt-20" >
+        <div class="ui-g-12 ph-30 big-search">
+          <span class="md-inputfield">
+            <input [(ngModel)]="partyNameText" name="tiName" type="text" class="width-full"  pInputText>
+            <label>Search First or Last Name (partial)</label>
+            <button type="submit" label="Search" icon="ui-icon-search" class="mr-20 fr" pButton></button>
+            <button type="button" label="Reset" (click)="onReset()"  icon="ui-icon-autorenew" class="ui-button-secondary fr" pButton></button>
+          </span>
+          <div>
+            <p-message severity="info" text="{{recordsFoundMessage}}" *ngIf="showRecordsFoundMessage"></p-message>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="ui-g-12 mb-20 pos-relative">
+      <loading-bar [visible]="isSearching" [message]="'searching...'"></loading-bar>
+      <h2 class="mt-0">Search User Results</h2>
+      <p-dataTable [value]="partyResults" selectionMode="single"
+            [(selection)]="selectedParty" (onRowSelect)="partyOnRowSelect($event)"
+            dataKey="partyOID" #dtPartyResults>
+        <p-column field="firstName" header="First Name" [style]="{'width':'35%'}"></p-column>
+        <p-column field="lastName" header="Last Name" [style]="{'width':'35%'}"></p-column>
+        <p-column field="userName" header="User Name" styleClass="ta-c" [style]="{'width':'30%'}"></p-column>
+      </p-dataTable>
+    </div>
+
+    <div class="ui-g-12 mt-20 ta-c">
+      <button type="button" (click)="addNewUser()" label="New User" icon="ui-icon-add" pButton></button>
+    </div>
+  </div>
+  <!-- //END USER SEARCH CARD -->
+
+
+  <!-- USER DETAILS SECTION -->
   <div class="ui-g-12 card">
     <loading-bar [visible]="loadingUser" [message]="loadingMessage"></loading-bar>
 
@@ -153,14 +190,14 @@
                     [value]="authCourt"
                     (selectionChange)="courtOnChange($event, acIdx)" >
                   <mat-option *ngFor="let ct of courts" [value]="ct">
-                    {{ct.courtName}} {{ct.locationCode}}
+                    {{ct.courtName}} {{ct.locationCode}} {{ct.courtOID}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
 
             <div class="ui-g-6 ph-20 pv-5">
-              <div class="mt-10" *ngIf="acIdx < user.authorizedCourts.length -1">{{ getStaffRoleNames(authCourt.staffRoles)}} </div>
+              <div class="mt-10" *ngIf="acIdx < user.authorizedCourts.length -1">{{ getStaffRoleNames(acIdx)}} </div>
               <!--  -->
               <mat-form-field class="width-full" *ngIf="acIdx == user.authorizedCourts.length -1">
                 <mat-select placeholder="Staff Roles" name="ddStaffRoles"
@@ -199,33 +236,4 @@
       </div>
     </form>
   </div>
-
-
-  <!-- SEARCH USER SECTION -->
-  <!-- <div class="ui-g-12 card">
-
-    <div class="ui-g-12 mt-20 ta-c">
-      <button type="submit" label="Search" icon="ui-icon-search" class="mr-20" pButton></button>
-      <button type="button" (click)="onReset()" label="Reset" icon="ui-icon-autorenew" class="ui-button-secondary " pButton></button>
-    </div>
-
-    <div class="ui-g-12 mv-20 pos-relative">
-      <loading-bar [visible]="isSearcing" [message]="'searching...'"></loading-bar>
-      <h2>Search Case Results</h2>
-      <p-dataTable [value]="caseResults" selectionMode="single" [(selection)]="selectedCase" (onRowSelect)="caseOnRowSelect($event)"
-        dataKey="caseOID" #dtCaseResults>
-        <p-column field="caseNumber" header="Case Number" [style]="{'width':'13%'}"></p-column>
-        <p-column field="caseCaption" header="Caption" [style]="{'width':'25%'}"></p-column>
-        <p-column field="caseType.name" header="Case Type" [style]="{'width':'15%'}"></p-column>
-        <p-column field="caseStatus.name" header="Case Status" [style]="{'width':'15%'}"></p-column>
-        <p-column field="casePhase.name" header="Case Phase" [style]="{'width':'15%'}"></p-column>
-        <p-column styleClass="col-button" header="View" [style]="{'width':'8%'}">
-          <ng-template let-item="rowData" pTemplate="body">
-            <i class="material-icons" (click)="caseOnRowSelect(item)">search</i>
-          </ng-template>
-        </p-column>
-      </p-dataTable>
-    </div>
-  </div> -->
-  <!-- //END SECOND CARD -->
 </div>

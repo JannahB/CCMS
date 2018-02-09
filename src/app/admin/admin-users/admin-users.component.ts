@@ -11,6 +11,8 @@ import { Court } from '../../common/entities/Court';
 import { StaffRole } from '../../common/entities/StaffRole';
 import { User } from './../../common/entities/User';
 import { AdminUserService } from '../../common/services/http/admin-user.service';
+import { PartyService } from './../../common/services/http/party.service';
+import { Party } from '../../common/entities/Party';
 
 @Component({
   selector: 'app-admin-users',
@@ -33,7 +35,8 @@ export class AdminUsersComponent implements OnInit {
     private breadCrumbSvc:BreadcrumbService,
     private lookupSvc: LookupService,
     private adminSvc: AdminUserService,
-    private toastSvc: ToastService
+    private toastSvc: ToastService,
+    private partySvc: PartyService
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Admin User Management', routerLink: ['/admin-users'] }
@@ -81,6 +84,7 @@ export class AdminUsersComponent implements OnInit {
   addNewUser() {
     this.user = new User();
     this.user.authorizedCourts = [];
+    this.partyResults = [];
     this.addAuthCourt();
   }
 
@@ -112,9 +116,21 @@ export class AdminUsersComponent implements OnInit {
     this.user.emails[0].emailAddress = event.value;
   }
 
-  getStaffRoleNames(staffRoles:StaffRole[]) {
-    if(!staffRoles) return;
+  // getStaffRoleNames(staffRoles:StaffRole[]) {
+  //   if(!staffRoles) return;
+  //   let text:string = "";
+  //   staffRoles.map( staffRole => {
+  //     text += staffRole.staffRoleName +', ';
+  //   })
+  //   let lastCommaIdx = text.lastIndexOf(', ');
+  //   text = text.slice(0, lastCommaIdx);
+  //   return text;
+  // }
+
+  getStaffRoleNames(acIdx: number) {
+    if(acIdx < 0) return;
     let text:string = "";
+    let staffRoles:StaffRole[] = this.user.authorizedCourts[acIdx].roles;
     staffRoles.map( staffRole => {
       text += staffRole.staffRoleName +', ';
     })
@@ -188,6 +204,54 @@ export class AdminUsersComponent implements OnInit {
     });
 
     return true;
+  }
+
+
+  // SEARCH USERs -------------------------
+  // --------------------------------------
+
+  showRecordsFoundMessage: boolean = false;
+  partyNameText: string = '';
+  partyResults: Party[];
+  recordsFoundMessage: string = '';
+  isSearching: boolean = false;
+
+  onSearch():void{
+    this.showRecordsFoundMessage = false;
+    this.isSearching = true;
+    let obj = { "partyName": this.partyNameText, courtUser:"true" };
+    this.partySvc
+      .fetchAny(obj)
+      .subscribe((result) => {
+        this.isSearching = false;
+        this.partyResults = result;
+        this.showNumberOfRecordsFound(result.length);
+      },
+    (error) => {
+      this.isSearching = false;
+    },
+    () => {
+      this.isSearching = false;
+    });
+  }
+
+  showNumberOfRecordsFound(num){
+    let text = num == 1 ? ' record found' : ' records found';
+    this.showRecordsFoundMessage = true;
+    this.recordsFoundMessage = num + text;
+  }
+
+  partyOnRowSelect(event) {
+    console.log(event)
+    let partyId = event.data.partyOID;
+    this.user = event.data;
+  }
+
+  onReset(){
+    this.showRecordsFoundMessage = false;
+    this.partyNameText = '';
+    this.partyResults = [];
+    this.showNumberOfRecordsFound(0);
   }
 
 
