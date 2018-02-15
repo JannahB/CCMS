@@ -150,7 +150,7 @@ export class AdminUsersComponent implements OnInit {
       .subscribe(user => {
         this.loadingUser = false;
         this.user = user[0];
-        this.toastSvc.showSuccessMessage('User '+user.firstName+' '+user.lastName+' saved.', 'User Saved!');
+        this.toastSvc.showSuccessMessage('User '+user[0].firstName+' '+user[0].lastName+' saved.', 'User Saved!');
         console.log('user', user);
       },
       (error) => {
