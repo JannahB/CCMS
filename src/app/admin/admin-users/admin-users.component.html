@@ -13,8 +13,8 @@
           <span class="md-inputfield">
             <input [(ngModel)]="partyNameText" name="tiName" type="text" class="width-full"  pInputText>
             <label>Search First or Last Name (partial)</label>
-            <button type="submit" label="Search" icon="ui-icon-search" class="mr-20 fr" pButton></button>
-            <button type="button" label="Reset" (click)="onReset()"  icon="ui-icon-autorenew" class="ui-button-secondary fr" pButton></button>
+            <button type="submit" label="Search" icon="ui-icon-search" class="mr-20 mt-10 fr" pButton></button>
+            <button type="button" label="Reset" (click)="onReset()"  icon="ui-icon-autorenew" class="ui-button-secondary mt-10 mr-10 fr" pButton></button>
           </span>
           <div>
             <p-message severity="info" text="{{recordsFoundMessage}}" *ngIf="showRecordsFoundMessage"></p-message>
