@@ -79,7 +79,7 @@ export class AdminUserService {
     authCourts = courts.map(c => {
       return {
         courtOID: c.courtOID.toString(),
-        roles: c.staffRoles.map( r => {
+        roles: c.roles.map( r => {
           return { staffRoleOID: r.staffRoleOID.toString() }
         })
       }
