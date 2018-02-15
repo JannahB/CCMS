@@ -30,5 +30,5 @@ export class AuthorizedCourt extends LookupEntity {
   courtLocations: CourtLocation[] = [];
   staffRoles: StaffRole[] = [];
   personIDTypes: Identifier[];
-  roles: Role[];
+  roles: Role[] = [];
 }

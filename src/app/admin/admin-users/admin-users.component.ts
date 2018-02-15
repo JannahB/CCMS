@@ -90,7 +90,7 @@ export class AdminUsersComponent implements OnInit {
 
   addAuthCourt() {
     let authCourtsLen = this.user.authorizedCourts.push(new AuthorizedCourt());
-    this.user.authorizedCourts[authCourtsLen-1].staffRoles.push(new StaffRole());
+    this.user.authorizedCourts[authCourtsLen-1].roles.push(new StaffRole());
     this.selectedAuthCourt = this.user.authorizedCourts[authCourtsLen-1];
     // console.log('this.user.authorizedCourts', this.user.authorizedCourts);
   }
@@ -109,23 +109,12 @@ export class AdminUsersComponent implements OnInit {
     // console.log('onFilterStaffRoles', event, authCourtIdx);
     // Set the OUTER selected AuthorizedCourt
     this.selectedAuthCourt = this.user.authorizedCourts[authCourtIdx];
-    this.user.authorizedCourts[authCourtIdx].staffRoles = event.value;
+    this.user.authorizedCourts[authCourtIdx].roles = event.value;
   }
 
   emailChanged(event){
     this.user.emails[0].emailAddress = event.value;
   }
-
-  // getStaffRoleNames(staffRoles:StaffRole[]) {
-  //   if(!staffRoles) return;
-  //   let text:string = "";
-  //   staffRoles.map( staffRole => {
-  //     text += staffRole.staffRoleName +', ';
-  //   })
-  //   let lastCommaIdx = text.lastIndexOf(', ');
-  //   text = text.slice(0, lastCommaIdx);
-  //   return text;
-  // }
 
   getStaffRoleNames(acIdx: number) {
     if(acIdx < 0) return;
@@ -137,6 +126,14 @@ export class AdminUsersComponent implements OnInit {
     let lastCommaIdx = text.lastIndexOf(', ');
     text = text.slice(0, lastCommaIdx);
     return text;
+  }
+
+  compareByCourtId(item1, item2) {
+    return item1.courtOID == item2.courtOID;
+  }
+
+  compareByRoleId(item1, item2) {
+    return item1.staffRoleOID == item2.staffRoleOID;
   }
 
   requestDeleteAuthCourt(authCourtIdx){
@@ -168,6 +165,8 @@ export class AdminUsersComponent implements OnInit {
   }
 
   private emailsSame():boolean {
+    // Don't validate previously saved user for now.
+    if(this.user.partyOID !== 0) return true;
     if (this.user.password != this.password2){
       this.toastSvc.showWarnMessage('Passwords must match.');
       return false;
@@ -178,18 +177,24 @@ export class AdminUsersComponent implements OnInit {
   private validateAuthCourts():boolean {
     let acs:AuthorizedCourt[] = this.user.authorizedCourts;
     let courtOIDs = [];
+    let errorFound = false;
     if(!acs || acs.length < 1) {
       this.toastSvc.showWarnMessage('Please add a court and role(s).');
       return false;
     }
-    acs.forEach(ac => {
-      if(!ac.courtOID || !ac.staffRoles.length){
+
+    // acs.forEach(ac => {
+    acs.some( ac =>  {
+      errorFound = false;
+      if(!ac.courtOID || !ac.roles.length){
         this.toastSvc.showWarnMessage('One of your Authorized Courts needs a Court and/or Role selection.');
+        errorFound = true;
         return false;
       }
-      ac.staffRoles.forEach( sr => {
+      ac.roles.some( sr => {
         if(!sr.staffRoleOID) {
           this.toastSvc.showWarnMessage('One of your Authorized Courts needs a Role selection.');
+          errorFound = true;
           return false;
         }
       })
@@ -197,13 +202,15 @@ export class AdminUsersComponent implements OnInit {
       let idx:number = courtOIDs.findIndex( id => id == ac.courtOID);
       if(idx > -1) {
         this.toastSvc.showWarnMessage('Each Court can only be used once.', 'Duplicate Court');
+        errorFound = true;
         return false;
       }
       courtOIDs.push(ac.courtOID);
 
     });
 
-    return true;
+    if(!errorFound)
+      return true;
   }
 
 

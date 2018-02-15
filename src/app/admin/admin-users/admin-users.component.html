@@ -130,46 +130,48 @@
           </div>
         </div>
 
-        <!-- PASSWORD -->
-        <div class="ui-g-12 ui-md-6 pad-20">
-          <span class="md-inputfield">
-            <input name="tiUserPwd" #tiUserPwd="ngModel" class="width-full"
-                [(ngModel)]="user.password" [required]="true" minlength="6" type="password"
-                pInputText>
-            <label>Password</label>
-          </span>
-          <div class="ui-message ui-messages-error ui-corner-all"
-              *ngIf="tiUserPwd.errors?.required && tiUserPwd.touched">
-            Please enter a Password for the User
+        <div *ngIf="user.partyOID == 0">
+
+          <!-- PASSWORD -->
+          <div class="ui-g-12 ui-md-6 pad-20">
+            <span class="md-inputfield">
+              <input name="tiUserPwd" #tiUserPwd="ngModel" class="width-full"
+                  [(ngModel)]="user.password" [required]="true" minlength="6" type="password"
+                  pInputText>
+              <label>Password</label>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiUserPwd.errors?.required && tiUserPwd.touched">
+              Please enter a Password for the User
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiUserPwd.errors?.minlength && tiUserPwd.touched">
+              Password must be a minimum of 6 characters
+            </div>
           </div>
-          <div class="ui-message ui-messages-error ui-corner-all"
-              *ngIf="tiUserPwd.errors?.minlength && tiUserPwd.touched">
-            Password must be a minimum of 6 characters
+
+          <!-- PASSWORD CONFIRM -->
+          <div class="ui-g-12 ui-md-6 pad-20">
+            <span class="md-inputfield">
+              <input name="tiUserPwd2" #tiUserPwd2="ngModel" class="width-full" [(ngModel)]="password2"
+                  [required]="true" minlength="6" type="password"
+                  pInputText>
+              <label>Confirm Password</label>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiUserPwd2.errors?.required && tiUserPwd2.touched">
+              Please enter a Confirmation Password for the User
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiUserPwd.errors?.minlength && tiUserPwd.touched">
+              Password must be a minimum of 6 characters
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="password2?.length >= user.password?.length && user.password != password2 && tiUserPwd.touched">
+              Passwords must be the same
+            </div>
           </div>
         </div>
-
-        <!-- PASSWORD CONFIRM -->
-        <div class="ui-g-12 ui-md-6 pad-20">
-          <span class="md-inputfield">
-            <input name="tiUserPwd2" #tiUserPwd2="ngModel" class="width-full" [(ngModel)]="password2"
-                [required]="true" minlength="6" type="password"
-                pInputText>
-            <label>Confirm Password</label>
-          </span>
-          <div class="ui-message ui-messages-error ui-corner-all"
-              *ngIf="tiUserPwd2.errors?.required && tiUserPwd2.touched">
-            Please enter a Confirmation Password for the User
-          </div>
-          <div class="ui-message ui-messages-error ui-corner-all"
-              *ngIf="tiUserPwd.errors?.minlength && tiUserPwd.touched">
-            Password must be a minimum of 6 characters
-          </div>
-          <div class="ui-message ui-messages-error ui-corner-all"
-              *ngIf="password2?.length >= user.password?.length && user.password != password2 && tiUserPwd.touched">
-            Passwords must be the same
-          </div>
-        </div>
-
 
         <!-- ADD COURTS & ROLES SECTION  -->
 
@@ -180,28 +182,45 @@
 
           <!-- COURTS & ROLES -->
 
+          <div class="ui-g-12 mb-5 courts-th">
+            <div class="ui-g-5 pv-0">
+              Courts
+            </div>
+            <div class="ui-g-6 pv-0">
+              Roles
+            </div>
+          </div>
+
           <div class="ui-g-12 mb-5 authCourt-row" *ngFor="let authCourt of user.authorizedCourts; let acIdx = index">
             <div class="ui-g-5 ph-20 pv-5">
-              <div class="mt-10" *ngIf="acIdx < user.authorizedCourts.length -1">{{authCourt.courtName}} {{authCourt.locationCode}}</div>
-              <!--  -->
-              <mat-form-field class="width-full" *ngIf="acIdx == user.authorizedCourts.length -1">
+              <!-- <div class="mt-10"
+                  *ngIf="acIdx < user.authorizedCourts.length -1; else courtDDTemplate">
+                      {{authCourt.courtName}} {{authCourt.locationCode}}
+              </div> -->
+
+              <!-- *ngIf="acIdx == user.authorizedCourts.length -1" -->
+              <mat-form-field class="width-full" >
                 <!-- Note: This will break [(ngModel)]="authCourt". Use [value]="authCourt" instead -->
                 <mat-select placeholder="Court" name="ddCourt"
+                    [compareWith]="compareByCourtId"
                     [value]="authCourt"
                     (selectionChange)="courtOnChange($event, acIdx)" >
                   <mat-option *ngFor="let ct of courts" [value]="ct">
-                    {{ct.courtName}} {{ct.locationCode}} {{ct.courtOID}}
+                    {{ct.courtName}} {{ct.locationCode}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+
             </div>
 
             <div class="ui-g-6 ph-20 pv-5">
-              <div class="mt-10" *ngIf="acIdx < user.authorizedCourts.length -1">{{ getStaffRoleNames(acIdx)}} </div>
-              <!--  -->
-              <mat-form-field class="width-full" *ngIf="acIdx == user.authorizedCourts.length -1">
-                <mat-select placeholder="Staff Roles" name="ddStaffRoles"
-                    [(ngModel)]="authCourt.staffRoles" (selectionChange)="staffRolesOnChange($event, acIdx)" multiple>
+              <!-- <div class="mt-10" *ngIf="acIdx < user.authorizedCourts.length -1">{{ getStaffRoleNames(acIdx)}} </div> -->
+              <!-- *ngIf="acIdx == user.authorizedCourts.length -1" -->
+              <mat-form-field class="width-full" >
+                <mat-select placeholder="Staff Roles" name="ddStaffRoles" multiple
+                    [compareWith]="compareByRoleId"
+                    [value]="authCourt.roles"
+                    (selectionChange)="staffRolesOnChange($event, acIdx)" >
                   <mat-option *ngFor="let sRole of staffRoles" [value]="sRole">
                     {{sRole.staffRoleName}}
                   </mat-option>
