@@ -50,16 +50,35 @@ export class AdminDataService {
   }
 
   fetchPhaseByTypeLookup<T>(caseTypeOID):Observable<T[]> {
+    if(!caseTypeOID) return;
     let url: string = this.getBaseUrl() + '/FetchPhaseByType';
+    caseTypeOID = caseTypeOID.toString();
+    return this.http.post<T[]>(
+      url,
+      { typeOID: caseTypeOID }
+    );
+  }
+
+  // FetchICCSCodeParent
+  // {categoryType: "1"}
+  /**
+   *
+   * @param categoryTypeOID
+   */
+  fetchICCSCodeParent<T>(categoryTypeOID):Observable<T[]> {
+    if(!categoryTypeOID) return;
+    let url: string = this.getBaseUrl() + '/FetchICCSCodeParent';
+    categoryTypeOID = categoryTypeOID.toString();
 
     return this.http.post<T[]>(
       url,
-      { typeOID: caseTypeOID },
-      { headers:
-        { uiVersion: "2" }
-      }
+      { categoryType: categoryTypeOID }
     );
   }
+
+
+
+
 
   /**
    *

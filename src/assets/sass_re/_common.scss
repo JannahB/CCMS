@@ -124,6 +124,10 @@ body .ui-datatable {
   text-transform: uppercase;
   color: #0277BD !important;
   width: 100% !important;
+
+  label.ui-dropdown-label {
+    text-align: center;
+  }
 }
 
 body .ui-dropdown-panel .ui-dropdown-item {

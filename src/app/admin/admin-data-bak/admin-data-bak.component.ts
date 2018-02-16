@@ -21,11 +21,11 @@ import { ToastService } from '../../common/services/utility/toast.service';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
-  selector: 'app-admin-data',
-  templateUrl: './admin-data.component.html',
-  styleUrls: ['./admin-data.component.scss']
+  selector: 'app-admin-data-bak',
+  templateUrl: './admin-data-bak.component.html',
+  styleUrls: ['./admin-data-bak.component.scss']
 })
-export class AdminDataComponent implements OnInit {
+export class AdminDataBakComponent implements OnInit {
 
   itemsListVisible:boolean = true;
 
