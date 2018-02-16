@@ -184,6 +184,7 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     }
 
     onFilterTasks(event) {
+      if(!event || !event.value) return;
       console.log('event.value', event.value);
       console.log('selectedTaskStatuses', this.selectedTaskStatuses );
       // 1 = completed tasks
