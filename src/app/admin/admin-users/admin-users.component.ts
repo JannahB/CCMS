@@ -88,6 +88,7 @@ export class AdminUsersComponent implements OnInit {
     this.user.authorizedCourts = [];
     this.partyResults = [];
     this.addAuthCourt();
+    this.showResetPassword = false;
   }
 
   addAuthCourt() {
@@ -142,6 +143,11 @@ export class AdminUsersComponent implements OnInit {
 
   requestDeleteAuthCourt(authCourtIdx){
     this.user.authorizedCourts.splice(authCourtIdx, 1);
+  }
+
+  onShowResetPassword() {
+    this.user.password = '';
+    this.showResetPassword = true;
   }
 
   saveUser(addUserForm){
@@ -256,6 +262,7 @@ export class AdminUsersComponent implements OnInit {
     console.log(event)
     let partyId = event.data.partyOID;
     this.user = event.data;
+    this.showResetPassword = false;
   }
 
   onReset(){
