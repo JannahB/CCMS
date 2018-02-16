@@ -1,0 +1,21 @@
+::ng-deep .layout-breadcrumb-options {
+
+  .mat-form-field-infix {
+    border: none !important;
+  }
+
+  .mat-form-field-wrapper {
+    margin-bottom: -10px;
+  }
+
+}
+
+
+
+::ng-deep .layout-container .layout-breadcrumb ul {
+    margin: 12px 0 0 0;
+    padding: 0 0 0 20px;
+    list-style: none;
+    color: #354850;
+    display: inline-block;
+  }
