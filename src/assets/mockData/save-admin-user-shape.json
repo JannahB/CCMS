@@ -1,0 +1,25 @@
+{
+  "partyOID": "0",
+  "firstName": "Joe",
+  "lastName": "Smith",
+  "password": "123123",
+  "userName": "jojo",
+  "emails": [
+    {
+      "partyEmailOID": 0,
+      "partyOID": 0,
+      "emailAddressType": "Primary",
+      "emailAddress": "jo@smith.com"
+    }
+  ],
+  "authorizedCourts": [
+    {
+      "courtOID": "5",
+      "roles": [
+        {
+          "staffRoleOID": "1"
+        }
+      ]
+    }
+  ]
+}
