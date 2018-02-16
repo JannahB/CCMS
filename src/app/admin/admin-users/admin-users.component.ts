@@ -8,6 +8,7 @@ import { LookupService } from './../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../breadcrumb.service';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { Court } from '../../common/entities/Court';
+import { Role } from './../../common/entities/Role';
 import { StaffRole } from '../../common/entities/StaffRole';
 import { User } from './../../common/entities/User';
 import { AdminUserService } from '../../common/services/http/admin-user.service';
@@ -90,7 +91,7 @@ export class AdminUsersComponent implements OnInit {
 
   addAuthCourt() {
     let authCourtsLen = this.user.authorizedCourts.push(new AuthorizedCourt());
-    this.user.authorizedCourts[authCourtsLen-1].roles.push(new StaffRole());
+    this.user.authorizedCourts[authCourtsLen-1].roles.push(new Role());
     this.selectedAuthCourt = this.user.authorizedCourts[authCourtsLen-1];
     // console.log('this.user.authorizedCourts', this.user.authorizedCourts);
   }
