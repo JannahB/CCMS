@@ -31,6 +31,7 @@ export class AdminUsersComponent implements OnInit {
   password2: string;
   loadingUser: boolean = false;
   loadingMessage: string = 'Loading user';
+  showResetPassword: boolean = false;
 
   constructor(
     private breadCrumbSvc:BreadcrumbService,
@@ -114,7 +115,9 @@ export class AdminUsersComponent implements OnInit {
   }
 
   emailChanged(event){
-    this.user.emails[0].emailAddress = event.value;
+    let email1 = this.user.emails[0];
+    email1.emailAddress = event.value;
+    email1.emailAddressType = 'Primary';
   }
 
   getStaffRoleNames(acIdx: number) {
