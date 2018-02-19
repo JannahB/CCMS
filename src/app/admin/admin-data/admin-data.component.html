@@ -13,76 +13,152 @@
   <div class="ui-g form-group " >
     <div class="card">
 
-      <!-- <div class="ui-g-12">
-      </div> -->
-      <div class="ui-g-12 mb-0">
-        <div class="ui-g-12 ui-md-3 pb-0">
-          <h2 class="mt-0">Data Tables</h2>
-        </div>
-        <div class="ui-g-12 ui-md-9 pb-0">
-          <p class="muted mv-0">Manage all reference data here. Choose a reference data table, then choose a data reference item to edit. </p>
-        </div>
-      </div>
-      <div class="ui-g-12 pt-0">
-        <p-dropdown
-            styleClass="big-dropdown"
-            (onChange)="refTableSelected($event)"
-            [options]="refDataTables"
-            [(ngModel)]="selectedTableId"
-            placeholder="choose data table" ></p-dropdown>
-      </div>
-
-      <div *ngIf="selectedTable" class="ui-g-4 ui-sm-12 mt-25">
-        <h2 class="mt-0" style="margin-bottom:35px;">Table Items </h2>
-        <p *ngIf="!selectedItem && selectedTableItems && selectedTableItems.length"
-            class="muted-label uc">Choose a Data Item below</p>
-        <p-listbox
-            *ngIf="itemsListVisible"
-            styleClass="data-items-listbox"
-            [options]="selectedTableItems"
-            optionLabel="{{selectedItemLabelField}}"
-            dataKey="{{selectedItemIdField}}"
-            [(ngModel)]="selectedItem"
-            (onChange)="selectedItemChanged($event)">
-        </p-listbox>
-        <button label="New Data Item"
-              type="button" pButton
-              *ngIf="selectedTable"
-              class="secondary width-full outline mt-5"
-              (click)="createNewItem()"
-              icon="ui-icon-add"></button>
-      </div>
-
-      <div *ngIf="selectedTable" class="ui-g-8 ui-sm-12">
-        <div class="ui-g-6">
-          <h2 class="">{{selectedTableLabel}}</h2>
-        </div>
-        <div class="ui-g-6 ta-r">
-
-        </div>
-
-        <div class="ui-g-12">
-          <!-- *ngIf="selectedItem" -->
-          <div  class="card" style="min-height:322px;">
-
-            <!-- ------------------
-                  TEMPLATE OUTLET
-                 ------------------ -->
-            <ng-container *ngTemplateOutlet='selectedTemplate'></ng-container>
-
-
+      <!-- TABLE DROP DOWN SELECTOR -->
+      <div>
+        <div class="ui-g-12 mb-0">
+          <div class="ui-g-12 ui-md-3 pb-0">
+            <h2 class="mt-0">Data Tables</h2>
+          </div>
+          <div class="ui-g-12 ui-md-9 pb-0">
+            <p class="muted mv-0">Manage all reference data here. Choose a reference data table, then choose a data reference item to edit. </p>
           </div>
         </div>
+        <div class="ui-g-12 pt-0">
+          <p-dropdown
+              styleClass="big-dropdown"
+              (onChange)="refTableSelected($event)"
+              [options]="refDataTables"
+              [(ngModel)]="selectedTableId"
+              placeholder="choose data table" ></p-dropdown>
+        </div>
+      </div>
+      <!-- // END TABLE  DROPDOWN -->
+
+      <div>
+        <!-- ------------------
+        TEMPLATE OUTLET
+        ------------------ -->
+        <ng-container *ngTemplateOutlet='selectedTemplate'></ng-container>
+      </div>
+
+    </div> <!-- // END CARD -->
+  </div>
+</div>
+
+<!-- BEGIN TEMPLATE ------------------- -->
+<ng-template #tpl1>
+  <div *ngIf="selectedTable" class="ui-g-4 ui-sm-12 mt-25">
+    <h2 class="mt-0" style="margin-bottom:35px;">Table Items </h2>
+    <p *ngIf="!selectedItem && selectedTableItems && selectedTableItems.length"
+        class="muted-label uc">Choose a Data Item below</p>
+    <p-listbox
+        *ngIf="itemsListVisible"
+        styleClass="data-items-listbox"
+        [options]="selectedTableItems"
+        optionLabel="{{selectedItemLabelField}}"
+        dataKey="{{selectedItemIdField}}"
+        [(ngModel)]="selectedItem"
+        (onChange)="selectedItemChanged($event)">
+    </p-listbox>
+    <button label="New Data Item"
+          type="button" pButton
+          *ngIf="selectedTable"
+          class="secondary width-full outline mt-5"
+          (click)="createNewItem()"
+          icon="ui-icon-add"></button>
+  </div>
+
+  <div *ngIf="selectedTable" class="ui-g-8 ui-sm-12">
+    <div class="ui-g-6">
+      <h2 class="">{{selectedTableLabel}}</h2>
+    </div>
+    <div class="ui-g-6 ta-r">
+      <!--  nothing to see hear, folks -->
+    </div>
+
+    <div class="ui-g-12">
+      <!-- *ngIf="selectedItem" -->
+      <div  class="card" style="min-height:322px;">
+
+        <form (ngSubmit)="saveDataItem()" #tplForm="ngForm" novalidate>
+          <div class="ui-g form-group" >
+
+            <!-- NAME -->
+            <div class="ui-g-12">
+              <span class="md-inputfield">
+                <input pInputText id="tiName" name="tiName" #tiName="ngModel" class="width-full"
+                        [required]="true"
+                        [(ngModel)]="selectedItem.name"/>
+                <label for="tiName">Name</label>
+              </span>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="tiName.errors?.required && tiName.touched" >
+                    Please enter a type Name
+              </div>
+            </div>
+
+            <!-- SHORT NAME -->
+            <div class="ui-g-12">
+              <span class="md-inputfield">
+                <input pInputText id="tiShortName" name="tiShortName" #tiShortName="ngModel" class="width-full"
+                        [(ngModel)]="selectedItem.shortName"/>
+                <label for="tiName">Short Name</label>
+              </span>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="tiShortName.errors?.required && tiShortName.touched" >
+                    Please enter a Short Name
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="ui-g-12">
+              <label class="minimal primary block" for="taDesc">Description</label>
+              <textarea id="taDesc" name="taDesc" #taDesc="ngModel"
+                        [required]="true"
+                        [(ngModel)]="selectedItem.description"
+                        [rows]="2"
+                        pInputTextarea
+                        autoResize="autoResize"
+                        class="width-full"></textarea>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="taDesc.errors?.required && taDesc.touched" >
+                    Please enter a description
+              </div>
+            </div>
+
+            <!-- SAVE / CANCEL BUTTONS -->
+            <div class="ui-g-12 ta-r">
+              <button type="button"
+                      (click)="deleteDataItemRequest()"
+                      [disabled]="!selectedItem.id"
+                      label="Delete"
+                      icon="ui-icon-delete"
+                      class="ui-button-danger fl" pButton></button>
+              <button type="button"
+                      (click)="saveDataItem()"
+                      label="Save"
+                      icon="ui-icon-check"
+                      class="secondary" pButton></button>
+              <button type="button"
+                      (click)="tplForm.reset(); cancelDataItemEdit()"
+                      label="Cancel"
+                      icon="ui-icon-clear"
+                      class="ui-button-secondary"
+                      pButton></button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-</div>
+</ng-template>
+<!-- END TEMPLATE -------------------- -->
 
 
 <!-- --------------------
       CASE TYPES TEMPLATE 1
 -->
-<ng-template #tpl1>
+<ng-template #tpl1a>
   <form (ngSubmit)="saveDataItem()" #tplForm="ngForm" novalidate>
     <div class="ui-g form-group" >
 
