@@ -115,6 +115,11 @@ body .ui-datatable {
     line-height: 1.33em;
     overflow: hidden;
   }
+
+  &.ui-datatable-scrollable thead tr th {
+    color: #1c333d;
+    font-size: 0.95em;
+  }
 }
 
 // DROPDOWN ---------------------

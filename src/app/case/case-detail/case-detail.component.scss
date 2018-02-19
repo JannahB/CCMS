@@ -3,10 +3,10 @@
   max-height: 80%;
 }
 
-::ng-deep p-datatable .ui-datatable {
-  overflow: scroll;
-  max-height: 280px;
-}
+// ::ng-deep p-datatable .ui-datatable {
+//   overflow: scroll;
+//   max-height: 280px;
+// }
 
 ::ng-deep p-panel.conflict-table .ui-panel .ui-panel-content  {
   padding: 0 !important;
