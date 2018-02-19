@@ -291,39 +291,62 @@
             <div class="ui-g-12 ui-md-6">
               <h2>Case Events</h2>
             </div>
-            <div class="ui-g-12 ui-md-6">
-              <label class="minimal primary block">Category Filter</label>
+            <!-- <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Event Category Filter</label>
               <p-dropdown
-                  placeholder="category filter..."
+                  placeholder="Event Category filter..."
                   [options]="eventTypes"
                   [(ngModel)]="eventTypeFilter"
                   optionLabel="eventTypeName"
-                  (onChange)="eventTypeFilterChange($event)"
+                  (onChange)="eventCategoryFilterChange($event)"
                   styleClass="width-auto">
               </p-dropdown>
               <button label="" type="button" class="ml-10 ui-button-secondary ui-button-icon-only clear-btn inline" pButton icon="fa-close" (click)="clearEventFilter()"></button>
-            </div>
+            </div> -->
+            <div class="ui-g-12 ui-md-3">
+                <label class="minimal primary block">Event ID Filter</label>
+                <p-dropdown
+                    placeholder="Event ID filter..."
+                    [options]="eventTypes"
+                    [(ngModel)]="eventTypeFilter"
+                    optionLabel="eventTypeName"
+                    (onChange)="eventTypeFilterChange($event)"
+                    styleClass="width-auto">
+                </p-dropdown>
+                <button label="" type="button" class="ml-10 ui-button-secondary ui-button-icon-only clear-btn inline" pButton icon="fa-close" (click)="clearEventFilter()"></button>
+              </div>
 
             <div class="ui-g-12">
               <p-dataTable [value]="filteredEvents"
                           selectionMode="single"
                           [(selection)]="caseEvent"
                           (onRowSelect)="caseEventOnRowSelect($event)"
+                          scrollable="true" scrollHeight="280px"
                           dataKey="caseEventOID" #dtCaseEvents>
-                <p-column field="eventDate" header="Date/Time" [style]="{'width':'13%'}">
-                    <ng-template pTemplate="body" let-item="rowData">
-                        {{item.eventDate | date:'medium'}}
-                    </ng-template>
-                </p-column>
-                <p-column field="eventType.eventCategoryText" header="Event Category" [style]="{'width':'8%'}"></p-column>
-                <p-column field="eventType.eventTypeName" header="Event ID" [style]="{'width':'8%'}"></p-column>
-                <p-column field="eventType.description" header="Event Description" [style]="{'width':'25%'}"></p-column>
-                <p-column field="document.documentName" header="Document" styleClass="text-break" [style]="{'width':'35%'}"></p-column>
-                <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
-                    <ng-template let-item="rowData" pTemplate="body">
-                        <i class="material-icons" (click)="requestViewCaseEvent(item)">search</i>
-                    </ng-template>
+                <!-- <p-column styleClass="col-button" header="Done" [style]="{'width':'6%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <i class="fa ui-icon-check task-done" *ngIf="item.eventType?.description == 'Task Completed'"></i>
+                      <i class="fa ui-icon-close" *ngIf="item.eventType?.description != 'Task Completed'"></i>
+                  </ng-template>
                 </p-column> -->
+                <p-column field="eventDate" header="Date/Time" [style]="{'width':'12%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.eventDate | date:'medium'}}
+                  </ng-template>
+                </p-column>
+                <p-column header="Entering Party" [style]="{'width':'13%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{ item.enteringParty?.firstName }} {{ item.enteringParty?.lastName }}
+                  </ng-template>
+                </p-column>
+                <p-column field="eventType.eventCategoryText" header="Event Category" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <!-- <p-column field="eventType.eventTypeName" header="Event ID" [style]="{'width':'8%'}"></p-column> -->
+                <p-column header="Event ID: Description" [style]="{'width':'25%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{ item.eventType?.eventTypeName }}: {{ item.eventType?.description }}
+                  </ng-template>
+                </p-column>
+                <p-column field="description" header="Event Details" styleClass="text-break" [style]="{'width':'35%'}"></p-column>
               </p-dataTable>
 
             </div>
