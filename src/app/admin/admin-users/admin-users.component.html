@@ -99,7 +99,7 @@
                 [required]="true" [email]="true"
                 pattern="^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$"
                 [ngModel]="user.emails[0]?.emailAddress"
-                (onChange)="emailChanged($event)"
+                (ngModelChange)="emailChanged($event)"
                 pInputText>
             <label>Email Address</label>
           </span>

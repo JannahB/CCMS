@@ -1,5 +1,6 @@
 import { Inject, Injectable, forwardRef} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { DatePipe } from '@angular/common';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../../../../environments/environment';
 
@@ -13,6 +14,7 @@ import { AuthorizedCourt } from '../../entities/AuthorizedCourt';
 export class AdminUserService {
 
   public static authenticationToken:string = null;
+  private datePipe:DatePipe = new DatePipe("en");
 
   protected getBaseUrl():string{
     return `${environment.apiUrl}`;
@@ -63,7 +65,7 @@ export class AdminUserService {
     userDTO.lastName = data.lastName;
     userDTO.userName = data.userName;
     userDTO.password = data.password;
-    userDTO.emails = data.emails; // .push( {emailAddress: data.emails[0]}) //  data.emails[0].emailAddress; // activate this when Aaron adds prop to DB
+    userDTO.emails = data.emails.length ? this.serializeEmails( data.emails ) : []; // .push( {emailAddress: data.emails[0]}) //  data.emails[0].emailAddress; // activate this when Aaron adds prop to DB
     userDTO.authorizedCourts = this.convertCourts(data.authorizedCourts);
 
     return this.http.post<User>(
@@ -71,6 +73,27 @@ export class AdminUserService {
       userDTO,
       { headers: {uiVersion:"2"}}
     )
+  }
+
+  private serializeEmails( emails:any[] ): any[] {
+      let newEmails = [];
+      emails.forEach(email => {
+        let value:any = {};
+        Object.assign(value, email);
+        if (value.startDate)
+            value.startDate = this.datePipe.transform(value.startDate, "yyyy-MM-dd");
+        if (value.endDate)
+            value.endDate = this.datePipe.transform(value.endDate, "yyyy-MM-dd");
+        else
+            value.endDate = '';
+
+        value.partyEmailOID = value.partyEmailOID ? value.partyEmailOID.toString() : "0";
+        value.partyOID = value.partyOID ? value.partyOID.toString() : "0";
+
+        newEmails.push(value);
+
+    });
+    return newEmails;
   }
 
   private convertCourts(courts:AuthorizedCourt[]):any[] {

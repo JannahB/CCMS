@@ -6,4 +6,7 @@ export class Email extends LookupEntity {
   partyOID: number = 0;
   emailAddressType:string = "";
   emailAddress:string = "";
+  startDate: Date = null;
+  endDate: Date = null;
+
 }

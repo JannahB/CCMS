@@ -14,6 +14,7 @@ import { User } from './../../common/entities/User';
 import { AdminUserService } from '../../common/services/http/admin-user.service';
 import { PartyService } from './../../common/services/http/party.service';
 import { Party } from '../../common/entities/Party';
+import { Email } from '../../common/entities/Email';
 
 @Component({
   selector: 'app-admin-users',
@@ -116,9 +117,12 @@ export class AdminUsersComponent implements OnInit {
   }
 
   emailChanged(event){
-    let email1 = this.user.emails[0];
-    email1.emailAddress = event.value;
-    email1.emailAddressType = 'Primary';
+    if(!this.user.emails[0])
+      this.user.emails[0] = new Email();
+
+    this.user.emails[0].emailAddress = event;
+    this.user.emails[0].emailAddressType = 'Primary';
+    this.user.emails[0].startDate = this.user.emails[0].startDate || new Date();
   }
 
   getStaffRoleNames(acIdx: number) {
@@ -151,7 +155,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   saveUser(addUserForm){
-    if(this.validateAuthCourts() && this.emailsSame()) {
+    if(this.validateAuthCourts() && this.passwordsSame()) {
       this.loadingMessage = 'Saving User';
       this.loadingUser = true;
 
@@ -174,7 +178,7 @@ export class AdminUsersComponent implements OnInit {
     }
   }
 
-  private emailsSame():boolean {
+  private passwordsSame():boolean {
     // Don't validate previously saved user for now.
     if(this.user.partyOID !== 0) return true;
     if (this.user.password != this.password2){
