@@ -1185,12 +1185,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   saveEvent(){
-
+    console.log('this.caseEvent.caseEventOID BEFORE SAVE', this.caseEvent.caseEventOID)
     this.caseEvent.initiatedByParty = this.selectedInitiatedByParty && this.selectedInitiatedByParty.caseParty ? this.selectedInitiatedByParty.caseParty : null;
 
     this.caseSvc
       .saveCaseEvent(this.caseEvent)
       .subscribe(savedCaseEvent => {
+        console.log('savedCaseEvent.caseEventOID AFTER SAVE', savedCaseEvent.caseEventOID)
         savedCaseEvent.eventType = this.eventTypes.find(e => e.eventTypeOID == savedCaseEvent.eventType.eventTypeOID);
 
         let index:number = this.case.caseEvents
@@ -1202,6 +1203,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
           this.case.caseEvents.push(savedCaseEvent);
           this.case.caseEvents = this.case.caseEvents.slice();
         }
+        this.filterCaseEvents();
       });
 
     this.showModalAddEvent = false;

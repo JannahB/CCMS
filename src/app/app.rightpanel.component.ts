@@ -161,7 +161,6 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
 
     getUserTasks(userRefresh:boolean = false) {
       // if we've already fetched once before then don't show loading bar
-      console.log('selectedTaskStatuses BEFORE fetch', this.selectedTaskStatuses );
       if(!this.userTasks || userRefresh) this.isLoadingTasks = true;
       this.taskSubscription = this.lookupSvc.fetchLookup<UserTask>('FetchUserTasks').subscribe(items => {
         this.userTasks = this.filteredUserTasks = items;
@@ -174,7 +173,7 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
           this.onFilterTasks( { value:  this.currentFilter } );
         }
       });
-      console.log('selectedTaskStatuses AFTER fetch', this.selectedTaskStatuses );
+
     }
 
     gotoCase(event, task:UserTask) {
