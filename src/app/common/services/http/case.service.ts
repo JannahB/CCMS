@@ -464,12 +464,14 @@ export class CaseService extends HttpBaseService<Case> {
         eventTypeOID: '',
         durationTimeMin: '',
         documentTemplateOID: undefined,
-        caseEventOID: undefined
+        caseEventOID: undefined,
+        description: ''
     };
 
     event.caseOID = data.caseOID.toString();
     event.initiatedByPartyOID = data.initiatedByParty ? data.initiatedByParty.partyOID.toString() : null;
     event.eventTypeOID = data.eventType.eventTypeOID.toString();
+    event.description = data.description;
 
     if(data.caseEventOID){
       event.caseEventOID = data.caseEventOID.toString();
