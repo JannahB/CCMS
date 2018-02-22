@@ -32,23 +32,28 @@ export class AppMenuComponent implements OnInit {
         });
 
         this.model = [
-            {label: 'Dashboard', icon: 'dashboard', routerLink: ['/']},
-            {label: 'Case', icon: 'gavel',
-                items: [
-                    {label:'Search Case', icon:'search', routerLink: ['/case-search']},
-                    {label:'New Case', icon:'gavel', routerLink: ['/case-detail/0']},
-                ]},
-            {label: 'Party', icon: 'folder_shared',
-                items: [
-                    {label:'Search Party', icon:'search', routerLink: ['/party-search']},
-                    {label:'New Party', icon:'folder_shared', routerLink: ['/party-detail/0']},
-                ]},
-            {label: 'Admin', icon: 'security',
-                items: [
-                    {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
-                    {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin-workflow']},
-                    {label:'User Maintenance', icon:'account_box', routerLink: ['/admin-users']},
-                ]},
+          {label: 'Dashboard', icon: 'dashboard', routerLink: ['/']},
+          {label: 'Case', icon: 'gavel',
+            items: [
+                {label:'Search Case', icon:'search', routerLink: ['/case-search']},
+                {label:'New Case', icon:'gavel', routerLink: ['/case-detail/0']},
+            ]},
+          {label: 'Party', icon: 'folder_shared',
+            items: [
+                {label:'Search Party', icon:'search', routerLink: ['/party-search']},
+                {label:'New Party', icon:'folder_shared', routerLink: ['/party-detail/0']},
+            ]},
+          {label: 'Admin', icon: 'security',
+            items: [
+              {label:'Data', icon:'chrome_reader_mode', items: [
+                {label:'Case Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/casetypes']},
+                {label:'Case Phases', icon:'chrome_reader_mode', routerLink: ['/admin/data/casephases']},
+              ]},
+              {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
+              {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
+              {label:'User Maintenance', icon:'account_box', routerLink: ['/admin/users']},
+            ]},
+
 
             // {
             //     label: 'Themes', icon: 'palette', badge: '2',
