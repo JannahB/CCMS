@@ -1,0 +1,49 @@
+<div class="ui-g">
+
+    <!-- HEADER -->
+    <div class="ui-g-6 pv-0">
+      <h1 class="page-header mt-0">Table Maintenance</h1>
+    </div>
+    <div class="ui-g-6 pv-0 ta-r">
+      <button mat-button color="primary" (click)="refreshLookups()">Refresh Lookup Tables</button>
+    </div>
+
+    <!-- FIRST SECTION -->
+
+    <div class="ui-g form-group " >
+      <div class="card">
+
+        <!-- TABLE DROP DOWN SELECTOR -->
+        <div>
+          <div class="ui-g-12 mb-0">
+            <div class="ui-g-12 ui-md-3 pb-0">
+              <h2 class="mt-0">Data Tables</h2>
+            </div>
+            <div class="ui-g-12 ui-md-9 pb-0">
+              <p class="muted mv-0">Manage all reference data here. Choose a reference data table, then choose a data reference item to edit. </p>
+            </div>
+          </div>
+          <div class="ui-g-12 pt-0">
+            <p-dropdown
+                styleClass="big-dropdown"
+                (onChange)="refTableSelected($event)"
+                [options]="refDataTables"
+                [(ngModel)]="selectedTableId"
+                placeholder="choose data table" ></p-dropdown>
+          </div>
+        </div>
+        <!-- // END TABLE  DROPDOWN -->
+
+        <div>
+          <!-- ------------------
+          ROUTER OUTLET
+          ------------------ -->
+          <router-outlet></router-outlet>
+
+        </div>
+
+      </div> <!-- // END CARD -->
+    </div>
+  </div>
+
+
