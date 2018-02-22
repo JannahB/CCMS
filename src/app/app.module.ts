@@ -110,6 +110,7 @@ import { DropdownPipe } from './common/pipes/dropdown.pipe';
 import { AdminDataService } from './common/services/http/admin-data.service';
 import { AdminUserService } from './common/services/http/admin-user.service';
 import { CourtService } from './common/services/http/court.service';
+import { AdminModule } from './admin/admin.module';
 
 
 
@@ -178,7 +179,8 @@ import { CourtService } from './common/services/http/court.service';
         TreeModule,
         TreeTableModule,
         HttpClientModule,
-        CustomMaterialModule
+        CustomMaterialModule,
+        AdminModule
     ],
     declarations: [
         AppComponent,

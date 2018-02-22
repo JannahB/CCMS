@@ -24,16 +24,7 @@ export const routes: Routes = [
     {path: 'admin-workflow', component: AdminWorkflowComponent, canActivate: [CanActivateAuthenticationGuard]},
     {path: 'admin-users', component: AdminUsersComponent, canActivate: [CanActivateAuthenticationGuard]},
 
-    // {path: '', component: DashboardComponent},
-    // {path: 'login', component: LoginComponent },
-    // {path: 'party-detail/:partyId', component: PartyDetailComponent},
-    // {path: 'party-search', component: PartySearchComponent},
-    // {path: 'case-detail/:caseId', component: CaseDetailComponent},
-    // {path: 'case-search', component: CaseSearchComponent},
-    // {path: 'admin-data', component: AdminDataComponent},
-    // {path: 'admin-workflow', component: AdminWorkflowComponent},
-    // {path: 'admin-users', component: AdminUsersComponent},
-
+    // { path: 'admin', loadChildren: 'app/admin/admin.module#AdminModule'},
 
 ];
 
