@@ -63,14 +63,14 @@ export class DataComponent implements OnInit {
 
     this.refDataTables = [
       { value: 1, route: 'casetypes', label: "Case Type" },
-      { value: 2, route: 'casephases', label: "Case Phase Type"},
+      // { value: 2, route: 'casephases', label: "Case Phase Type"},
       { value: 3, route: 'casestatuses', label: "Case Status Type" },
-      { value: 4, route: 'case', label: "Case Party Role Type" },
-      { value: 5, route: 'case', label: "Party Identifier Type" },
-      { value: 6, route: 'case', label: "ICCS Code" },
-      { value: 7, route: 'case', label: "Event Type" },
-      { value: 8, route: 'case', label: "Hearing Type" },
-      { value: 9, route: 'case', label: "Court Location" },
+      // { value: 4, route: 'case', label: "Case Party Role Type" },
+      // { value: 5, route: 'case', label: "Party Identifier Type" },
+      // { value: 6, route: 'case', label: "ICCS Code" },
+      // { value: 7, route: 'case', label: "Event Type" },
+      // { value: 8, route: 'case', label: "Hearing Type" },
+      { value: 9, route: 'courtlocations', label: "Court Location" },
     ];
   }
 
