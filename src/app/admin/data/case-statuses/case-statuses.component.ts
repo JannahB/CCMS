@@ -25,6 +25,7 @@ export class CaseStatusesComponent implements OnInit {
 
   typeItems: CaseStatus[];
   selectedItem: CaseStatus;
+  selectedItemCopy: CaseStatus;
   tableLabel:string = "Case Status"
   refDataSubscription: Subscription;
 
@@ -50,6 +51,7 @@ export class CaseStatusesComponent implements OnInit {
       this.itemsList.deselectAll();
       event.option.selected = true;
       this.selectedItem = event.option.value;
+      this.copySelectedItem();
     });
 
   }
@@ -62,6 +64,7 @@ export class CaseStatusesComponent implements OnInit {
     this.refDataSubscription = this.lookupSvc.fetchLookup<CaseStatus>('FetchCaseStatus').subscribe(result => {
       this.typeItems = result;
       this.selectedItem = this.typeItems[0];
+      this.copySelectedItem();
       setTimeout(() => {
         this.itemsList.options.first.selected = true;
       }, 100);
@@ -75,7 +78,9 @@ export class CaseStatusesComponent implements OnInit {
   }
 
   createNewItem() {
+    this.itemsList.deselectAll();
     this.selectedItem = new CaseStatus();
+    this.copySelectedItem();
   }
 
   saveDataItem(){
@@ -101,6 +106,19 @@ export class CaseStatusesComponent implements OnInit {
     })
 
   }
+
+  copySelectedItem() {
+    this.selectedItemCopy = { ...this.selectedItem };
+  }
+
+  cancelDataItemEdit(event){
+    this.selectedItem = { ...this.selectedItemCopy };
+  }
+
+  deleteDataItemRequest() {
+    // TODO: Add delete modal
+  }
+
 
 
 }
