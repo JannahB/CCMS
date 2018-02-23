@@ -1,3 +1,4 @@
+import { CaseStatusesComponent } from './data/case-statuses/case-statuses.component';
 import { CasePhasesComponent } from './data/case-phases/case-phases.component';
 import { CaseTypesComponent } from './data/case-types/case-types.component';
 import { NgModule } from '@angular/core';
@@ -21,6 +22,7 @@ const routes: Routes = [
           {path: '', pathMatch: 'full', redirectTo: 'casetypes' },
           {path: 'casetypes', component: CaseTypesComponent},
           {path: 'casephases', component: CasePhasesComponent},
+          {path: 'casestatuses', component: CaseStatusesComponent},
          ]
        },
 

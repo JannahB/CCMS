@@ -10,6 +10,8 @@ import { CaseTypesComponent } from './data/case-types/case-types.component';
 import { CasePhasesComponent } from './data/case-phases/case-phases.component';
 import { ButtonModule, DropdownModule } from 'primeng/primeng';
 import { CustomMaterialModule } from '../common/modules/customMaterial.module';
+import { CaseStatusesComponent } from './data/case-statuses/case-statuses.component';
+import { CourtLocationsComponent } from './data/court-locations/court-locations.component';
 
 @NgModule({
   imports: [
@@ -21,6 +23,6 @@ import { CustomMaterialModule } from '../common/modules/customMaterial.module';
     CustomMaterialModule
 
   ],
-  declarations: [DataComponent, AdminComponent, CaseTypesComponent, CasePhasesComponent]
+  declarations: [DataComponent, AdminComponent, CaseTypesComponent, CasePhasesComponent, CaseStatusesComponent, CourtLocationsComponent]
 })
 export class AdminModule { }

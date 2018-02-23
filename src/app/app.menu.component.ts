@@ -45,11 +45,12 @@ export class AppMenuComponent implements OnInit {
             ]},
           {label: 'Admin', icon: 'security',
             items: [
-              {label:'Data', icon:'chrome_reader_mode', items: [
+              {label:'Table Data', icon:'chrome_reader_mode', items: [
                 {label:'Case Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/casetypes']},
                 {label:'Case Phases', icon:'chrome_reader_mode', routerLink: ['/admin/data/casephases']},
+                {label:'Case Statuses', icon:'chrome_reader_mode', routerLink: ['/admin/data/casestatuses']},
               ]},
-              {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
+              // {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
               {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
               {label:'User Maintenance', icon:'account_box', routerLink: ['/admin/users']},
             ]},
