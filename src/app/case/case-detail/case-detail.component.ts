@@ -153,10 +153,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.loadingCase = true;
     this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe (kase => {
       this.loadingCase = false;
+
       if(!kase.caseOID){
         this.toastSvc.showWarnMessage('There is no case with caseOID of '+ caseId +'.', 'No Case Found');
       } else {
         this.case = kase;
+
+        this.case.caseDocs.filter( cd => {
+          console.log(cd.documentName);
+          console.log('index of ^', cd.documentName.indexOf('^'))
+          return cd.documentName.indexOf('^') == -1;
+        })
 
         if(this.case.caseType){
           this.caseSvc
