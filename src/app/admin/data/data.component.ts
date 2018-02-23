@@ -9,7 +9,15 @@ import { ToastService } from '../../common/services/utility/toast.service';
 @Component({
   selector: 'app-data',
   templateUrl: './data.component.html',
-  styleUrls: ['./data.component.scss']
+  styles: [
+    `
+    .card h2 {
+      font-weight: 300;
+      text-transform: uppercase;
+    }
+
+    `
+  ]
 })
 export class DataComponent implements OnInit {
 
