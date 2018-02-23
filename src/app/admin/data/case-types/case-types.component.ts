@@ -11,7 +11,15 @@ import { ToastService } from '../../../common/services/utility/toast.service';
 @Component({
   selector: 'app-case-types',
   templateUrl: './case-types.component.html',
-  styleUrls: ['./case-types.component.scss']
+  styles: [
+    `
+    h2 {
+      font-weight: 300;
+      text-transform: uppercase;
+    }
+
+    `
+  ]
 })
 export class CaseTypesComponent implements OnInit {
 
@@ -31,11 +39,13 @@ export class CaseTypesComponent implements OnInit {
 
   ngOnInit(){
 
-
   }
 
   ngAfterViewInit() {
+
     this.getRefData();
+
+    // Handle selection change via dom element so we can DeselectAll
     this.itemsList.selectionChange.subscribe((event: MatSelectionListChange) => {
       this.itemsList.deselectAll();
       event.option.selected = true;
@@ -45,24 +55,23 @@ export class CaseTypesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-
+    if(this.refDataSubscription) this.refDataSubscription.unsubscribe();
   }
 
 
   getRefData() {
-    let that = this;
-    this.lookupSvc.fetchLookup<CaseType>('FetchCaseType').subscribe(result => {
+    this.refDataSubscription = this.lookupSvc.fetchLookup<CaseType>('FetchCaseType').subscribe(result => {
       this.typeItems = result;
       this.selectedItem = this.typeItems[0];
       setTimeout(() => {
-        that.itemsList.options.first.selected = true;
+        this.itemsList.options.first.selected = true;
       }, 100);
 
     })
   }
 
   onSelectionChange(event) {
-    console.log(event);
+    // Handling selection change with MatSelectionListChange observable above
     // this.selectedItem = event.option.value[0];
   }
 
@@ -81,9 +90,7 @@ export class CaseTypesComponent implements OnInit {
         this.typeItems[index] = result;
       }else{
         this.typeItems.push(result);
-        // this.typeItems = this.typeItems.slice();
       }
-      // this.refreshList();
       this.toastSvc.showSuccessMessage('Item Saved');
     },
     (error) => {
