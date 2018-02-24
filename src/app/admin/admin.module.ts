@@ -8,7 +8,7 @@ import { DataComponent } from './data/data.component';
 import { AdminComponent } from './admin.component';
 import { CaseTypesComponent } from './data/case-types/case-types.component';
 import { CasePhasesComponent } from './data/case-phases/case-phases.component';
-import { ButtonModule, DropdownModule } from 'primeng/primeng';
+import { ButtonModule, DropdownModule, DialogModule } from 'primeng/primeng';
 import { CustomMaterialModule } from '../common/modules/customMaterial.module';
 import { CaseStatusesComponent } from './data/case-statuses/case-statuses.component';
 import { CourtLocationsComponent } from './data/court-locations/court-locations.component';
@@ -20,7 +20,8 @@ import { CourtLocationsComponent } from './data/court-locations/court-locations.
     AdminRoutingModule,
     ButtonModule,
     DropdownModule,
-    CustomMaterialModule
+    CustomMaterialModule,
+    DialogModule
 
   ],
   declarations: [DataComponent, AdminComponent, CaseTypesComponent, CasePhasesComponent, CaseStatusesComponent, CourtLocationsComponent]
