@@ -29,12 +29,12 @@ export class LookupService {
     return this.http.get<T[]>(url);
   }
 
-  public fetchPhaseByTypeLookup<T>(caseTypeOID):Observable<T[]> {
+  public fetchPhaseByTypeLookup<T>(caseTypeOID: string | number ):Observable<T[]> {
     let url: string = this.getBaseUrl() + '/FetchPhaseByType';
 
     return this.http.post<T[]>(
       url,
-      { typeOID: caseTypeOID },
+      { typeOID: caseTypeOID.toString() },
       { headers:
         { uiVersion: "2" }
       }

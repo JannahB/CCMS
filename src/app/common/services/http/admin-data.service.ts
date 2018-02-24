@@ -50,15 +50,16 @@ export class AdminDataService {
     );
   }
 
-  fetchPhaseByTypeLookup<T>(caseTypeOID):Observable<T[]> {
-    if(!caseTypeOID) return;
+
+  public fetchPhaseByTypeLookup<T>(caseTypeOID: string | number ):Observable<T[]> {
     let url: string = this.getBaseUrl() + '/FetchPhaseByType';
-    caseTypeOID = caseTypeOID.toString();
+
     return this.http.post<T[]>(
       url,
-      { typeOID: caseTypeOID }
+      { typeOID: caseTypeOID.toString() }
     );
   }
+
 
   // FetchICCSCodeParent
   // {categoryType: "1"}
@@ -118,7 +119,7 @@ export class AdminDataService {
     let url: string = this.getBaseUrl() +'/SaveCasePhase';
     let obj = {
       casePhaseOID: data.casePhaseOID ? data.casePhaseOID.toString() : null,
-      caseTypeOID: data.caseTypeOID,
+      caseTypeOID: data.caseTypeOID ? data.caseTypeOID.toString() : null,
       name: data.name,
       description: data.description ? data.description.toString() : null,
     };
