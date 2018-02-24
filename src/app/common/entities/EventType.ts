@@ -1,10 +1,10 @@
 
 export class EventType {
 
-  courtOID: number; 
-  description: string; 
-  eventCategoryText: string; 
-  eventTypeName: string; 
-  eventTypeOID: number; 
-    
+  courtOID: number = 0;
+  description: string = '';
+  eventCategoryText: string = '';
+  eventTypeName: string = '';
+  eventTypeOID: number = 0;
+
 }

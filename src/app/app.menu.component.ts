@@ -51,6 +51,8 @@ export class AppMenuComponent implements OnInit {
                 {label:'Case Statuses', icon:'chrome_reader_mode', routerLink: ['/admin/data/casestatuses']},
                 {label:'Court Locations', icon:'chrome_reader_mode', routerLink: ['/admin/data/courtlocations']},
                 {label:'Case Party Roles', icon:'chrome_reader_mode', routerLink: ['/admin/data/casepartyroles']},
+                {label:'Event Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/eventtypes']},
+
 
               ]},
               // {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},

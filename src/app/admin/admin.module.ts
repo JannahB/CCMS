@@ -13,6 +13,7 @@ import { CustomMaterialModule } from '../common/modules/customMaterial.module';
 import { CaseStatusesComponent } from './data/case-statuses/case-statuses.component';
 import { CourtLocationsComponent } from './data/court-locations/court-locations.component';
 import { CasePartyRolesComponent } from './data/case-party-roles/case-party-roles.component';
+import { EventTypesComponent } from './data/event-types/event-types.component';
 
 @NgModule({
   imports: [
@@ -25,6 +26,6 @@ import { CasePartyRolesComponent } from './data/case-party-roles/case-party-role
     DialogModule
 
   ],
-  declarations: [DataComponent, AdminComponent, CaseTypesComponent, CasePhasesComponent, CaseStatusesComponent, CourtLocationsComponent, CasePartyRolesComponent]
+  declarations: [DataComponent, AdminComponent, CaseTypesComponent, CasePhasesComponent, CaseStatusesComponent, CourtLocationsComponent, CasePartyRolesComponent, EventTypesComponent]
 })
 export class AdminModule { }
