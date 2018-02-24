@@ -1,8 +1,8 @@
-import { CaseType } from './../../../common/entities/CaseType';
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
 
+import { CaseType } from './../../../common/entities/CaseType';
 import { LookupService } from './../../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { AdminDataService } from '../../../common/services/http/admin-data.service';
@@ -78,8 +78,10 @@ export class CaseTypesComponent implements OnInit {
       this.typeItems = result;
       this.selectedItem = this.typeItems[0];
       this.copySelectedItem();
+      // If items in list, default to first item
       setTimeout(() => {
-        this.itemsList.options.first.selected = true;
+        if( this.itemsList.options.first )
+          this.itemsList.options.first.selected = true;
       }, 100);
 
     })

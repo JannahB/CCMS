@@ -74,8 +74,10 @@ export class CaseStatusesComponent implements OnInit {
       this.typeItems = result;
       this.selectedItem = this.typeItems[0];
       this.copySelectedItem();
+      // If items in list, default to first item
       setTimeout(() => {
-        this.itemsList.options.first.selected = true;
+        if( this.itemsList.options.first )
+          this.itemsList.options.first.selected = true;
       }, 100);
 
     })
