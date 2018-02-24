@@ -163,11 +163,12 @@ export class AdminDataService {
    */
   saveCasePartyRole(data:CasePartyRole):Observable<CasePartyRole> {
     let url: string = this.getBaseUrl() +'/SaveCasePartyRole';
+
     let obj = {
       casePartyRoleOID: data.casePartyRoleOID ? data.casePartyRoleOID.toString() : null,
       name: data.name,
       description: data.description ? data.description.toString() : null,
-      codefendantIndicator: data.codefendantIndicator
+      codefendantIndicator: data.codefendantIndicator ? '1' : '0'
     };
 
     return this.http.post<CasePartyRole>(
