@@ -7,6 +7,7 @@ import { LookupService } from './../../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { AdminDataService } from '../../../common/services/http/admin-data.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
+import { environment } from './../../../../environments/environment';
 
 @Component({
   selector: 'app-case-types',
@@ -23,9 +24,15 @@ import { ToastService } from '../../../common/services/utility/toast.service';
 })
 export class CaseTypesComponent implements OnInit {
 
+
   typeItems: CaseType[];
   selectedItem: CaseType;
-  selectedItemCopy: CaseType;
+
+  allowDeleteLookupItems: boolean;
+  selectedItemIdx: number;
+  selectedItemBak: CaseType;
+  showDeleteItemModal: boolean = false;
+
   tableLabel:string = "Case Type"
   refDataSubscription: Subscription;
 
@@ -34,12 +41,17 @@ export class CaseTypesComponent implements OnInit {
     private lookupSvc: LookupService,
     private adminSvc: AdminDataService,
     private toastSvc: ToastService
-  ) { }
+  ) {
+    this.breadCrumbSvc.setItems([
+      { label: 'Data Table Maintenance', routerLink: ['/admin/data'] },
+      { label: 'Case Types', routerLink: ['/admin/data/casetypes'] }
+    ]);
+   }
 
   @ViewChild(MatSelectionList) itemsList: MatSelectionList;
 
   ngOnInit(){
-
+    this.allowDeleteLookupItems = environment.allowDeleteLookupItems;
   }
 
   ngAfterViewInit() {
@@ -88,8 +100,7 @@ export class CaseTypesComponent implements OnInit {
     this.adminSvc.saveCaseType(this.selectedItem).subscribe( result => {
       console.log('result', result);
 
-      let index:number = this.typeItems
-        .findIndex(itm => itm.caseTypeOID == result.caseTypeOID);
+      let index:number = this.getIndexOfItem(result);
 
       if(index >= 0){
         this.typeItems[index] = result;
@@ -109,17 +120,45 @@ export class CaseTypesComponent implements OnInit {
   }
 
   copySelectedItem() {
-    // TODO: fix compiler grumpiness
-    // this.selectedItemCopy = { ...this.selectedItem };
+    this.selectedItemBak = Object.assign( new CaseType(), this.selectedItem );
+    this.selectedItemIdx = this.getIndexOfItem(this.selectedItem);
   }
 
-  cancelDataItemEdit(event){
-    // TODO: fix compiler grumpiness
-    // this.selectedItem = { ...this.selectedItemCopy };
+  cancelDataItemEdit(event) {
+    this.selectedItem = Object.assign( new CaseType(), this.selectedItemBak );
+    this.typeItems[this.selectedItemIdx] = this.selectedItem;
   }
 
   deleteDataItemRequest() {
-    // TODO: Add delete modal
+    if(!this.allowDeleteLookupItems) {
+      this.toastSvc.showInfoMessage('Delete support is currently not available.');
+      return;
+    }
+    this.showDeleteItemModal = true;
+  }
+
+  deleteDataItem() {
+    this.adminSvc.deleteLookupItem('CaseType', this.selectedItem.caseTypeOID).subscribe( result => {
+      this.typeItems.splice(this.getIndexOfItem(), 1);
+      this.selectedItem = this.typeItems[0];
+      this.toastSvc.showSuccessMessage('The item has been deleted.');
+    },
+    (error) => {
+      console.log(error);
+      this.toastSvc.showErrorMessage('There was an error deleting the item.');
+    },
+    () => {
+      // final
+    })
+  }
+
+  hideModals(){
+    this.showDeleteItemModal = false;
+  }
+
+  private getIndexOfItem(item = this.selectedItem): number {
+    return this.typeItems
+        .findIndex(itm => itm.caseTypeOID == item.caseTypeOID);
   }
 
 }
