@@ -10,6 +10,7 @@ import { AdminComponent } from './admin.component';
 import { AdminWorkflowComponent } from './admin-workflow/admin-workflow.component';
 import { CanActivateAuthenticationGuard } from '../common/guards/can-activate-authentication.guard';
 import { CourtLocationsComponent } from './data/court-locations/court-locations.component';
+import { CasePartyRolesComponent } from './data/case-party-roles/case-party-roles.component';
 
 const routes: Routes = [
   {path: 'admin', component: AdminComponent,
@@ -25,6 +26,7 @@ const routes: Routes = [
           {path: 'casephases', component: CasePhasesComponent},
           {path: 'casestatuses', component: CaseStatusesComponent},
           {path: 'courtlocations', component: CourtLocationsComponent},
+          {path: 'casepartyroles', component: CasePartyRolesComponent},
          ]
        },
 

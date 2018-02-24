@@ -1,10 +1,10 @@
 
 export class CasePartyRole {
 
-  casePartyRoleOID: number;
-  name: string;
-  description: string;
-  codefendantIndicator: boolean;
-  courtOID: number;
+  casePartyRoleOID: number = 0;
+  name: string = '';
+  description: string = '';
+  codefendantIndicator: boolean = false;
+  courtOID: number = 0;
 
 }
