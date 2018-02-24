@@ -6,5 +6,7 @@
 export const environment = {
   production: false,
   apiUrl: "https://traincms.ttlawcourts.org/CCMS3/",                // TRAINING
-  mockUrl: "assets/mockData/"
+  mockUrl: "assets/mockData/",
+
+  allowDeleteLookupItems: false
 };

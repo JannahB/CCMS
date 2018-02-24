@@ -1,3 +1,4 @@
+import { DateValidatorService } from './../utility/dates/date-validator.service';
 import { Inject, Injectable, forwardRef} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
@@ -295,6 +296,16 @@ export class AdminDataService {
     )
   }
 
+
+  // TODO: Get API signature from Aaron
+  deleteLookupItem(type: string, id:string | number ){
+    let url: string = this.getBaseUrl() +'/Delete/'+type;
+
+    return this.http.post(
+      url,
+      id.toString()
+    )
+  }
 
 
 

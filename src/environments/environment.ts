@@ -8,5 +8,7 @@ export const environment = {
   apiUrl: "http://209.10.74.232/CCMS3/",                // DEV
   // apiUrl: "https://testcms.ttlawcourts.org/CCMS3/",  // TEST
   // apiUrl: "http://cms.ttlawcourts.org/CCMS3/",       // PROD
-  mockUrl: "assets/mockData/"
+  mockUrl: "assets/mockData/",
+
+  allowDeleteLookupItems: false
 };
