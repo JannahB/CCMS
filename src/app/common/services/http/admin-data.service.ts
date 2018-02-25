@@ -246,8 +246,7 @@ export class AdminDataService {
 
     return this.http.post<EventType>(
       url,
-      obj,
-      { headers: {uiVersion:"2"}}
+      obj
     )
   }
 
@@ -265,14 +264,13 @@ export class AdminDataService {
     let obj = {
       hearingTypeOID: data.hearingTypeOID ? data.hearingTypeOID.toString() : null,
       hearingName: data.hearingName,
-      durationInMinutes: data.durationInMinutes,
+      durationInMinutes: data.durationInMinutes ? data.durationInMinutes.toString() : "0",
       description: data.description ? data.description.toString() : null,
     };
 
     return this.http.post<HearingType>(
       url,
-      obj,
-      { headers: {uiVersion:"2"}}
+      obj
     )
   }
 
@@ -293,8 +291,7 @@ export class AdminDataService {
 
     return this.http.post<CourtLocation>(
       url,
-      obj,
-      { headers: {uiVersion:"2"}}
+      obj
     )
   }
 

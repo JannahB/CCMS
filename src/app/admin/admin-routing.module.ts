@@ -12,6 +12,7 @@ import { CanActivateAuthenticationGuard } from '../common/guards/can-activate-au
 import { CourtLocationsComponent } from './data/court-locations/court-locations.component';
 import { CasePartyRolesComponent } from './data/case-party-roles/case-party-roles.component';
 import { EventTypesComponent } from './data/event-types/event-types.component';
+import { HearingTypeComponent } from './data/hearing-type/hearing-type.component';
 
 const routes: Routes = [
   {path: 'admin', component: AdminComponent,
@@ -29,6 +30,8 @@ const routes: Routes = [
           {path: 'courtlocations', component: CourtLocationsComponent},
           {path: 'casepartyroles', component: CasePartyRolesComponent},
           {path: 'eventtypes', component: EventTypesComponent },
+          {path: 'hearingtypes', component: HearingTypeComponent },
+
 
          ]
        },

@@ -14,6 +14,7 @@ import { CaseStatusesComponent } from './data/case-statuses/case-statuses.compon
 import { CourtLocationsComponent } from './data/court-locations/court-locations.component';
 import { CasePartyRolesComponent } from './data/case-party-roles/case-party-roles.component';
 import { EventTypesComponent } from './data/event-types/event-types.component';
+import { HearingTypeComponent } from './data/hearing-type/hearing-type.component';
 
 @NgModule({
   imports: [
@@ -26,6 +27,6 @@ import { EventTypesComponent } from './data/event-types/event-types.component';
     DialogModule
 
   ],
-  declarations: [DataComponent, AdminComponent, CaseTypesComponent, CasePhasesComponent, CaseStatusesComponent, CourtLocationsComponent, CasePartyRolesComponent, EventTypesComponent]
+  declarations: [DataComponent, AdminComponent, CaseTypesComponent, CasePhasesComponent, CaseStatusesComponent, CourtLocationsComponent, CasePartyRolesComponent, EventTypesComponent, HearingTypeComponent]
 })
 export class AdminModule { }
