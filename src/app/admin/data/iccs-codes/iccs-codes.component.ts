@@ -8,7 +8,6 @@ import { BreadcrumbService } from '../../../breadcrumb.service';
 import { AdminDataService } from '../../../common/services/http/admin-data.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
 import { environment } from './../../../../environments/environment';
-import { CasePhase } from '../../../common/entities/CasePhase';
 import { IccsCode } from './../../../common/entities/IccsCode';
 
 
@@ -30,8 +29,8 @@ export class IccsCodesComponent implements OnInit {
   categoryTypes: any[];
   selectedCategory: any;
 
-  parentItems: CaseType[];
-  selectedParentItem: CaseType;
+  parentItems: IccsCode[];
+  selectedParentItem: IccsCode;
 
   typeItems: IccsCode[];
   selectedItem: IccsCode;
@@ -94,16 +93,17 @@ export class IccsCodesComponent implements OnInit {
       {id: 4, name: 'Class'}
     ];
 
-    this.parentRefDataSubscription = this.lookupSvc.fetchLookup<CaseType>('FetchCaseType').subscribe(result => {
-      this.parentItems = result;
-      this.selectedParentItem = this.parentItems[0];
-      this.getRefDataItems();
-    })
+    this.parentRefDataSubscription = this.adminSvc.fetchICCSCodeParent<IccsCode>(1)
+      .subscribe(result => {
+        this.parentItems = result;
+        this.selectedParentItem = this.parentItems[0];
+        this.getRefDataItems();
+      })
   }
 
   getRefDataItems() {
-    let id = this.selectedParentItem.caseTypeOID;
-    this.refDataSubscription = this.lookupSvc.fetchPhaseByTypeLookup<CasePhase>(this.selectedParentItem.caseTypeOID)
+    let id = this.selectedParentItem.iccsCodeOID;
+    this.refDataSubscription = this.adminSvc.fetchICCSCodeParent<IccsCode>(this.selectedParentItem.iccsCodeOID)
       .subscribe(result => {
         this.typeItems = result;
         this.selectedItem = this.typeItems[0];
@@ -120,22 +120,22 @@ export class IccsCodesComponent implements OnInit {
 
   parentItemOnChange(event) {
     let parentTypeId = event.value;
-    this.selectedParentItem = this.parentItems.find( itm => itm.caseTypeOID == parentTypeId);
+    this.selectedParentItem = this.parentItems.find( itm => itm.iccsCodeOID == parentTypeId);
     this.getRefDataItems();
   }
 
   createNewItem() {
     this.editing = true;
     this.itemsList.deselectAll();
-    this.selectedItem = new CasePhase();
-    this.selectedItem.caseTypeOID = this.selectedParentItem.caseTypeOID;
+    this.selectedItem = new IccsCode();
+    this.selectedItem.iccsCodeOID = this.selectedParentItem.iccsCodeOID;
     this.copySelectedItem();
   }
 
   saveDataItem(){
-    this.adminSvc.saveCasePhase(this.selectedItem).subscribe( result => {
+    this.adminSvc.saveICCSCode(this.selectedItem).subscribe( result => {
       console.log('result', result);
-      let savedItem:CasePhase = result[0]
+      let savedItem:IccsCode = result[0]
 
       let index:number = this.getIndexOfItem(savedItem);
 
@@ -157,13 +157,13 @@ export class IccsCodesComponent implements OnInit {
   }
 
   copySelectedItem() {
-    this.selectedItemBak = Object.assign( new CasePhase(), this.selectedItem );
+    this.selectedItemBak = Object.assign( new IccsCode(), this.selectedItem );
     this.selectedItemIdx = this.getIndexOfItem(this.selectedItem);
   }
 
   cancelDataItemEdit(event) {
     this.editing = false;
-    this.selectedItem = Object.assign( new CasePhase(), this.selectedItemBak );
+    this.selectedItem = Object.assign( new IccsCode(), this.selectedItemBak );
     this.typeItems[this.selectedItemIdx] = this.selectedItem;
   }
 
@@ -176,7 +176,7 @@ export class IccsCodesComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.adminSvc.deleteLookupItem('CasePhase', this.selectedItem.caseTypeOID).subscribe( result => {
+    this.adminSvc.deleteLookupItem('IccsCode', this.selectedItem.iccsCodeOID).subscribe( result => {
       this.typeItems.splice(this.getIndexOfItem(), 1);
       this.selectedItem = this.typeItems[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
@@ -196,7 +196,7 @@ export class IccsCodesComponent implements OnInit {
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.typeItems
-        .findIndex(itm => itm.casePhaseOID == item.casePhaseOID);
+        .findIndex(itm => itm.iccsCodeOID == item.iccsCodeOID);
   }
 
 }
