@@ -1,3 +1,4 @@
+import { UserService } from './common/services/utility/user.service';
 import { AuthenticationService } from './common/services/http/authentication.service';
 import { GlobalState } from './common/services/state/global.state';
 import {Component, Input, OnInit} from '@angular/core';
@@ -22,7 +23,8 @@ export class AppMenuComponent implements OnInit {
     constructor(
       public app: AppComponent,
       public _state:GlobalState,
-      public authSvc: AuthenticationService
+      public authSvc: AuthenticationService,
+      public userSvc: UserService
     ) {}
 
     ngOnInit() {
@@ -43,25 +45,6 @@ export class AppMenuComponent implements OnInit {
                 {label:'Search Party', icon:'search', routerLink: ['/party-search']},
                 {label:'New Party', icon:'folder_shared', routerLink: ['/party-detail/0']},
             ]},
-          {label: 'Admin', icon: 'security',
-            items: [
-              {label:'Table Data', icon:'chrome_reader_mode', items: [
-                {label:'Case Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/casetypes']},
-                {label:'Case Phases', icon:'chrome_reader_mode', routerLink: ['/admin/data/casephases']},
-                {label:'Case Statuses', icon:'chrome_reader_mode', routerLink: ['/admin/data/casestatuses']},
-                {label:'Court Locations', icon:'chrome_reader_mode', routerLink: ['/admin/data/courtlocations']},
-                {label:'Case Party Roles', icon:'chrome_reader_mode', routerLink: ['/admin/data/casepartyroles']},
-                {label:'Event Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/eventtypes']},
-                {label:'Hearing Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/hearingtypes']},
-                // {label:'ICCS Codes', icon:'chrome_reader_mode', routerLink: ['/admin/data/iccscodes']},
-
-
-              ]},
-              // {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
-              {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
-              {label:'User Maintenance', icon:'account_box', routerLink: ['/admin/users']},
-            ]},
-
 
             // {
             //     label: 'Themes', icon: 'palette', badge: '2',
@@ -74,6 +57,27 @@ export class AppMenuComponent implements OnInit {
             // },
 
         ];
+
+        if(this.userSvc.loggedInUser && this.userSvc.loggedInUser.isCourtUser) {
+          this.model.push(
+            {label: 'Admin', icon: 'security',
+            items: [
+              {label:'Table Data', icon:'chrome_reader_mode', items: [
+                {label:'Case Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/casetypes']},
+                {label:'Case Phases', icon:'chrome_reader_mode', routerLink: ['/admin/data/casephases']},
+                {label:'Case Statuses', icon:'chrome_reader_mode', routerLink: ['/admin/data/casestatuses']},
+                {label:'Court Locations', icon:'chrome_reader_mode', routerLink: ['/admin/data/courtlocations']},
+                {label:'Case Party Roles', icon:'chrome_reader_mode', routerLink: ['/admin/data/casepartyroles']},
+                {label:'Event Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/eventtypes']},
+                {label:'Hearing Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/hearingtypes']},
+                // {label:'ICCS Codes', icon:'chrome_reader_mode', routerLink: ['/admin/data/iccscodes']},
+              ]},
+              // {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
+              {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
+              {label:'User Maintenance', icon:'account_box', routerLink: ['/admin/users']},
+            ]}
+          )
+        }
     }
 
     changeTheme(theme) {
