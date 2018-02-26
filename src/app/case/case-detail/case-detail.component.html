@@ -418,29 +418,33 @@
                 <h2>Documents</h2>
             </div>
             <div class="ui-g-12 pt-0">
-                <div class="ui-g-12 ui-md-3">
-                    <label class="minimal primary block">Generate Document</label>
-                    <!-- TODO: Get document types lookup data -->
-                    <p-dropdown
-                        placeholder="document type..."
-                        [options]="documentTemplateTypes"
-                        [(ngModel)]="selectedDocumentTemplateType"
-                        optionLabel="documentName"
-                        (onChange)="ddOnChange($event)"
-                        styleClass="width-full">
-                    </p-dropdown>
+              <div class="ui-g-12 ui-md-6">
+                <h4 class="mt-0 mb-10">Generate Document</h4>
+                <div class="ui-g-12 ui-md-6">
+                  <!-- <label class="minimal primary block">Generate Document</label> -->
+                  <!-- TODO: Get document types lookup data -->
+                  <p-dropdown
+                      placeholder="document type..."
+                      [options]="documentTemplateTypes"
+                      [(ngModel)]="selectedDocumentTemplateType"
+                      optionLabel="documentName"
+                      (onChange)="ddOnChange($event)"
+                      styleClass="width-full">
+                  </p-dropdown>
                 </div>
-                <div class="ui-g-12 ui-md-3 pb-0">
+                <div class="ui-g-12 ui-md-6 pv-0">
                     <button type="button"
                         (click)="generateDoc()"
                         label="Generate"
                         icon="ui-icon-settings-applications"
                         class="ui-button-secondary inline" pButton></button>
                 </div>
+              </div>
+              <!-- FILE UPLOAD -->
+              <div class="ui-g-12 ui-md-6 ta-r">
+                <h4 class="mt-0 mb-10">Upload Document</h4>
 
-                <!-- FILE UPLOAD -->
-                <div class="ui-g-12 ui-md-6 pb-0 ta-r">
-                  <p-fileUpload name="theFiles[]" url="{{baseURL}}GetAttachment" (onUpload)="onUpload($event)"
+                  <p-fileUpload mode="basic" name="theFiles[]" url="{{baseURL}}GetAttachment" (onUpload)="onUpload($event)"
                       (onBeforeSend)="onBeforeSendFile($event)"
                       multiple="multiple" accept="application/pdf" maxFileSize="5000000">
                       <!-- accept="*.doc, *.docx, application/pdf" -->
@@ -450,7 +454,11 @@
                           </ul>
                       </ng-template>
                   </p-fileUpload>
-                </div>
+
+              </div>
+
+
+
             </div>
 
             <div class="ui-g-12">

@@ -26,3 +26,8 @@
   font-weight: 300;
   text-transform: uppercase;
 }
+
+::ng-deep .ui-button.ui-fileupload-choose {
+  background-color: white;
+  color: #444444;
+}

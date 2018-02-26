@@ -161,8 +161,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
         // Remove all files with a '^' in the docName - they are orphans
         this.case.caseDocs = this.case.caseDocs.filter( cd => {
-          console.log(cd.documentName);
-          console.log('index of ^', cd.documentName.indexOf('^'))
           return cd.documentName.indexOf('^') == -1;
         })
 
