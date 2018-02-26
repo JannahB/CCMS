@@ -100,6 +100,7 @@ import { ToastService } from './common/services/utility/toast.service';
 import { AuthorizationInterceptor } from './common/interceptors/authorization.interceptor';
 import { LoginComponent } from './login/login.component';
 import { CanActivateAuthenticationGuard } from './common/guards/can-activate-authentication.guard';
+import { CanActivateIsCourtUserGuard } from './common/guards/can-activate-is-court-user.guard';
 import { AuthenticationService } from './common/services/http/authentication.service';
 import { LoadingBarComponent } from './common/components/loading-bar.component';
 import { LocalStorageService } from './common/services/utility/local-storage.service';
@@ -220,6 +221,7 @@ import { AdminModule } from './admin/admin.module';
         CaseService,
         LookupService,
         CanActivateAuthenticationGuard,
+        CanActivateIsCourtUserGuard,
         AuthenticationService,
         LocalStorageService,
         UserService,
