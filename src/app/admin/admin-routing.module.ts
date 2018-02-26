@@ -1,3 +1,4 @@
+import { IccsCodesComponent } from './data/iccs-codes/iccs-codes.component';
 import { CaseStatusesComponent } from './data/case-statuses/case-statuses.component';
 import { CasePhasesComponent } from './data/case-phases/case-phases.component';
 import { CaseTypesComponent } from './data/case-types/case-types.component';
@@ -31,6 +32,7 @@ const routes: Routes = [
           {path: 'casepartyroles', component: CasePartyRolesComponent},
           {path: 'eventtypes', component: EventTypesComponent },
           {path: 'hearingtypes', component: HearingTypeComponent },
+          {path: 'iccscodes', component: IccsCodesComponent },
 
 
          ]

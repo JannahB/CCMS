@@ -53,6 +53,7 @@ export class AppMenuComponent implements OnInit {
                 {label:'Case Party Roles', icon:'chrome_reader_mode', routerLink: ['/admin/data/casepartyroles']},
                 {label:'Event Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/eventtypes']},
                 {label:'Hearing Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/hearingtypes']},
+                // {label:'ICCS Codes', icon:'chrome_reader_mode', routerLink: ['/admin/data/iccscodes']},
 
 
               ]},
