@@ -34,8 +34,6 @@ const routes: Routes = [
           {path: 'eventtypes', component: EventTypesComponent , canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard ]},
           {path: 'hearingtypes', component: HearingTypeComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard ] },
           {path: 'iccscodes', component: IccsCodesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard ] },
-
-
          ]
        },
 

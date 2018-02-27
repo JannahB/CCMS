@@ -67,7 +67,7 @@ export class DataComponent implements OnInit {
       { value: 3, route: 'casestatuses', label: "Case Status Type" },
       { value: 4, route: 'casepartyroles', label: "Case Party Role Type" },
       { value: 5, route: 'eventtypes', label: "Event Type" },
-      // { value: 6, route: 'iccscodes', label: "ICCS Code" },
+      { value: 6, route: 'iccscodes', label: "ICCS Code" },
       { value: 7, route: 'hearingtypes', label: "Hearing Type" },
       { value: 8, route: 'courtlocations', label: "Court Location" },
     ];

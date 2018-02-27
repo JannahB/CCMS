@@ -14,6 +14,12 @@ import { GlobalState } from './common/services/state/global.state';
         /*color: #BF2E1A; Brand Red*/
         color: #707070;
       }
+      li.profile-item {
+        border-left: 1px solid #cccccc;
+      }
+      .arrow {
+        font-size: 1.5em;
+      }
     `],
     template: `
         <div class="topbar clearfix" >
@@ -39,11 +45,19 @@ import { GlobalState } from './common/services/state/global.state';
                     <li #profile class="profile-item" *ngIf="app.profileMode==='top'||app.isHorizontal()"
                         [ngClass]="{'active-top-menu':app.activeTopbarItem === profile}">
 
+                        <button mat-button (click)="app.onTopbarItemClick($event,profile)">
+                          <i class="material-icons profile-icon">account_circle</i>
+                          <span class="">{{loggedInUser?.firstName}} {{loggedInUser?.lastName}}</span>
+                          <i class="material-icons profile-icon arrow">keyboard_arrow_down</i>
+                        </button>
+
+                        <!--
                         <a href="#" (click)="app.onTopbarItemClick($event,profile)">
                           <i class="material-icons profile-icon">account_circle</i>
-                          <!-- <img class="profile-image" src="assets/layout/images/avatar.png" /> -->
+                          <!-- <img class="profile-image" src="assets/layout/images/avatar.png" />
                           <span class="">{{loggedInUser?.firstName}} {{loggedInUser?.lastName}}</span>
                         </a>
+                        -->
 
                         <ul class="ultima-menu animated fadeInDown">
 
