@@ -33,6 +33,15 @@ export class UserService {
     this._loggedInUser = user;
   }
 
+  public isAdminUser():boolean {
+    if(!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length ) return false;
+
+    let idx = this.loggedInUser.roles.findIndex( itm => itm.ccmsAdmin == true);
+    console.log('Logged in user', this.loggedInUser.userName);
+    console.log('  Admin Role', (idx > -1) );
+    return idx > -1;
+  }
+
 
 
 }

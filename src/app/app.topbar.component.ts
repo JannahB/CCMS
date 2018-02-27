@@ -180,8 +180,10 @@ export class AppTopbarComponent {
         this._state.notifyDataChanged('theme.change', theme, true );
     }
 
-    public logout():void{
-        AuthorizationInterceptor.authToken = null;
+    public logout():void {
+      this.userSvc.loggedInUser = null;
+      AuthorizationInterceptor.authToken = null;
+      this._state.notifyDataChanged('app.loggedOut', null, true );
     }
 
 }

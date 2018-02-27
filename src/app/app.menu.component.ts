@@ -27,57 +27,72 @@ export class AppMenuComponent implements OnInit {
       public userSvc: UserService
     ) {}
 
+
+
     ngOnInit() {
 
-        this._state.subscribe('theme.change', (theme) => {
-            this.changeTheme(theme);
-        });
+      this._state.subscribe('theme.change', (theme) => {
+          this.changeTheme(theme);
+      });
 
-        this.model = [
-          {label: 'Dashboard', icon: 'dashboard', routerLink: ['/']},
-          {label: 'Case', icon: 'gavel',
-            items: [
-                {label:'Search Case', icon:'search', routerLink: ['/case-search']},
-                {label:'New Case', icon:'gavel', routerLink: ['/case-detail/0']},
+      this._state.subscribe('app.loggedOut', (count) => {
+        this.buildMenu();
+      });
+
+      this._state.subscribe('app.loggedIn', (count) => {
+        this.buildMenu();
+      });
+
+      this.buildMenu();
+    }
+
+    buildMenu(){
+      this.model = [
+        {label: 'Dashboard', icon: 'dashboard', routerLink: ['/']},
+        {label: 'Case', icon: 'gavel',
+          items: [
+              {label:'Search Case', icon:'search', routerLink: ['/case-search']},
+              {label:'New Case', icon:'gavel', routerLink: ['/case-detail/0']},
+          ]},
+        {label: 'Party', icon: 'folder_shared',
+          items: [
+              {label:'Search Party', icon:'search', routerLink: ['/party-search']},
+              {label:'New Party', icon:'folder_shared', routerLink: ['/party-detail/0']},
+          ]},
+
+          // {
+          //     label: 'Themes', icon: 'palette', badge: '2',
+          //     items: [
+          //         {label: 'TT Blue', icon: 'brush', command: (event) => {this.changeTheme('tt'); }},
+          //         {label: 'TT Red', icon: 'brush', command: (event) => {this.changeTheme('tt2'); }},
+          //         {label: 'Login Page', icon: 'verified_user', url: 'assets/pages/login.html', target: '_blank'},
+          //         {label: 'Dark Menu', icon: 'label',  command: () => this.app.darkMenu = true},
+          //     ]
+          // },
+
+      ];
+
+      if(this.userSvc.loggedInUser && this.userSvc.isAdminUser() ) {
+        this.model.push(
+          {label: 'Admin', icon: 'security',
+          items: [
+            {label:'Table Data', icon:'chrome_reader_mode', items: [
+              {label:'Case Types', icon:'chevron_right', routerLink: ['/admin/data/casetypes']},
+              {label:'Case Phases', icon:'chevron_right', routerLink: ['/admin/data/casephases']},
+              {label:'Case Statuses', icon:'chevron_right', routerLink: ['/admin/data/casestatuses']},
+              {label:'Court Locations', icon:'chevron_right', routerLink: ['/admin/data/courtlocations']},
+              {label:'Case Party Roles', icon:'chevron_right', routerLink: ['/admin/data/casepartyroles']},
+              {label:'Event Types', icon:'chevron_right', routerLink: ['/admin/data/eventtypes']},
+              {label:'Hearing Types', icon:'chevron_right', routerLink: ['/admin/data/hearingtypes']},
+              {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
             ]},
-          {label: 'Party', icon: 'folder_shared',
-            items: [
-                {label:'Search Party', icon:'search', routerLink: ['/party-search']},
-                {label:'New Party', icon:'folder_shared', routerLink: ['/party-detail/0']},
-            ]},
+            // {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
+            {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
+            {label:'User Maintenance', icon:'account_box', routerLink: ['/admin/users']},
+          ]}
+        )
+      }
 
-            // {
-            //     label: 'Themes', icon: 'palette', badge: '2',
-            //     items: [
-            //         {label: 'TT Blue', icon: 'brush', command: (event) => {this.changeTheme('tt'); }},
-            //         {label: 'TT Red', icon: 'brush', command: (event) => {this.changeTheme('tt2'); }},
-            //         {label: 'Login Page', icon: 'verified_user', url: 'assets/pages/login.html', target: '_blank'},
-            //         {label: 'Dark Menu', icon: 'label',  command: () => this.app.darkMenu = true},
-            //     ]
-            // },
-
-        ];
-
-        if(this.userSvc.loggedInUser && this.userSvc.loggedInUser.isCourtUser) {
-          this.model.push(
-            {label: 'Admin', icon: 'security',
-            items: [
-              {label:'Table Data', icon:'chrome_reader_mode', items: [
-                {label:'Case Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/casetypes']},
-                {label:'Case Phases', icon:'chrome_reader_mode', routerLink: ['/admin/data/casephases']},
-                {label:'Case Statuses', icon:'chrome_reader_mode', routerLink: ['/admin/data/casestatuses']},
-                {label:'Court Locations', icon:'chrome_reader_mode', routerLink: ['/admin/data/courtlocations']},
-                {label:'Case Party Roles', icon:'chrome_reader_mode', routerLink: ['/admin/data/casepartyroles']},
-                {label:'Event Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/eventtypes']},
-                {label:'Hearing Types', icon:'chrome_reader_mode', routerLink: ['/admin/data/hearingtypes']},
-                // {label:'ICCS Codes', icon:'chrome_reader_mode', routerLink: ['/admin/data/iccscodes']},
-              ]},
-              // {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
-              {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
-              {label:'User Maintenance', icon:'account_box', routerLink: ['/admin/users']},
-            ]}
-          )
-        }
     }
 
     changeTheme(theme) {

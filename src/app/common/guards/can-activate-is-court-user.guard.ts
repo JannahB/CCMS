@@ -20,7 +20,7 @@ export class CanActivateIsCourtUserGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-      if(this.userSvc.loggedInUser.isCourtUser){
+      if( this.userSvc.isAdminUser() ){
         return true;
       }
 
