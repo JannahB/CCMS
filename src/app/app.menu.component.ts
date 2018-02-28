@@ -76,6 +76,7 @@ export class AppMenuComponent implements OnInit {
         this.model.push(
           {label: 'Admin', icon: 'security',
           items: [
+            {label:'User Maintenance', icon:'account_box', routerLink: ['/admin/users']},
             {label:'Table Data', icon:'chrome_reader_mode', items: [
               {label:'Case Types', icon:'chevron_right', routerLink: ['/admin/data/casetypes']},
               {label:'Case Phases', icon:'chevron_right', routerLink: ['/admin/data/casephases']},
@@ -84,11 +85,11 @@ export class AppMenuComponent implements OnInit {
               {label:'Case Party Roles', icon:'chevron_right', routerLink: ['/admin/data/casepartyroles']},
               {label:'Event Types', icon:'chevron_right', routerLink: ['/admin/data/eventtypes']},
               {label:'Hearing Types', icon:'chevron_right', routerLink: ['/admin/data/hearingtypes']},
-              {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
+              // {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
             ]},
             // {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
-            {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
-            {label:'User Maintenance', icon:'account_box', routerLink: ['/admin/users']},
+            // {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
+
           ]}
         )
       }
