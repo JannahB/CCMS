@@ -1,6 +1,8 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
+import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import "rxjs/add/observable/forkJoin";
 
 import { CaseType } from './../../../common/entities/CaseType';
 import { LookupService } from './../../../common/services/http/lookup.service';
@@ -9,7 +11,6 @@ import { AdminDataService } from '../../../common/services/http/admin-data.servi
 import { ToastService } from '../../../common/services/utility/toast.service';
 import { environment } from './../../../../environments/environment';
 import { IccsCode } from './../../../common/entities/IccsCode';
-
 
 
 @Component({
@@ -26,18 +27,25 @@ import { IccsCode } from './../../../common/entities/IccsCode';
 })
 export class IccsCodesComponent implements OnInit {
 
-  categoryTypes: any[];
-  selectedCategory: any;
 
-  parentItems: IccsCode[];
-  selectedParentItem: IccsCode;
-
-  typeItems: IccsCode[];
+  activeList: IccsCode[];
   selectedItem: IccsCode;
+  selectedItems: IccsCode[]; // used only to satisfy selection-list need for plurality
+  parentList: IccsCode[];
+  selectedParentItem: IccsCode;
+  categories: any[];
+  selectedCatIdx: number;
+  tabLabel: string;
+  miniBreadcrumb: string;
 
-  allowDeleteLookupItems: boolean;
+  parentList0: IccsCode[];
+  parentList1: IccsCode[];
+  parentList2: IccsCode[];
+  parentList3: IccsCode[];
+
   selectedItemIdx: number;
   selectedItemBak: IccsCode;
+  allowDeleteLookupItems: boolean;
   showDeleteItemModal: boolean = false;
   editing: boolean = false;
 
@@ -86,27 +94,84 @@ export class IccsCodesComponent implements OnInit {
 
   getParentRefData() {
 
-    this.categoryTypes = [
+    this.categories = [
       {id: 1, name: 'Section'},
       {id: 2, name: 'Division'},
       {id: 3, name: 'Group'},
       {id: 4, name: 'Class'}
     ];
 
+    var source = Observable.forkJoin<any>(
+      this.adminSvc.fetchICCSCodeParent<IccsCode>(1),
+      this.adminSvc.fetchICCSCodeParent<IccsCode>(2),
+      this.adminSvc.fetchICCSCodeParent<IccsCode>(3),
+      this.adminSvc.fetchICCSCodeParent<IccsCode>(4),
+    );
+
+    this.parentRefDataSubscription = source.subscribe(
+      results => {
+        this.parentList0 = results[0] as IccsCode[];
+        this.parentList1 = results[1] as IccsCode[];
+        this.parentList2 = results[2] as IccsCode[];
+        this.parentList3 = results[3] as IccsCode[];
+    });
+
     this.parentRefDataSubscription = this.adminSvc.fetchICCSCodeParent<IccsCode>(1)
       .subscribe(result => {
-        this.parentItems = result;
-        this.selectedParentItem = this.parentItems[0];
+        this.parentList = result;
+        this.selectedParentItem = this.parentList[0];
         this.getRefDataItems();
       })
+
+    this.selectedCatIdx = 0;
+    this.selectedTabIndexChange(this.selectedCatIdx);
   }
+
+  selectedTabIndexChange(event) {
+    console.log(event);
+    this.parentList = this['parentList'+ event];
+    this.setSelectedParent(event);
+  }
+
+  selectedParentChange(event) {
+    console.log('parentchange', event);
+    this.setSelectedParent(event.value);
+  }
+
+  setSelectedParent(idx = 0){
+    this.selectedParentItem = this.parentList[idx];
+    this.setList(idx);
+  }
+
+  setList(idx = 0){
+    this.activeList = this['list'+idx];
+    this.setSelectedItem(0);
+  }
+
+  setSelectedItem(idx = 0){
+    this.selectedItem = this.activeList[idx];
+    this.selectedItems = [];
+    this.selectedItems.push(this.selectedItem);
+    console.log('selectedItem', this.selectedItem)
+    this.genBreadCrumb();
+  }
+
+  genBreadCrumb(){
+    let part1 = this.categories[this.selectedCatIdx].name;
+    let part2 = this.selectedParentItem ? '  |  ' + this.selectedParentItem.categoryName : '';
+    let part3 = this.selectedItem ? '  |  ' + this.selectedItem.categoryName : ''
+    this.miniBreadcrumb = part1 + part2 + part3;
+  }
+
+
+
 
   getRefDataItems() {
     let id = this.selectedParentItem.iccsCodeOID;
     this.refDataSubscription = this.adminSvc.fetchICCSCodeParent<IccsCode>(this.selectedParentItem.iccsCodeOID)
       .subscribe(result => {
-        this.typeItems = result;
-        this.selectedItem = this.typeItems[0];
+        this.activeList = result;
+        this.selectedItem = this.activeList[0];
         this.copySelectedItem();
         // If items in list, default to first item
         setTimeout(() => {
@@ -120,7 +185,7 @@ export class IccsCodesComponent implements OnInit {
 
   parentItemOnChange(event) {
     let parentTypeId = event.value;
-    this.selectedParentItem = this.parentItems.find( itm => itm.iccsCodeOID == parentTypeId);
+    this.selectedParentItem = this.parentList.find( itm => itm.iccsCodeOID == parentTypeId);
     this.getRefDataItems();
   }
 
@@ -140,11 +205,11 @@ export class IccsCodesComponent implements OnInit {
       let index:number = this.getIndexOfItem(savedItem);
 
       if(index >= 0){
-        this.typeItems[index] = savedItem;
+        this.activeList[index] = savedItem;
       }else{
-        this.typeItems.push(savedItem);
+        this.activeList.push(savedItem);
       }
-      this.typeItems = this.typeItems.slice();
+      this.activeList = this.activeList.slice();
       this.toastSvc.showSuccessMessage('Item Saved');
     },
     (error) => {
@@ -164,7 +229,7 @@ export class IccsCodesComponent implements OnInit {
   cancelDataItemEdit(event) {
     this.editing = false;
     this.selectedItem = Object.assign( new IccsCode(), this.selectedItemBak );
-    this.typeItems[this.selectedItemIdx] = this.selectedItem;
+    this.activeList[this.selectedItemIdx] = this.selectedItem;
   }
 
   deleteDataItemRequest() {
@@ -177,8 +242,8 @@ export class IccsCodesComponent implements OnInit {
 
   deleteDataItem() {
     this.adminSvc.deleteLookupItem('IccsCode', this.selectedItem.iccsCodeOID).subscribe( result => {
-      this.typeItems.splice(this.getIndexOfItem(), 1);
-      this.selectedItem = this.typeItems[0];
+      this.activeList.splice(this.getIndexOfItem(), 1);
+      this.selectedItem = this.activeList[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
     },
     (error) => {
@@ -195,7 +260,7 @@ export class IccsCodesComponent implements OnInit {
   }
 
   private getIndexOfItem(item = this.selectedItem): number {
-    return this.typeItems
+    return this.activeList
         .findIndex(itm => itm.iccsCodeOID == item.iccsCodeOID);
   }
 

@@ -1,3 +1,54 @@
+<!--
+  --------------------------------------------------
+  This is the new layout that needs to be integrated
+
+  <div class="breadcrumb">{{miniBreadcrumb}}</div>
+<mat-tab-group [(selectedIndex)]="tabIdx" (selectedIndexChange)="selectedTabIndexChange($event)">
+	<mat-tab label="Section">
+		<ng-container *ngTemplateOutlet='listItems'></ng-container>
+	</mat-tab>
+	<mat-tab label="Division">
+		<ng-container *ngTemplateOutlet='parentListTmp'></ng-container>
+    <mat-divider></mat-divider>
+		<ng-container *ngTemplateOutlet='listItems'></ng-container>
+	</mat-tab>
+	<mat-tab label="Group">
+		<ng-container *ngTemplateOutlet='parentListTmp'></ng-container>
+    <mat-divider></mat-divider>
+		<ng-container *ngTemplateOutlet='listItems'></ng-container>
+	</mat-tab>
+	<mat-tab label="Class">
+		<ng-container *ngTemplateOutlet='parentListTmp'></ng-container>
+    <mat-divider></mat-divider>
+		<ng-container *ngTemplateOutlet='listItems'></ng-container>
+	</mat-tab>
+</mat-tab-group>
+
+
+<!-- Parent List Template
+<ng-template #parentListTmp>
+    <h3>Parent Code</h3>
+    <mat-select placeholder="Parent ICCS Code" (selectionChange)="selectedParentChange($event)"
+                [(ngModel)]="selectedParentItem.id">
+      <!-- [compareWith]=""
+      <mat-option [value]="p.id" *ngFor="let p of parentList" >
+        {{p.name}}
+      </mat-option>
+    </mat-select>
+  </ng-template>
+
+  <!-- List Items Template
+  <ng-template #listItems>
+    <h3>ICCS Items</h3>
+    <mat-selection-list [(ngModel)]="selectedItems" >
+      <mat-list-option *ngFor="let item of activeList; let i=index;" [value]="selectedItem">
+        {{item.name}}
+      </mat-list-option>
+    </mat-selection-list>
+  </ng-template>
+
+ -->
+
 <div class="ui-g-4 ui-sm-12 mt-25">
 
     <h2 class="mt-0" style="margin-bottom:35px;">{{tableLabel}}s </h2>
@@ -8,7 +59,7 @@
           [disabled]="editing"
           [value]="selectedParentItem?.caseTypeOID"
           (selectionChange)="parentItemOnChange($event)" >
-        <mat-option *ngFor="let pitem of parentItems" [value]="pitem.caseTypeOID">
+        <mat-option *ngFor="let pitem of parentList" [value]="pitem.caseTypeOID">
           {{pitem.name}}
         </mat-option>
       </mat-select>
@@ -17,7 +68,7 @@
     <!-- this breaks [(ngModel)]="selectedItem" -->
     <mat-selection-list #itemsList [disabled]="editing"
         class="items-list" >
-      <mat-list-option *ngFor="let item of typeItems; let i=index; let itm"
+      <mat-list-option *ngFor="let item of activeList; let i=index; let itm"
           [class.hi]="selected"
           [value]="item">
         {{ item.name }}
