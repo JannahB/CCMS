@@ -236,6 +236,7 @@ export class AdminUsersComponent implements OnInit {
   partyResults: Party[];
   recordsFoundMessage: string = '';
   isSearching: boolean = false;
+  selectedParty:Party;
 
   onSearch():void{
     this.showRecordsFoundMessage = false;

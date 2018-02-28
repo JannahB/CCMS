@@ -4,7 +4,6 @@ import { CasePhasesComponent } from './data/case-phases/case-phases.component';
 import { CaseTypesComponent } from './data/case-types/case-types.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AdminDataComponent } from './admin-data/admin-data.component';
 import { DataComponent } from './data/data.component';
 import { AdminUsersComponent } from './admin-users/admin-users.component';
 import { AdminComponent } from './admin.component';

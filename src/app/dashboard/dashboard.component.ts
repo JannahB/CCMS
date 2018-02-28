@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit {
   incompleteTaskCount: number;
 
   constructor(
-    private app: AppComponent,
+    public app: AppComponent,
     private breadCrumbSvc:BreadcrumbService,
     private toastSvc:ToastService,
     private _state: GlobalState

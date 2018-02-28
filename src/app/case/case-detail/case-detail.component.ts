@@ -1045,6 +1045,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   }
 
+  hearingConflictsOnRowSelect(event){
+
+  }
+
 
 
 

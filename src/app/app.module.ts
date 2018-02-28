@@ -86,7 +86,6 @@ import { CaseDetailComponent } from './case/case-detail/case-detail.component';
 import { PartyDetailComponent } from './party/party-detail/party-detail.component';
 import { PartySearchComponent } from './party/party-search/party-search.component';
 import { CaseService } from './common/services/http/case.service';
-import { AdminDataComponent } from './admin/admin-data/admin-data.component';
 import { AdminWorkflowComponent } from './admin/admin-workflow/admin-workflow.component';
 import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
 import { LookupService } from './common/services/http/lookup.service';
@@ -197,7 +196,6 @@ import { AdminModule } from './admin/admin.module';
         CaseDetailComponent,
         PartyDetailComponent,
         PartySearchComponent,
-        AdminDataComponent,
         AdminWorkflowComponent,
         AdminUsersComponent,
         LoginComponent,

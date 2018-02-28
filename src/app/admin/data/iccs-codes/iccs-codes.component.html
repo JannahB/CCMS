@@ -57,9 +57,9 @@
       <!-- [compareWith]="compareByCourtId" -->
       <mat-select placeholder="Parent Case Type" name="ddParentCaseType" #ddParentCaseType
           [disabled]="editing"
-          [value]="selectedParentItem?.caseTypeOID"
+          [value]="selectedParentItem?.iccsCodeOID"
           (selectionChange)="parentItemOnChange($event)" >
-        <mat-option *ngFor="let pitem of parentList" [value]="pitem.caseTypeOID">
+        <mat-option *ngFor="let pitem of parentList" [value]="pitem.iccsCodeOID">
           {{pitem.name}}
         </mat-option>
       </mat-select>
