@@ -211,16 +211,19 @@ export class CaseService extends HttpBaseService<Case> {
           let now:Date = new Date();
           let age:number = 0;
 
-          if(caseParty.dob.getMonth() == now.getMonth()){
-            if(caseParty.dob.getDate() > now.getDate()){
-                age = now.getFullYear() - caseParty.dob.getFullYear() - 1;
+          let dob = caseParty.dob;
+          if(dob){
+            if(dob.getMonth() == now.getMonth()){
+              if(dob.getDate() > now.getDate()){
+                age = now.getFullYear() - dob.getFullYear() - 1;
+              }else{
+                age = now.getFullYear() - dob.getFullYear();
+              }
+            }else if(dob.getMonth() > now.getMonth()){
+              age =  now.getFullYear() - dob.getFullYear() - 1;
             }else{
-                age = now.getFullYear() - caseParty.dob.getFullYear();
+              age =  now.getFullYear() - dob.getFullYear();
             }
-          }else if(caseParty.dob.getMonth() > now.getMonth()){
-            age =  now.getFullYear() - caseParty.dob.getFullYear() - 1;
-          }else{
-            age =  now.getFullYear() - caseParty.dob.getFullYear();
           }
 
           caseParty.age = age;
