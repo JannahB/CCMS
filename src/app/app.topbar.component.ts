@@ -1,3 +1,4 @@
+import { TaskCount } from './common/entities/internal/TaskCount';
 import { UserService } from './common/services/utility/user.service';
 import {Component, OnInit} from '@angular/core';
 import {AppComponent} from './app.component';
@@ -183,8 +184,8 @@ export class AppTopbarComponent {
         this.loggedInUser = user;
       });
 
-      this._state.subscribe('userTasks.count', (count) => {
-        this.userTaskCount = count;
+      this._state.subscribe('userTasks.count', (counts:TaskCount) => {
+        this.userTaskCount = counts.totalTaskCount;
       })
 
       this.loggedInUser = this.userSvc.loggedInUser;

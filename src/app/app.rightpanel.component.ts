@@ -1,3 +1,4 @@
+import { TaskCount } from './common/entities/internal/TaskCount';
 import { AuthenticationService } from './common/services/http/authentication.service';
 import { Router } from '@angular/router';
 import { GlobalState } from './common/services/state/global.state';
@@ -165,8 +166,9 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       this.taskSubscription = this.lookupSvc.fetchLookup<UserTask>('FetchUserTasks').subscribe(items => {
         this.userTasks = this.filteredUserTasks = items;
         this.isLoadingTasks = false;
-        if(items)
-          this._state.notifyDataChanged('userTasks.count', items.length);
+        if(items) {
+          this.broadcastTaskCounts(items);
+        }
 
         if(userRefresh) {
           this.selectedTaskStatuses = null;
@@ -174,6 +176,15 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
         }
       });
 
+    }
+
+    broadcastTaskCounts(userTasks: UserTask[]) {
+      let taskObj = new TaskCount();
+      let complete = userTasks.filter( item => item.doneDate).length;
+      taskObj.totalTaskCount = userTasks.length;
+      taskObj.completedTaskCount = complete;
+      taskObj.incompleteTaskCount = userTasks.length - complete;
+      this._state.notifyDataChanged('userTasks.count', taskObj);
     }
 
     gotoCase(event, task:UserTask) {
