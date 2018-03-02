@@ -105,6 +105,7 @@ export class CaseSearchComponent implements OnInit {
     if(this.selectedCasePartyRoleType) obj = {...obj, casePartyRoleOID: this.selectedCasePartyRoleType.casePartyRoleOID.toString()};
 
     if(Object.keys(obj).length === 0) {
+      this.isSearcing = false;
       this.toastSvc.showInfoMessage('Please enter/select criteria and try again.', 'Criteria Needed')
       return;
     }
