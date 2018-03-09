@@ -140,6 +140,17 @@
               right: 0px;
               top: 4px;
           }
+
+          .overdue{
+            i {
+              color: #BF2E1A !important;
+            }
+            .task-date {
+              color: #BF2E1A !important;
+              font-weight: 700;
+            }
+
+          }
         }
       }
     }

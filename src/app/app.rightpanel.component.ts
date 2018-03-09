@@ -1,3 +1,4 @@
+import { LocalStorageService } from './common/services/utility/local-storage.service';
 import { TaskCount } from './common/entities/internal/TaskCount';
 import { AuthenticationService } from './common/services/http/authentication.service';
 import { Router } from '@angular/router';
@@ -82,14 +83,17 @@ declare var jQuery: any;
 
               <div>
                 <loading-bar [visible]="isLoadingTasks" [message]="'loading tasks...'"></loading-bar>
-                <ul class="task-items">
-                  <li *ngFor="let task of filteredUserTasks">
+                <ul class="task-items" >
+                  <li *ngFor="let task of filteredUserTasks" >
+                  <div [ngClass]="{'overdue' : isOverdue(task)}">
                     <a href="#" (click)="gotoCase($event, task)"><p class="task-title">{{task.taskType?.name}}</p></a>
                     <a href="#" (click)="gotoCase($event, task)"><p class="task-subtitle">{{task.associatedCase.caseNumber}}</p></a>
                       <i class="fa ui-icon-check task-done" *ngIf="task.doneDate"></i>
-                      <i class="fa ui-icon-close"*ngIf="!task.doneDate"></i>
+                      <i class="fa ui-icon-close"*ngIf="!task.doneDate" ></i>
+
                       <!-- <i class="fa ui-icon-check-box-outline-blank"*ngIf="!task.doneDate"></i> -->
                       <span class="task-date">{{ task.dueDate | date:'MMM d, y' }}</span>
+                  </div>
                   </li>
                 </ul>
               </div>
@@ -101,10 +105,12 @@ declare var jQuery: any;
 })
 export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
 
+
     rightPanelMenuScroller: HTMLDivElement;
     taskStatus: SelectItem[] = [
         {label:'Complete Tasks', value:1},
-        {label:'Incomplete Tasks', value:2}
+        {label:'Incomplete Tasks', value:2},
+        {label:'Overdue Tasks', value:3}
     ];
     selectedTaskStatuses: SelectItem[];
     taskDateRange: Date[];
@@ -122,8 +128,23 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       private router: Router,
       private lookupSvc: LookupService,
       public _state: GlobalState,
-      public authSvc: AuthenticationService
+      public authSvc: AuthenticationService,
+      private localStorageSvc: LocalStorageService
     ) {}
+
+
+    private _taskCounts: TaskCount;
+    public get taskCounts(){
+      if(!this._taskCounts) {
+        this._taskCounts = this.localStorageSvc.getValue('TASK_COUNTS');
+      }
+      return this._taskCounts;
+    }
+
+    public set taskCounts(tc:TaskCount){
+      this.localStorageSvc.setValue('TASK_COUNTS', tc);
+      this._taskCounts = tc;
+    }
 
     ngOnInit() {
 
@@ -148,6 +169,8 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       setTimeout(() => {
           jQuery(this.rightPanelMenuScroller).nanoScroller({flash: true});
       }, 10);
+
+      this.getUserTasks();
     }
 
     ngOnDestroy() {
@@ -184,7 +207,13 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       taskObj.totalTaskCount = userTasks.length;
       taskObj.completedTaskCount = complete;
       taskObj.incompleteTaskCount = userTasks.length - complete;
+      taskObj.overdueTaskCount = this.userTasks.filter( item => this.isOverdue(item)).length;
       this._state.notifyDataChanged('userTasks.count', taskObj);
+      this.taskCounts = taskObj;
+    }
+
+    updateCountsInLocStorage(taskCounts: TaskCount){
+
     }
 
     gotoCase(event, task:UserTask) {
@@ -195,22 +224,25 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
 
     onFilterTasks(event) {
       if(!event || !event.value) return;
-      console.log('event.value', event.value);
-      console.log('selectedTaskStatuses', this.selectedTaskStatuses );
       // 1 = completed tasks
       // 2 = incomplete tasks
+      // 3 = overdue tasks
 
-      this.currentFilter = event.value;
-
-      if(event.value.length == 0 || event.value.length == 2){
+      if(event.value.length == 0 || event.value.length == this.taskStatus.length){
+        // Show All
         this.filteredUserTasks = this.userTasks;
-      } else if (event.value.length == 1) {
-        let val = event.value[0];
-        if(val == 1)
-          this.filteredUserTasks = this.userTasks.filter( item => item.doneDate);
-        else if(val == 2)
-          this.filteredUserTasks = this.userTasks.filter( item => !item.doneDate);
-        };
+      } else {
+        let ft = [];
+        if(event.value.find(itm => itm == 1))
+          ft = [...ft, ...this.userTasks.filter( item => item.doneDate)];
+        if(event.value.find(itm => itm == 2))
+          ft = [...ft, ...this.userTasks.filter( item => !item.doneDate)];
+        if(event.value.find(itm => itm == 3))
+          ft = [...ft, ...this.userTasks.filter( item => this.isOverdue(item))];
+
+        // De-Dup 'em
+        this.filteredUserTasks = ft.filter( (elem, pos) =>  ft.indexOf(elem) == pos );
+      }
     }
 
     isTaskOnThisDate(date){
@@ -222,6 +254,13 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     onTaskDateSelected(event) {
       console.log('onTaskDateSelected', event);
 
+    }
+
+    isOverdue(task:UserTask) {
+      if(!task) return false;
+      if(!task.dueDate) return true;
+      let dueDate = new Date(task.dueDate);
+      return ( !task.doneDate && dueDate.getTime() < new Date().getTime() );
     }
 
 
