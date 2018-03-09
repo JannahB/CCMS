@@ -1,3 +1,4 @@
+import { LocalStorageService } from './../common/services/utility/local-storage.service';
 import { TaskCount } from './../common/entities/internal/TaskCount';
 import { GlobalState } from './../common/services/state/global.state';
 import { Component, OnInit } from '@angular/core';
@@ -18,14 +19,29 @@ export class DashboardComponent implements OnInit {
   totalTaskCount: number;
   completedTaskCount: number;
   incompleteTaskCount: number;
+  overdueTaskCount: number;
 
   constructor(
     public app: AppComponent,
     private breadCrumbSvc:BreadcrumbService,
     private toastSvc:ToastService,
-    private _state: GlobalState
+    private _state: GlobalState,
+    private localStorageSvc: LocalStorageService
   ) {
     this.breadCrumbSvc.setItems([]);
+  }
+
+  private _taskCounts: TaskCount;
+  public get taskCounts(){
+    if(!this._taskCounts) {
+      this._taskCounts = this.localStorageSvc.getValue('TASK_COUNTS');
+    }
+    return this._taskCounts;
+  }
+
+  public set taskCounts(tc:TaskCount){
+    this.localStorageSvc.setValue('TASK_COUNTS', tc);
+    this._taskCounts = tc;
   }
 
   ngOnInit() {
@@ -34,7 +50,13 @@ export class DashboardComponent implements OnInit {
       this.totalTaskCount = counts.totalTaskCount;
       this.completedTaskCount = counts.completedTaskCount;
       this.incompleteTaskCount = counts.incompleteTaskCount;
+      this.overdueTaskCount = counts.overdueTaskCount;
     })
+
+    this.totalTaskCount = this.taskCounts.totalTaskCount | 0;
+    this.completedTaskCount = this.taskCounts.completedTaskCount | 0;
+    this.incompleteTaskCount = this.taskCounts.incompleteTaskCount | 0;
+    this.overdueTaskCount = this.taskCounts.overdueTaskCount | 0;
   }
 
   makeToast() {
