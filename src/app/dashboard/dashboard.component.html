@@ -14,20 +14,20 @@
       </p>
     </div>
 
-    <div class="ui-g-12 ui-lg-6 pl-0">
+    <div class="ui-g-12 ui-md-4 pl-0">
       <a href="#" (click)="app.onRightPanelButtonClick($event)">
         <div class="ui-g card colorbox colorbox-1">
           <div class="ui-g-4">
             <i class="material-icons">timer</i>
           </div>
           <div class="ui-g-8">
-            <span class="colorbox-name">Tasks</span>
+            <span class="colorbox-name">Total Tasks</span>
             <span class="colorbox-count">{{totalTaskCount}}</span>
           </div>
         </div>
       </a>
     </div>
-    <div class="ui-g-12 ui-lg-6 pr-0">
+    <div class="ui-g-12 ui-md-4 pr-0">
       <a href="#" (click)="app.onRightPanelButtonClick($event)">
         <div class="ui-g card colorbox colorbox-2">
           <div class="ui-g-4">
@@ -36,6 +36,19 @@
           <div class="ui-g-8">
             <span class="colorbox-name">Incomplete Tasks</span>
             <span class="colorbox-count">{{incompleteTaskCount}}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="ui-g-12 ui-md-4 pr-0">
+      <a href="#" (click)="app.onRightPanelButtonClick($event)">
+        <div class="ui-g card colorbox" [ngClass]="(overdueTaskCount > 0) ? 'colorbox-urgent' : 'colorbox-neutral'">
+          <div class="ui-g-4">
+            <i class="material-icons">timer</i>
+          </div>
+          <div class="ui-g-8">
+            <span class="colorbox-name">Overdue Tasks</span>
+            <span class="colorbox-count">{{overdueTaskCount}}</span>
           </div>
         </div>
       </a>

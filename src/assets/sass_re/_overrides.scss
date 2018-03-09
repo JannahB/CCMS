@@ -206,3 +206,24 @@ body {
   }
 
 }
+
+// COLOR BOX ------------------------
+.dashboard {
+  .colorbox {
+
+    &.colorbox-urgent {
+      background-color: #b94839;
+
+      div:first-child {
+          background-color: #943326;
+      }
+    }
+    &.colorbox-neutral {
+      background-color: #9e9797;
+
+      div:first-child {
+          background-color: #727070
+      }
+    }
+  }
+}
