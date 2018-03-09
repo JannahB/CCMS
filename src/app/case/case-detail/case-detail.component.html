@@ -87,9 +87,9 @@
 
             <div class="ui-g-12 ui-md-4">
               <label class="minimal primary block">Case Type</label>
+              <!-- [disabled]="case.caseOID != 0" -->
               <p-dropdown name="ddCaseType" #ddCaseType placeholder="case type..."
                   [required]="true"
-                  [disabled]="case.caseOID != 0"
                   optionLabel="name"
                   [options]="caseTypes"
                   [(ngModel)]="case.caseType"
@@ -104,9 +104,9 @@
 
             <div class="ui-g-12 ui-md-4">
               <label class="minimal primary block">Case Phase</label>
+              <!-- [disabled]="!casePhases || !case.caseType || case.caseOID != 0" -->
               <p-dropdown name="ddCasePhase" #ddCasePhase placeholder="case phase..."
                   [required]="true"
-                  [disabled]="!casePhases || !case.caseType || case.caseOID != 0"
                   (click)="isCaseTypeSelected($event)"
                   optionLabel="name"
                   [options]="casePhases"
