@@ -38,13 +38,15 @@ export class DashboardComponent implements OnInit {
     }
     return this._taskCounts;
   }
-
   public set taskCounts(tc:TaskCount){
     this.localStorageSvc.setValue('TASK_COUNTS', tc);
     this._taskCounts = tc;
   }
 
+
   ngOnInit() {
+
+    this.taskCounts = new TaskCount();
 
     this._state.subscribe('userTasks.count', (counts:TaskCount) => {
       this.totalTaskCount = counts.totalTaskCount;
