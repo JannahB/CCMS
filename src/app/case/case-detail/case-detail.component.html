@@ -56,7 +56,7 @@
               </div>
             </div>
 
-            <div class="ui-g-12 ui-md-3">
+            <div class="ui-g-12 ui-md-3 pr-20">
                 <label class="minimal block primary">Case Weight</label>
                 <div class="mar-0">{{ case.caseWeight }}</div>
                 <p-slider name="slCaseWeight" #slCaseWeight="ngModel" [required]="true" min="1" [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10" [animate]="true"></p-slider>
@@ -64,6 +64,18 @@
                     *ngIf="slCaseWeight.errors?.min && slCaseWeight.touched" >
                       Please choose a Case Weight
                 </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-6 mt-25" *ngIf="case.caseOID > 0">
+              <span class="md-inputfield">
+                <input pInputText type="text" #tiCaseCaption="ngModel" required name="tiCaseCaption"
+                        [(ngModel)]="case.caseCaption" class="width-full" >
+                <label>Case Caption</label>
+              </span>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="tiCaseCaption.errors?.required && tiCaseCaption.touched" >
+                    Please enter a Case Caption
+              </div>
             </div>
           </div>
 
