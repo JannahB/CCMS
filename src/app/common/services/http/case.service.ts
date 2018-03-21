@@ -38,47 +38,47 @@ import { CaseHearingDTO } from '../../entities/CaseHearingDTO';
 export class CaseService extends HttpBaseService<Case> {
 
   private mockFile: string = 'cases-b.json';
-  private datePipe:DatePipe = new DatePipe("en");
+  private datePipe: DatePipe = new DatePipe("en");
 
   // Override Base URL's set in Super
   // protected getBaseUrl():string{
   //   return `${super.getBaseUrl()}/FetchCase`;
   // }
 
-  protected getBaseMockUrl():string{
+  protected getBaseMockUrl(): string {
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
   }
 
   constructor(
-    @Inject(forwardRef(() => HttpClient)) protected http:HttpClient,
-    @Inject(forwardRef(() => Http)) protected classicHttp:Http
-  ){
+    @Inject(forwardRef(() => HttpClient)) protected http: HttpClient,
+    @Inject(forwardRef(() => Http)) protected classicHttp: Http
+  ) {
     super(http);
   }
 
 
-  public fetchAny(obj:any):Observable<Case[]>{
+  public fetchAny(obj: any): Observable<Case[]> {
     let url: string = `${super.getBaseUrl()}/FetchCase`;
 
     return this.http.post<Case[]>(url, obj)
       .map(res => {
-        let kases:Case[] = res;
+        let kases: Case[] = res;
         return this.convertDates(kases);
       })
   }
 
-  public fetchOne(id:string):Observable<Case>{
+  public fetchOne(id: string): Observable<Case> {
     let url: string = `${super.getBaseUrl()}/FetchCase`;
 
     return this.http.post<Case>(url,
-      { caseOID : id })
+      { caseOID: id })
       .map(res => {
-        if(res[0] == undefined) {
+        if (res[0] == undefined) {
           // this handles server return of [undefined]
           // an array populated with undefined
           return new Case();
-        }else {
-          let kase:Case = res[0];
+        } else {
+          let kase: Case = res[0];
           kase = this.convertDates([kase])[0];
           return kase;
         }
@@ -86,71 +86,71 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
 
-  public fetch(body:any):Observable<Case[]>{
+  public fetch(body: any): Observable<Case[]> {
     let url: string = `${super.getBaseUrl()}/FetchCase`;
 
     return this.http.post<Case[]>(url, body,
     )
       .map(res => {
-        let kases:Case[] = res;
+        let kases: Case[] = res;
         return this.convertDates(kases);
       })
   }
 
-  public get():Observable<Case[]>{
-    let url:string = `${super.getBaseUrl()}/FetchCase`;
+  public get(): Observable<Case[]> {
+    let url: string = `${super.getBaseUrl()}/FetchCase`;
 
     return this.http.get<Case[]>(url)
       .map(res => {
-        let kases:Case[] = res;
+        let kases: Case[] = res;
 
         return this.convertDates(kases);
       });
   }
 
-  public getMock():Observable<Case[]>{
-    let url:string = this.getBaseMockUrl();
+  public getMock(): Observable<Case[]> {
+    let url: string = this.getBaseMockUrl();
     return this.http.get<Case[]>(url)
       .map(res => {
-        let kases:Case[] = res;
+        let kases: Case[] = res;
         return this.convertDates(kases);
       });
   }
 
-  public getOneMock(caseId:string):Observable<Case>{
-    let url:string = this.getBaseMockUrl();
+  public getOneMock(caseId: string): Observable<Case> {
+    let url: string = this.getBaseMockUrl();
     return this.http.get<Case[]>(url)
       .map(res => {
-        let kases:Case[] = res;
+        let kases: Case[] = res;
         kases = this.convertDates(kases);
-        let kase:Case = kases[0];
+        let kase: Case = kases[0];
         return kase;
       });
   }
 
-  createAssociatedCase(caseOID: number){
+  createAssociatedCase(caseOID: number) {
     let url: string = `${super.getBaseUrl()}/CreateAssociatedCase`;
-    let body: any = { caseOID: caseOID.toString()};
+    let body: any = { caseOID: caseOID.toString() };
 
-    return this.http.post<Case>(url, body )
+    return this.http.post<Case>(url, body)
       .map(res => {
-        let kase:Case = res;
+        let kase: Case = res;
         return this.convertDates([kase]);
       })
   }
 
-  private convertDates(kases:Case[]){
-    if( !kases || !kases.length || Object.keys(kases).length === 0 || kases[0] == undefined){
+  private convertDates(kases: Case[]) {
+    if (!kases || !kases.length || Object.keys(kases).length === 0 || kases[0] == undefined) {
       return [];
     }
-    kases.forEach( kase => {
-      if(kase.caseFilingDate){
+    kases.forEach(kase => {
+      if (kase.caseFilingDate) {
         kase.caseFilingDate = DateConverter.convertDate(kase.caseFilingDate);
       }
 
-      let caseDocs:CaseDocument[] = kase.caseDocs;
-      if(caseDocs) {
-        caseDocs.forEach( cd => {
+      let caseDocs: CaseDocument[] = kase.caseDocs;
+      if (caseDocs) {
+        caseDocs.forEach(cd => {
           cd.docReceived = DateConverter.convertDate(cd.docReceived);
           cd.docSent = DateConverter.convertDate(cd.docSent);
           cd.lastUpdateDate = DateConverter.convertDate(cd.lastUpdateDate);
@@ -158,71 +158,71 @@ export class CaseService extends HttpBaseService<Case> {
       }
 
       let caseEvents: CaseEvent[] = kase.caseEvents;
-      if(caseEvents) {
-        caseEvents.forEach( ce => {
+      if (caseEvents) {
+        caseEvents.forEach(ce => {
           ce.eventDate = DateConverter.convertDate(ce.eventDate);
         })
       }
 
       let caseParties: CaseParty[] = kase.caseParties;
-      if(caseParties) {
-        caseParties.forEach( cp => {
+      if (caseParties) {
+        caseParties.forEach(cp => {
 
           // Convert the Dates on the Root of the Object
           let startDate = cp.startDate;
-          if(startDate) cp.startDate = DateConverter.convertDate(cp.startDate);
+          if (startDate) cp.startDate = DateConverter.convertDate(cp.startDate);
           let endDate = cp.endDate;
-          if(endDate) cp.endDate = DateConverter.convertDate(cp.endDate);
+          if (endDate) cp.endDate = DateConverter.convertDate(cp.endDate);
 
           // Get at the Nested CaseParty --
           let caseParty = cp.caseParty;
 
           caseParty.dob = DateConverter.convertDate(caseParty.dob);
 
-          let idents:Identifier[] = caseParty.identifiers;
-          if(idents) {
-            idents.forEach( idf => {
+          let idents: Identifier[] = caseParty.identifiers;
+          if (idents) {
+            idents.forEach(idf => {
               idf.startDate = DateConverter.convertDate(idf.startDate);
               idf.endDate = DateConverter.convertDate(idf.endDate);
             })
           }
-          let addresses:Address[] = caseParty.addresses;
-          if(addresses) {
-            addresses.forEach( addr => {
+          let addresses: Address[] = caseParty.addresses;
+          if (addresses) {
+            addresses.forEach(addr => {
               addr.startDate = DateConverter.convertDate(addr.startDate);
               addr.endDate = DateConverter.convertDate(addr.endDate);
             })
           }
-          let emails:Email[] = caseParty.emails;
-          if(emails) {
-            emails.forEach( em => {
+          let emails: Email[] = caseParty.emails;
+          if (emails) {
+            emails.forEach(em => {
               em.startDate = DateConverter.convertDate(em.startDate);
               em.endDate = DateConverter.convertDate(em.endDate);
             })
           }
-          let phones:PhoneNumber[] = caseParty.phoneNumbers;
-          if(phones) {
+          let phones: PhoneNumber[] = caseParty.phoneNumbers;
+          if (phones) {
             phones.forEach(ph => {
               ph.startDate = DateConverter.convertDate(ph.startDate);
               ph.endDate = DateConverter.convertDate(ph.endDate);
             })
           }
 
-          let now:Date = new Date();
-          let age:number = 0;
+          let now: Date = new Date();
+          let age: number = 0;
 
           let dob = caseParty.dob;
-          if(dob){
-            if(dob.getMonth() == now.getMonth()){
-              if(dob.getDate() > now.getDate()){
+          if (dob) {
+            if (dob.getMonth() == now.getMonth()) {
+              if (dob.getDate() > now.getDate()) {
                 age = now.getFullYear() - dob.getFullYear() - 1;
-              }else{
+              } else {
                 age = now.getFullYear() - dob.getFullYear();
               }
-            }else if(dob.getMonth() > now.getMonth()){
-              age =  now.getFullYear() - dob.getFullYear() - 1;
-            }else{
-              age =  now.getFullYear() - dob.getFullYear();
+            } else if (dob.getMonth() > now.getMonth()) {
+              age = now.getFullYear() - dob.getFullYear() - 1;
+            } else {
+              age = now.getFullYear() - dob.getFullYear();
             }
           }
 
@@ -232,8 +232,8 @@ export class CaseService extends HttpBaseService<Case> {
       }
 
       let caseTasks: CaseTask[] = kase.caseTasks;
-      if(caseTasks) {
-        caseTasks.forEach( ct => {
+      if (caseTasks) {
+        caseTasks.forEach(ct => {
           ct.assignedDate = DateConverter.convertDate(ct.assignedDate);
           ct.dueDate = DateConverter.convertDate(ct.dueDate);
           ct.doneDate = DateConverter.convertDate(ct.doneDate);
@@ -241,14 +241,14 @@ export class CaseService extends HttpBaseService<Case> {
       }
 
       let caseHearings: CaseHearing[] = kase.caseHearings;
-      if(caseHearings) {
-        caseHearings.forEach( ch => {
+      if (caseHearings) {
+        caseHearings.forEach(ch => {
           ch.startDateTime = DateConverter.convertDate(ch.startDateTime);
           ch.endDateTime = DateConverter.convertDate(ch.endDateTime);
         })
       }
 
-      if(kase.judicialAssignments){
+      if (kase.judicialAssignments) {
         kase.judicialAssignments = kase.judicialAssignments
           .map(a => this.convertDatesForJudicialAssignment(a));
       }
@@ -257,26 +257,27 @@ export class CaseService extends HttpBaseService<Case> {
     return kases;
   }
 
-  public fetchICCSCategory(iccsCodeOID:number = null):Observable<IccsCode[]>{
-    let url:string = `${super.getBaseUrl()}/FetchICCSCategory`;
+  public fetchICCSCategory(iccsCodeOID: number = null): Observable<IccsCode[]> {
+    let url: string = `${super.getBaseUrl()}/FetchICCSCategory`;
 
-    let params:Object = "";
+    let params: Object = "";
 
-    if(iccsCodeOID){
+    if (iccsCodeOID) {
       params = { iccsCodeOID: iccsCodeOID.toString() };
     }
 
     return this.http.post<IccsCode[]>(url, params);
   }
 
-  public fetchChargeFactor():Observable<ChargeFactor[]>{
-    let url:string = `${super.getBaseUrl()}/FetchChargeFactor`;
+  public fetchChargeFactor(): Observable<ChargeFactor[]> {
+    let url: string = `${super.getBaseUrl()}/FetchChargeFactor`;
 
     return this.http.post<ChargeFactor[]>(url, "");
   }
 
-  public saveCourtCase(data:Case):Observable<Case>{
-    var caseData:any = {
+  public saveCourtCase(data: Case): Observable<Case> {
+    var caseData: any = {
+      caseCaption: data.caseCaption || '',
       caseFilingDate: null,
       caseType: null,
       caseStatus: null,
@@ -286,106 +287,106 @@ export class CaseService extends HttpBaseService<Case> {
       caseCharges: []
     };
     if (data.caseOID)
-        caseData.caseOID = data.caseOID.toString();
+      caseData.caseOID = data.caseOID.toString();
 
     if (data.caseFilingDate)
-        caseData.caseFilingDate = this.datePipe.transform(data.caseFilingDate, "yyyy-MM-dd");
+      caseData.caseFilingDate = this.datePipe.transform(data.caseFilingDate, "yyyy-MM-dd");
     if (data.caseType)
-        caseData.caseType = data.caseType.caseTypeOID.toString();
+      caseData.caseType = data.caseType.caseTypeOID.toString();
     if (data.caseStatus)
-        caseData.caseStatus = data.caseStatus.statusOID.toString();
+      caseData.caseStatus = data.caseStatus.statusOID.toString();
     if (data.casePhase)
-        caseData.casePhase = data.casePhase.casePhaseOID.toString();
+      caseData.casePhase = data.casePhase.casePhaseOID.toString();
     if (data.caseWeight)
-        caseData.caseWeight = data.caseWeight.toString();
+      caseData.caseWeight = data.caseWeight.toString();
     if (data.caseParties.length > 0) {
-        data.caseParties.forEach(value => {
-            var party = {
-                partyRoleOID: value.role ? value.role.casePartyRoleOID.toString() : null,
-                partyOID: value.caseParty.partyOID.toString(),
-                startDate: this.datePipe.transform(value.startDate, "yyyy-MM-dd"),
-                endDate: null
-            };
+      data.caseParties.forEach(value => {
+        var party = {
+          partyRoleOID: value.role ? value.role.casePartyRoleOID.toString() : null,
+          partyOID: value.caseParty.partyOID.toString(),
+          startDate: this.datePipe.transform(value.startDate, "yyyy-MM-dd"),
+          endDate: null
+        };
 
-            if (value.endDate)
-                party.endDate = this.datePipe.transform(value.endDate, "yyyy-MM-dd");
+        if (value.endDate)
+          party.endDate = this.datePipe.transform(value.endDate, "yyyy-MM-dd");
 
-            caseData.caseParties.push(party);
-        });
+        caseData.caseParties.push(party);
+      });
     }
     if (data.caseCharges.length > 0) {
-        data.caseCharges.forEach(value => {
-            var charge:any = {
-                iccsCodeOID: value.iccsCode.iccsCodeOID.toString(),
-                lea: value.leaChargingDetails,
-                factors: []
-            };
-            if (value.localCharge)
-                charge.localChargeOID = value.localCharge.localChargeOID.toString();
-            value.chargeFactors.forEach(factor => {
-                charge.factors.push(factor.chargeFactorOID.toString());
-            });
-            caseData.caseCharges.push(charge);
+      data.caseCharges.forEach(value => {
+        var charge: any = {
+          iccsCodeOID: value.iccsCode.iccsCodeOID.toString(),
+          lea: value.leaChargingDetails,
+          factors: []
+        };
+        if (value.localCharge)
+          charge.localChargeOID = value.localCharge.localChargeOID.toString();
+        value.chargeFactors.forEach(factor => {
+          charge.factors.push(factor.chargeFactorOID.toString());
         });
+        caseData.caseCharges.push(charge);
+      });
     }
 
-    let url:string = `${super.getBaseUrl()}/SaveCourtCase`;
+    let url: string = `${super.getBaseUrl()}/SaveCourtCase`;
 
     return this.http
       .post<Case[]>(url, caseData)
       .map(c => this.convertDates(c)[0]);
   }
 
-  public saveCaseTask(data: CaseTaskDTO):Observable<CaseTask> {
-    let url:string = `${super.getBaseUrl()}/SaveCaseTask`;
+  public saveCaseTask(data: CaseTaskDTO): Observable<CaseTask> {
+    let url: string = `${super.getBaseUrl()}/SaveCaseTask`;
     return this.http
       .post<CaseTask>(url, data)
       .map(t => this.convertCaseTaskDates(t))
   }
 
-  convertCaseTaskDates(ct){
+  convertCaseTaskDates(ct) {
     ct.assignedDate = DateConverter.convertDate(ct.assignedDate);
     ct.dueDate = DateConverter.convertDate(ct.dueDate);
     ct.doneDate = DateConverter.convertDate(ct.doneDate);
     return ct;
   }
 
-  public fetchCasePartyRole():Observable<CasePartyRole[]>{
-    let url:string = `${super.getBaseUrl()}/FetchCasePartyRole`;
+  public fetchCasePartyRole(): Observable<CasePartyRole[]> {
+    let url: string = `${super.getBaseUrl()}/FetchCasePartyRole`;
 
     return this.http
       .get<CasePartyRole[]>(url);
   }
 
-  public fetchDocumentTemplate():Observable<DocTemplate[]>{
-    let url:string = `${super.getBaseUrl()}/FetchDocumentTemplate`;
+  public fetchDocumentTemplate(): Observable<DocTemplate[]> {
+    let url: string = `${super.getBaseUrl()}/FetchDocumentTemplate`;
 
     return this.http
       .get<DocTemplate[]>(url);
   }
 
-  public saveCaseHearing(data: CaseHearingDTO):Observable<CaseHearing> {
-    let url:string = `${super.getBaseUrl()}/SaveCaseHearing`;
+  public saveCaseHearing(data: CaseHearingDTO): Observable<CaseHearing> {
+    let url: string = `${super.getBaseUrl()}/SaveCaseHearing`;
     return this.http
       .post<CaseHearing>(url, data)
       .map(h => this.convertHearingDates(h))
   }
 
-  convertHearingDates(item:CaseHearing){
+  convertHearingDates(item: CaseHearing) {
     item.startDateTime = DateConverter.convertDate(item.startDateTime);
     item.endDateTime = DateConverter.convertDate(item.endDateTime);
     return item;
   }
 
-  public downloadCourtDocument(caseOID:number, documentTemplateOID:number):Observable<ArrayBuffer>{
-    let url:string = `${super.getBaseUrl()}/GenerateCourtDocument`;
-    let params:object = {
+  public downloadCourtDocument(caseOID: number, documentTemplateOID: number): Observable<ArrayBuffer> {
+    let url: string = `${super.getBaseUrl()}/GenerateCourtDocument`;
+    let params: object = {
       caseOID: caseOID.toString(),
       documentTemplateOID: documentTemplateOID.toString()
     };
 
-    let options:RequestOptionsArgs = {}
-    let headers:Headers = new Headers();
+    let options: RequestOptionsArgs = {}
+    let headers: Headers = new Headers();
 
     headers.append("token", AuthorizationInterceptor.authToken);
     headers.append("Authorization", `Bearer ${AuthorizationInterceptor.authToken}`);
@@ -398,10 +399,10 @@ export class CaseService extends HttpBaseService<Case> {
       .map(response => {
         let headers = response.headers;
         let contentType = headers.get('content-type');
-        let fileName = headers.get('content-disposition').split('; ')[1].split('=')[1].replace(/"/g,'');
+        let fileName = headers.get('content-disposition').split('; ')[1].split('=')[1].replace(/"/g, '');
         let result = response.arrayBuffer();
         //let data = new Blob([result], { type: contentType });
-        let fileSaver:FileSaver = new FileSaver();
+        let fileSaver: FileSaver = new FileSaver();
 
         fileSaver.saveAs(response.blob(), fileName);
 
@@ -410,22 +411,22 @@ export class CaseService extends HttpBaseService<Case> {
 
   }
 
-  public fetchJudicialOfficer():Observable<JudicialOfficer[]>{
-    let url:string = `${super.getBaseUrl()}/FetchJudicialOfficer`;
+  public fetchJudicialOfficer(): Observable<JudicialOfficer[]> {
+    let url: string = `${super.getBaseUrl()}/FetchJudicialOfficer`;
 
     return this.http
       .get<JudicialOfficer[]>(url)
       .map(judges => judges.map(this.mapToRealJudicialOfficer));
   }
 
-  private mapToRealJudicialOfficer(judge:JudicialOfficer):JudicialOfficer{
+  private mapToRealJudicialOfficer(judge: JudicialOfficer): JudicialOfficer {
     return Object.assign(new JudicialOfficer(), judge);
   }
 
-  public saveJudicialAssignment(data:JudicialAssignment):Observable<JudicialAssignment>{
-    let url:string = `${super.getBaseUrl()}/SaveJudicialAssignment`;
+  public saveJudicialAssignment(data: JudicialAssignment): Observable<JudicialAssignment> {
+    let url: string = `${super.getBaseUrl()}/SaveJudicialAssignment`;
 
-    let assignment:any = {
+    let assignment: any = {
       caseOID: data.caseOID.toString(),
       partyOID: data.judicialOfficial.partyOID.toString(),
       startDate: this.datePipe.transform(data.startDate, "yyyy-MM-dd")
@@ -438,13 +439,13 @@ export class CaseService extends HttpBaseService<Case> {
       assignment.judicialAssignmentOID = data.judicialAssignmentOID.toString();
 
     return this.http
-      .post<JudicialAssignment[]>(url,assignment)
+      .post<JudicialAssignment[]>(url, assignment)
       .map(j => this.convertDatesForJudicialAssignment(j[0]));
   }
 
-  private convertDatesForJudicialAssignment(assignment:JudicialAssignment):JudicialAssignment{
-    let ref:any = assignment;
-    if(assignment.endDate){
+  private convertDatesForJudicialAssignment(assignment: JudicialAssignment): JudicialAssignment {
+    let ref: any = assignment;
+    if (assignment.endDate) {
       assignment.endDate = DateConverter.convertDate(assignment.endDate);
     }
 
@@ -453,22 +454,22 @@ export class CaseService extends HttpBaseService<Case> {
     return assignment;
   }
 
-  public fetchEventType():Observable<EventType[]>{
-    let url:string = `${super.getBaseUrl()}/FetchEventType`;
+  public fetchEventType(): Observable<EventType[]> {
+    let url: string = `${super.getBaseUrl()}/FetchEventType`;
 
     return this.http
       .get<EventType[]>(url);
   }
 
-  public saveCaseEvent(data:CaseEvent):Observable<CaseEvent>{
+  public saveCaseEvent(data: CaseEvent): Observable<CaseEvent> {
     var event = {
-        caseOID: '',
-        initiatedByPartyOID: '',
-        eventTypeOID: '',
-        durationTimeMin: '',
-        documentTemplateOID: undefined,
-        caseEventOID: undefined,
-        description: ''
+      caseOID: '',
+      initiatedByPartyOID: '',
+      eventTypeOID: '',
+      durationTimeMin: '',
+      documentTemplateOID: undefined,
+      caseEventOID: undefined,
+      description: ''
     };
 
     event.caseOID = data.caseOID.toString();
@@ -476,41 +477,41 @@ export class CaseService extends HttpBaseService<Case> {
     event.eventTypeOID = data.eventType.eventTypeOID.toString();
     event.description = data.description;
 
-    if(data.caseEventOID){
+    if (data.caseEventOID) {
       event.caseEventOID = data.caseEventOID.toString();
     }
 
     if (data.durationTimeMin || data.durationTimeMin === 0)
-        event.durationTimeMin = data.durationTimeMin.toString();
+      event.durationTimeMin = data.durationTimeMin.toString();
 
     if (data.docTemplate)
-        event.documentTemplateOID = data.docTemplate.documentTemplateOID.toString();
+      event.documentTemplateOID = data.docTemplate.documentTemplateOID.toString();
 
-    let url:string = `${super.getBaseUrl()}/SaveCaseEvent`;
+    let url: string = `${super.getBaseUrl()}/SaveCaseEvent`;
 
     return this.http
       .post<CaseEvent[]>(url, event)
       .map(e => e[0]);
   }
 
-  public fetchCaseType():Observable<CaseType[]>{
-    let url:string = `${super.getBaseUrl()}/FetchCaseType`;
+  public fetchCaseType(): Observable<CaseType[]> {
+    let url: string = `${super.getBaseUrl()}/FetchCaseType`;
 
     return this.http
       .get<CaseType[]>(url);
   }
 
-  public fetchCaseStatus():Observable<CaseStatus[]>{
-    let url:string = `${super.getBaseUrl()}/FetchCaseStatus`;
+  public fetchCaseStatus(): Observable<CaseStatus[]> {
+    let url: string = `${super.getBaseUrl()}/FetchCaseStatus`;
 
     return this.http
       .get<CaseStatus[]>(url);
   }
 
-  public fetchPhaseByType(type:number):Observable<CasePhase[]>{
-    let url:string = `${super.getBaseUrl()}/FetchPhaseByType`;
+  public fetchPhaseByType(type: number): Observable<CasePhase[]> {
+    let url: string = `${super.getBaseUrl()}/FetchPhaseByType`;
 
-    let params:object = {
+    let params: object = {
       typeOID: type.toString()
     }
 
@@ -518,8 +519,8 @@ export class CaseService extends HttpBaseService<Case> {
       .post<CasePhase[]>(url, params);
   }
 
-  public fetchHearing(data:any):Observable<CaseHearing[]>{
-    let url:string = `${super.getBaseUrl()}/FetchHearing`;
+  public fetchHearing(data: any): Observable<CaseHearing[]> {
+    let url: string = `${super.getBaseUrl()}/FetchHearing`;
 
     return this.http
       .post<CaseHearing[]>(url, data);
