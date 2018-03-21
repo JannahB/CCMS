@@ -1,6 +1,6 @@
 {
   "name": "ccms-tt",
-  "version": "1.1.0",
+  "version": "1.0.6",
   "license": "COMMERCIAL",
   "angular-cli": {},
   "scripts": {
@@ -21,7 +21,7 @@
     "e2e": "ng e2e",
     "gen-theme": "sass src/assets/theme/theme-tt.scss src/assets/theme/theme-tt.css",
     "gen-layout": "sass src/assets/layout/css/layout-tt.scss src/assets/layout/css/layout-tt.css",
-    "release": "standard-version --preset angular --release-count 0"
+    "release": "standard-version --preset angular --release-count 0 --patch"
   },
   "private": true,
   "dependencies": {
