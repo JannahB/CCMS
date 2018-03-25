@@ -155,6 +155,7 @@
                           selectionMode="single"
                           [(selection)]="selectedParty"
                           (onRowSelect)="partyOnRowSelect($event)"
+                          scrollable="true" scrollHeight="200px"
                           dataKey="caseParty.partyOID" #dtParties>
                 <p-column field="role.name" header="Role" [style]="{'width':'10%'}"></p-column>
                 <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
@@ -249,6 +250,7 @@
                           selectionMode="single"
                           [(selection)]="selectedCharge"
                           (onRowSelect)="caseOnRowSelect($event)"
+                          scrollable="true" scrollHeight="200px"
                           dataKey="caseChargeOID" #dtCharges>
                 <p-column field="iccsCode.categoryIdentifier" header="UN Code" [style]="{'width':'7%'}"></p-column>
                 <p-column field="iccsCode.categoryName" header="Description" [style]="{'width':'15%'}"></p-column>
@@ -386,6 +388,7 @@
                           selectionMode="single"
                           [(selection)]="selectedCaseTask"
                           (onRowSelect)="taskOnRowSelect($event)"
+                          scrollable="true" scrollHeight="280px"
                           dataKey="taskOID" #dtTasks>
                 <p-column field="dueDate" header="Due Date" [style]="{'width':'13%'}">
                     <ng-template pTemplate="body" let-item="rowData">
@@ -478,6 +481,7 @@
                             selectionMode="single"
                             [(selection)]="selectedDoc"
                             (onRowSelect)="docOnRowSelect($event)"
+                            scrollable="true" scrollHeight="280px"
                             dataKey="documentOID" #dtDocs>
                     <p-column field="lastUpdateDate" header="Document Date" [style]="{'width':'25%'}">
                         <ng-template pTemplate="body" let-item="rowData">
@@ -510,6 +514,7 @@
                           selectionMode="single"
                           [(selection)]="selectedHearing"
                           (onRowSelect)="hearingOnRowSelect($event)"
+                          scrollable="true" scrollHeight="280px"
                           dataKey="caseHearingOID" #dtHearings>
                   <p-column field="startDateTime" header="Start Date/Time" [style]="{'width':'17%'}">
                       <ng-template pTemplate="body" let-item="rowData">
@@ -559,6 +564,7 @@
                           selectionMode="single"
                           [(selection)]="selectedJudicialAssignment"
                           (onRowSelect)="judicialAssignmentOnRowSelect($event)"
+                          scrollable="true" scrollHeight="280px"
                           dataKey="judicialAssignmentOID" #dtJudicialAssignment>
                 <p-column field="" header="Start Date/Time" [style]="{'width':'20%'}">
                     <ng-template pTemplate="body" let-item="rowData">
@@ -1105,7 +1111,7 @@
         </div>
 
         <div class="ui-g-12">
-          <label class="minimal primary block" for="tiLea">LEA Lead Charge</label>
+          <label class="minimal primary block" for="tiLea">Police Lead Charge</label>
           <textarea id="tiLea" name="tiLea" #tiLea="ngModel"
                     [required]="true"
                     [(ngModel)]="leaLeadChargeText"
@@ -1115,7 +1121,7 @@
                     class="width-full"></textarea>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="tiLea.errors?.required && tiLea.touched" >
-                LEA Lead Charge is required
+                Police Lead Charge is required
           </div>
         </div>
 

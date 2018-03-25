@@ -75,6 +75,7 @@
         <loading-bar [visible]="isSearcing" [message]="'searching...'"></loading-bar>
       <h2>Search Case Results</h2>
       <p-dataTable [value]="caseResults" selectionMode="single" [(selection)]="selectedCase" (onRowSelect)="caseOnRowSelect($event)"
+        scrollable="true" scrollHeight="280px"
         dataKey="caseOID" #dtCaseResults>
         <p-column field="caseNumber" header="Case Number" [style]="{'width':'13%'}"></p-column>
         <p-column field="caseCaption" header="Caption" [style]="{'width':'25%'}"></p-column>

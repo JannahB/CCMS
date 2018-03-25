@@ -28,6 +28,7 @@
       <h2 class="mt-0">Search User Results</h2>
       <p-dataTable [value]="partyResults" selectionMode="single"
             [(selection)]="selectedParty" (onRowSelect)="partyOnRowSelect($event)"
+            scrollable="true" scrollHeight="280px"
             dataKey="partyOID" #dtPartyResults>
         <p-column field="firstName" header="First Name" [style]="{'width':'35%'}"></p-column>
         <p-column field="lastName" header="Last Name" [style]="{'width':'35%'}"></p-column>

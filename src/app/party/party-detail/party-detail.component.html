@@ -125,6 +125,7 @@
           <p-dataTable [value]="party?.identifiers" [loading]="newIdentifierMode" [loadingIcon]="null"
                        selectionMode="single"
                        [(selection)]="selectedIdentifier"
+                       scrollable="true" scrollHeight="200px"
                        (onRowSelect)="identifierOnRowSelect($event)"
                        dataKey="partyIdentifierOID" #dtIdentifiers>
               <p-column field="identifierType" header="Type" [style]="{'width':'20%'}"></p-column>
@@ -243,6 +244,7 @@
                         selectionMode="single"
                         [(selection)]="selectedEmail"
                         (onRowSelect)="emailOnRowSelect($event)"
+                        scrollable="true" scrollHeight="200px"
                         dataKey="partyEmailOID">
               <p-column field="emailAddressType" header="Type" [style]="{'width':'20%'}"></p-column>
               <p-column field="emailAddress" header="Email Address" [style]="{'width':'20%'}"></p-column>
@@ -373,6 +375,7 @@
                         selectionMode="single"
                         [(selection)]="selectedPhone"
                         (onRowSelect)="phoneOnRowSelect($event)"
+                        scrollable="true" scrollHeight="200px"
                         dataKey="partyPhoneOID">
               <p-column field="phoneType" header="Type" [style]="{'width':'20%'}"></p-column>
               <p-column field="phoneNumber" header="Phone Number" [style]="{'width':'20%'}"></p-column>
@@ -478,6 +481,7 @@
                         selectionMode="single"
                         [(selection)]="selectedAddress"
                         (onRowSelect)="addressOnRowSelect($event)"
+                        scrollable="true" scrollHeight="200px"
                         [responsive]="true"
                         dataKey="addressOID">
               <p-column field="addressType" header="Type" [style]="{'width':'20%'}"></p-column>
