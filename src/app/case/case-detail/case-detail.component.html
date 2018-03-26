@@ -534,10 +534,12 @@
                           {{ item.judicialOfficer?.firstName + ' ' + item.judicialOfficer?.lastName }}
                       </ng-template>
                   </p-column>
-                  <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
-                      <ng-template let-item="rowData" pTemplate="body">
-                          <i class="material-icons" (click)="requestViewHearing(item)">search</i>
-                      </ng-template>
+
+                  <!-- TODO: Turn this on when deleteHearing EP ready  -->
+                  <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                    <ng-template let-item="rowData" pTemplate="body">
+                        <i class="material-icons delete-icon" (click)="requestDeleteHearing($event, item)">delete</i>
+                    </ng-template>
                   </p-column> -->
               </p-dataTable>
 
@@ -626,12 +628,12 @@
 
 <!-- REMOVE CHARGE CONFIRMATION MODAL -->
 
-<p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteChargeModal" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-    <div>Are you sure you want to delete this Charge?</div>
+<p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteHearingModal" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <div>Are you sure you want to delete this Hearing?</div>
     <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
             <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
-            <button label="Yes"   type="button" pButton icon="fa-check" (click)="deleteCharge()" ></button>
+            <button label="Yes"   type="button" pButton icon="fa-check" (click)="deleteHearing()" ></button>
         </div>
     </p-footer>
 </p-dialog>
