@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { GlobalState } from './../state/global.state';
 import { LocalStorageService } from './local-storage.service';
 import { Party } from '../../entities/Party';
+import { Permission } from '../../entities/Permission';
 
 
 
@@ -13,32 +14,43 @@ export class UserService {
 
   constructor(
     private localStorageSvc: LocalStorageService,
-    public _state:GlobalState
+    public _state: GlobalState
   ) {
     this._state.subscribe('app.loggedIn', (user) => {
       this.loggedInUser = user;
     });
-   }
+  }
 
 
-  public get loggedInUser(){
-    if(!this._loggedInUser) {
+  public get loggedInUser() {
+    if (!this._loggedInUser) {
       this._loggedInUser = this.localStorageSvc.getValue('LOGGED_IN_USER');
     }
     return this._loggedInUser;
   }
 
-  public set loggedInUser(user:any){
+  public set loggedInUser(user: any) {
     this.localStorageSvc.setValue('LOGGED_IN_USER', user);
     this._loggedInUser = user;
   }
 
-  public isAdminUser():boolean {
-    if(!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length ) return false;
+  public isAdminUser(): boolean {
+    if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
 
-    let idx = this.loggedInUser.roles.findIndex( itm => itm.ccmsAdmin == true);
+    let idx = this.loggedInUser.roles.findIndex(itm => itm.ccmsAdmin == true);
     console.log('Logged in user', this.loggedInUser.userName);
-    console.log('  Admin Role', (idx > -1) );
+    console.log('  Admin Role', (idx > -1));
+    return idx > -1;
+  }
+
+  hasPermission(pmId: number): boolean {
+    console.log('pmId', pmId);
+    if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
+
+    // TODO: Handle switching of selectedCourt
+    let court1Permissions: Permission[] = this.loggedInUser.roles[0];
+    if (!court1Permissions.length) return false;
+    let idx = court1Permissions.findIndex(itm => itm.permissionID == pmId);
     return idx > -1;
   }
 
