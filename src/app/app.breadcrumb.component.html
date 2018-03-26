@@ -21,9 +21,9 @@
 
           <mat-form-field class="width-full court-dropdown" floatLabel="never" >
             <mat-select placeholder="Court" name="ddCourt"
-                [(ngModel)]="selectedCourt"
+                [ngModel]="selectedCourt.courtOID"
                 (selectionChange)="courtOnChange($event)" >
-              <mat-option *ngFor="let ct of courts" [value]="ct">
+              <mat-option *ngFor="let ct of courts" [value]="ct.courtOID">
                 {{ct.courtName}} {{ct.locationCode}}
               </mat-option>
             </mat-select>

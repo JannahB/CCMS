@@ -6,6 +6,7 @@ import { environment } from '../../environments/environment';
 import { AuthenticationService } from '../common/services/http/authentication.service';
 import { AuthenticationModel } from '../common/model/authentication-model';
 import { Party } from '../common/entities/Party';
+import { AppStateService } from '../common/services/state/app.state.sevice';
 
 @Component({
   selector: 'login',
@@ -14,35 +15,36 @@ import { Party } from '../common/entities/Party';
 })
 export class LoginComponent implements OnInit {
 
-  public userName:string = "";
-  public password:string = "";
-  public verificationCode:string = "";
+  public userName: string = "";
+  public password: string = "";
+  public verificationCode: string = "";
 
-  public isAttemptingLogin:boolean = false;
-  public hasLoginFailed:boolean = false;
+  public isAttemptingLogin: boolean = false;
+  public hasLoginFailed: boolean = false;
 
   constructor(
-    private authenticationService:AuthenticationService,
-    private router:Router,
+    private authenticationService: AuthenticationService,
+    private router: Router,
     private _state: GlobalState,
-    private authenticationModel:AuthenticationModel
+    private appState: AppStateService,
+    private authenticationModel: AuthenticationModel
   ) { }
 
   ngOnInit() {
   }
 
-  public loginClicked():void{
+  public loginClicked(): void {
     //TODO: validate on minimum required characters
     this.logIn(this.userName, this.password);
   }
 
-  public resendClicked():void{
+  public resendClicked(): void {
     this.hasLoginFailed = false;
     //TODO: should we implement this some other way?
     this.logIn(this.userName, this.password);
   }
 
-  private logIn(userName:string, password:string):void{
+  private logIn(userName: string, password: string): void {
     this.isAttemptingLogin = true;
     this.hasLoginFailed = false;
 
@@ -50,12 +52,12 @@ export class LoginComponent implements OnInit {
       .FetchLoginCredentials(userName, password)
       .subscribe((loginResult) => {
         this.handleAuthenticationComplete(loginResult);
-          // this.authenticationService
-          //   .FetchToken(userName, 5)
-          //   .subscribe(tokenResult => {
-          //     this.handleAuthenticationComplete();
-          //   });
-        },
+        // this.authenticationService
+        //   .FetchToken(userName, 5)
+        //   .subscribe(tokenResult => {
+        //     this.handleAuthenticationComplete();
+        //   });
+      },
         (error) => {
           this.hasLoginFailed = true;
           this.isAttemptingLogin = false;
@@ -66,15 +68,16 @@ export class LoginComponent implements OnInit {
       );
   }
 
-  private handleAuthenticationComplete(loginResult):void{
+  private handleAuthenticationComplete(loginResult): void {
     this.hasLoginFailed = false;
     this.isAttemptingLogin = false;
 
-    this._state.notifyDataChanged('app.loggedIn', loginResult, true );
+    this._state.notifyDataChanged('app.loggedIn', loginResult, true);
+    this.appState.selectedCourt = loginResult.authorizedCourts ? loginResult.authorizedCourts[0] : null;
 
-    let url:string = "/";
+    let url: string = "/";
 
-    if(this.authenticationModel.returnUrl){
+    if (this.authenticationModel.returnUrl) {
       // prevent '/login' from being the returnUrl
       url = this.authenticationModel.returnUrl == "/login" ? "/" : this.authenticationModel.returnUrl;
     }

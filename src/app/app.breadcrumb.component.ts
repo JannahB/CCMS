@@ -12,31 +12,33 @@ import { UserService } from './common/services/utility/user.service';
 import { AuthorizedCourt } from './common/entities/AuthorizedCourt';
 import { ToastService } from './common/services/utility/toast.service';
 import { CourtService } from './common/services/http/court.service';
+import { AppStateService } from './common/services/state/app.state.sevice';
 
 @Component({
-    selector: 'app-breadcrumb',
-    templateUrl: './app.breadcrumb.component.html',
-    styleUrls: ['app.breadcrumb.scss']
+  selector: 'app-breadcrumb',
+  templateUrl: './app.breadcrumb.component.html',
+  styleUrls: ['app.breadcrumb.scss']
 })
 export class AppBreadcrumbComponent implements OnDestroy {
 
   loggedInUser: Party;
   subscription: Subscription;
   items: MenuItem[];
-  selectedCourt:AuthorizedCourt;
+  selectedCourt: AuthorizedCourt;
   courts: AuthorizedCourt[];
 
   constructor(
     public breadcrumbService: BreadcrumbService,
     private app: AppComponent,
-    public _state:GlobalState,
+    public _state: GlobalState,
     public userSvc: UserService,
     public courtSvc: CourtService,
     public toastSvc: ToastService,
-    public router: Router
+    public router: Router,
+    public appState: AppStateService
   ) {
     this.subscription = breadcrumbService.itemsHandler.subscribe(response => {
-        this.items = response;
+      this.items = response;
     });
   }
 
@@ -52,44 +54,31 @@ export class AppBreadcrumbComponent implements OnDestroy {
     if (this.subscription) this.subscription.unsubscribe();
   }
 
-  initUser(user){
-    this.loggedInUser =  user;
+  initUser(user) {
+    this.loggedInUser = user;
     this.courts = this.loggedInUser.authorizedCourts;
-    this.selectedCourt = this.loggedInUser.authorizedCourts[0];
+    this.selectedCourt = this.appState.selectedCourt || this.loggedInUser.authorizedCourts[0];
   }
 
   courtOnChange(event) {
     console.log('courtOnChange', event);
 
     // Call FetchCourt with courtOID
-    let courtOID = event.value.courtOID;
-    this.courtSvc.updateSelectedCourt(courtOID).subscribe( court => {
-      this.selectedCourt = this.courts.find( ct => ct.courtOID == courtOID );
-
-      this.toastSvc.showSuccessMessage('Changed to '+ this.selectedCourt.courtName+' '+this.selectedCourt.locationCode);
-
-      this.router.navigate([ '/' ]);
+    // let courtOID = event.value.courtOID;
+    let courtOID = event.value;
+    this.courtSvc.updateSelectedCourt(courtOID).subscribe(court => {
+      this.selectedCourt = this.courts.find(ct => ct.courtOID == courtOID);
+      this.appState.selectedCourt = this.selectedCourt;
+      this.toastSvc.showSuccessMessage('Changed to ' + this.selectedCourt.courtName + ' ' + this.selectedCourt.locationCode);
+      this.router.navigate(['/']);
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error changing courts.')
-    },
-    () => {
-      // final
-    })
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error changing courts.');
+      },
+      () => {
+        // final
+      })
   }
-
-  sendCourtChanage(courtOID:number) {
-    this._state.notifyDataChanged('app.court.change', courtOID, true );
-  }
-
 
 }
-
-
-
-
-
-
-
-

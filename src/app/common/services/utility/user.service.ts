@@ -1,10 +1,11 @@
-import { Role } from './../../entities/Role';
 import { Injectable } from '@angular/core';
 
 import { GlobalState } from './../state/global.state';
 import { LocalStorageService } from './local-storage.service';
 import { Party } from '../../entities/Party';
+import { Role } from './../../entities/Role';
 import { Permission } from '../../entities/Permission';
+import { AppStateService } from '../state/app.state.sevice';
 
 
 
@@ -15,7 +16,8 @@ export class UserService {
 
   constructor(
     private localStorageSvc: LocalStorageService,
-    public _state: GlobalState
+    public _state: GlobalState,
+    public appState: AppStateService
   ) {
     this._state.subscribe('app.loggedIn', (user) => {
       this.loggedInUser = user;
@@ -44,22 +46,21 @@ export class UserService {
     return idx > -1;
   }
 
-  hasPermission(pmId: number, courtOID: number): boolean {
+  hasPermission(pmId: number, courtOID?: number): boolean {
     console.log('pmId', pmId);
+    if (!courtOID) courtOID = this.appState.selectedCourt.courtOID;
+    if (!courtOID) return false;
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
 
     let roles: Role[] = this.loggedInUser.roles;
     let roleByCourtId = roles.find(itm => itm.courtOID == courtOID);
     if (!roleByCourtId) return false;
 
-    // TODO: Handle switching of selectedCourt
     let courtPermissions: Permission[] = roleByCourtId.permissions;
     if (!courtPermissions.length) return false;
     let idx = courtPermissions.findIndex(itm => itm.permissionID == pmId);
     console.log('  idx', idx)
     return idx > -1;
   }
-
-
 
 }
