@@ -56,7 +56,7 @@
         </p-dataTable>
       </div>
 
-      <div class="ui-g-12 mt-20 ta-c">
+      <div class="ui-g-12 mt-20 ta-c" *ngIf="hasPermission(Permission.CREATE_PARTY)">
         <button type="button" (click)="onNewParty()" label="New Party" icon="ui-icon-add" pButton></button>
       </div>
 

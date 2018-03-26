@@ -1,6 +1,7 @@
+import { UserService } from './../../common/services/utility/user.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
-import {Subscription} from 'rxjs/Subscription';
+import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { SelectItem } from 'primeng/primeng';
 
@@ -20,6 +21,7 @@ import { ToastService } from '../../common/services/utility/toast.service';
 import { Email } from '../../common/entities/Email';
 import { CountriesService } from '../../common/services/http/countries.service';
 import { CollectionUtil } from '../../common/utils/collection-util';
+import { Permission } from './../../common/entities/Permission';
 
 
 @Component({
@@ -29,32 +31,32 @@ import { CollectionUtil } from '../../common/utils/collection-util';
 })
 export class PartyDetailComponent implements OnInit, OnDestroy {
 
-  lockApiCalls:boolean = false;
+  lockApiCalls: boolean = false;
 
-  addressTypes:SelectItem[];
+  addressTypes: SelectItem[];
   selectedAddress: Address;
-  addressToDelete:Address;
+  addressToDelete: Address;
   selectedAddressCopy: Address;
-  countries:SelectItem[];
+  countries: SelectItem[];
   countriesSubscription: Subscription;
-  emailTypes:SelectItem[];
-  selectedEmail:Email;
-  emailToDelete:Email;
+  emailTypes: SelectItem[];
+  selectedEmail: Email;
+  emailToDelete: Email;
   selectedEmailCopy: Email;
-  filteredLanguages:string[];
-  genderTypes:any[];
+  filteredLanguages: string[];
+  genderTypes: any[];
   genericSubsciption: Subscription;
-  selectedIdentifier:Identifier;
+  selectedIdentifier: Identifier;
   identifierToDelete: Identifier;
   selectedIdentifierCopy: Identifier;
   identifierTypes: Identifier[];
   identifierTypeOptions: SelectItem[];
   identifierSubscription: Subscription;
-  languages:Language[];
+  languages: Language[];
   languageSubscription: Subscription;
-  party:Party;
+  party: Party;
   partySubscription: Subscription;
-  phoneTypes:SelectItem[];
+  phoneTypes: SelectItem[];
   selectedPhone: PhoneNumber;
   phoneToDelete: PhoneNumber;
   selectedPhoneCopy: PhoneNumber;
@@ -68,18 +70,20 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   showDeleteEmailModal: boolean = false;
   showDeletePhoneModal: boolean = false;
   showDeleteAddressModal: boolean = false;
+  public Permission: any = Permission;
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private breadCrumbSvc:BreadcrumbService,
-    private toastSvc:ToastService,
+    private breadCrumbSvc: BreadcrumbService,
+    private toastSvc: ToastService,
     private languageSvc: LanguageService,
     private identifierSvc: IdentifierService,
     private dropdownSvc: DropdownDataTransformService,
     private partySvc: PartyService,
     private genericTypeSvc: GenericTypesService,
     private countriesSvc: CountriesService,
-    private router:Router
+    private router: Router,
+    private userSvc: UserService
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Party Detail', routerLink: ['/party-detail'] }
@@ -113,37 +117,37 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       this.identifierTypeOptions = this.dropdownSvc.transformSameLabelAndValue(this.identifierTypes, 'name');
     });
 
-    this.genericSubsciption = this.genericTypeSvc.getMock().subscribe( types => {
+    this.genericSubsciption = this.genericTypeSvc.getMock().subscribe(types => {
       let gTypes = this.dropdownSvc.transformSameLabelAndValue(types, 'name');
       this.emailTypes = gTypes;
       this.addressTypes = gTypes;
       this.phoneTypes = gTypes;
     });
 
-    this.countriesSubscription = this.countriesSvc.getMock().subscribe( countries => {
+    this.countriesSubscription = this.countriesSvc.getMock().subscribe(countries => {
       this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
     })
 
     this.buildRefData();
 
     this.router.events
-      .subscribe( event => {
-        if(event instanceof NavigationEnd){
+      .subscribe(event => {
+        if (event instanceof NavigationEnd) {
           this.initializeParty();
         }
       })
   }
 
-  private initializeParty():void{
-    let params:any = this.activatedRoute.params;
-    let partyId:string = params.value.partyId;
+  private initializeParty(): void {
+    let params: any = this.activatedRoute.params;
+    let partyId: string = params.value.partyId;
 
-    if(partyId == "0" || partyId == null) {
+    if (partyId == "0" || partyId == null) {
       // TODO: Create New Party with empty properties;
       // new'ing doesn't bring properties w/o constructor on entity!?
       this.party = new Party();
     } else {
-      this.partySubscription = this.partySvc.fetchOne(partyId).subscribe (party => {
+      this.partySubscription = this.partySvc.fetchOne(partyId).subscribe(party => {
         this.party = party;
       });
 
@@ -152,18 +156,23 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.languageSubscription) this.languageSubscription.unsubscribe();
-    if(this.identifierSubscription) this.identifierSubscription.unsubscribe();
-    if(this.partySubscription) this.partySubscription.unsubscribe();
-    if(this.genericSubsciption) this.genericSubsciption.unsubscribe();
-    if(this.countriesSubscription) this.countriesSubscription.unsubscribe();
+    if (this.identifierSubscription) this.identifierSubscription.unsubscribe();
+    if (this.partySubscription) this.partySubscription.unsubscribe();
+    if (this.genericSubsciption) this.genericSubsciption.unsubscribe();
+    if (this.countriesSubscription) this.countriesSubscription.unsubscribe();
   }
 
 
   /* -------------------
     General Details Methods
     --------------------  */
+  hasPermission(pm) {
+    if (!this.party) return false;
+    return this.userSvc.hasPermission(pm);
+  }
+
   calculateAge(dob) {
-    if(!dob) return;
+    if (!dob) return;
     return moment().diff(dob, 'years');
   }
 
@@ -179,13 +188,13 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.filteredLanguages = this.filterLangs(query, this.languages);
   }
 
-  filterLangs( query, languages: any[] ):any[] {
-    let filtered : any[] = [];
-    for(let i = 0; i < languages.length; i++) {
-        let lang = languages[i];
-        if(lang.languageName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-            filtered.push(lang);
-        }
+  filterLangs(query, languages: any[]): any[] {
+    let filtered: any[] = [];
+    for (let i = 0; i < languages.length; i++) {
+      let lang = languages[i];
+      if (lang.languageName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(lang);
+      }
     }
     return filtered;
   }
@@ -195,7 +204,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     --------------------  */
   savePartyDetails() {
     // TODO: Save Party functionality
-      this.saveParty();
+    this.saveParty();
   }
 
   /* -------------------
@@ -208,7 +217,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.party.identifiers = this.party.identifiers.slice();
   }
 
-  identifierOnRowSelect(event){
+  identifierOnRowSelect(event) {
     this.selectedIdentifierCopy = { ...this.selectedIdentifier }
     this.selectedIdentifier = event.data;
   }
@@ -217,7 +226,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.selectedIdentifier.identifierType = event.value;
   }
 
-  requestDeleteIdentifier(identifier:Identifier) {
+  requestDeleteIdentifier(identifier: Identifier) {
     this.showDeleteIdentifierModal = true;
     this.identifierToDelete = identifier;
   }
@@ -235,10 +244,10 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   cancelIdentifierEdit() {
     this.newIdentifierMode = false;
-    if(!this.selectedIdentifier.partyIdentifierOID ) {
+    if (!this.selectedIdentifier.partyIdentifierOID) {
       // remove from datasource
       let list = this.party.identifiers;
-      let i:number = list.indexOf(this.selectedIdentifier);
+      let i: number = list.indexOf(this.selectedIdentifier);
       list.splice(i, 1);
       // force binding refresh
       this.party.identifiers = list.slice();
@@ -260,208 +269,208 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   /* -------------------
       Email Methods
     --------------------  */
-    newEmail() {
-      this.newEmailMode = true;
-      this.selectedEmail = new Email();
-      this.party.emails.push(this.selectedEmail);
-      this.party.emails = this.party.emails.slice();
+  newEmail() {
+    this.newEmailMode = true;
+    this.selectedEmail = new Email();
+    this.party.emails.push(this.selectedEmail);
+    this.party.emails = this.party.emails.slice();
+  }
+
+  emailOnRowSelect(event) {
+    this.selectedEmailCopy = { ...this.selectedEmail }
+    this.selectedEmail = event.data;
+  }
+
+  emailTypeOnChange(event) {
+    this.selectedEmail.emailAddressType = event.value;
+  }
+
+  requestDeleteEmail(email: Email) {
+    this.showDeleteEmailModal = true;
+    this.emailToDelete = email;
+  }
+
+  deleteEmail() {
+    this.showDeleteEmailModal = false;
+
+    CollectionUtil.removeArrayItem(this.party.emails, this.emailToDelete);
+    this.saveParty(false);
+    this.emailToDelete = null;
+    this.selectedEmailCopy = null;
+    this.selectedEmail = null;
+    this.newEmailMode = false;
+  }
+
+  cancelEmailEdit() {
+    this.newEmailMode = false;
+    if (!this.selectedEmail.partyEmailOID) {
+      // remove from datasource
+      let list = this.party.emails;
+      let i: number = list.indexOf(this.selectedEmail);
+      list.splice(i, 1);
+      // force binding refresh
+      this.party.emails = list.slice();
+    } else {
+      this.selectedEmail = { ...this.selectedEmailCopy }
     }
+    this.selectedEmail = null;
+  }
 
-    emailOnRowSelect(event){
-      this.selectedEmailCopy = { ...this.selectedEmail }
-      this.selectedEmail = event.data;
+  saveEmail() {
+    this.newEmailMode = false;
+
+    this.selectedEmail = null;
+    this.saveParty();
+  }
+
+
+  /* -------------------
+    Phone Number Methods
+  --------------------  */
+  newPhone() {
+    this.newPhoneMode = true;
+    this.selectedPhone = new PhoneNumber();
+    this.party.phoneNumbers.push(this.selectedPhone);
+    this.party.phoneNumbers = this.party.phoneNumbers.slice();
+  }
+
+  phoneOnRowSelect(event) {
+    this.selectedPhoneCopy = { ...this.selectedPhone }
+    this.selectedPhone = event.data;
+  }
+
+  phoneTypeOnChange(event) {
+    this.selectedPhone.phoneType = event.value;
+  }
+
+  requestDeletePhone(phone: PhoneNumber) {
+    this.showDeletePhoneModal = true;
+    this.phoneToDelete = phone;
+  }
+  deletePhone() {
+    this.showDeletePhoneModal = false;
+
+    CollectionUtil.removeArrayItem(this.party.phoneNumbers, this.phoneToDelete);
+    this.saveParty(false);
+    this.phoneToDelete = null;
+    this.selectedPhoneCopy = null;
+    this.selectedPhone = null;
+    this.newPhoneMode = false;
+  }
+
+
+  cancelPhoneEdit() {
+    this.newPhoneMode = false;
+    if (!this.selectedPhone.partyPhoneOID) {
+      // remove from datasource
+      let list = this.party.phoneNumbers;
+      let i: number = list.indexOf(this.selectedPhone);
+      list.splice(i, 1);
+      // force binding refresh
+      this.party.phoneNumbers = list.slice();
+    } else {
+      this.selectedPhone = { ...this.selectedPhoneCopy }
     }
+    this.selectedPhone = null;
+  }
 
-    emailTypeOnChange(event) {
-      this.selectedEmail.emailAddressType = event.value;
+  savePhone() {
+    this.newPhoneMode = false;
+
+    this.selectedPhone = null;
+    this.saveParty();
+  }
+
+
+  /* -------------------
+    Address Methods
+  --------------------  */
+  newAddress() {
+    this.newAddressMode = true;
+    this.selectedAddress = new Address();
+    this.party.addresses.push(this.selectedAddress);
+    this.party.addresses = this.party.addresses.slice();
+  }
+
+  addressOnRowSelect(event) {
+    this.selectedAddressCopy = { ...this.selectedAddress }
+    this.selectedAddress = event.data;
+  }
+
+  addressTypeOnChange(event) {
+    this.selectedAddress.addressType = event.value;
+  }
+
+  countryOnChange(event) {
+    this.selectedAddress.countryName = event.value;
+  }
+
+  requestDeleteAddress(address: Address) {
+    this.showDeleteAddressModal = true;
+    this.addressToDelete = address;
+  }
+  deleteAddress() {
+    this.showDeleteAddressModal = false;
+
+    CollectionUtil.removeArrayItem(this.party.addresses, this.addressToDelete);
+    this.saveParty(false);
+    this.addressToDelete = null;
+    this.selectedAddressCopy = null;
+    this.selectedAddress = null;
+    this.newAddressMode = false;
+  }
+
+  cancelAddressEdit() {
+    this.newAddressMode = false;
+    if (!this.selectedAddress.addressOID) {
+      // remove from datasource
+      let list = this.party.addresses;
+      let i: number = list.indexOf(this.selectedAddress);
+      list.splice(i, 1);
+      // force binding refresh
+      this.party.addresses = list.slice();
+    } else {
+      this.selectedAddress = { ...this.selectedAddressCopy }
     }
+    this.selectedAddress = null;
+  }
 
-    requestDeleteEmail(email:Email) {
-      this.showDeleteEmailModal = true;
-      this.emailToDelete = email;
-    }
+  saveAddress() {
+    this.newAddressMode = false;
 
-    deleteEmail() {
-      this.showDeleteEmailModal = false;
+    this.selectedAddress = null;
 
-      CollectionUtil.removeArrayItem(this.party.emails, this.emailToDelete);
-      this.saveParty(false);
-      this.emailToDelete = null;
-      this.selectedEmailCopy = null;
-      this.selectedEmail = null;
-      this.newEmailMode = false;
-    }
+    this.saveParty();
+  }
 
-    cancelEmailEdit() {
-      this.newEmailMode = false;
-      if(!this.selectedEmail.partyEmailOID ) {
-        // remove from datasource
-        let list  = this.party.emails;
-        let i:number = list.indexOf(this.selectedEmail);
-        list.splice(i, 1);
-        // force binding refresh
-        this.party.emails = list.slice();
-      } else {
-        this.selectedEmail = { ...this.selectedEmailCopy }
-      }
-      this.selectedEmail = null;
-    }
-
-    saveEmail() {
-      this.newEmailMode = false;
-
-      this.selectedEmail = null;
-      this.saveParty();
-    }
-
-
-    /* -------------------
-      Phone Number Methods
-    --------------------  */
-    newPhone() {
-      this.newPhoneMode = true;
-      this.selectedPhone = new PhoneNumber();
-      this.party.phoneNumbers.push(this.selectedPhone);
-      this.party.phoneNumbers = this.party.phoneNumbers.slice();
-    }
-
-    phoneOnRowSelect(event){
-      this.selectedPhoneCopy = { ...this.selectedPhone }
-      this.selectedPhone = event.data;
-    }
-
-    phoneTypeOnChange(event) {
-      this.selectedPhone.phoneType = event.value;
-    }
-
-    requestDeletePhone(phone:PhoneNumber) {
-      this.showDeletePhoneModal = true;
-      this.phoneToDelete = phone;
-    }
-    deletePhone() {
-      this.showDeletePhoneModal = false;
-
-      CollectionUtil.removeArrayItem(this.party.phoneNumbers, this.phoneToDelete);
-      this.saveParty(false);
-      this.phoneToDelete = null;
-      this.selectedPhoneCopy = null;
-      this.selectedPhone = null;
-      this.newPhoneMode = false;
-    }
-
-
-    cancelPhoneEdit() {
-      this.newPhoneMode = false;
-      if(!this.selectedPhone.partyPhoneOID) {
-        // remove from datasource
-        let list  = this.party.phoneNumbers;
-        let i:number = list.indexOf(this.selectedPhone);
-        list.splice(i, 1);
-        // force binding refresh
-        this.party.phoneNumbers = list.slice();
-      } else {
-        this.selectedPhone = { ...this.selectedPhoneCopy }
-      }
-      this.selectedPhone = null;
-    }
-
-    savePhone() {
-      this.newPhoneMode = false;
-
-      this.selectedPhone = null;
-      this.saveParty();
-    }
-
-
-    /* -------------------
-      Address Methods
-    --------------------  */
-    newAddress() {
-      this.newAddressMode = true;
-      this.selectedAddress = new Address();
-      this.party.addresses.push(this.selectedAddress);
-      this.party.addresses = this.party.addresses.slice();
-    }
-
-    addressOnRowSelect(event){
-      this.selectedAddressCopy = { ...this.selectedAddress }
-      this.selectedAddress = event.data;
-    }
-
-    addressTypeOnChange(event) {
-      this.selectedAddress.addressType = event.value;
-    }
-
-    countryOnChange(event) {
-      this.selectedAddress.countryName = event.value;
-    }
-
-    requestDeleteAddress(address:Address) {
-      this.showDeleteAddressModal = true;
-      this.addressToDelete = address;
-    }
-    deleteAddress() {
-      this.showDeleteAddressModal = false;
-
-      CollectionUtil.removeArrayItem(this.party.addresses, this.addressToDelete);
-      this.saveParty(false);
-      this.addressToDelete = null;
-      this.selectedAddressCopy = null;
-      this.selectedAddress = null;
-      this.newAddressMode = false;
-    }
-
-    cancelAddressEdit() {
-      this.newAddressMode = false;
-      if(!this.selectedAddress.addressOID ) {
-        // remove from datasource
-        let list  = this.party.addresses;
-        let i:number = list.indexOf(this.selectedAddress);
-        list.splice(i, 1);
-        // force binding refresh
-        this.party.addresses = list.slice();
-      } else {
-        this.selectedAddress = { ...this.selectedAddressCopy }
-      }
-      this.selectedAddress = null;
-    }
-
-    saveAddress() {
-      this.newAddressMode = false;
-
-      this.selectedAddress = null;
-
-      this.saveParty();
-    }
-
-    hideModals(){
-      this.showDeleteIdentifierModal = false;
-      this.showDeleteEmailModal = false;
-      this.showDeletePhoneModal = false;
-      this.showDeleteAddressModal = false;
-    }
+  hideModals() {
+    this.showDeleteIdentifierModal = false;
+    this.showDeleteEmailModal = false;
+    this.showDeletePhoneModal = false;
+    this.showDeleteAddressModal = false;
+  }
 
 
 
   private buildRefData() {
 
     this.genderTypes = [
-      {label:'M', value:'M'}, {label:'F', value:'F'},
+      { label: 'M', value: 'M' }, { label: 'F', value: 'F' },
     ];
 
   }
 
-  private saveParty(shouldShowSuccessMessage:boolean = true):void{
+  private saveParty(shouldShowSuccessMessage: boolean = true): void {
     this.partySvc
       .saveParty(this.party)
       .subscribe(result => {
         console.log("Party saved");
-        let shouldRedirectToEditPartyRoute:boolean = !this.party.partyOID;
+        let shouldRedirectToEditPartyRoute: boolean = !this.party.partyOID;
         this.party = result;
-        if(shouldShowSuccessMessage){
+        if (shouldShowSuccessMessage) {
           this.toastSvc.showSuccessMessage('Party Saved!');
         }
-        if(shouldRedirectToEditPartyRoute){
+        if (shouldRedirectToEditPartyRoute) {
           this.router.navigate(["party-detail", this.party.partyOID]);
         }
       });

@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { PartyService } from '../../common/services/http/party.service';
-import { Party } from '../../common/entities/Party';
 import { Router } from '@angular/router';
 
-import {Message} from 'primeng/components/common/api';
+import { Party } from '../../common/entities/Party';
+import { Message } from 'primeng/components/common/api';
+import { UserService } from './../../common/services/utility/user.service';
 import { DateUtils } from '../../common/utils/date-utils';
+import { PartyService } from '../../common/services/http/party.service';
+import { Permission } from '../../common/entities/Permission';
 
 
 @Component({
@@ -14,22 +16,24 @@ import { DateUtils } from '../../common/utils/date-utils';
 })
 export class PartySearchComponent implements OnInit {
 
-  partyNameText:string = "";
+  partyNameText: string = "";
   partyResults: Party[];
   selectedParty: Party;
   showRecordsFoundMessage: boolean = false;
   recordsFoundMessage: string;
+  public Permission: any = Permission;
 
 
   constructor(
-    private partyService:PartyService,
-    private router:Router
+    private partyService: PartyService,
+    private router: Router,
+    private userSvc: UserService
   ) { }
 
   ngOnInit() {
   }
 
-  public onSearch():void{
+  public onSearch(): void {
     this.showRecordsFoundMessage = false;
     let obj = { "partyName": this.partyNameText };
     this.partyService
@@ -43,15 +47,19 @@ export class PartySearchComponent implements OnInit {
       });
   }
 
-  setPartiesAge(){
-    if(this.partyResults.length > 0){
-      this.partyResults.map( p => {
+  hasPermission(pm) {
+    return this.userSvc.hasPermission(pm);
+  }
+
+  setPartiesAge() {
+    if (this.partyResults.length > 0) {
+      this.partyResults.map(p => {
         p.age = DateUtils.calculateAge(p.dob);
       })
     }
   }
 
-  showNumberOfRecordsFound(num){
+  showNumberOfRecordsFound(num) {
     let text = num == 1 ? ' record found' : ' records found';
     this.showRecordsFoundMessage = true;
     this.recordsFoundMessage = num + text;
@@ -61,16 +69,16 @@ export class PartySearchComponent implements OnInit {
     console.log(event)
     let partyId = event.data.partyOID;
 
-    this.router.navigate(['party-detail', partyId ]);
+    this.router.navigate(['party-detail', partyId]);
   }
 
-  onReset(){
+  onReset() {
     this.showRecordsFoundMessage = false;
     this.partyNameText = '';
   }
 
-  onNewParty(){
-    this.router.navigate(['party-detail', 0 ]);
+  onNewParty() {
+    this.router.navigate(['party-detail', 0]);
   }
 
 }
