@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0"></a>
+# [1.2.0](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.1.0...v1.2.0) (2018-03-26)
+
+
+### Features
+
+* **Security:** add static permission types ([bba76d5](https://bitbucket.org/reurgency/ccms-fe2/commits/bba76d5))
+* **Security:** apply permissions to Case page AC-123 ([3eb6f2f](https://bitbucket.org/reurgency/ccms-fe2/commits/3eb6f2f))
+* **Security:** mod user security to take courtOID as arg ([c4abf93](https://bitbucket.org/reurgency/ccms-fe2/commits/c4abf93))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.0.7...v1.1.0) (2018-03-26)
 
