@@ -42,6 +42,8 @@ import { CaseHearings } from '../../common/entities/CaseHearings';
 import { CaseHearingDTO } from '../../common/entities/CaseHearingDTO';
 import { LocalStorageService } from './../../common/services/utility/local-storage.service';
 import { DateUtils } from '../../common/utils/date-utils';
+import { UserService } from './../../common/services/utility/user.service';
+import { Permission } from './../../common/entities/Permission';
 
 
 @Component({
@@ -76,6 +78,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   datePipe: DatePipe = new DatePipe("en");
 
+  public Permission: any = Permission;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private breadCrumbSvc: BreadcrumbService,
@@ -85,6 +89,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     private toastSvc: ToastService,
     private lookupSvc: LookupService,
     private localStorageService: LocalStorageService,
+    private userSvc: UserService
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Case', routerLink: ['/case-detail'] }
@@ -128,6 +133,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if (this.caseSubscription) this.caseSubscription.unsubscribe();
     if (this.caseTaskSubscription) this.caseTaskSubscription.unsubscribe();
     if (this.routeSubscription) this.routeSubscription.unsubscribe();
+  }
+
+  hasPermission(pm) {
+    if (!this.case || !this.case.court) return false;
+    let courtOID = this.case.court.courtOID;
+    return this.userSvc.hasPermission(pm, courtOID);
   }
 
   staticMessage: any = {};
@@ -255,6 +266,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   partyOnRowSelect(event) {
+    if (!this.hasPermission(this.Permission.VIEW_CASE_PARTY)) return false;
     this.selectedCaseParty = event.data;
     this.showModalEditCaseParty = true;
     // TODO: SHOW DROPDOWNS AS TEXT IN FORM
@@ -693,6 +705,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   taskOnRowSelect(event) {
+    if (!this.hasPermission(this.Permission.UPDATE_TASK)) return false;
     this.selectedCaseTask = event.data;
     this.onShowCaseTaskModal();
     console.log('taskOnRowSelect selected case task', this.selectedCaseTask)
@@ -851,6 +864,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   hearingOnRowSelect(event) {
+
+    if (!this.hasPermission(this.Permission.UPDATE_CASE_HEARING)) return false;
     if (this.showDeleteHearingModal) return;
     this.selectedHearing = event.data;
     this.onShowHearingModal();
@@ -1081,6 +1096,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   // Handles a row click
   judicialAssignmentOnRowSelect(event) {
+
+    if (!this.hasPermission(this.Permission.UPDATE_JUDICIAL_ASSIGNMENT)) return false;
     this.onShowJudgeModal();
     this.judge = event.data;
   }

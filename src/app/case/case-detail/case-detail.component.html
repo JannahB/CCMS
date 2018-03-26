@@ -28,7 +28,9 @@
                 label="Save Case"
                 icon="ui-icon-check"
                 class="btn-big" pButton
-                [disabled]="!caseForm.form.valid"></button>
+                [disabled]="!caseForm.form.valid"
+                *ngIf="hasPermission(Permission.CREATE_CASE)"
+                ></button>
       </div>
     </div>
 
@@ -41,7 +43,7 @@
               <label class="minimal primary block">Filing Date</label>
               <p-calendar id="dtFilingDate" name="dtFilingDate" #dtFilingDate
                     [required]="true"
-                    [disabled]="case.caseOID != 0"
+                    [disabled]="case.caseOID != 0 || !hasPermission(Permission.CREATE_CASE)"
                     [(ngModel)]="case.caseFilingDate"
                     dateFormat="mm/dd/yy"
                     placeholder="Case Filing Date"
@@ -59,7 +61,13 @@
             <div class="ui-g-12 ui-md-3 pr-20">
                 <label class="minimal block primary">Case Weight</label>
                 <div class="mar-0">{{ case.caseWeight }}</div>
-                <p-slider name="slCaseWeight" #slCaseWeight="ngModel" [required]="true" min="1" [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10" [animate]="true"></p-slider>
+                <p-slider name="slCaseWeight" #slCaseWeight="ngModel"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE)"
+                      [required]="true" min="1"
+                      [(ngModel)]="case.caseWeight"
+                      [style]="{'width':'100%'}"
+                      [min]="0" [max]="10"
+                      [animate]="true"></p-slider>
                 <div class="ui-message ui-messages-error ui-corner-all"
                     *ngIf="slCaseWeight.errors?.min && slCaseWeight.touched" >
                       Please choose a Case Weight
@@ -68,8 +76,11 @@
 
             <div class="ui-g-12 ui-md-6 mt-25" *ngIf="case.caseOID > 0">
               <span class="md-inputfield">
+                <!-- TODO: HANDLE BOTH CREATE_CASE &&  -->
                 <input pInputText type="text" #tiCaseCaption="ngModel" required name="tiCaseCaption"
-                        [(ngModel)]="case.caseCaption" class="width-full" >
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      [(ngModel)]="case.caseCaption"
+                      class="width-full" >
                 <label>Case Caption</label>
               </span>
               <div class="ui-message ui-messages-error ui-corner-all"
@@ -84,6 +95,7 @@
             <div class="ui-g-12 ui-md-4">
               <label class="minimal primary block">Case Status</label>
               <p-dropdown name="ddCaseStaus" #ddCaseStaus placeholder="case status..."
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                   [required]="true"
                   optionLabel="name"
                   [options]="caseStatuses"
@@ -101,6 +113,7 @@
               <label class="minimal primary block">Case Type</label>
               <!-- [disabled]="case.caseOID != 0" -->
               <p-dropdown name="ddCaseType" #ddCaseType placeholder="case type..."
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                   [required]="true"
                   optionLabel="name"
                   [options]="caseTypes"
@@ -118,6 +131,7 @@
               <label class="minimal primary block">Case Phase</label>
               <!-- [disabled]="!casePhases || !case.caseType || case.caseOID != 0" -->
               <p-dropdown name="ddCasePhase" #ddCasePhase placeholder="case phase..."
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                   [required]="true"
                   (click)="isCaseTypeSelected($event)"
                   optionLabel="name"
@@ -144,6 +158,7 @@
 
             <div class="ui-g-12 ui-md-6 ta-r">
               <button type="button"
+                  *ngIf="hasPermission(Permission.ADD_CASE_PARTY)"
                   (click)="showAddCaseParty();"
                   label="Add Case Party"
                   icon="ui-icon-add"
@@ -198,10 +213,11 @@
             </div>
             <div class="ui-g-12 ui-md-6 ta-r">
               <button type="button"
-                    (click)="onAddCaseCharge(caseChargeForm)"
-                    label="Add Case Charge"
-                    icon="ui-icon-add"
-                    class="ui-button-secondary mr-15" pButton></button>
+                  *ngIf="hasPermission(Permission.UPDATE_CASE)"
+                  (click)="onAddCaseCharge(caseChargeForm)"
+                  label="Add Case Charge"
+                  icon="ui-icon-add"
+                  class="ui-button-secondary mr-15" pButton></button>
             </div>
 
             <div class="ui-g-12">
@@ -277,6 +293,7 @@
           <!-- CASE SAVE BUTTON -->
           <div class="ui-g-12 ta-r">
             <button type="button"
+                *ngIf="hasPermission(Permission.ADD_CASE_PARTY)"
                 (click)="saveCase()"
                 label="Save Case"
                 icon="ui-icon-check"
@@ -417,6 +434,7 @@
             </div>
             <div class="ui-g-12">
               <button type="button"
+                  *ngIf="hasPermission(Permission.CREATE_TASK)"
                   (click)="createCaseTask()"
                   label="Add Case Task"
                   icon="ui-icon-add"
@@ -432,7 +450,7 @@
             <div class="ui-g-12">
                 <h2>Documents</h2>
             </div>
-            <div class="ui-g-12 pt-0">
+            <div class="ui-g-12 pt-0" *ngIf="hasPermission(Permission.UPDATE_CASE)">
               <div class="ui-g-12 ui-md-6">
                 <h4 class="mt-0 mb-10">Generate Document</h4>
                 <div class="ui-g-12 ui-md-6">
@@ -469,11 +487,7 @@
                           </ul>
                       </ng-template>
                   </p-fileUpload>
-
               </div>
-
-
-
             </div>
 
             <div class="ui-g-12">
@@ -546,6 +560,7 @@
             </div>
             <div class="ui-g-12">
                 <button type="button"
+                    *ngIf="hasPermission(Permission.CREATE_CASE_HEARING)"
                     (click)="createHearing(hearingForm)"
                     label="Add Hearing"
                     icon="ui-icon-add"
@@ -592,6 +607,7 @@
             </div>
             <div class="ui-g-12">
                 <button type="button"
+                    *ngIf="hasPermission(Permission.CREATE_JUDICIAL_ASSIGNMENT)"
                     (click)="onAddJudge()"
                     label="Add Judge"
                     icon="ui-icon-add"
