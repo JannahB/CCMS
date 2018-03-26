@@ -1,3 +1,4 @@
+import { Role } from './../../entities/Role';
 import { Injectable } from '@angular/core';
 
 import { GlobalState } from './../state/global.state';
@@ -43,14 +44,19 @@ export class UserService {
     return idx > -1;
   }
 
-  hasPermission(pmId: number): boolean {
+  hasPermission(pmId: number, courtOID: number): boolean {
     console.log('pmId', pmId);
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
 
+    let roles: Role[] = this.loggedInUser.roles;
+    let roleByCourtId = roles.find(itm => itm.courtOID == courtOID);
+    if (!roleByCourtId) return false;
+
     // TODO: Handle switching of selectedCourt
-    let court1Permissions: Permission[] = this.loggedInUser.roles[0];
-    if (!court1Permissions.length) return false;
-    let idx = court1Permissions.findIndex(itm => itm.permissionID == pmId);
+    let courtPermissions: Permission[] = roleByCourtId.permissions;
+    if (!courtPermissions.length) return false;
+    let idx = courtPermissions.findIndex(itm => itm.permissionID == pmId);
+    console.log('  idx', idx)
     return idx > -1;
   }
 
