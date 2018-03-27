@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.1"></a>
+## [1.2.1](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.2.0...v1.2.1) (2018-03-27)
+
+
+### Bug Fixes
+
+* **Security:** user with full permission could not create new case ([3d2f2d3](https://bitbucket.org/reurgency/ccms-fe2/commits/3d2f2d3))
+
+
+### Features
+
+* **app:** persist selected court thru browser refresh ([4a20718](https://bitbucket.org/reurgency/ccms-fe2/commits/4a20718))
+* **Security:** apply permissions to Party pages AC-206 ([7edb5ac](https://bitbucket.org/reurgency/ccms-fe2/commits/7edb5ac))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.1.0...v1.2.0) (2018-03-26)
 
