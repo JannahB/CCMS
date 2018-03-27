@@ -268,7 +268,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   partyOnRowSelect(event) {
-    if (!this.hasPermission(this.Permission.VIEW_CASE_PARTY)) return false;
+    if (!this.hasPermission(this.Permission.UPDATE_CASE)) return false;
     this.selectedCaseParty = event.data;
     this.showModalEditCaseParty = true;
     // TODO: SHOW DROPDOWNS AS TEXT IN FORM

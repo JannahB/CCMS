@@ -47,7 +47,7 @@ export class UserService {
   }
 
   hasPermission(pmId: number, courtOID?: number): boolean {
-    console.log('pmId', pmId);
+    // console.log('pmId', pmId);
     if (!courtOID) courtOID = this.appState.selectedCourt.courtOID;
     if (!courtOID) return false;
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
@@ -59,7 +59,7 @@ export class UserService {
     let courtPermissions: Permission[] = roleByCourtId.permissions;
     if (!courtPermissions.length) return false;
     let idx = courtPermissions.findIndex(itm => itm.permissionID == pmId);
-    console.log('  idx', idx)
+    // console.log('  idx', idx)
     return idx > -1;
   }
 

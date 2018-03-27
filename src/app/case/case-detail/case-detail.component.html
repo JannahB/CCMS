@@ -158,7 +158,7 @@
 
             <div class="ui-g-12 ui-md-6 ta-r">
               <button type="button"
-                  *ngIf="hasPermission(Permission.ADD_CASE_PARTY)"
+                  *ngIf="hasPermission(Permission.CREATE_CASE)"
                   (click)="showAddCaseParty();"
                   label="Add Case Party"
                   icon="ui-icon-add"
@@ -293,7 +293,7 @@
           <!-- CASE SAVE BUTTON -->
           <div class="ui-g-12 ta-r">
             <button type="button"
-                *ngIf="hasPermission(Permission.ADD_CASE_PARTY)"
+                *ngIf="hasPermission(Permission.CREATE_CASE)"
                 (click)="saveCase()"
                 label="Save Case"
                 icon="ui-icon-check"
