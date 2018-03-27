@@ -136,9 +136,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   hasPermission(pm) {
-    if (!this.case || !this.case.court) return false;
-    let courtOID = this.case.court.courtOID;
-    return this.userSvc.hasPermission(pm, courtOID);
+    if (!this.case) return false;
+    return this.userSvc.hasPermission(pm);
+    // if (!this.case || !this.case.court) return false;
+    // let courtOID = this.case.court.courtOID;
+    // return this.userSvc.hasPermission(pm, courtOID);
   }
 
   staticMessage: any = {};
