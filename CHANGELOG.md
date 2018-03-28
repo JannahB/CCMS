@@ -1,8 +1,8 @@
 # Change Log
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+All notable changes to this project will be documented in this file. 
 
-<a name="1.2.3"></a>
+
 ## [1.2.3](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.2.2...v1.2.3) (2018-03-28)
 
 
@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="1.2.2"></a>
+
 ## [1.2.2](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.2.1...v1.2.2) (2018-03-27)
 
 
@@ -23,7 +23,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="1.2.1"></a>
+
 ## [1.2.1](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.2.0...v1.2.1) (2018-03-27)
 
 
@@ -39,7 +39,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="1.2.0"></a>
+
 # [1.2.0](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.1.0...v1.2.0) (2018-03-26)
 
 
@@ -51,7 +51,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="1.1.0"></a>
 # [1.1.0](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.0.7...v1.1.0) (2018-03-26)
 
 
@@ -64,7 +63,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="1.0.7"></a>
 ## [1.0.7](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.1.0...v1.0.7) (2018-03-21)
 
 
@@ -79,7 +77,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="1.0.6"></a>
 ## [1.0.6](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.1.0...v1.0.6) (2018-03-21)
 
 ### Features
