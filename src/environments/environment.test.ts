@@ -8,5 +8,7 @@ export const environment = {
   apiUrl: "https://testcms.ttlawcourts.org/CCMS3/",  // TEST
   mockUrl: "assets/mockData/",
 
-  allowDeleteLookupItems: false
+  allowDeleteLookupItems: false,
+
+  VERSION: require('../../package.json').version
 };

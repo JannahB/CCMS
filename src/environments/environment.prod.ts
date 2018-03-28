@@ -3,5 +3,7 @@ export const environment = {
   apiUrl: "https://cms.ttlawcourts.org/CCMS3/",       // PROD
   mockUrl: "assets/mockData/",
 
-  allowDeleteLookupItems: false
+  allowDeleteLookupItems: false,
+
+  VERSION: require('../../package.json').version
 };

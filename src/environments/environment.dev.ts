@@ -9,5 +9,7 @@ export const environment = {
   apiUrl: "http://68.169.61.22/CCMS3/",                // DEV
   mockUrl: "assets/mockData/",
 
-  allowDeleteLookupItems: false
+  allowDeleteLookupItems: false,
+
+  VERSION: require('../../package.json').version
 };

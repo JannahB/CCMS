@@ -8,5 +8,7 @@ export const environment = {
   apiUrl: "https://traincms.ttlawcourts.org/CCMS3/",                // TRAINING
   mockUrl: "assets/mockData/",
 
-  allowDeleteLookupItems: false
+  allowDeleteLookupItems: false,
+
+  VERSION: require('../../package.json').version
 };
