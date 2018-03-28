@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.3"></a>
+## [1.2.3](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.2.2...v1.2.3) (2018-03-28)
+
+
+### Features
+
+* **app:** add version to footer ([ce44723](https://bitbucket.org/reurgency/ccms-fe2/commits/ce44723))
+* **app:** app versioning ([75a8a9c](https://bitbucket.org/reurgency/ccms-fe2/commits/75a8a9c))
+
+
+
 <a name="1.2.2"></a>
 ## [1.2.2](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.2.1...v1.2.2) (2018-03-27)
 
