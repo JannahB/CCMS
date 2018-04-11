@@ -44,6 +44,8 @@ import { LocalStorageService } from './../../common/services/utility/local-stora
 import { DateUtils } from '../../common/utils/date-utils';
 import { UserService } from './../../common/services/utility/user.service';
 import { Permission } from './../../common/entities/Permission';
+import { LocalCharge } from '../../common/entities/LocalCharge';
+import { IccsCodeCategory } from '../../common/entities/IccsCodeCategory';
 
 
 @Component({
@@ -75,6 +77,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   caseStatuses: CaseStatus[] = [];
   casePhases: CasePhase[] = [];
   baseURL: string;
+  selectedChargeLawTypeId:any;
 
   datePipe: DatePipe = new DatePipe("en");
 
@@ -499,13 +502,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   showDeleteChargeModal: boolean = false;
 
   sectionTypes: IccsCode[];        // FetchICCSCategory GET
-  selectedSectionType: IccsCode;
+  selectedSectionType: IccsCode = null;
   divisionTypes: IccsCode[];
-  selectedDivisionType: IccsCode;
+  selectedDivisionType: IccsCode = null;
   groupTypes: IccsCode[];
-  selectedGroupType: IccsCode;
+  selectedGroupType: IccsCode = null;
   classTypes: IccsCode[];
-  selectedClassType: IccsCode;
+  selectedClassType: IccsCode = null;
   chargeLawTypes: any[];
   selectedChargeLawType: any;
   leaLeadChargeText: string;
@@ -527,24 +530,19 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showModalAddCaseCharge = true;
 
     this.caseSvc
-      .fetchICCSCategory()
-      .subscribe(categories => {
-        this.sectionTypes = categories;
-      })
+      .fetchLocalCharge()
+      .subscribe(localCharges => this.chargeLawTypes = localCharges);
 
     this.caseSvc
       .fetchChargeFactor()
       .subscribe(chargeFactors => {
         this.chargeFactorTypes = chargeFactors;
         this.filteredChargeFactorTypes = chargeFactors;
-      })
+      });
   }
 
   resetIccsCodes() {
-    this.selectedSectionType = null;
-    this.selectedDivisionType = null;
-    this.selectedGroupType = null;
-    this.selectedClassType = null;
+    this.resetCategories();
     this.selectedChargeLawType = null;
 
     // keep  -> sectionTypes
@@ -584,8 +582,52 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.chargeLawTypes = this.selectedClassType.localCharges;
   }
 
-  chargeLawTypeOnChange(event) {
-    // may not need to handle this one, use [(ngModel)]
+  chargeLawTypeOnChange(selectedIccsCodeOID:number) {
+    if(!this.chargeLawTypes){
+      this.selectedChargeLawType = null;
+      return;
+    }
+
+    this.selectedChargeLawType = this.chargeLawTypes.find(c => c.localChargeOID == selectedIccsCodeOID);
+
+    this.setCategories(this.selectedChargeLawType);
+  }
+
+  private resetCategories():void{
+    this.selectedSectionType = null;
+    this.selectedDivisionType = null;
+    this.selectedGroupType = null;
+    this.selectedClassType = null;
+  }
+
+  private setCategories(localCharge:LocalCharge){
+    if(!localCharge){
+      this.resetCategories();
+      return;
+    }
+
+    this.selectedDivisionType = null;
+    this.selectedGroupType = null;
+    this.selectedClassType = null;
+
+    let parentCode:IccsCode = localCharge.parentICCSCode;
+
+    while(parentCode){
+      this.setCategory(parentCode);
+      parentCode = parentCode.parentICCSCode;
+    }
+  }
+
+  private setCategory(iccsCode:IccsCode):void{
+    if(iccsCode.categoryType == IccsCodeCategory.SECTION){
+      this.selectedSectionType = iccsCode;
+    }else if(iccsCode.categoryType == IccsCodeCategory.DIVISION){
+      this.selectedDivisionType = iccsCode;
+    }else if(iccsCode.categoryType == IccsCodeCategory.GROUP){
+      this.selectedGroupType = iccsCode;
+    }else if(iccsCode.categoryType == IccsCodeCategory.CLASS){
+      this.selectedClassType = iccsCode;
+    }
   }
 
   getChargeFactorsToFilter(event) {
