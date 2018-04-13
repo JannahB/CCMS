@@ -1065,63 +1065,43 @@
 
         <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Section</label>
-          <p-dropdown name="ddSection" id="ddSection" #ddSection="ngModel" placeholder="choose Section..."
-              [required]="true"
-              [options]="sectionTypes"
-              optionLabel="categoryName"
-              [(ngModel)]="selectedSectionType"
-              (onChange)="sectionTypeOnChange($event)"
-              styleClass="width-full">
-          </p-dropdown>
-          <div class="ui-message ui-messages-error ui-corner-all"
-                *ngIf="ddSection.errors?.required && ddSection.touched" >
-                Section is required
-          </div>
+          <span *ngIf="selectedChargeLawType && selectedSectionType">{{selectedSectionType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedSectionType">Not Applicable</span>
+          <span *ngIf="!selectedChargeLawType">Unknown</span>
         </div>
 
         <div class="ui-g-12 mb-0">
             <label class="minimal primary block">Division</label>
-            <p-dropdown name="ddDivision" id="ddDivision" placeholder="choose Division..."
-                [options]="divisionTypes"
-                optionLabel="categoryName"
-                [(ngModel)]="selectedDivisionType"
-                (onChange)="divisionTypeOnChange($event)"
-                styleClass="width-full">
-            </p-dropdown>
+            <span *ngIf="selectedChargeLawType && selectedDivisionType">{{selectedDivisionType.categoryName}}</span>
+            <span *ngIf="selectedChargeLawType && !selectedDivisionType">Not Applicable</span>
+            <span *ngIf="!selectedChargeLawType">Unknown</span>
         </div>
 
         <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Group</label>
-          <p-dropdown name="ddGroup" placeholder="choose Group..."
-              [options]="groupTypes"
-              optionLabel="categoryName"
-              [(ngModel)]="selectedGroupType"
-              (onChange)="groupTypeOnChange($event)"
-              styleClass="width-full">
-          </p-dropdown>
+          <span *ngIf="selectedChargeLawType && selectedGroupType">{{selectedGroupType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedGroupType">Not Applicable</span>
+          <span *ngIf="!selectedChargeLawType">Unknown</span>
         </div>
 
         <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Class</label>
-          <p-dropdown name="ddClass" placeholder="choose Class..."
-              [options]="classTypes"
-              optionLabel="categoryName"
-              [(ngModel)]="selectedClassType"
-              (onChange)="classTypeOnChange($event)"
-              styleClass="width-full">
-          </p-dropdown>
+          <span *ngIf="selectedChargeLawType && selectedClassType">{{selectedClassType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedClassType">Not Applicable</span>
+          <span *ngIf="!selectedChargeLawType">Unknown</span>
         </div>
 
         <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Charge/Law</label>
-          <p-dropdown name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel" placeholder="choose Charge/Law..."
-              [required]="lastSelectedTypeLocalCharges.length > 0 ? true : undefined"
-              [options]="chargeLawTypes"
-              optionLabel="localCharge"
-              [(ngModel)]="selectedChargeLawType"
-              (onChange)="chargeLawTypeOnChange($event)"
-              styleClass="width-full">
-          </p-dropdown>
+          <custom-autocomplete name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel" placeholder="choose Charge/Law..."
+            [required]="true"
+            [options]="chargeLawTypes"
+            labelField="localCharge"
+            dataField="localChargeOID"
+            [ngModel]="selectedChargeLawType?.localChargeOID"
+            (ngModelChange)="chargeLawTypeOnChange($event)"
+            styleClass="width-full"
+          ></custom-autocomplete>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="ddChargeLaw.errors?.required && ddChargeLaw.touched" >
                 Charge/Law is required

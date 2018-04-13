@@ -112,6 +112,7 @@ import { AdminDataService } from './common/services/http/admin-data.service';
 import { AdminUserService } from './common/services/http/admin-user.service';
 import { CourtService } from './common/services/http/court.service';
 import { AdminModule } from './admin/admin.module';
+import { CustomAutocompleteComponent } from './common/components/custom-autocomplete/custom-autocomplete.component';
 
 
 
@@ -201,7 +202,8 @@ import { AdminModule } from './admin/admin.module';
     AdminUsersComponent,
     LoginComponent,
     LoadingBarComponent,
-    DropdownPipe
+    DropdownPipe, 
+    CustomAutocompleteComponent
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

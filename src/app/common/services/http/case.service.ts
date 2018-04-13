@@ -32,6 +32,7 @@ import { CaseType } from '../../entities/CaseType';
 import { CaseStatus } from '../../entities/CaseStatus';
 import { CasePhase } from '../../entities/CasePhase';
 import { CaseHearingDTO } from '../../entities/CaseHearingDTO';
+import { LocalCharge } from '../../entities/LocalCharge';
 
 
 @Injectable()
@@ -273,6 +274,13 @@ export class CaseService extends HttpBaseService<Case> {
     let url: string = `${super.getBaseUrl()}/FetchChargeFactor`;
 
     return this.http.post<ChargeFactor[]>(url, "");
+  }
+
+  public fetchLocalCharge():Observable<LocalCharge[]>{
+    let url:string = `${super.getBaseUrl()}/FetchLocalCharge`;
+
+    return this.http
+      .post<LocalCharge[]>(url, "");
   }
 
   public saveCourtCase(data: Case): Observable<Case> {

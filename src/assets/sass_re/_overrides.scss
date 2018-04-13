@@ -227,3 +227,8 @@ body {
     }
   }
 }
+
+// AutoComplete Overlay
+.cdk-overlay-container{
+  z-index: 2000!important;
+}

@@ -5,5 +5,4 @@ export class ChargeFactor {
   chargeFactorOID: number; 
   description: string;
   name: string; 
-  
 }

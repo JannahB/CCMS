@@ -1,3 +1,4 @@
+import { IccsCode } from "./IccsCode";
 
 export class LocalCharge {
 
@@ -6,5 +7,6 @@ export class LocalCharge {
   localCharge: string; 
   localChargeOID: number; 
   localLaw: string; 
+  parentICCSCode: IccsCode;
   
 }
