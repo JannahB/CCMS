@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { LocationStrategy, HashLocationStrategy, CommonModule } from '@angular/common';
 import { AppRoutes } from './app.routes';
 import 'rxjs/add/operator/toPromise';
 
@@ -121,6 +121,7 @@ import { CustomAutocompleteComponent } from './common/components/custom-autocomp
   imports: [
     BrowserModule,
     FormsModule,
+    CommonModule,
     AppRoutes,
     HttpModule,
     BrowserAnimationsModule,

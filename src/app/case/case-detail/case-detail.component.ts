@@ -593,6 +593,23 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.setCategories(this.selectedChargeLawType);
   }
 
+  public localChargeFilterFunction(filterText:string, options:LocalCharge[]):LocalCharge[]{
+    if (!options) {
+      return [];
+    }
+
+    if (!filterText) {
+      return options.copy();
+    }
+
+    return options
+      .filter(o => {
+        let text:string = `${o.categoryIdentifier} ${o.localCharge}`;
+
+        return text.contains(filterText, false);
+      });
+  }
+
   private resetCategories():void{
     this.selectedSectionType = null;
     this.selectedDivisionType = null;

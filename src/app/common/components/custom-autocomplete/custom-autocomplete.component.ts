@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, forwardRef, ViewChild, ContentChild, TemplateRef } from '@angular/core';
 import { MatAutocompleteSelectedEvent, MatAutocomplete, MatInput } from '@angular/material';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -15,6 +15,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ]
 })
 export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor {
+  @ContentChild(TemplateRef)
+  public ngTemplateOutlet: TemplateRef<any>;
 
   @ViewChild("auto")
   public autoComplete: MatAutocomplete;
@@ -44,10 +46,27 @@ export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor
   public labelField: string = "label";
 
   @Input()
-  public labelField2: string = "";
+  public dataField: string = "id";
+
+  //This must be declated before it is used as the default filterFunction below
+  private filterFunctionInternalImpl = (filterText:string, options:any[]) => {
+    if (!options) {
+      return [];
+    }
+
+    if (!filterText) {
+      return options.copy();
+    }
+
+    return options
+      .filter(o => 
+        o[this.labelField] && o[this.labelField]
+          .contains(filterText, false)
+      );
+  }
 
   @Input()
-  public dataField: string = "id";
+  public filterFunction:(filterText:string, options:any[]) => any[] = this.filterFunctionInternalImpl;
 
   public filteredOptions: any[];
 
@@ -89,18 +108,7 @@ export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor
   }
 
   public filterOptions(filterText: string): void {
-    if (!this.options) {
-      this.filteredOptions = [];
-      return;
-    }
-
-    if (!filterText) {
-      this.filteredOptions = this.options.copy();
-      return;
-    }
-
-    this.filteredOptions = this.options
-      .filter(o => o[this.labelField] && o[this.labelField].contains(filterText, false));
+    this.filteredOptions = this.filterFunction(filterText, this.options);
   }
 
   public onBlur(): void {

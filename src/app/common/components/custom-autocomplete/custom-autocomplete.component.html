@@ -14,13 +14,15 @@
   <mat-autocomplete #auto="matAutocomplete"
     (optionSelected)="optionSelected($event);"
     autoActiveFirstOption >
-      <mat-option *ngFor="let option of filteredOptions" [value]="option[dataField]">
-          <div class="custom-ac-label1">
+      <mat-option *ngFor="let option of filteredOptions" [value]="option[dataField]" >
+        <template [ngTemplateOutlet]="ngTemplateOutlet" [ngTemplateOutletContext]="{$implicit: option}">
+          <!-- <div class="custom-ac-label1">
             {{option[labelField]}}
           </div>
           <div class="custom-ac-label2" *ngIf="labelField2 && labelField2 != '' ">
             {{option[labelField2]}}
-          </div>
+          </div> -->
+        </template>
       </mat-option>
   </mat-autocomplete>
 </div>
