@@ -7,7 +7,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   templateUrl: './custom-autocomplete.component.html',
   styleUrls: ['./custom-autocomplete.component.scss'],
   providers: [
-    { 
+    {
       provide: NG_VALUE_ACCESSOR,
       multi: true,
       useExisting: forwardRef(() => CustomAutocompleteComponent),
@@ -17,49 +17,52 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor {
 
   @ViewChild("auto")
-  public autoComplete:MatAutocomplete;
+  public autoComplete: MatAutocomplete;
   @ViewChild("matInput")
-  public matInput:MatInput;
+  public matInput: MatInput;
 
   @Input()
-  public placeholder:string;
+  public placeholder: string;
 
   @Input()
-  public inputName:string;
-  
-  private _options : any[];
-  public get options() : any[] {
+  public inputName: string;
+
+  private _options: any[];
+  public get options(): any[] {
     return this._options;
   }
   @Input()
-  public set options(v : any[]) {
+  public set options(v: any[]) {
     this._options = v;
     this.filterOptions(this.filterText);
   }
-  
-  @Input()
-  public disabled:boolean = false;
-  
-  @Input()
-  public labelField:string = "label";
 
   @Input()
-  public dataField:string = "id";
+  public disabled: boolean = false;
 
-  public filteredOptions:any[];
+  @Input()
+  public labelField: string = "label";
 
-  public filterText:string = "";
+  @Input()
+  public labelField2: string = "";
 
-  public selectedId:string | number;
+  @Input()
+  public dataField: string = "id";
+
+  public filteredOptions: any[];
+
+  public filterText: string = "";
+
+  public selectedId: string | number;
 
   constructor() { }
 
   ngOnInit() {
-    
+
   }
 
-  public getItemById(id:string | number):any{
-    if(!this.options){
+  public getItemById(id: string | number): any {
+    if (!this.options) {
       return null;
     }
 
@@ -67,31 +70,31 @@ export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor
       .find(t => t[this.dataField] == id);
   }
 
-  public displayFunction = (id:string | number):string => {
-    let item:any = this.getItemById(id);
+  public displayFunction = (id: string | number): string => {
+    let item: any = this.getItemById(id);
 
-    if(item == null){
-        return "";
+    if (item == null) {
+      return "";
     }
 
     return item[this.labelField];
   }
 
-  public optionSelected(event:MatAutocompleteSelectedEvent):void{
+  public optionSelected(event: MatAutocompleteSelectedEvent): void {
     this.writeValue(event.option.value);
-    if(!this._onChange){
+    if (!this._onChange) {
       return;
     }
     this._onChange(event.option.value);
   }
 
-  public filterOptions(filterText:string):void{
-    if(!this.options){
+  public filterOptions(filterText: string): void {
+    if (!this.options) {
       this.filteredOptions = [];
       return;
     }
 
-    if(!filterText){
+    if (!filterText) {
       this.filteredOptions = this.options.copy();
       return;
     }
@@ -100,44 +103,44 @@ export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor
       .filter(o => o[this.labelField] && o[this.labelField].contains(filterText, false));
   }
 
-  public onBlur():void{
-    if(!this._onTouched){
+  public onBlur(): void {
+    if (!this._onTouched) {
       return;
     }
 
     this._onTouched();
   }
 
-  writeValue(obj: any): void{
-    //Slight delay in order to ensure that anything that would otherwise be 
-    //written to the text input is overridden by this value.  
+  writeValue(obj: any): void {
+    //Slight delay in order to ensure that anything that would otherwise be
+    //written to the text input is overridden by this value.
     //TODO: figure out how to intercept whatever is writing to the text
     //input instead
     setTimeout(() => {
       this.selectedId = obj;
 
-      let selectedOption:any = this.getItemById(this.selectedId);
-      if(selectedOption){
+      let selectedOption: any = this.getItemById(this.selectedId);
+      if (selectedOption) {
         this.filterText = selectedOption[this.labelField];
-      }else{
+      } else {
         this.filterText = "";
       }
     }, 0);
   }
 
-  registerOnChange(fn: any): void{
+  registerOnChange(fn: any): void {
     this._onChange = fn;
   }
 
-  registerOnTouched(fn: any): void{
+  registerOnTouched(fn: any): void {
     this._onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void{
+  setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
 
-  private _onChange:Function;
-  private _onTouched:Function;
+  private _onChange: Function;
+  private _onTouched: Function;
 
 }

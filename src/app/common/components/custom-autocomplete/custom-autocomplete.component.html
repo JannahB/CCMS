@@ -1,21 +1,26 @@
 <div>
   <mat-form-field class="width-full">
-    <input matInput 
+    <input matInput
       #matInput="matInput"
-      [placeholder]="placeholder" 
-      [matAutocomplete]="auto" 
-      [ngModel]="filterText" 
-      (ngModelChange)="filterOptions($event)" 
-      [disabled]="disabled" 
+      [placeholder]="placeholder"
+      [matAutocomplete]="auto"
+      [ngModel]="filterText"
+      (ngModelChange)="filterOptions($event)"
+      [disabled]="disabled"
       [ngModelOptions]="{standalone: true }"
       (blur)="onBlur();">
   </mat-form-field>
 
-  <mat-autocomplete #auto="matAutocomplete" 
+  <mat-autocomplete #auto="matAutocomplete"
     (optionSelected)="optionSelected($event);"
     autoActiveFirstOption >
       <mat-option *ngFor="let option of filteredOptions" [value]="option[dataField]">
-          {{option[labelField]}}
+          <div class="custom-ac-label1">
+            {{option[labelField]}}
+          </div>
+          <div class="custom-ac-label2" *ngIf="labelField2 && labelField2 != '' ">
+            {{option[labelField2]}}
+          </div>
       </mat-option>
   </mat-autocomplete>
 </div>
