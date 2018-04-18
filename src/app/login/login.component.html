@@ -41,30 +41,6 @@
             </div>
           </div>
 
-
-          <!-- <div class="mb-20">
-            <label class="input-label" for="userName">User Name:</label>
-            <input pInputText name="userName" [(ngModel)]="userName" placeholder="Enter User Name..." required #userNameField="ngModel" />
-
-            <div class="ui-messages-error" [hidden]="userNameField.valid || userNameField.untouched">
-                <div *ngIf="userNameField.errors && userNameField.errors.required">
-                    User Name is required
-                </div>
-            </div>
-          </div>
-          -->
-          <!-- <div class="mb-20">
-            <label class="input-label" for="password">Password:</label>
-            <input pInputText type="password" name="password" [(ngModel)]="password" placeholder="Enter Password..." required #passwordField="ngModel" />
-
-            <div class="ui-messages-error" [hidden]="passwordField.valid || passwordField.untouched">
-                <div *ngIf="passwordField.errors && passwordField.errors.required">
-                    Password is required
-                </div>
-            </div>
-          </div> -->
-
-
           <div class="ui-g-12 mv-20 ui-fluid">
             <button pButton type="submit" label="Log In" (click)="loginClicked()" class="ui-button ui-button-secondary"
                     [disabled]="isAttemptingLogin || !loginForm.form.valid"></button>
@@ -73,6 +49,10 @@
 
           </div>
           <div *ngIf="hasLoginFailed" class="ui-messages-error">Login Failed</div>
+          <!-- Add this back when reset password is enabled
+            <div>
+            Forgot your password?  <a [routerLink]="['/reset-password']">Reset it</a>.
+          </div> -->
         </form>
       </div>
     </div>

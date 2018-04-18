@@ -48,4 +48,31 @@ export class AuthenticationService{
                     return response;
                 });
     }
+
+    public RequestPasswordReset(userName:string):Observable<FetchTokenResponse>{
+        let url:string = `${environment.apiUrl}/RequestPasswordReset`;
+
+        return this.http
+            .post<FetchTokenResponse>(url,
+            {
+                userName: userName
+            });
+    }
+
+    public ResetPassword(userName:string, password:string, token:string):Observable<void>{
+        let url:string = `${environment.apiUrl}/ResetPassword`;
+
+        return this.http
+            .post<any>(url,
+            {
+                userName: userName,
+                password: password,
+                token: token
+            })
+            .map(result => {
+              if(!result){
+                  throw new Error("Reset Password Failed");
+              }  
+            });
+    }
 }

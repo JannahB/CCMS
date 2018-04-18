@@ -1101,6 +1101,7 @@
             [ngModel]="selectedChargeLawType?.localChargeOID"
             (ngModelChange)="chargeLawTypeOnChange($event)"
             [filterFunction]="localChargeFilterFunction"
+            [labelFunction]="localChargeLabelFunction"
             styleClass="width-full"
           >
             <ng-template let-option>
@@ -1111,7 +1112,10 @@
                 {{option.localLaw}}
               </div>
             </ng-template>
-        </custom-autocomplete>
+          </custom-autocomplete>
+          <div class="custom-ac-label2" *ngIf="selectedChargeLawType" >
+            {{selectedChargeLawType?.localLaw}}
+          </div>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="ddChargeLaw.errors?.required && ddChargeLaw.touched" >
                 Charge/Law is required

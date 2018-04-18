@@ -46,6 +46,9 @@ export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor
   public labelField: string = "label";
 
   @Input()
+  public labelFunction: (item:any) => string = null;
+
+  @Input()
   public dataField: string = "id";
 
   //This must be declated before it is used as the default filterFunction below
@@ -56,6 +59,19 @@ export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor
 
     if (!filterText) {
       return options.copy();
+    }
+
+    if(this.labelFunction){
+      return options
+        .filter( o => {
+          let label:string = this.labelFunction(o);
+
+          if(label === null){
+            return false;
+          }
+
+          return label.contains(filterText, false);
+        })
     }
 
     return options
@@ -96,6 +112,10 @@ export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor
       return "";
     }
 
+    if(this.labelFunction){
+      return this.labelFunction(item);
+    }
+
     return item[this.labelField];
   }
 
@@ -128,11 +148,18 @@ export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor
       this.selectedId = obj;
 
       let selectedOption: any = this.getItemById(this.selectedId);
-      if (selectedOption) {
-        this.filterText = selectedOption[this.labelField];
-      } else {
+      
+      if (!selectedOption) {
         this.filterText = "";
+        return;
       }
+
+      if(this.labelFunction){
+        this.filterText = this.labelFunction(selectedOption);
+        return;
+      }
+
+      this.filterText = selectedOption[this.labelField];
     }, 0);
   }
 

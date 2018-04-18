@@ -113,6 +113,8 @@ import { AdminUserService } from './common/services/http/admin-user.service';
 import { CourtService } from './common/services/http/court.service';
 import { AdminModule } from './admin/admin.module';
 import { CustomAutocompleteComponent } from './common/components/custom-autocomplete/custom-autocomplete.component';
+import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
+import { NewPasswordComponent } from './login/new-password/new-password.component';
 
 
 
@@ -204,7 +206,7 @@ import { CustomAutocompleteComponent } from './common/components/custom-autocomp
     LoginComponent,
     LoadingBarComponent,
     DropdownPipe, 
-    CustomAutocompleteComponent
+    CustomAutocompleteComponent, ResetPasswordComponent, NewPasswordComponent
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

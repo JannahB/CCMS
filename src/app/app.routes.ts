@@ -11,10 +11,15 @@ import { AdminWorkflowComponent } from './admin/admin-workflow/admin-workflow.co
 import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
 import { LoginComponent } from './login/login.component';
 import { CanActivateAuthenticationGuard } from './common/guards/can-activate-authentication.guard';
+import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
+import { NewPasswordComponent } from './login/new-password/new-password.component';
 
 export const routes: Routes = [
     {path: '', component: DashboardComponent, canActivate: [CanActivateAuthenticationGuard]},
     {path: 'login', component: LoginComponent },
+    //Add these back when password reset is enabled
+    // {path: 'reset-password', component: ResetPasswordComponent },
+    // {path: 'new-password/:token', component: NewPasswordComponent },
     {path: 'party-detail/:partyId', component: PartyDetailComponent, canActivate: [CanActivateAuthenticationGuard]},
     {path: 'party-search', component: PartySearchComponent, canActivate: [CanActivateAuthenticationGuard]},
     {path: 'case-detail/:caseId', component: CaseDetailComponent, canActivate: [CanActivateAuthenticationGuard]},

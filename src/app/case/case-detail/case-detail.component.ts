@@ -610,6 +610,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       });
   }
 
+  public localChargeLabelFunction(localCharge:LocalCharge):string{
+    if(!localCharge){
+      return "";
+    }
+
+    return `${localCharge.categoryIdentifier} ${localCharge.localCharge}`;
+  }
+
   private resetCategories():void{
     this.selectedSectionType = null;
     this.selectedDivisionType = null;
