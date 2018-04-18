@@ -1,5 +1,21 @@
 # Change Log
 
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="1.3.0"></a>
+# [1.3.0](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.2.3...v1.3.0) (2018-04-18)
+
+
+### Features
+
+* **autocomplete:** create two lines in the custom-autocomplete option list ([28e7292](https://bitbucket.org/reurgency/ccms-fe2/commits/28e7292))
+* **Case Charge:** allow users to select only the local charge and auto-populate all of the other iccs codes based on the local charge ([b90e1aa](https://bitbucket.org/reurgency/ccms-fe2/commits/b90e1aa))
+* **Components:** update auto-complete so that it accepts an item renderer template and custom filter function ([26a80fe](https://bitbucket.org/reurgency/ccms-fe2/commits/26a80fe))
+
+
+
+# Change Log
+
 All notable changes to this project will be documented in this file. 
 
 
