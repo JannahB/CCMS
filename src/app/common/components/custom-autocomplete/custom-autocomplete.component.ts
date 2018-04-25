@@ -105,10 +105,29 @@ export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor
       .find(t => t[this.dataField] == id);
   }
 
+  private getItemByLabel(label:string):any{
+    if(!label){
+      return null;
+    }
+
+    return this.options
+      .find(t => {
+        if(this.labelFunction && this.labelFunction(t) == label){
+          return true;
+        }
+
+        return t[this.labelField] == label;
+      });
+  }
+
   public displayFunction = (id: string | number): string => {
     let item: any = this.getItemById(id);
 
     if (item == null) {
+      //id has already been transformed into the display label
+      if(typeof id === "string" && this.getItemByLabel(id)){
+        return id;
+      }
       return "";
     }
 
@@ -140,27 +159,21 @@ export class CustomAutocompleteComponent implements OnInit, ControlValueAccessor
   }
 
   writeValue(obj: any): void {
-    //Slight delay in order to ensure that anything that would otherwise be
-    //written to the text input is overridden by this value.
-    //TODO: figure out how to intercept whatever is writing to the text
-    //input instead
-    setTimeout(() => {
-      this.selectedId = obj;
+    this.selectedId = obj;
 
-      let selectedOption: any = this.getItemById(this.selectedId);
-      
-      if (!selectedOption) {
-        this.filterText = "";
-        return;
-      }
+    let selectedOption: any = this.getItemById(this.selectedId);
+    
+    if (!selectedOption) {
+      this.filterText = "";
+      return;
+    }
 
-      if(this.labelFunction){
-        this.filterText = this.labelFunction(selectedOption);
-        return;
-      }
+    if(this.labelFunction){
+      this.filterText = this.labelFunction(selectedOption);
+      return;
+    }
 
-      this.filterText = selectedOption[this.labelField];
-    }, 0);
+    this.filterText = selectedOption[this.labelField];
   }
 
   registerOnChange(fn: any): void {
