@@ -1,0 +1,66 @@
+{
+  "localChargeOID": 233294584,
+  "courtOID": 6,
+  "categoryIdentifier": "090111",
+  "localCharge": "Possession of ammunition",
+  "localLaw": "Section 6 (1) Firearms Act",
+  "parentICCSCode": {
+    "iccsCodeOID": 948857290,
+    "courtOID": 6,
+    "parentOID": 33827719159008,
+    "parentICCSCode": {
+      "iccsCodeOID": 33827719159008,
+      "courtOID": 6,
+      "parentOID": 3122186072719690,
+      "parentICCSCode": {
+        "iccsCodeOID": 3122186072719690,
+        "courtOID": 6,
+        "parentOID": 799304233278056,
+        "parentICCSCode": {
+          "iccsCodeOID": 799304233278056,
+          "courtOID": 6,
+          "parentOID": 0,
+          "categoryType": 1,
+          "categoryName": "09 Acts against public safety and state security",
+          "categoryIdentifier": "09",
+          "localCharges": []
+        },
+        "categoryType": 2,
+        "categoryName": "0901 Acts involving weapons, explosives and other destructive materials",
+        "categoryIdentifier": "0901",
+        "localCharges": []
+      },
+      "categoryType": 3,
+      "categoryName": "09011 Possession or use of weapons and explosives",
+      "categoryIdentifier": "09011",
+      "localCharges": [
+        {
+          "localChargeOID": 901029964,
+          "courtOID": 6,
+          "categoryIdentifier": "09011",
+          "localCharge": "Possession of an offensive weapon",
+          "localLaw": "Section 3 Prevention of Crimes (Offensive Weapons Act); Section  2 Restriction of Offensive Weapons Act"
+        }
+      ]
+    },
+    "categoryType": 4,
+    "categoryName": "090111 Discharging a firearm within 40 yards of a roadway",
+    "categoryIdentifier": "090111",
+    "localCharges": [
+      {
+        "localChargeOID": 233294584,
+        "courtOID": 6,
+        "categoryIdentifier": "090111",
+        "localCharge": "Possession of ammunition",
+        "localLaw": "Section 6 (1) Firearms Act"
+      },
+      {
+        "localChargeOID": 582780009,
+        "courtOID": 6,
+        "categoryIdentifier": "090111",
+        "localCharge": "Discharging a firearm within 40 yards of a roadway",
+        "localLaw": "Firearms Act"
+      }
+    ]
+  }
+},
