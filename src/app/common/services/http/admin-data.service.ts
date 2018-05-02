@@ -15,6 +15,7 @@ import { IccsCode } from '../../entities/IccsCode';
 import { CaseHearing } from '../../entities/CaseHearing';
 import { EventType } from '../../entities/EventType';
 import { HearingType } from '../../entities/HearingType';
+import { EventWorkflow } from '../../entities/EventWorkflow';
 
 
 @Injectable()
@@ -293,6 +294,13 @@ export class AdminDataService {
       url,
       obj
     )
+  }
+
+  fetchEventWorkflow(eventTypeOID:number):Observable<EventWorkflow>{
+    var url:string = `${this.getBaseUrl()}/FetchEventWorkflow`;
+
+    return this.http
+      .post<EventWorkflow>(url, {"eventTypeOID": eventTypeOID.toString()});
   }
 
 

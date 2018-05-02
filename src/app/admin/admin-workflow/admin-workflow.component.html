@@ -1,5 +1,6 @@
 <div class="ui-g">
 
+    <loading-bar [visible]="showLoadingBar"></loading-bar>
     <!-- HEADER -->
     <div class="ui-g-12 pv-0">
       <h1 class="page-header mt-0">Admin - Event Workflow</h1>
@@ -35,7 +36,7 @@
         <label class="minimal primary block" for="taDesc">Description</label>
         <textarea id="taDesc" name="taDesc" #taDesc="ngModel"
                   [required]="true"
-                  [(ngModel)]="selectedEvent"
+                  [ngModel]="selectedEvent?.description"
                   [rows]="2"
                   pInputTextarea
                   autoResize="autoResize"
@@ -46,13 +47,25 @@
 
       <div class="ui-g-12 mv-20">
         <h2>Workflow Steps</h2>
-        <p-dataTable [value]="workflowSteps" selectionMode="single" [(selection)]="selectedStep" (onRowSelect)="stepOnRowSelect($event)"
+        <p-dataTable [value]="selectedEventWorkflow?.workflowSteps" selectionMode="single" [(selection)]="selectedStep" (onRowSelect)="stepOnRowSelect($event)"
           scrollable="true" scrollHeight="200px"
           dataKey="workflowStepOID" #dtWorkflowSteps>
-          <p-column header="Time Delay" field="" [style]="{'width':'13%'}"></p-column>
-          <p-column header="Task" field="" [style]="{'width':'25%'}"></p-column>
-          <p-column header="Document" field="" [style]="{'width':'15%'}"></p-column>
-          <p-column header="Assigned Resource" field="" [style]="{'width':'15%'}"></p-column>
+          <p-column header="Time Delay" field="delayDays" [style]="{'width':'13%'}"></p-column>
+          <p-column header="Task" field="" [style]="{'width':'25%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+              {{ item.taskType?.name}}
+            </ng-template>
+          </p-column>
+          <p-column header="Document" field="" [style]="{'width':'15%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+              {{ item.documentTemplateOID | idToName:documentTemplates:"documentTemplateOID":"documentName" }} 
+            </ng-template>
+          </p-column>
+          <p-column header="Assigned Resource" field="" [style]="{'width':'15%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+              {{ item.assignedPool?.poolName}}
+            </ng-template>
+          </p-column>
           <p-column header="Remove" styleClass="col-button" [style]="{'width':'8%'}">
             <ng-template let-item="rowData" pTemplate="body">
               <i class="material-icons" (click)="requestViewParty(item)">search</i>

@@ -115,6 +115,7 @@ import { AdminModule } from './admin/admin.module';
 import { CustomAutocompleteComponent } from './common/components/custom-autocomplete/custom-autocomplete.component';
 import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { NewPasswordComponent } from './login/new-password/new-password.component';
+import { ReferenceDataIdToNamePipe } from './common/pipes/reference-data-id-to-name.pipe';
 
 
 
@@ -206,6 +207,7 @@ import { NewPasswordComponent } from './login/new-password/new-password.componen
     LoginComponent,
     LoadingBarComponent,
     DropdownPipe, 
+    ReferenceDataIdToNamePipe,
     CustomAutocompleteComponent, ResetPasswordComponent, NewPasswordComponent
   ],
   providers: [
@@ -230,6 +232,7 @@ import { NewPasswordComponent } from './login/new-password/new-password.componen
     LocalStorageService,
     UserService,
     DropdownPipe,
+    ReferenceDataIdToNamePipe,
     AdminDataService,
     AdminUserService,
     CourtService,
