@@ -88,7 +88,7 @@ export class AppMenuComponent implements OnInit {
               // {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
             ]},
             // {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
-            // {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
+            {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
 
           ]}
         )

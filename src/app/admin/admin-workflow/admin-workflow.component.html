@@ -63,7 +63,7 @@
           </p-column>
           <p-column header="Assigned Resource" field="" [style]="{'width':'15%'}">
             <ng-template let-item="rowData" pTemplate="body">
-              {{ item.assignedPool?.poolName}}
+              {{ item.assignedParty?.firstName }} {{ item.assignedParty?.lastName }}
             </ng-template>
           </p-column>
           <p-column header="Remove" styleClass="col-button" [style]="{'width':'8%'}">
