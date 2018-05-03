@@ -116,6 +116,7 @@ import { CustomAutocompleteComponent } from './common/components/custom-autocomp
 import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { NewPasswordComponent } from './login/new-password/new-password.component';
 import { ReferenceDataIdToNamePipe } from './common/pipes/reference-data-id-to-name.pipe';
+import { NamePipe } from './common/pipes/name.pipe';
 
 
 
@@ -208,6 +209,7 @@ import { ReferenceDataIdToNamePipe } from './common/pipes/reference-data-id-to-n
     LoadingBarComponent,
     DropdownPipe, 
     ReferenceDataIdToNamePipe,
+    NamePipe,
     CustomAutocompleteComponent, ResetPasswordComponent, NewPasswordComponent
   ],
   providers: [
@@ -233,6 +235,7 @@ import { ReferenceDataIdToNamePipe } from './common/pipes/reference-data-id-to-n
     UserService,
     DropdownPipe,
     ReferenceDataIdToNamePipe,
+    NamePipe,
     AdminDataService,
     AdminUserService,
     CourtService,

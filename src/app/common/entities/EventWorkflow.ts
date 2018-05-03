@@ -7,5 +7,6 @@ export class EventWorkflow{
     public description:string;
     public eventWorkflowOID:number;
     public triggeringEvent:EventType;
+    public triggeringEventOID:string;
     public workflowSteps:WorkflowStep[];
 }

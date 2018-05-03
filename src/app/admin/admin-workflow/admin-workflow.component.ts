@@ -11,6 +11,8 @@ import { DocTemplate } from '../../common/entities/DocTemplate';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { PartyService } from '../../common/services/http/party.service';
 import { Party } from '../../common/entities/Party';
+import { WorkflowStep } from '../../common/entities/WorkflowStep';
+import { Pool } from '../../common/entities/Pool';
 
 @Component({
   selector: 'app-admin-workflow',
@@ -24,12 +26,15 @@ export class AdminWorkflowComponent implements OnInit {
   eventTypes:EventType[];
   taskTypes:TaskType[];
   documentTemplates:DocTemplate[];
+  staffPools:Pool[];
   parties:Party[];
 
   selectedEvent: EventType;
   selectedEventWorkflow:EventWorkflow = null;
-  workflowSteps: any[];
-  selectedStep: any;
+  workflowSteps: WorkflowStep[];
+  selectedStep: WorkflowStep;
+
+  showWorkflowStepModal:boolean = false;
 
   constructor( 
     private breadCrumbSvc:BreadcrumbService,
@@ -56,6 +61,9 @@ export class AdminWorkflowComponent implements OnInit {
     let documentTemplateObservable:Observable<DocTemplate[]> = this.lookupService
       .fetchLookup<DocTemplate>('FetchDocumentTemplate');
 
+    let staffPoolObservable:Observable<Pool[]> = this.lookupService
+      .fetchLookup<Pool>('FetchStaffPool');
+
     let partyObservable:Observable<Party[]> = this.partyService
       .fetchAny({ courtUser: "true"});
 
@@ -63,13 +71,15 @@ export class AdminWorkflowComponent implements OnInit {
       eventTypeObservable,
       taskTypeObservable,
       documentTemplateObservable,
+      staffPoolObservable,
       partyObservable
     ).subscribe( 
       results => {
         this.eventTypes = results[0];
         this.taskTypes = results[1];
         this.documentTemplates = results[2];
-        this.parties = results[3];
+        this.staffPools = results[3];
+        this.parties = results[4];
 
         this.showLoadingBar = false;
       },
@@ -104,19 +114,53 @@ export class AdminWorkflowComponent implements OnInit {
   }
 
   onAddStep() {
-    // TODO: implement
+    this.selectedStep = new WorkflowStep();
+    
+    this.showWorkflowStepModal = true;
+  }
+
+  saveWorkflowStep(){
+    if(!this.selectedEventWorkflow.workflowSteps){
+      this.selectedEventWorkflow.workflowSteps = [];
+    }
+    this.selectedEventWorkflow.workflowSteps.push(this.selectedStep);
+    this.selectedEventWorkflow.workflowSteps = this.selectedEventWorkflow.workflowSteps.copy();
+    this.showWorkflowStepModal = false;
   }
 
   deleteWorkflowEventRequest(event) {
     // TODO: implement
   }
 
-  cancelWorkflowEdit() {
+  deleteWorkflowStepRequest(event){
+    this.selectedEventWorkflow
+      .workflowSteps
+      .remove(event);
+  }
 
+  cancelWorkflowEdit() {
+    this.showWorkflowStepModal = false;
   }
 
   saveWorkflow(){
-    // TODO: implement
+    this.showLoadingBar = true;
+
+    this.adminDataService
+      .saveEventWorkflow(this.selectedEventWorkflow)
+      .subscribe(
+        workflow => {
+          this.selectedEventWorkflow = workflow;
+          this.showLoadingBar = false;
+        },
+        error => {
+          this.toastService.showErrorMessage("Error saving workflow");
+          this.showLoadingBar = false;
+        }
+      );
+  }
+
+  documentSelected(event:any):void{
+    this.selectedStep.documentTemplateOID = event.value.documentTemplateOID;
   }
 
 

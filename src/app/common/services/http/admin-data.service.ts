@@ -16,6 +16,7 @@ import { CaseHearing } from '../../entities/CaseHearing';
 import { EventType } from '../../entities/EventType';
 import { HearingType } from '../../entities/HearingType';
 import { EventWorkflow } from '../../entities/EventWorkflow';
+import { TaskType } from '../../entities/TaskType';
 
 
 @Injectable()
@@ -303,6 +304,62 @@ export class AdminDataService {
       .post<EventWorkflow>(url, {"eventTypeOID": eventTypeOID.toString()});
   }
 
+  saveEventWorkflow(data:EventWorkflow):Observable<EventWorkflow>{
+    // let workflow = {
+    //   eventWorkflowOID: eventWorkflow.eventWorkflowOID ? eventWorkflow.eventWorkflowOID.toString() : undefined,
+    //   description: eventWorkflow.description ? eventWorkflow.description : undefined,
+    //   triggeringEventOID: eventWorkflow.triggeringEvent.eventTypeOID.toString(),
+    //   workflowSteps: eventWorkflow.workflowSteps ? eventWorkflow.workflowSteps
+    //     .map(step => {
+    //       return {
+    //         workflowStepOID: step.workflowStepOID ? step.workflowStepOID.toString() : undefined,
+    //         assignedPartyOID: step.assignedParty ? step.assignedParty.partyOID.toString() : undefined,
+    //         delayDays: step.delayDays.toString(),
+    //         documentTemplateOID: step.documentTemplateOID ? step.documentTemplateOID.toString() : undefined,
+    //         taskTypeOID: step.taskType.taskTypeOID.toString()
+    //       }
+    //     }) : []
+    // }
+    let workflow = {
+        workflowSteps: []
+    };
+    if (data.eventWorkflowOID)
+        workflow["eventWorkflowOID"] = data.eventWorkflowOID.toString();
+    workflow["triggeringEventOID"] = data.triggeringEvent.eventTypeOID.toString();
+    if (data.description)
+        workflow["description"] = data.description;
+    if (data.workflowSteps.length > 0) {
+      data.workflowSteps.forEach(item => {
+            let step = {};
+            if (item.workflowStepOID)
+              step["workflowStepOID"] = item.workflowStepOID.toString();
+            let party = item.assignedParty;
+            step["delayDays"] = item.delayDays.toString();
+            step["taskTypeOID"] = item.taskType.taskTypeOID.toString();
+            // if (party.ref.poolOID)
+            //     step.assignedPoolOID = party.ref.poolOID;
+            // if (party.ref.partyOID)
+            //     step.assignedPartyOID = party.ref.partyOID;
+            if(party)
+              step["assignedPartyOID"] = party.partyOID.toString()
+            if (item.documentTemplateOID)
+              step["documentTemplateOID"] = item.documentTemplateOID.toString();
+            workflow.workflowSteps.push(step);
+        });
+    }
+    var url:string = `${this.getBaseUrl()}/SaveEventWorkflow`;
+
+    return this.http
+      .post<EventWorkflow[]>(url, workflow)
+      .map(eventWorkflows => eventWorkflows[0]);
+  }
+
+  saveTaskType(taskType:TaskType):Observable<TaskType>{
+    var url:string = `${this.getBaseUrl()}/SaveTaskType`;
+
+    return this.http
+      .post<TaskType>(url, taskType);
+  }
 
   // TODO: Get API signature from Aaron
   deleteLookupItem(type: string, id:string | number ){
