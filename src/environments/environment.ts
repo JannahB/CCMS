@@ -11,6 +11,8 @@ export const environment = {
   // apiUrl: "http://cms.ttlawcourts.org/CCMS3/",       // PROD
   mockUrl: "assets/mockData/",
   allowDeleteLookupItems: false,
+  allowResetPasswordFeature: false,
+  allowAdminWorkflowFeature: false,
 
   VERSION: require('../../package.json').version
 };

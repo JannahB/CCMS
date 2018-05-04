@@ -1,14 +1,15 @@
+import { environment } from './../environments/environment';
 import { UserService } from './common/services/utility/user.service';
 import { AuthenticationService } from './common/services/http/authentication.service';
 import { GlobalState } from './common/services/state/global.state';
-import {Component, Input, OnInit} from '@angular/core';
-import {trigger, state, style, transition, animate} from '@angular/animations';
-import {MenuItem} from 'primeng/primeng';
-import {AppComponent} from './app.component';
+import { Component, Input, OnInit } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+import { MenuItem } from 'primeng/primeng';
+import { AppComponent } from './app.component';
 
 @Component({
-    selector: 'app-menu',
-    template: `
+  selector: 'app-menu',
+  template: `
     <div *ngIf="authSvc.isLoggedIn">
         <ul app-submenu [item]="model" root="true" class="ultima-menu ultima-main-menu clearfix" [reset]="reset" visible="true"></ul>
     </div>
@@ -16,100 +17,116 @@ import {AppComponent} from './app.component';
 })
 export class AppMenuComponent implements OnInit {
 
-    @Input() reset: boolean;
+  @Input() reset: boolean;
 
-    model: any[];
+  adminMenuItems: any[];
+  allowAdminWorkflowFeature: boolean = false;
+  model: any[];
 
-    constructor(
-      public app: AppComponent,
-      public _state:GlobalState,
-      public authSvc: AuthenticationService,
-      public userSvc: UserService
-    ) {}
+  constructor(
+    public app: AppComponent,
+    public _state: GlobalState,
+    public authSvc: AuthenticationService,
+    public userSvc: UserService
+  ) { }
 
 
 
-    ngOnInit() {
+  ngOnInit() {
+    this.allowAdminWorkflowFeature = environment.allowAdminWorkflowFeature;
 
-      this._state.subscribe('theme.change', (theme) => {
-          this.changeTheme(theme);
-      });
-
-      this._state.subscribe('app.loggedOut', (count) => {
-        this.buildMenu();
-      });
-
-      this._state.subscribe('app.loggedIn', (count) => {
-        this.buildMenu();
-      });
-
-      this.buildMenu();
-    }
-
-    buildMenu(){
-      this.model = [
-        {label: 'Dashboard', icon: 'dashboard', routerLink: ['/']},
-        {label: 'Case', icon: 'gavel',
-          items: [
-              {label:'Search Case', icon:'search', routerLink: ['/case-search']},
-              {label:'New Case', icon:'gavel', routerLink: ['/case-detail/0']},
-          ]},
-        {label: 'Party', icon: 'folder_shared',
-          items: [
-              {label:'Search Party', icon:'search', routerLink: ['/party-search']},
-              {label:'New Party', icon:'folder_shared', routerLink: ['/party-detail/0']},
-          ]},
-
-          // {
-          //     label: 'Themes', icon: 'palette', badge: '2',
-          //     items: [
-          //         {label: 'TT Blue', icon: 'brush', command: (event) => {this.changeTheme('tt'); }},
-          //         {label: 'TT Red', icon: 'brush', command: (event) => {this.changeTheme('tt2'); }},
-          //         {label: 'Login Page', icon: 'verified_user', url: 'assets/pages/login.html', target: '_blank'},
-          //         {label: 'Dark Menu', icon: 'label',  command: () => this.app.darkMenu = true},
-          //     ]
-          // },
-
-      ];
-
-      if(this.userSvc.loggedInUser && this.userSvc.isAdminUser() ) {
-        this.model.push(
-          {label: 'Admin', icon: 'security',
-          items: [
-            {label:'User Maintenance', icon:'account_box', routerLink: ['/admin/users']},
-            {label:'Table Data', icon:'chrome_reader_mode', items: [
-              {label:'Case Types', icon:'chevron_right', routerLink: ['/admin/data/casetypes']},
-              {label:'Case Phases', icon:'chevron_right', routerLink: ['/admin/data/casephases']},
-              {label:'Case Statuses', icon:'chevron_right', routerLink: ['/admin/data/casestatuses']},
-              {label:'Court Locations', icon:'chevron_right', routerLink: ['/admin/data/courtlocations']},
-              {label:'Case Party Roles', icon:'chevron_right', routerLink: ['/admin/data/casepartyroles']},
-              {label:'Event Types', icon:'chevron_right', routerLink: ['/admin/data/eventtypes']},
-              {label:'Hearing Types', icon:'chevron_right', routerLink: ['/admin/data/hearingtypes']},
-              // {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
-            ]},
-            // {label:'Table Data', icon:'chrome_reader_mode', routerLink: ['/admin-data']},
-            {label:'Event Workflow', icon:'rotate_90_degrees_ccw', routerLink: ['/admin/workflow']},
-
-          ]}
-        )
+    this.adminMenuItems = [
+      { label: 'User Maintenance', icon: 'account_box', routerLink: ['/admin/users'] },
+      {
+        label: 'Table Data', icon: 'chrome_reader_mode', items:
+          [
+            { label: 'Case Types', icon: 'chevron_right', routerLink: ['/admin/data/casetypes'] },
+            { label: 'Case Phases', icon: 'chevron_right', routerLink: ['/admin/data/casephases'] },
+            { label: 'Case Statuses', icon: 'chevron_right', routerLink: ['/admin/data/casestatuses'] },
+            { label: 'Court Locations', icon: 'chevron_right', routerLink: ['/admin/data/courtlocations'] },
+            { label: 'Case Party Roles', icon: 'chevron_right', routerLink: ['/admin/data/casepartyroles'] },
+            { label: 'Event Types', icon: 'chevron_right', routerLink: ['/admin/data/eventtypes'] },
+            { label: 'Hearing Types', icon: 'chevron_right', routerLink: ['/admin/data/hearingtypes'] },
+            // {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
+          ]
       }
+    ];
 
+    if (this.allowAdminWorkflowFeature) {
+      this.adminMenuItems.push(
+        { label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
+      )
     }
 
-    changeTheme(theme) {
-        const themeLink: HTMLLinkElement = <HTMLLinkElement> document.getElementById('theme-css');
-        const layoutLink: HTMLLinkElement = <HTMLLinkElement> document.getElementById('layout-css');
+    this._state.subscribe('theme.change', (theme) => {
+      this.changeTheme(theme);
+    });
 
-        themeLink.href = 'assets/theme/theme-' + theme + '.css';
-        layoutLink.href = 'assets/layout/css/layout-' + theme + '.css';
+    this._state.subscribe('app.loggedOut', (count) => {
+      this.buildMenu();
+    });
+
+    this._state.subscribe('app.loggedIn', (count) => {
+      this.buildMenu();
+    });
+
+    this.buildMenu();
+  }
+
+  buildMenu() {
+    this.model = [
+      { label: 'Dashboard', icon: 'dashboard', routerLink: ['/'] },
+      {
+        label: 'Case', icon: 'gavel',
+        items: [
+          { label: 'Search Case', icon: 'search', routerLink: ['/case-search'] },
+          { label: 'New Case', icon: 'gavel', routerLink: ['/case-detail/0'] },
+        ]
+      },
+      {
+        label: 'Party', icon: 'folder_shared',
+        items: [
+          { label: 'Search Party', icon: 'search', routerLink: ['/party-search'] },
+          { label: 'New Party', icon: 'folder_shared', routerLink: ['/party-detail/0'] },
+        ]
+      },
+
+      // {
+      //     label: 'Themes', icon: 'palette', badge: '2',
+      //     items: [
+      //         {label: 'TT Blue', icon: 'brush', command: (event) => {this.changeTheme('tt'); }},
+      //         {label: 'TT Red', icon: 'brush', command: (event) => {this.changeTheme('tt2'); }},
+      //         {label: 'Login Page', icon: 'verified_user', url: 'assets/pages/login.html', target: '_blank'},
+      //         {label: 'Dark Menu', icon: 'label',  command: () => this.app.darkMenu = true},
+      //     ]
+      // },
+
+    ];
+
+    if (this.userSvc.loggedInUser && this.userSvc.isAdminUser()) {
+      this.model.push(
+        {
+          label: 'Admin', icon: 'security',
+          items: this.adminMenuItems
+        }
+      )
     }
+  }
+
+  changeTheme(theme) {
+    const themeLink: HTMLLinkElement = <HTMLLinkElement>document.getElementById('theme-css');
+    const layoutLink: HTMLLinkElement = <HTMLLinkElement>document.getElementById('layout-css');
+
+    themeLink.href = 'assets/theme/theme-' + theme + '.css';
+    layoutLink.href = 'assets/layout/css/layout-' + theme + '.css';
+  }
 }
 
 @Component({
   /* tslint:disable:component-selector */
-    selector: '[app-submenu]',
+  selector: '[app-submenu]',
   /* tslint:enable:component-selector */
-    template: `
+  template: `
         <ng-template ngFor let-child let-i="index" [ngForOf]="(root ? item : item.items)">
             <li [ngClass]="{'active-menuitem': isActive(i)}" [class]="child.badgeStyleClass" *ngIf="child.visible === false ? false : true">
                 <a [href]="child.url||'#'"
@@ -148,94 +165,96 @@ export class AppMenuComponent implements OnInit {
             </li>
         </ng-template>
     `,
-    animations: [
-        trigger('children', [
-            state('hiddenAnimated', style({
-                height: '0px'
-            })),
-            state('visibleAnimated', style({
-                height: '*'
-            })),
-            state('visible', style({
-                height: '*'
-            })),
-            state('hidden', style({
-                height: '0px'
-            })),
-            transition('visibleAnimated => hiddenAnimated', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)')),
-            transition('hiddenAnimated => visibleAnimated', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)'))
-        ])
-    ]
+  animations: [
+    trigger('children', [
+      state('hiddenAnimated', style({
+        height: '0px'
+      })),
+      state('visibleAnimated', style({
+        height: '*'
+      })),
+      state('visible', style({
+        height: '*'
+      })),
+      state('hidden', style({
+        height: '0px'
+      })),
+      transition('visibleAnimated => hiddenAnimated', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)')),
+      transition('hiddenAnimated => visibleAnimated', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)'))
+    ])
+  ]
 })
 export class AppSubMenuComponent {
 
-    @Input() item: MenuItem;
+  @Input() item: MenuItem;
 
-    @Input() root: boolean;
+  @Input() root: boolean;
 
-    @Input() visible: boolean;
+  @Input() visible: boolean;
 
-    _reset: boolean;
+  _reset: boolean;
 
-    activeIndex: number;
+  activeIndex: number;
 
-    constructor(public app: AppComponent) {}
+  constructor(public app: AppComponent) { }
 
-    itemClick(event: Event, item: MenuItem, index: number) {
-        if (this.root) {
-            this.app.menuHoverActive = !this.app.menuHoverActive;
-        }
-
-        // avoid processing disabled items
-        if (item.disabled) {
-            event.preventDefault();
-            return true;
-        }
-
-        // activate current item and deactivate active sibling if any
-        this.activeIndex = (this.activeIndex === index) ? null : index;
-
-        // execute command
-        if (item.command) {
-            item.command({originalEvent: event, item: item});
-        }
-
-        // prevent hash change
-        if (item.items || (!item.url && !item.routerLink)) {
-            event.preventDefault();
-        }
-
-        // hide menu
-        if (!item.items) {
-            if (this.app.isHorizontal() || this.app.isSlim()) {
-                this.app.resetMenu = true; } else {
-                this.app.resetMenu = false; }
-
-            this.app.overlayMenuActive = false;
-            this.app.staticMenuMobileActive = false;
-            this.app.menuHoverActive = !this.app.menuHoverActive;
-        }
+  itemClick(event: Event, item: MenuItem, index: number) {
+    if (this.root) {
+      this.app.menuHoverActive = !this.app.menuHoverActive;
     }
 
-    onMouseEnter(index: number) {
-        if (this.root && this.app.menuHoverActive && (this.app.isHorizontal() || this.app.isSlim())) {
-            this.activeIndex = index;
-        }
+    // avoid processing disabled items
+    if (item.disabled) {
+      event.preventDefault();
+      return true;
     }
 
-    isActive(index: number): boolean {
-        return this.activeIndex === index;
+    // activate current item and deactivate active sibling if any
+    this.activeIndex = (this.activeIndex === index) ? null : index;
+
+    // execute command
+    if (item.command) {
+      item.command({ originalEvent: event, item: item });
     }
 
-    @Input() get reset(): boolean {
-        return this._reset;
+    // prevent hash change
+    if (item.items || (!item.url && !item.routerLink)) {
+      event.preventDefault();
     }
 
-    set reset(val: boolean) {
-        this._reset = val;
+    // hide menu
+    if (!item.items) {
+      if (this.app.isHorizontal() || this.app.isSlim()) {
+        this.app.resetMenu = true;
+      } else {
+        this.app.resetMenu = false;
+      }
 
-        if (this._reset && (this.app.isHorizontal() || this.app.isSlim())) {
-            this.activeIndex = null;
-        }
+      this.app.overlayMenuActive = false;
+      this.app.staticMenuMobileActive = false;
+      this.app.menuHoverActive = !this.app.menuHoverActive;
     }
+  }
+
+  onMouseEnter(index: number) {
+    if (this.root && this.app.menuHoverActive && (this.app.isHorizontal() || this.app.isSlim())) {
+      this.activeIndex = index;
+    }
+  }
+
+  isActive(index: number): boolean {
+    return this.activeIndex === index;
+  }
+
+  @Input() get reset(): boolean {
+    return this._reset;
+  }
+
+  set reset(val: boolean) {
+    this._reset = val;
+
+    if (this._reset && (this.app.isHorizontal() || this.app.isSlim())) {
+      this.activeIndex = null;
+    }
+  }
 }

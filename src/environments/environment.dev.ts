@@ -10,6 +10,8 @@ export const environment = {
   mockUrl: "assets/mockData/",
 
   allowDeleteLookupItems: false,
+  allowResetPasswordFeature: true,
+  allowAdminWorkflowFeature: true,
 
   VERSION: require('../../package.json').version
 };
