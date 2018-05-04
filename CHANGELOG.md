@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.2"></a>
+## [1.3.2](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.3.1...v1.3.2) (2018-05-04)
+
+
+### Features
+
+* **Admin Workflow:** add feature flag for Workflow feature ([3bd9b4b](https://bitbucket.org/reurgency/ccms-fe2/commits/3bd9b4b))
+* **Event Workflow:** saving workflow ([a97b18a](https://bitbucket.org/reurgency/ccms-fe2/commits/a97b18a))
+* **Reset Pwd:** add feature flag for reset password feature ([21f467d](https://bitbucket.org/reurgency/ccms-fe2/commits/21f467d))
+* **Users:** style improvements to request reset pwd page ([2577974](https://bitbucket.org/reurgency/ccms-fe2/commits/2577974))
+* **Users:** style improvements to submit new pwd page ([06d3449](https://bitbucket.org/reurgency/ccms-fe2/commits/06d3449))
+* **Workflow:**  implement get calls and some UI functionality ([88f2081](https://bitbucket.org/reurgency/ccms-fe2/commits/88f2081))
+* **Workflow:** add workflow navigation ([c5dfe0c](https://bitbucket.org/reurgency/ccms-fe2/commits/c5dfe0c))
+
+
+
 <a name="1.3.1"></a>
 ## [1.3.1](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.3.0...v1.3.1) (2018-04-25)
 
