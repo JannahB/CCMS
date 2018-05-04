@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
 
   public isAttemptingLogin: boolean = false;
   public hasLoginFailed: boolean = false;
+  public allowResetPasswordFeature: boolean = false;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -31,6 +32,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.allowResetPasswordFeature = environment.allowResetPasswordFeature;
   }
 
   public loginClicked(): void {
