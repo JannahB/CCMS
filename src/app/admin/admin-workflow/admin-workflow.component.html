@@ -59,12 +59,12 @@
           </p-column>
           <p-column header="Document" field="" [style]="{'width':'15%'}">
             <ng-template let-item="rowData" pTemplate="body">
-              {{ item.documentTemplateOID | idToName:documentTemplates:"documentTemplateOID":"documentName" }} 
+              {{ item.documentTemplateOID | idToName:documentTemplates:"documentTemplateOID":"documentName" }}
             </ng-template>
           </p-column>
           <p-column header="Assigned Resource" field="" [style]="{'width':'15%'}">
             <ng-template let-item="rowData" pTemplate="body">
-              {{ item.assignedParty?.partyOID | idToName:parties:"partyOID":"firstName" }} 
+              {{ item.assignedParty?.partyOID | idToName:parties:"partyOID":"firstName" }}
               {{ item.assignedParty?.partyOID | idToName:parties:"partyOID":"lastName" }}
             </ng-template>
           </p-column>
@@ -111,12 +111,12 @@
 
     <p-dialog header="Workflow Step" width="450" [(visible)]="showWorkflowStepModal" [responsive]="true" showEffect="fade" [modal]="true" [closable]="true" *ngIf="selectedStep">
       <form #workflowStepForm="ngForm">
-        
+
         <div class="ui-g-12">
           <mat-form-field class="width-full" >
-            <label for="timeDelay">Time Delay</label>
-            <div>*Enter 0 for immediate</div>
-            <input matInput name="timeDelay" #timeDelayField="ngModel" placeholder="Time Delay"
+            <label class="minimal primary block" for="timeDelay">Time Delay *Enter 0 for immediate</label>
+            <!-- <div>*Enter 0 for immediate</div> -->
+            <input matInput name="timeDelay" #timeDelayField="ngModel"
                    [(ngModel)]="selectedStep.delayDays" required>
               <div class="ui-message ui-messages-error ui-corner-all"
                    *ngIf="timeDelayField.errors?.required && timeDelayField.touched" >
@@ -126,38 +126,38 @@
         </div>
 
         <div class="ui-g-12">
-          <label for="task">Task</label>
+          <label class="minimal primary block" for="task">Task</label>
           <p-dropdown name="task" #taskField="ngModel" placeholder="choose Task..."
               [required]="true"
               [options]="taskTypes"
               optionLabel="name"
               [(ngModel)]="selectedStep.taskType"
-              styleClass="width-full">
+              styleClass="width-full"  appendTo="body">
           </p-dropdown>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="taskField.errors?.required && taskField.touched" >
                 Please select a task
           </div>
         </div>
-  
+
         <div class="ui-g-12">
-          <label for="document">Document</label>
+          <label class="minimal primary block" for="document">Document</label>
           <p-dropdown name="document" #documentField="ngModel" placeholder="choose Document..."
               [required]="true"
               [options]="documentTemplates"
               optionLabel="documentName"
               [ngModel]="selectedStep.documentTemplateOID"
               (onChange)="documentSelected($event);"
-              styleClass="width-full">
+              styleClass="width-full" >
           </p-dropdown>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="documentField.errors?.required && documentField.touched" >
                 Please select a document template
           </div>
         </div>
-  
+
         <div class="ui-g-12">
-            <label for="resource">Assigned Resource</label>
+            <label class="minimal primary block" for="resource">Assigned Resource</label>
             <mat-form-field class="width-full" >
                 <mat-select placeholder="choose Resource..." name="resource"
                     [value]="selectedStep.assignedParty"
@@ -175,7 +175,7 @@
                       (click)="saveWorkflowStep()"
                       label="Save"
                       icon="ui-icon-check"
-                      class="secondary" 
+                      class="secondary"
                       pButton
                       [disabled]="!selectedEventWorkflow"></button>
               <button type="button"
