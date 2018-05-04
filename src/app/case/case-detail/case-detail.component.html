@@ -156,13 +156,13 @@
               <h2 class="mb-10">Case Parties</h2>
             </div>
 
-            <div class="ui-g-12 ui-md-6 ta-r">
+            <div class="ui-g-12 ui-md-6 ta-r pos-relative">
               <button type="button"
                   *ngIf="hasPermission(Permission.CREATE_CASE)"
                   (click)="showAddCaseParty();"
                   label="Add Case Party"
                   icon="ui-icon-add"
-                  class="ui-button-secondary mr-15" pButton></button>
+                  class="ui-button-secondary mr-15 abs-btn" pButton></button>
             </div>
 
             <div class="ui-g-12">
@@ -211,13 +211,13 @@
             <div class="ui-g-12 ui-md-6">
               <h2 class="mb-10">Charges</h2>
             </div>
-            <div class="ui-g-12 ui-md-6 ta-r">
+            <div class="ui-g-12 ui-md-6 ta-r pos-relative">
               <button type="button"
                   *ngIf="hasPermission(Permission.UPDATE_CASE)"
                   (click)="onAddCaseCharge(caseChargeForm)"
                   label="Add Case Charge"
                   icon="ui-icon-add"
-                  class="ui-button-secondary mr-15" pButton></button>
+                  class="ui-button-secondary mr-15 abs-btn" pButton></button>
             </div>
 
             <div class="ui-g-12">
@@ -278,7 +278,7 @@
                       </div>
                     </ng-template>
                 </p-column>
-                <p-column field="localCharge.localCharge" header="Charge/Law" [style]="{'width':'30%'}"></p-column>
+                <p-column field="localCharge.localLaw" header="Charge/Law" [style]="{'width':'30%'}"></p-column>
                 <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
@@ -291,7 +291,7 @@
           <p-message *ngIf="staticMessage.visible" severity="{{staticMessage.severity}}" text="{{staticMessage.message}}"></p-message>
 
           <!-- CASE SAVE BUTTON -->
-          <div class="ui-g-12 ta-r">
+          <div class="ui-g-12 ta-r mt-30">
             <button type="button"
                 *ngIf="hasPermission(Permission.CREATE_CASE)"
                 (click)="saveCase()"
@@ -1067,58 +1067,61 @@
           <label class="minimal primary block">Section</label>
           <span *ngIf="selectedChargeLawType && selectedSectionType">{{selectedSectionType.categoryName}}</span>
           <span *ngIf="selectedChargeLawType && !selectedSectionType">Not Applicable</span>
-          <span *ngIf="!selectedChargeLawType">Unknown</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
         </div>
 
         <div class="ui-g-12 mb-0">
             <label class="minimal primary block">Division</label>
             <span *ngIf="selectedChargeLawType && selectedDivisionType">{{selectedDivisionType.categoryName}}</span>
             <span *ngIf="selectedChargeLawType && !selectedDivisionType">Not Applicable</span>
-            <span *ngIf="!selectedChargeLawType">Unknown</span>
+            <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
         </div>
 
         <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Group</label>
           <span *ngIf="selectedChargeLawType && selectedGroupType">{{selectedGroupType.categoryName}}</span>
           <span *ngIf="selectedChargeLawType && !selectedGroupType">Not Applicable</span>
-          <span *ngIf="!selectedChargeLawType">Unknown</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
         </div>
 
         <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Class</label>
           <span *ngIf="selectedChargeLawType && selectedClassType">{{selectedClassType.categoryName}}</span>
           <span *ngIf="selectedChargeLawType && !selectedClassType">Not Applicable</span>
-          <span *ngIf="!selectedChargeLawType">Unknown</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
         </div>
 
-        <div class="ui-g-12 mb-0">
-          <label class="minimal primary block">Charge/Law</label>
-          <custom-autocomplete name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel" placeholder="choose Charge/Law..."
-            [required]="true"
-            [options]="chargeLawTypes"
-            labelField="localCharge"
-            dataField="localChargeOID"
-            [ngModel]="selectedChargeLawType?.localChargeOID"
-            (ngModelChange)="chargeLawTypeOnChange($event)"
-            [filterFunction]="localChargeFilterFunction"
-            [labelFunction]="localChargeLabelFunction"
-            styleClass="width-full"
-          >
-            <ng-template let-option>
-              <div class="custom-ac-label1">
-                {{option.categoryIdentifier}} {{option.localCharge}}
-              </div>
-              <div class="custom-ac-label2" >
-                {{option.localLaw}}
-              </div>
-            </ng-template>
-          </custom-autocomplete>
-          <div class="custom-ac-label2" *ngIf="selectedChargeLawType" >
-            {{selectedChargeLawType?.localLaw}}
-          </div>
-          <div class="ui-message ui-messages-error ui-corner-all"
-                *ngIf="ddChargeLaw.errors?.required && ddChargeLaw.touched" >
-                Charge/Law is required
+        <div class="ui-g-12 mb-0 feature-box">
+          <p>Enter Charge/Law First</p>
+          <div class="feature-box-inner">
+            <label class="minimal primary block">Charge/Law</label>
+            <custom-autocomplete name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel" placeholder="choose Charge/Law..."
+              [required]="true"
+              [options]="chargeLawTypes"
+              labelField="localCharge"
+              dataField="localChargeOID"
+              [ngModel]="selectedChargeLawType?.localChargeOID"
+              (ngModelChange)="chargeLawTypeOnChange($event)"
+              [filterFunction]="localChargeFilterFunction"
+              [labelFunction]="localChargeLabelFunction"
+              styleClass="width-full"
+            >
+              <ng-template let-option>
+                <div class="custom-ac-label1">
+                  {{option.categoryIdentifier}} {{option.localCharge}}
+                </div>
+                <div class="custom-ac-label2" >
+                  {{option.localLaw}}
+                </div>
+              </ng-template>
+            </custom-autocomplete>
+            <div class="custom-ac-label2" *ngIf="selectedChargeLawType" >
+              {{selectedChargeLawType?.localLaw}}
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddChargeLaw.errors?.required && ddChargeLaw.touched" >
+                  Charge/Law is required
+            </div>
           </div>
         </div>
 

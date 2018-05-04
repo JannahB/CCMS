@@ -31,3 +31,25 @@
   background-color: white;
   color: #444444;
 }
+
+.feature-box {
+  background-color: #a6d5f1;
+  border-radius: 5px;
+  p {
+    color: #0b5582;
+    font-size: 1.1em;
+    text-align: center;
+    margin: 5px 0 10px;
+  }
+}
+.feature-box-inner {
+  background-color: white;
+  padding: 10px;
+}
+
+.abs-btn {
+  position: absolute;
+  right: -5px;
+  top: 30px;
+  font-size: 0.9em;
+}
