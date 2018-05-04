@@ -324,7 +324,7 @@ export class AdminDataService {
         workflowSteps: []
     };
     if (data.eventWorkflowOID)
-        workflow["eventWorkflowOID"] = data.eventWorkflowOID.toString();
+        workflow["workflowOID"] = data.eventWorkflowOID.toString();
     workflow["triggeringEventOID"] = data.triggeringEvent.eventTypeOID.toString();
     if (data.description)
         workflow["description"] = data.description;

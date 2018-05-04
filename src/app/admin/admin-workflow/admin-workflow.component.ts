@@ -136,6 +136,8 @@ export class AdminWorkflowComponent implements OnInit {
     this.selectedEventWorkflow
       .workflowSteps
       .remove(event);
+
+    this.selectedEventWorkflow.workflowSteps = this.selectedEventWorkflow.workflowSteps.copy();
   }
 
   cancelWorkflowEdit() {
