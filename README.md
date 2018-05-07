@@ -16,7 +16,19 @@ Run `ng serve` for a DEV server. Navigate to `http://localhost:4800/`. The app w
 
 ## Development server
 
-Run `ng serve` for a DEV server. Navigate to `http://localhost:4800/`. The app will automatically reload if you change any of the source files.
+Run `npm start` for a DEV server. Navigate to `http://localhost:4800/`. The app will automatically reload if you change any of the source files.
+By default, API calls will be made on the `apiUrl` found in `environment.dev.ts`. 
+
+### CORS Avoidance Hack in DEV ENV
+#### Disable Security in Chrome Canary on Mac
+`open /Applications/Google\ Chrome\ Canary.app --args --user-data-dir="/var/tmp/Chrome dev session" --disable-web-security`
+
+#### Disable Security in Chrome on Mac
+`open /Applications/Google\ Chrome.app --args --user-data-dir="/var/tmp/Chrome dev session" --disable-web-security`
+
+#### Disable Security in Chrome on Window:
+`"C:\Users\[USER_NAME]\AppData\Local\Google\Chrome SxS\Application\chrome.exe" --disable-web-security --user-data-dir`
+
 
 ## Code scaffolding
 
@@ -24,7 +36,10 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Run `ng build:test` to build the project for the TEST env. 
+Run `ng build:training` to build the project for the TRAIN env. 
+Run `ng build:aot` to build the project for the PROD env. 
+Build artifacts will be stored in the `dist/` directory for all builds.
 
 ## Running unit tests
 
