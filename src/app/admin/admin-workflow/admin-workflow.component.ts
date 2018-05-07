@@ -138,6 +138,8 @@ export class AdminWorkflowComponent implements OnInit {
       .subscribe(
         eventWorkflow => {
           this.selectedEventWorkflow = eventWorkflow;
+          this.sortWorkflowSteps();
+
           this.showLoadingBar = false;
         },
         error => {
@@ -164,6 +166,7 @@ export class AdminWorkflowComponent implements OnInit {
     }
     this.selectedEventWorkflow.workflowSteps.push(this.selectedStep);
     this.selectedEventWorkflow.workflowSteps = this.selectedEventWorkflow.workflowSteps.copy();
+    this.sortWorkflowSteps();
     this.showWorkflowStepModal = false;
   }
 
@@ -182,6 +185,7 @@ export class AdminWorkflowComponent implements OnInit {
       .remove(this.selectedWorkflowStepToDelete);
 
     this.selectedEventWorkflow.workflowSteps = this.selectedEventWorkflow.workflowSteps.copy();
+    this.sortWorkflowSteps();
     this.clearSelectedWorkflowStep();
   }
 
@@ -202,6 +206,7 @@ export class AdminWorkflowComponent implements OnInit {
       .subscribe(
         workflow => {
           this.selectedEventWorkflow = workflow;
+          this.sortWorkflowSteps();
           this.showLoadingBar = false;
           this.toastService.showSuccessMessage("Workflow Saved");
         },
@@ -246,5 +251,19 @@ export class AdminWorkflowComponent implements OnInit {
     this.taskDescription = "";
 
     this.showNewTaskTypeModal = false;
+  }
+
+  private sortWorkflowSteps(){
+    if(!this.selectedEventWorkflow || !this.selectedEventWorkflow.workflowSteps){
+      return;
+    }
+
+    this.selectedEventWorkflow.workflowSteps = this.selectedEventWorkflow
+      .workflowSteps
+      .sort(
+        (step1, step2) => {
+          return step1.delayDays - step2.delayDays;
+        }
+      )
   }
 }
