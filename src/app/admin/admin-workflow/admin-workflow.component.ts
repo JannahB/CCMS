@@ -35,6 +35,45 @@ export class AdminWorkflowComponent implements OnInit {
   selectedStep: WorkflowStep;
 
   showWorkflowStepModal:boolean = false;
+  showNewTaskTypeModal:boolean = false;
+
+  taskName:string = "";
+  taskDescription:string = "";
+
+  showDeleteWorkflowStepConfirmation:boolean = false;
+  selectedWorkflowStepToDelete:WorkflowStep = null;
+
+  get assignedPartyOrPool():any{
+    if(!this.selectedStep){
+      return null;
+    }
+
+    if(this.selectedStep.assignedParty){
+      return this.selectedStep.assignedParty;
+    }
+
+    if(this.selectedStep.assignedPool){
+      return this.selectedStep.assignedPool;
+    }
+
+    return null;
+  }
+
+  set assignedPartyOrPool(value:any){
+    if(!this.selectedStep){
+      return;
+    }
+
+    if(value.partyOID){
+      this.selectedStep.assignedParty = value;
+      this.selectedStep.assignedPool = null;
+    }
+
+    if(value.poolOID){
+      this.selectedStep.assignedPool = value;
+      this.selectedStep.assignedParty = null;
+    }
+  }
 
   constructor( 
     private breadCrumbSvc:BreadcrumbService,
@@ -132,12 +171,23 @@ export class AdminWorkflowComponent implements OnInit {
     // TODO: implement
   }
 
-  deleteWorkflowStepRequest(event){
+  deleteWorkflowStepRequest(step){
+    this.showDeleteWorkflowStepConfirmation = true;
+    this.selectedWorkflowStepToDelete = step;
+  }
+
+  confirmDeleteWorkflowStep(){
     this.selectedEventWorkflow
       .workflowSteps
-      .remove(event);
+      .remove(this.selectedWorkflowStepToDelete);
 
     this.selectedEventWorkflow.workflowSteps = this.selectedEventWorkflow.workflowSteps.copy();
+    this.clearSelectedWorkflowStep();
+  }
+
+  clearSelectedWorkflowStep(){
+    this.selectedWorkflowStepToDelete = null;
+    this.showDeleteWorkflowStepConfirmation = false;
   }
 
   cancelWorkflowEdit() {
@@ -153,6 +203,7 @@ export class AdminWorkflowComponent implements OnInit {
         workflow => {
           this.selectedEventWorkflow = workflow;
           this.showLoadingBar = false;
+          this.toastService.showSuccessMessage("Workflow Saved");
         },
         error => {
           this.toastService.showErrorMessage("Error saving workflow");
@@ -165,5 +216,35 @@ export class AdminWorkflowComponent implements OnInit {
     this.selectedStep.documentTemplateOID = event.value.documentTemplateOID;
   }
 
+  saveNewTaskType(){
+    let taskType = new TaskType();
 
+    taskType.name = this.taskName;
+    taskType.description = this.taskDescription;
+
+    this.showLoadingBar = true;
+
+    this.adminDataService
+      .saveTaskType(taskType)
+      .subscribe( 
+        taskType => {
+          this.taskTypes.push(taskType);
+          this.taskTypes = this.taskTypes.copy();
+          this.showLoadingBar = false;
+          this.clearTaskType();
+          this.selectedStep.taskType = taskType;
+        },
+        error => {
+          this.toastService.showErrorMessage("Error saving task type");
+          this.showLoadingBar = false;
+        }
+      )
+  }
+
+  clearTaskType(){
+    this.taskName = "";
+    this.taskDescription = "";
+
+    this.showNewTaskTypeModal = false;
+  }
 }

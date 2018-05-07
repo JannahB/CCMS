@@ -333,15 +333,16 @@ export class AdminDataService {
             let step = {};
             if (item.workflowStepOID)
               step["workflowStepOID"] = item.workflowStepOID.toString();
-            let party = item.assignedParty;
             step["delayDays"] = item.delayDays.toString();
             step["taskTypeOID"] = item.taskType.taskTypeOID.toString();
             // if (party.ref.poolOID)
             //     step.assignedPoolOID = party.ref.poolOID;
             // if (party.ref.partyOID)
             //     step.assignedPartyOID = party.ref.partyOID;
-            if(party)
-              step["assignedPartyOID"] = party.partyOID.toString()
+            if(item.assignedParty)
+              step["assignedPartyOID"] = item.assignedParty.partyOID.toString();
+            if(item.assignedPool)
+              step["assignedPoolOID"] = item.assignedPool.poolOID.toString();
             if (item.documentTemplateOID)
               step["documentTemplateOID"] = item.documentTemplateOID.toString();
             workflow.workflowSteps.push(step);
@@ -350,15 +351,22 @@ export class AdminDataService {
     var url:string = `${this.getBaseUrl()}/SaveEventWorkflow`;
 
     return this.http
-      .post<EventWorkflow[]>(url, workflow)
-      .map(eventWorkflows => eventWorkflows[0]);
+      .post(url, workflow, { responseType: 'text' })
+      .map(result => {
+        if(result){
+          let eventWorkflows:EventWorkflow[] = JSON.parse(result);
+          return eventWorkflows[0];
+        }
+        return data;
+      });
   }
 
   saveTaskType(taskType:TaskType):Observable<TaskType>{
     var url:string = `${this.getBaseUrl()}/SaveTaskType`;
 
     return this.http
-      .post<TaskType>(url, taskType);
+      .post<TaskType[]>(url, taskType)
+      .map(results => results[0]);
   }
 
   // TODO: Get API signature from Aaron
