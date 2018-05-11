@@ -168,22 +168,10 @@ export class AdminWorkflowComponent implements OnInit {
     return arr;
   }
 
-  filterPoolParties(filterText: string, options: PoolParty[]): PoolParty[] {
-    if (!options)
-      return [];
-
-    if (!filterText)
-      return options.copy();
-
-    return options
-      .filter(o => {
-        let text: string = `${o.fullName}`;
-        return text.contains(filterText, false);
-      });
-  }
-
-  poolPartyOnChange(pp: PoolParty) {
+  poolPartyOnChange(id:number) {
+    let pp: PoolParty = this.poolParties.find(pp => pp.id == id);
     console.log('poolPartyOnChange pp', pp);
+    
     this.selectedPoolParty = pp;
   }
 
@@ -299,20 +287,6 @@ export class AdminWorkflowComponent implements OnInit {
           this.showLoadingBar = false;
         }
       );
-  }
-
-  filterDocuments(filterText: string, options: DocTemplate[]): DocTemplate[] {
-    if (!options)
-      return [];
-
-    if (!filterText)
-      return options.copy();
-
-    return options
-      .filter(o => {
-        let text: string = `${o.documentName}`;
-        return text.contains(filterText, false);
-      });
   }
 
   documentSelected(event: any): void {
