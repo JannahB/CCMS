@@ -209,8 +209,8 @@
         </div> -->
 
         <div class="ui-g-12">
-          <label class="minimal primary block">Assigned Resource</label>
-          <custom-autocomplete name="acResource" id="acResource" #acResource="ngModel" placeholder="choose Resource..."
+          <!-- <label class="minimal primary block">Assigned Resource</label> -->
+          <custom-autocomplete name="acResource" id="acResource" #acResource="ngModel" placeholder="Assigned Resource"
             [required]="true"
             [options]="poolParties"
             labelField="fullName"
@@ -238,8 +238,8 @@
         <div class="ui-g-12 ta-r">
             <button type="button"
                     (click)="saveWorkflowStep()"
-                    label="Save"
-                    icon="ui-icon-check"
+                    label="Add Step"
+                    icon="ui-icon-add"
                     class="secondary"
                     pButton
                     [disabled]="!selectedEventWorkflow"></button>
