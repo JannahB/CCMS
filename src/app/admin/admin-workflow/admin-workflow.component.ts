@@ -301,8 +301,23 @@ export class AdminWorkflowComponent implements OnInit {
       );
   }
 
+  filterDocuments(filterText: string, options: DocTemplate[]): DocTemplate[] {
+    if (!options)
+      return [];
+
+    if (!filterText)
+      return options.copy();
+
+    return options
+      .filter(o => {
+        let text: string = `${o.documentName}`;
+        return text.contains(filterText, false);
+      });
+  }
+
   documentSelected(event: any): void {
-    this.selectedStep.documentTemplateOID = event.value.documentTemplateOID;
+    console.log('documentSelected event', event);
+    this.selectedStep.documentTemplateOID = event;
   }
 
   saveNewTaskType() {

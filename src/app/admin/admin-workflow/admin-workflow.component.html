@@ -140,7 +140,9 @@
               [(ngModel)]="selectedStep.taskType"
               styleClass="width-full"  appendTo="body">
           </p-dropdown>
-          <button pButton label="+" (click)="showNewTaskTypeModal = true;"></button>
+          <!-- <button pButton label="+" (click)="showNewTaskTypeModal = true;"></button> -->
+          <button pButton icon="fa-plus" class="mt-10 ui-button-secondary ui-button-icon-only clear-btn inline"
+                  (click)="showNewTaskTypeModal = true;"></button>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="taskField.errors?.required && taskField.touched" >
                 Please select a task
@@ -148,6 +150,30 @@
         </div>
 
         <div class="ui-g-12">
+          <!-- <label class="minimal primary block">Document</label> -->
+          <custom-autocomplete name="acDocument" id="acDocument" #acDocument="ngModel" placeholder="Document Template"
+            [required]="true"
+            [options]="documentTemplates"
+            labelField="documentName"
+            dataField="documentTemplateOID"
+            [ngModel]="selectedStep.documentTemplateOID"
+            (ngModelChange)="documentSelected($event)"
+            [filterFunction]="filterDocuments"
+            styleClass="width-full"
+          >
+            <ng-template let-option>
+              <div class="custom-ac-label1">
+                {{option.documentName}}
+              </div>
+            </ng-template>
+          </custom-autocomplete>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="acDocument.errors?.required && acDocument.touched" >
+                Please select a document template
+          </div>
+        </div>
+
+        <!-- <div class="ui-g-12">
           <label class="minimal primary block" for="document">Document</label>
           <p-dropdown name="document" #documentField="ngModel" placeholder="choose Document..."
               [required]="true"
@@ -161,7 +187,7 @@
                 *ngIf="documentField.errors?.required && documentField.touched" >
                 Please select a document template
           </div>
-        </div>
+        </div> -->
 
         <!-- <div class="ui-g-12">
           <label class="minimal primary block" for="resource">Assigned Resource</label>
@@ -205,6 +231,10 @@
             </ng-template>
           </custom-autocomplete>
 
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="acResource.errors?.required && acResource.touched" >
+                Please assign a resource
+          </div>
         </div>
 
         <!-- SAVE / CANCEL BUTTONS -->
