@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.0"></a>
+# [1.4.0](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.3.2...v1.4.0) (2018-05-11)
+
+
+### Bug Fixes
+
+* **Workflow:** fix a few minor glitches ([505cae5](https://bitbucket.org/reurgency/ccms-fe2/commits/505cae5))
+* **Workflow:** fix auto-complete implementation ([3ad851b](https://bitbucket.org/reurgency/ccms-fe2/commits/3ad851b))
+
+
+### Features
+
+* **Workflow:** add new task type and assign resource pool ([3279533](https://bitbucket.org/reurgency/ccms-fe2/commits/3279533))
+* **Workflow:** replace document dd with autocomplete ([bd514b6](https://bitbucket.org/reurgency/ccms-fe2/commits/bd514b6))
+* **Workflow:** save of workflow ([442b4c0](https://bitbucket.org/reurgency/ccms-fe2/commits/442b4c0))
+* **Workflow:** sort by time delay ([b3bd8b3](https://bitbucket.org/reurgency/ccms-fe2/commits/b3bd8b3))
+
+
+
 <a name="1.3.2"></a>
 ## [1.3.2](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.3.1...v1.3.2) (2018-05-04)
 
