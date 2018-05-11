@@ -71,7 +71,7 @@
               <span *ngIf="item.assignedPool">
                   {{ item.assignedPool.poolName }}
               </span>
-              
+
             </ng-template>
           </p-column>
           <p-column header="Remove" styleClass="col-button" [style]="{'width':'8%'}">
@@ -163,51 +163,74 @@
           </div>
         </div>
 
+        <!-- <div class="ui-g-12">
+          <label class="minimal primary block" for="resource">Assigned Resource</label>
+          <mat-form-field class="width-full" >
+              <mat-select placeholder="choose Resource..." name="resource"
+                  [value]="assignedPartyOrPool"
+                  (selectionChange)="assignedPartyOrPool = $event.value;" >
+
+                <mat-optgroup label="Staff Pools">
+                  <mat-option *ngFor="let pool of staffPools" [value]="pool">
+                      {{ pool.poolName }}
+                  </mat-option>
+                </mat-optgroup>
+                <mat-optgroup label="Court Parties">
+                  <mat-option *ngFor="let party of parties" [value]="party">
+                      {{ party.firstName }} {{ party.lastName }}
+                  </mat-option>
+                </mat-optgroup>
+              </mat-select>
+            </mat-form-field>
+        </div> -->
+
         <div class="ui-g-12">
-            <label class="minimal primary block" for="resource">Assigned Resource</label>
-            <mat-form-field class="width-full" >
-                <mat-select placeholder="choose Resource..." name="resource"
-                    [value]="assignedPartyOrPool"
-                    (selectionChange)="assignedPartyOrPool = $event.value;" >
+          <label class="minimal primary block">Assigned Resource</label>
+          <custom-autocomplete name="acResource" id="acResource" #acResource="ngModel" placeholder="choose Resource..."
+            [required]="true"
+            [options]="poolParties"
+            labelField="fullName"
+            dataField="id"
+            [ngModel]="selectedPoolParty"
+            (ngModelChange)="poolPartyOnChange($event)"
+            [filterFunction]="filterPoolParties"
+            styleClass="width-full"
+          >
+          <!--
+             -->
+            <ng-template let-option>
+              <div class="custom-ac-label1">
+                {{option.fullName}}
+              </div>
+            </ng-template>
+          </custom-autocomplete>
 
-                  <mat-optgroup label="Staff Pools">
-                    <mat-option *ngFor="let pool of staffPools" [value]="pool">
-                        {{ pool.poolName }}
-                    </mat-option>
-                  </mat-optgroup>
-                  <mat-optgroup label="Court Parties">
-                    <mat-option *ngFor="let party of parties" [value]="party">
-                        {{ party.firstName }} {{ party.lastName }}
-                    </mat-option>
-                  </mat-optgroup>
-                </mat-select>
-              </mat-form-field>
-          </div>
+        </div>
 
-          <!-- SAVE / CANCEL BUTTONS -->
-          <div class="ui-g-12 ta-r">
-              <button type="button"
-                      (click)="saveWorkflowStep()"
-                      label="Save"
-                      icon="ui-icon-check"
-                      class="secondary"
-                      pButton
-                      [disabled]="!selectedEventWorkflow"></button>
-              <button type="button"
-                      (click)="cancelWorkflowEdit()"
-                      label="Cancel"
-                      icon="ui-icon-clear"
-                      class="ui-button-secondary"
-                      pButton
-                      [disabled]="!selectedEventWorkflow"></button>
+        <!-- SAVE / CANCEL BUTTONS -->
+        <div class="ui-g-12 ta-r">
+            <button type="button"
+                    (click)="saveWorkflowStep()"
+                    label="Save"
+                    icon="ui-icon-check"
+                    class="secondary"
+                    pButton
+                    [disabled]="!selectedEventWorkflow"></button>
+            <button type="button"
+                    (click)="cancelWorkflowEdit()"
+                    label="Cancel"
+                    icon="ui-icon-clear"
+                    class="ui-button-secondary"
+                    pButton
+                    [disabled]="!selectedEventWorkflow"></button>
 
-          </div>
+        </div>
       </form>
     </p-dialog>
 
     <p-dialog header="Confirm Deletion" [(visible)]="showDeleteWorkflowStepConfirmation" [responsive]="true" showEffect="fade" [closable]="true" [modal]="true">
       <h3>Are you sure you want to delete this workflow step?</h3>
-      
+
       <div class="ui-g-12 ta-r">
           <button type="button"
                   (click)="confirmDeleteWorkflowStep()"
@@ -227,7 +250,7 @@
 
     <p-dialog header="Create Task Type" width="450" [(visible)]="showNewTaskTypeModal" [responsive]="true" showEffect="fade" [closable]="true" >
       <form #taskTypeForm="ngForm" *ngIf="showNewTaskTypeModal">
-        
+
           <div class="ui-g-12">
             <label class="minimal primary block" for="taskName">Name</label>
             <mat-form-field class="width-full" >
@@ -239,11 +262,11 @@
               </div>
             </mat-form-field>
           </div>
-    
-          
+
+
         <div class="ui-g-12">
           <label class="minimal primary block" for="taskDescription">Description</label>
-          <mat-form-field class="width-full" >            
+          <mat-form-field class="width-full" >
             <textarea matInput name="taskDescription" #taskDescriptionField="ngModel"
                     [(ngModel)]="taskDescription" required>
             </textarea>
