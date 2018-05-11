@@ -240,6 +240,7 @@ export class AdminWorkflowComponent implements OnInit {
     this.selectedEventWorkflow.workflowSteps = this.selectedEventWorkflow.workflowSteps.copy();
     this.sortWorkflowSteps();
     this.showWorkflowStepModal = false;
+    this.selectedPoolParty = null;
   }
 
   deleteWorkflowEventRequest(event) {
@@ -268,6 +269,7 @@ export class AdminWorkflowComponent implements OnInit {
 
   cancelWorkflowEdit() {
     this.showWorkflowStepModal = false;
+    this.selectedPoolParty = null;
   }
 
   saveWorkflow() {
