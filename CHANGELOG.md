@@ -5,11 +5,14 @@ All notable changes to this project will be documented in this file. See [standa
 <a name="1.4.3"></a>
 ## [1.4.3](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.4.2...v1.4.3) (2018-05-18)
 
-
+* **Workflow:** integrate workflow with new Java Endpoints
 
 <a name="1.4.2"></a>
 ## [1.4.2](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.4.1...v1.4.2) (2018-05-18)
 
+### Features
+
+* **Workflow:** turn on workflow feature flag
 
 
 <a name="1.4.1"></a>
