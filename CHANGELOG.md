@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.3"></a>
+## [1.4.3](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.4.2...v1.4.3) (2018-05-18)
+
+
+
 <a name="1.4.2"></a>
 ## [1.4.2](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.4.1...v1.4.2) (2018-05-18)
 
