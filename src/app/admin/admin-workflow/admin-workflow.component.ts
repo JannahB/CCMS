@@ -110,11 +110,17 @@ export class AdminWorkflowComponent implements OnInit {
     let documentTemplateObservable: Observable<DocTemplate[]> = this.lookupService
       .fetchLookup<DocTemplate>('FetchDocumentTemplate');
 
-    let staffPoolObservable: Observable<Pool[]> = this.lookupService
-      .fetchLookup<Pool>('FetchStaffPool');
+    // let staffPoolObservable: Observable<Pool[]> = this.lookupService
+    //   .fetchLookup<Pool>('FetchStaffPool');
+
+    let staffPoolObservable: Observable<Pool[]> = this.partyService
+      .getAllStaffPoolSlim();
+
+    // let partyObservable: Observable<Party[]> = this.partyService
+    //   .fetchAny({ courtUser: "true" });
 
     let partyObservable: Observable<Party[]> = this.partyService
-      .fetchAny({ courtUser: "true" });
+      .getAllSlim();
 
     Observable.forkJoin(
       eventTypeObservable,
@@ -131,7 +137,9 @@ export class AdminWorkflowComponent implements OnInit {
         this.parties = results[4];
 
         // Merge Pool and Party items into a single list
+        console.log('parties', this.parties);
         this.poolParties = this.mergePoolsAndParties(this.staffPools, this.parties);
+        console.log('poolParties', this.poolParties);
 
         this.showLoadingBar = false;
       },
@@ -150,7 +158,7 @@ export class AdminWorkflowComponent implements OnInit {
         let obj: PoolParty = new PoolParty();
         obj.fullName = p.poolName;
         obj.type = 'pool'
-        obj.id = p.poolOID;
+        obj.id = p.id;
         arr.push(obj);
       });
     }
@@ -160,7 +168,7 @@ export class AdminWorkflowComponent implements OnInit {
         let obj: PoolParty = new PoolParty();
         obj.fullName = pty.firstName + ' ' + pty.lastName;
         obj.type = 'party'
-        obj.id = pty.partyOID;
+        obj.id = pty.id;
         arr.push(obj);
       });
     }
@@ -168,10 +176,10 @@ export class AdminWorkflowComponent implements OnInit {
     return arr;
   }
 
-  poolPartyOnChange(id:number) {
+  poolPartyOnChange(id: number) {
     let pp: PoolParty = this.poolParties.find(pp => pp.id == id);
     console.log('poolPartyOnChange pp', pp);
-    
+
     this.selectedPoolParty = pp;
   }
 
@@ -181,16 +189,19 @@ export class AdminWorkflowComponent implements OnInit {
   // }
 
   private attachPoolOrPartyItem(workflowStep: WorkflowStep, pp: PoolParty) {
-    // TODO: REMOVE assignedPool and assignedParty first!
     workflowStep.assignedParty = null;
     workflowStep.assignedPool = null;
     if (pp.type == 'pool') {
-      let staffPool = this.staffPools.find(itm => itm.poolOID == pp.id);
+      // let staffPool = this.staffPools.find(itm => itm.poolOID == pp.id);
+      let staffPool = this.staffPools.find(itm => itm.id == pp.id);
+      staffPool.poolOID = pp.id;
       workflowStep.assignedPool = staffPool;
       return workflowStep;
     }
     else if (pp.type == 'party') {
-      let party = this.parties.find(itm => itm.partyOID == pp.id);
+      // let party = this.parties.find(itm => itm.partyOID == pp.id);
+      let party = this.parties.find(itm => itm.id == pp.id);
+      party.partyOID = pp.id;
       workflowStep.assignedParty = party;
       return workflowStep;
     }

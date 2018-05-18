@@ -5,7 +5,9 @@
 
 export const environment = {
   production: false,
-  apiUrl: "http://127.0.0.1:8080/CCMS3/",                // LOCAL
+  // apiUrl: "http://localhost:8080",                // LOCAL
+  apiUrl: "http://206.189.224.74:8080/CCMS3",        // LOCAL DO Instance
+
   mockUrl: "assets/mockData/",
 
   allowDeleteLookupItems: false,

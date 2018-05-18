@@ -9,6 +9,7 @@ import { Role } from './Role';
 
 export class Party extends LookupEntity {
 
+  id: number = 0;
   partyOID: number = 0;
   courtOID: number = 0;
   lastName: string = "";
@@ -30,5 +31,5 @@ export class Party extends LookupEntity {
   authorizedCourts: AuthorizedCourt[] = [];
   queryName: string = "";
 
-  age:number = 0;
+  age: number = 0;
 }
