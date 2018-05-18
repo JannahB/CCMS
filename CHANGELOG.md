@@ -1,13 +1,11 @@
 # Change Log
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="1.4.3"></a>
 ## [1.4.3](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.4.2...v1.4.3) (2018-05-18)
 
 * **Workflow:** integrate workflow with new Java Endpoints
 
-<a name="1.4.2"></a>
+
 ## [1.4.2](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.4.1...v1.4.2) (2018-05-18)
 
 ### Features
@@ -15,7 +13,6 @@ All notable changes to this project will be documented in this file. See [standa
 * **Workflow:** turn on workflow feature flag
 
 
-<a name="1.4.1"></a>
 ## [1.4.1](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.4.0...v1.4.1) (2018-05-18)
 
 
@@ -30,7 +27,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="1.4.0"></a>
 # [1.4.0](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.3.2...v1.4.0) (2018-05-11)
 
 
@@ -49,7 +45,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="1.3.2"></a>
 ## [1.3.2](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.3.1...v1.3.2) (2018-05-04)
 
 
@@ -65,7 +60,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="1.3.1"></a>
 ## [1.3.1](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.3.0...v1.3.1) (2018-04-25)
 
 
@@ -81,7 +75,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="1.3.0"></a>
 # [1.3.0](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.2.3...v1.3.0) (2018-04-18)
 
 
