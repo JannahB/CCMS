@@ -64,8 +64,8 @@
           <p-column header="Assigned Resource" field="" [style]="{'width':'15%'}">
             <ng-template let-item="rowData" pTemplate="body">
               <span *ngIf="item.assignedParty">
-                  {{ item.assignedParty.partyOID | idToName:parties:"partyOID":"firstName" }}
-                  {{ item.assignedParty.partyOID | idToName:parties:"partyOID":"lastName" }}
+                  {{ item.assignedParty.partyOID | idToName:parties:"id":"firstName" }}
+                  {{ item.assignedParty.partyOID | idToName:parties:"id":"lastName" }}
               </span>
               <span *ngIf="item.assignedPool">
                   {{ item.assignedPool.poolName }}
