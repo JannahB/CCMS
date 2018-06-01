@@ -77,7 +77,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   caseStatuses: CaseStatus[] = [];
   casePhases: CasePhase[] = [];
   baseURL: string;
-  selectedChargeLawTypeId:any;
+  selectedChargeLawTypeId: any;
 
   datePipe: DatePipe = new DatePipe("en");
 
@@ -475,6 +475,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.newCaseParty.caseParty.lastName = event;
   }
 
+  newCPlFullNameChanged(event) {
+    this.newCaseParty.caseParty.fullName = event;
+  }
+
   newCPaltNameChanged(event) {
     console.log('newCPaltNameChanged(event)', event)
     this.newCaseParty.caseParty.alternativeName = event;
@@ -582,8 +586,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.chargeLawTypes = this.selectedClassType.localCharges;
   }
 
-  chargeLawTypeOnChange(selectedIccsCodeOID:number) {
-    if(!this.chargeLawTypes){
+  chargeLawTypeOnChange(selectedIccsCodeOID: number) {
+    if (!this.chargeLawTypes) {
       this.selectedChargeLawType = null;
       return;
     }
@@ -593,7 +597,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.setCategories(this.selectedChargeLawType);
   }
 
-  public localChargeFilterFunction(filterText:string, options:LocalCharge[]):LocalCharge[]{
+  public localChargeFilterFunction(filterText: string, options: LocalCharge[]): LocalCharge[] {
     if (!options) {
       return [];
     }
@@ -604,29 +608,29 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     return options
       .filter(o => {
-        let text:string = `${o.categoryIdentifier} ${o.localCharge}`;
+        let text: string = `${o.categoryIdentifier} ${o.localCharge}`;
 
         return text.contains(filterText, false);
       });
   }
 
-  public localChargeLabelFunction(localCharge:LocalCharge):string{
-    if(!localCharge){
+  public localChargeLabelFunction(localCharge: LocalCharge): string {
+    if (!localCharge) {
       return "";
     }
 
     return `${localCharge.categoryIdentifier} ${localCharge.localCharge}`;
   }
 
-  private resetCategories():void{
+  private resetCategories(): void {
     this.selectedSectionType = null;
     this.selectedDivisionType = null;
     this.selectedGroupType = null;
     this.selectedClassType = null;
   }
 
-  private setCategories(localCharge:LocalCharge){
-    if(!localCharge){
+  private setCategories(localCharge: LocalCharge) {
+    if (!localCharge) {
       this.resetCategories();
       return;
     }
@@ -635,22 +639,22 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedGroupType = null;
     this.selectedClassType = null;
 
-    let parentCode:IccsCode = localCharge.parentICCSCode;
+    let parentCode: IccsCode = localCharge.parentICCSCode;
 
-    while(parentCode){
+    while (parentCode) {
       this.setCategory(parentCode);
       parentCode = parentCode.parentICCSCode;
     }
   }
 
-  private setCategory(iccsCode:IccsCode):void{
-    if(iccsCode.categoryType == IccsCodeCategory.SECTION){
+  private setCategory(iccsCode: IccsCode): void {
+    if (iccsCode.categoryType == IccsCodeCategory.SECTION) {
       this.selectedSectionType = iccsCode;
-    }else if(iccsCode.categoryType == IccsCodeCategory.DIVISION){
+    } else if (iccsCode.categoryType == IccsCodeCategory.DIVISION) {
       this.selectedDivisionType = iccsCode;
-    }else if(iccsCode.categoryType == IccsCodeCategory.GROUP){
+    } else if (iccsCode.categoryType == IccsCodeCategory.GROUP) {
       this.selectedGroupType = iccsCode;
-    }else if(iccsCode.categoryType == IccsCodeCategory.CLASS){
+    } else if (iccsCode.categoryType == IccsCodeCategory.CLASS) {
       this.selectedClassType = iccsCode;
     }
   }

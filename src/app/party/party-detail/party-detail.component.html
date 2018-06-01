@@ -9,20 +9,49 @@
 
         <div  *ngIf="party">
 
-          <!-- column 1 -->
-          <div class="ui-g-12 ui-md-4">
+          <div class="ui-g-12 mb-20 ml-10">
+            <p-checkbox [(ngModel)]="party.isOrganization" binary="true" name="cb_isOrganization"></p-checkbox>
+            <span class="task-name">Is Organization?</span>
+          </div>
 
-            <div class="ui-g-12 mb-20">
+          <!-- Organization column 1 -->
+          <div class="ui-g-12 ui-md-6" *ngIf="party.isOrganization">
+            <div class="ui-g-12 mb-20 pl-0" >
+              <span class="md-inputfield">
+                <input type="text" pInputText required [(ngModel)]="party.fullName" name="tiOrgName" #tiOrgName="ngModel" >
+                <label>Organization Name</label>
+              </span>
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                 *ngIf="tiOrgName.errors?.required && tiOrgName.touched" >
+                  Please enter an Organization Name
+            </div>
+          </div>
+
+          <!-- column 1 -->
+          <div class="ui-g-12 ui-md-4" *ngIf="!party.isOrganization">
+
+            <div class="ui-g-12 mb-20" >
               <span class="md-inputfield">
                 <input pInputText type="text" [(ngModel)]="party.firstName" name="firstName" >
-                <label>First Name</label>
+                <label>Given Name</label>
               </span>
             </div>
             <div class="ui-g-12 mb-20">
               <span class="md-inputfield">
                 <input type="text" pInputText [(ngModel)]="party.lastName" >
-                <label>Last Name</label>
+                <label>Family Name</label>
               </span>
+            </div>
+            <div class="ui-g-12 mb-20" >
+              <span class="md-inputfield">
+                <input type="text" pInputText required [(ngModel)]="party.fullName" name="tiFullName" #tiFullName="ngModel" >
+                <label>Full Name</label>
+              </span>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                   *ngIf="tiFullName.errors?.required && tiFullName.touched" >
+                   Please enter the Full Name
+              </div>
             </div>
             <div class="ui-g-12 mb-0">
               <span class="md-inputfield">
@@ -33,7 +62,7 @@
           </div>
 
           <!-- column 2 -->
-          <div class="ui-g-12 ui-md-3 pt-0 mt-n-5">
+          <div class="ui-g-12 ui-md-3 pt-0 mt-n-5" *ngIf="!party.isOrganization">
 
             <div class="ui-g-12 mb-0">
               <label class="minimal primary block">Date of Birth</label>
@@ -67,7 +96,7 @@
           </div>
 
           <!-- column 3 -->
-          <div class="ui-g-12 ui-md-5">
+          <div class="ui-g-12 ui-md-5" *ngIf="!party.isOrganization">
             <div class="ui-g-12 ">
               <label class="minimal primary mr-10">Interpreter Required</label>
               <p-inputSwitch [(ngModel)]="party.interpreterRequiredIndicator" ></p-inputSwitch>

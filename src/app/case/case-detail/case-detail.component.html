@@ -172,8 +172,31 @@
                           (onRowSelect)="partyOnRowSelect($event)"
                           scrollable="true" scrollHeight="200px"
                           dataKey="caseParty.partyOID" #dtParties>
+
+                <p-column field="caseParty.isOrganization" header="Is Org?" [style]="{'width':'8%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <i class="fa ui-icon-check task-done" *ngIf="item.isOrganization"></i>
+                  </ng-template>
+                </p-column>
+
                 <p-column field="role.name" header="Role" [style]="{'width':'10%'}"></p-column>
-                <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
+
+                <p-column header="Party Info" [style]="{'width':'30%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <div>{{ item.caseParty.firstName }} {{ item.caseParty.lastName }}</div>
+                      <!-- TODO: turn this on when fullName support on Server -->
+                      <div>{{ item.fullName }}</div>
+                      <div *ngIf="!item.caseParty.isOrganization">
+                          <span class="smaller">
+                          DOB: {{ item.caseParty.dob | date:'M/d/yyyy' }}
+                          Sex: {{ item.caseParty.sex }}
+                          Age: {{ item.caseParty.age }}
+                        </span>
+                      </div>
+                    </ng-template>
+                </p-column>
+
+                <!-- <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
                 <p-column field="caseParty.lastName" header="Last Name" [style]="{'width':'15%'}"></p-column>
                 <p-column field="caseParty.sex" header="Sex" [style]="{'width':'7%'}"></p-column>
                 <p-column header="Date of Birth" [style]="{'width':'13%'}">
@@ -181,7 +204,8 @@
                         {{ item.caseParty.dob | date:'M/d/yyyy' }}
                     </ng-template>
                 </p-column>
-                <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column>
+                <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column> -->
+
                 <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
                     <ng-template pTemplate="body" let-item="rowData">
                         {{item.startDate | date:'M/d/yyyy'}}
@@ -698,15 +722,45 @@
                           [scrollable]="true"
                           (onRowSelect)="searchPartyOnRowSelect($event)"
                           dataKey="partyOID" #dtSearchParty>
+
+                <p-column field="isOrganization" header="Is Org?" [style]="{'width':'8%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <i class="fa ui-icon-check task-done" *ngIf="item.isOrganization"></i>
+                  </ng-template>
+                </p-column>
+
+                <p-column header="Party Info" [style]="{'width':'50%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <div>{{ item.firstName }} {{ item.lastName }}</div>
+                      <!-- TODO: turn this on when fullName support on Server -->
+                      <!-- <div>{{ item.fullName }}</div> -->
+                      <div *ngIf="!item.isOrganization">
+                          <span class="smaller">
+                          DOB: {{ item.dob | date:'M/d/yyyy' }}
+                          Sex: {{ item.sex }}
+                          Age: {{ item.age }}
+                        </span>
+                      </div>
+                    </ng-template>
+                </p-column>
+
+                <!-- <p-column header="Full Name" field="fullName" [style]="{'width':'50%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.fdob | date:'M/d/yyyy'}}
+                  </ng-template>
+                </p-column>
+
                 <p-column header="First Name" field="firstName" [style]="{'width':'25%'}"></p-column>
                 <p-column header="Last Name" field="lastName" [style]="{'width':'25%'}"></p-column>
+
                 <p-column header="DOB" field="dob" [style]="{'width':'15%'}">
                   <ng-template pTemplate="body" let-item="rowData">
                       {{item.dob | date:'M/d/yyyy'}}
                   </ng-template>
                 </p-column>
                 <p-column header="Age" field="age" [style]="{'width':'10%'}"></p-column>
-                <p-column header="Sex" field="sex" [style]="{'width':'7%'}"></p-column>
+                <p-column header="Sex" field="sex" [style]="{'width':'7%'}"></p-column> -->
+
               </p-dataTable>
             </div>
 
@@ -776,77 +830,111 @@
      ------------ CREATE NEW PARTY ----------------
     -->
     <p-tabPanel header="Create New Party">
-      <form #newCasePartyForm="ngForm" novalidate>
+      <form #newCasePartyForm="ngForm" novalidate class="mt-n-30">
+
+
         <div class="ui-g form-group" novalidate>
 
           <div  *ngIf="newCaseParty">
 
-            <div class="ui-g-12 mb-20">
-              <span class="md-inputfield">
-                <input pInputText type="text" #newCPfName="ngModel" required name="newCPfName"
-                        [ngModel]="newCaseParty.caseParty?.firstName" (ngModelChange)="newCPfNameChanged($event)">
-                <label>First Name</label>
-              </span>
+            <div class="ui-g-12 mb-20 ml-10" *ngIf="newCaseParty.caseParty">
+              <p-checkbox [(ngModel)]="newCaseParty.caseParty.isOrganization" binary="true" name="cb_isOrganization"></p-checkbox>
+              <span class="task-name">Is Organization?</span>
+            </div>
+
+            <!-- Organization -->
+            <div class="ui-g-12 ui-md-6" *ngIf="newCaseParty.caseParty?.isOrganization">
+              <div class="ui-g-12 mb-20 pl-0" >
+                <span class="md-inputfield">
+                  <input type="text" pInputText required [(ngModel)]="newCaseParty.caseParty.fullName" name="tiOrgName" #tiOrgName="ngModel" >
+                  <label>Organization Name</label>
+                </span>
+              </div>
               <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="newCPfName.errors?.required && newCPfName.touched" >
-                    Please enter First Name
+                   *ngIf="tiOrgName.errors?.required && tiOrgName.touched" >
+                    Please enter an Organization Name
               </div>
             </div>
 
-            <div class="ui-g-12 mb-20">
-              <span class="md-inputfield">
-                <input type="text" pInputText #newCPlName="ngModel" name="newCPlName" required
-                        [ngModel]="newCaseParty.caseParty?.lastName"  (ngModelChange)="newCPlNameChanged($event)">
-                <label>Last Name</label>
-              </span>
-              <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="newCPlName.errors?.required && newCPlName.touched" >
-                    Please enter Last Name
-              </div>
-            </div>
-
-            <div class="ui-g-12 mb-0">
-              <span class="md-inputfield">
-                <input type="text" pInputText name="newCPaltName"
-                        [ngModel]="newCaseParty.caseParty?.alternativeName" (ngModelChange)="newCPaltNameChanged($event)">
-                <label>Alternative Name</label>
-              </span>
-            </div>
-
-
-            <div class="ui-g-12 mb-0 pl-0">
-              <div class="ui-g-12 ui-md-6 mb-0">
-                <label class="minimal primary block">Date of Birth</label>
-                <p-calendar id="newCPdob" name="newCPdob" #newCPdob="ngModel"
-                      [required]="true"
-                      inputStyleClass="width-full"
-                      [ngModel]="newCaseParty.caseParty?.dob"
-                      (ngModelChange)="newCPdobChange($event)"
-                      dateFormat="mm/dd/yy"
-                      placeholder="Date of Birth"
-                      [showIcon]="true"
-                      [yearNavigator]="true"
-                      yearRange="1900:2020"
-                      appendTo="body"></p-calendar>
+            <div *ngIf="!newCaseParty.caseParty?.isOrganization">
+              <div class="ui-g-12 mb-20">
+                <span class="md-inputfield">
+                  <input pInputText type="text" #newCPfName="ngModel" required name="newCPfName"
+                          [ngModel]="newCaseParty.caseParty?.firstName" (ngModelChange)="newCPfNameChanged($event)">
+                  <label>Given Name</label>
+                </span>
                 <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="newCPdob.errors?.required && newCPdob.touched" >
-                  Please enter a Date of Birth
+                      *ngIf="newCPfName.errors?.required && newCPfName.touched" >
+                      Please enter Given Name
                 </div>
               </div>
 
-              <div class="ui-g-12 ui-md-6 mb-0">
-                <label class="minimal primary block">Sex</label>
-                  <p-dropdown name="newCPsex" #newCPsex="ngModel" placeholder="choose gender"
-                      [required]="true"
-                      [options]="genderTypes"
-                      [ngModel]="newCaseParty.caseParty?.sex"
-                      (ngModelChange)="newCPsexChange($event)"
-                      styleClass="width-auto">
-                  </p-dropdown>
+              <div class="ui-g-12 mb-20">
+                <span class="md-inputfield">
+                  <input type="text" pInputText #newCPlName="ngModel" name="newCPlName" required
+                          [ngModel]="newCaseParty.caseParty?.lastName" (ngModelChange)="newCPlNameChanged($event)">
+                  <label>Family Name</label>
+                </span>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                      *ngIf="newCPlName.errors?.required && newCPlName.touched" >
+                      Please enter Family Name
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-20">
+                <span class="md-inputfield">
+                  <input type="text" pInputText #newCPfullName="ngModel" name="newCPfullName" required
+                          [ngModel]="newCaseParty.caseParty?.fullName" (ngModelChange)="newCPlFullNameChanged($event)">
+                  <label>Full Name</label>
+                </span>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                      *ngIf="newCPfullName.errors?.required && newCPfullName.touched" >
+                      Please enter Full Name
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-0">
+                <span class="md-inputfield">
+                  <input type="text" pInputText name="newCPaltName"
+                          [ngModel]="newCaseParty.caseParty?.alternativeName" (ngModelChange)="newCPaltNameChanged($event)">
+                  <label>Alternative Name</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mb-0 pl-0">
+                <div class="ui-g-12 ui-md-6 mb-0">
+                  <label class="minimal primary block">Date of Birth</label>
+                  <p-calendar id="newCPdob" name="newCPdob" #newCPdob="ngModel"
+                        [required]="true"
+                        inputStyleClass="width-full"
+                        [ngModel]="newCaseParty.caseParty?.dob"
+                        (ngModelChange)="newCPdobChange($event)"
+                        dateFormat="mm/dd/yy"
+                        placeholder="Date of Birth"
+                        [showIcon]="true"
+                        [yearNavigator]="true"
+                        yearRange="1900:2020"
+                        appendTo="body"></p-calendar>
                   <div class="ui-message ui-messages-error ui-corner-all"
-                        *ngIf="newCPsex.errors?.required && newCPsex.touched" >
-                    Please enter a gender
+                      *ngIf="newCPdob.errors?.required && newCPdob.touched" >
+                    Please enter a Date of Birth
                   </div>
+                </div>
+
+                <div class="ui-g-12 ui-md-6 mb-0">
+                  <label class="minimal primary block">Sex</label>
+                    <p-dropdown name="newCPsex" #newCPsex="ngModel" placeholder="choose gender"
+                        [required]="true"
+                        [options]="genderTypes"
+                        [ngModel]="newCaseParty.caseParty?.sex"
+                        (ngModelChange)="newCPsexChange($event)"
+                        styleClass="width-auto">
+                    </p-dropdown>
+                    <div class="ui-message ui-messages-error ui-corner-all"
+                          *ngIf="newCPsex.errors?.required && newCPsex.touched" >
+                      Please enter a gender
+                    </div>
+                </div>
               </div>
             </div>
 

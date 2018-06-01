@@ -14,7 +14,7 @@
           <div class="ui-g-12 ph-30 big-search">
             <span class="md-inputfield">
               <input [(ngModel)]="partyNameText" name="tiName" type="text" class="width-full"  pInputText>
-              <label>First or Last Name (partial)</label>
+              <label>Full Name</label>
             </span>
             <div>
               <p-message severity="info" text="{{recordsFoundMessage}}" *ngIf="showRecordsFoundMessage"></p-message>
@@ -39,8 +39,18 @@
         <p-dataTable [value]="partyResults" selectionMode="single" [(selection)]="selectedParty" (onRowSelect)="partyOnRowSelect($event)"
           scrollable="true" scrollHeight="280px"
           dataKey="partyOID" #dtPartyResults>
-          <p-column field="firstName" header="First Name" [style]="{'width':'13%'}"></p-column>
-          <p-column field="lastName" header="Last Name" [style]="{'width':'25%'}"></p-column>
+          <p-column field="firstName" header="Is Org?" [style]="{'width':'7%', 'text-align':'center'}">
+            <ng-template pTemplate="body" let-item="rowData" >
+                <i class="fa ui-icon-check task-done" *ngIf="item.isOrganization"></i>
+                <!-- <i class="fa ui-icon-close"*ngIf="!item.isOrganization" ></i> -->
+            </ng-template>
+          </p-column>
+          <p-column field="fullName" header="Full Name" [style]="{'width':'35%'}">
+            <!-- TODO: change first/lastName to fullName when available from server -->
+              <ng-template pTemplate="body" let-item="rowData">
+                  {{item.firstName}} {{item.lastName}}
+              </ng-template>
+          </p-column>
           <p-column field="dob" header="DOB" styleClass="ta-c" [style]="{'width':'15%'}">
               <ng-template pTemplate="body" let-item="rowData">
                   {{item.dob | date:'M/d/yyyy'}}
@@ -48,11 +58,6 @@
           </p-column>
           <p-column field="age" header="Age" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>
           <p-column field="sex" header="Sex" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>
-          <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'8%'}">
-            <ng-template let-item="rowData" pTemplate="body">
-              <i class="material-icons" (click)="requestViewParty(item)">search</i>
-            </ng-template>
-          </p-column> -->
         </p-dataTable>
       </div>
 

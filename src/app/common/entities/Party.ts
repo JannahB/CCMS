@@ -32,4 +32,7 @@ export class Party extends LookupEntity {
   queryName: string = "";
 
   age: number = 0;
+
+  isOrganization: boolean = false;
+  fullName: string = "";
 }
