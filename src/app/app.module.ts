@@ -117,7 +117,7 @@ import { ResetPasswordComponent } from './login/reset-password/reset-password.co
 import { NewPasswordComponent } from './login/new-password/new-password.component';
 import { ReferenceDataIdToNamePipe } from './common/pipes/reference-data-id-to-name.pipe';
 import { NamePipe } from './common/pipes/name.pipe';
-
+import { CalendarService } from './common/services/http/calendar.service';
 
 
 
@@ -207,7 +207,7 @@ import { NamePipe } from './common/pipes/name.pipe';
     AdminUsersComponent,
     LoginComponent,
     LoadingBarComponent,
-    DropdownPipe, 
+    DropdownPipe,
     ReferenceDataIdToNamePipe,
     NamePipe,
     CustomAutocompleteComponent, ResetPasswordComponent, NewPasswordComponent
@@ -239,6 +239,7 @@ import { NamePipe } from './common/pipes/name.pipe';
     AdminDataService,
     AdminUserService,
     CourtService,
+    CalendarService,
     AppStateService,
     {
       provide: HTTP_INTERCEPTORS,

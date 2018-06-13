@@ -11,6 +11,7 @@ export const environment = {
   allowDeleteLookupItems: false,
   allowResetPasswordFeature: false,
   allowAdminWorkflowFeature: true,
+  allowAdminCalendarFeature: false,
 
   VERSION: require('../../package.json').version
 };

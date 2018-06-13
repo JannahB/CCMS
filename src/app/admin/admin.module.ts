@@ -16,6 +16,11 @@ import { CasePartyRolesComponent } from './data/case-party-roles/case-party-role
 import { EventTypesComponent } from './data/event-types/event-types.component';
 import { HearingTypeComponent } from './data/hearing-type/hearing-type.component';
 import { IccsCodesComponent } from './data/iccs-codes/iccs-codes.component';
+import { HolidaysComponent } from './calendar/holidays/holidays.component';
+import { CalTemplatesComponent } from './calendar/cal-templates/cal-templates.component';
+import { CalResourcesComponent } from './calendar/cal-resources/cal-resources.component';
+import { CalFacilitiesComponent } from './calendar/cal-facilities/cal-facilities.component';
+import { DayPilotModule } from "daypilot-pro-angular";
 
 @NgModule({
   imports: [
@@ -25,9 +30,25 @@ import { IccsCodesComponent } from './data/iccs-codes/iccs-codes.component';
     ButtonModule,
     DropdownModule,
     CustomMaterialModule,
-    DialogModule
+    DialogModule,
+    DayPilotModule
 
   ],
-  declarations: [DataComponent, AdminComponent, CaseTypesComponent, CasePhasesComponent, CaseStatusesComponent, CourtLocationsComponent, CasePartyRolesComponent, EventTypesComponent, HearingTypeComponent, IccsCodesComponent]
+  declarations: [
+    DataComponent,
+    AdminComponent,
+    CaseTypesComponent,
+    CasePhasesComponent,
+    CaseStatusesComponent,
+    CourtLocationsComponent,
+    CasePartyRolesComponent,
+    EventTypesComponent,
+    HearingTypeComponent,
+    IccsCodesComponent,
+    HolidaysComponent,
+    CalTemplatesComponent,
+    CalResourcesComponent,
+    CalFacilitiesComponent
+  ]
 })
 export class AdminModule { }
