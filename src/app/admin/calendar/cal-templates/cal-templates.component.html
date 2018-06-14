@@ -18,7 +18,8 @@
       </mat-form-field>
 
       <!-- LIST -->
-      <mat-selection-list #itemsList (selectionChange)="onSelectionChange($event)" class="items-list">
+      <!-- (selectionChange)="onSelectionChange($event)" -->
+      <mat-selection-list #matSelectionList  class="items-list">
         <mat-list-option *ngFor="let item of templates; let i=index; let itm" [class.hi]="selected" [value]="item">
           {{ item.name }}
         </mat-list-option>
@@ -68,9 +69,17 @@
         </div>
         <div class="ta-r">
             <!-- <button label="Save Template" type="button" pButton icon="fa-check" (click)="hideModals()"></button> -->
+            <button mat-raised-button color="primary" (click)="deleteDataItemRequest()" class="mt-30 fl">
+              <mat-icon aria-label="Add template button">delete</mat-icon>
+              Delete Template
+            </button>
             <button mat-raised-button color="primary" (click)="saveItem()" class="mt-30">
               <mat-icon aria-label="Add template button">check</mat-icon>
               Save Template
+            </button>
+            <button mat-raised-button color="primary" (click)="cancelDataItemEdit()" class="mt-30">
+              <mat-icon aria-label="Add template button">clear</mat-icon>
+              Cancel
             </button>
         </div>
       </div>

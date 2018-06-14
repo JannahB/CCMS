@@ -1,3 +1,4 @@
+import { CalTemplateTime } from './../../entities/CalTemplateTime';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 // import { Http, Response } from '@angular/http';
@@ -75,8 +76,14 @@ export class CalendarService extends HttpBaseService<any> {
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
   }
 
-  getEvents(from: DayPilot.Date, to: DayPilot.Date): Observable<any[]> {
+  deleteTemplateTimeBlock(id) {
+    let url: string = `${super.getBaseUrl()}/api/template-times/${id}`;
+    return this.http
+      .delete<CalTemplateTime>(url)
+  }
 
+
+  getEvents(from: DayPilot.Date, to: DayPilot.Date): Observable<any[]> {
     // simulating an HTTP request
     return new Observable(observer => {
       setTimeout(() => {

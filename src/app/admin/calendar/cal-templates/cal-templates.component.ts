@@ -15,40 +15,16 @@ import { CalTemplate } from '../../../common/entities/CalTemplate';
 })
 export class CalTemplatesComponent implements OnInit {
 
-  ngOnInit() {
-    this.templates = [
-      { id: 1, name: 'Standard Hours', description: 'Standard work week hours' },
-      { id: 2, name: 'Short Friday', description: 'Standard hours with 1-3 on Friday' },
-      { id: 3, name: 'Plus Sat Morning', description: 'Standard hours plus short Saturday' },
-      { id: 4, name: 'Wednesday Exempt', description: 'Standard week minus Wed for monthly conference' }
-    ];
-
-    // Handle mat-selection-list selection change via dom element so we can DeselectAll
-    this.itemsList.selectionChange.subscribe((event: MatSelectionListChange) => {
-      this.itemsList.deselectAll();
-      event.option.selected = true;
-      this.selectedTemplate = event.option.value;
-      this.copySelectedItem();
-    });
-
-    this.selectedTemplate = this.templates[0];
-  }
-
-  ngOnDestroy() {
-    // if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
-  }
-
-
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
 
   @ViewChild(MatSelectionList)
-  itemsList: MatSelectionList;
+  matSelectionList: MatSelectionList;
 
   events: any[] = [];
   templates: any[] = [];
   selectedTemplate: any;
-  selectedTemplateBak: any
+  selectedTemplateBak: any;
   selectedTemplateIdx: number;
   showDeleteItemModal: boolean = false;
 
@@ -76,6 +52,7 @@ export class CalTemplatesComponent implements OnInit {
         var dp = args.control;
         dp.clearSelection();
         if (!modal.result) { return; }
+        // id: Math.random() * 1000000/1000000,
         dp.events.add(new DayPilot.Event({
           start: args.start,
           end: args.end,
@@ -132,7 +109,11 @@ export class CalTemplatesComponent implements OnInit {
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
-      // this.message("Event deleted");
+      // delete TemplateTime data.id
+      this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)
+        .subscribe(result => {
+          this.toastSvc.showInfoMessage('Time block deleted.');
+        });
       console.log('delete', args);
     }
   };
@@ -153,6 +134,29 @@ export class CalTemplatesComponent implements OnInit {
     console.log(now.add(7, 'days').format());
   }
 
+  ngOnInit() {
+    this.templates = [
+      { id: 1, name: 'Standard Hours', description: 'Standard work week hours' },
+      { id: 2, name: 'Short Friday', description: 'Standard hours with 1-3 on Friday' },
+      { id: 3, name: 'Plus Sat Morning', description: 'Standard hours plus short Saturday' },
+      { id: 4, name: 'Wednesday Exempt', description: 'Standard week minus Wed for monthly conference' }
+    ];
+
+    // Handle mat-selection-list selection change via dom element so we can DeselectAll
+    this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
+      this.matSelectionList.deselectAll();
+      event.option.selected = true;
+      this.selectedTemplate = event.option.value;
+      this.copySelectedItem();
+    });
+
+    this.selectedTemplate = this.templates[0];
+  }
+
+  ngOnDestroy() {
+    // if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
+  }
+
   ngAfterViewInit(): void {
     var from = this.scheduler.control.visibleStart();
     var to = this.scheduler.control.visibleEnd();
@@ -169,15 +173,19 @@ export class CalTemplatesComponent implements OnInit {
   }
 
   createNewTemplate() {
-    this.itemsList.deselectAll();
+    this.matSelectionList.deselectAll();
     this.selectedTemplate = new CalTemplate();
     this.copySelectedItem();
   }
 
   saveItem() {
-    if (this.selectedTemplate.id) {
-      // Update existing item
+    console.log('1 Saving template:', this.selectedTemplate)
 
+    this.serializeDPDateWithZone();
+
+    if (this.selectedTemplate.id) {
+      console.log('2 Saving template:', this.selectedTemplate)
+      // Update existing item PUT
       this.calendarSvc.put(this.selectedTemplate.id, this.selectedTemplate)
         .subscribe(result => {
           this.updateList(result);
@@ -192,7 +200,7 @@ export class CalTemplatesComponent implements OnInit {
             // final
           })
     } else {
-      // Add new item
+      // Add new item POST
       this.calendarSvc.post(this.selectedTemplate)
         .subscribe(result => {
           console.log('result', result);
@@ -244,6 +252,29 @@ export class CalTemplatesComponent implements OnInit {
     this.showDeleteItemModal = false;
   }
 
+  onSelectionChange() {
+    // handling change in mat-select
+  }
+
+  private serializeDPDateWithZone() {
+    // Serialize the Time Blocks before saving
+    this.selectedTemplate.days.forEach(block => {
+      // if a block is new, stretched or moved, the start and/or end date will be
+      // converted to a DayPilot.Date which uses '.value' to hold the string date
+      if (block.start.value) {
+        block.start = block.start.value + "Z";
+      }
+      if (block.end.value) {
+        block.end = block.end.value + "Z";
+      }
+      // if a guid (assigned to new blocks by calendar) then change to a
+      // number that will be overwritten by server to a server long type
+      if (block.id.length == 36) {
+        block.id = Math.round((Math.random() * 10000000000000000));
+      }
+    });
+  }
+
   private setFirstListItem() {
     if (!this.templates || !this.templates.length)
       return;
@@ -251,8 +282,8 @@ export class CalTemplatesComponent implements OnInit {
     this.selectedTemplate = this.templates[0];
     this.copySelectedItem();
     setTimeout(() => {
-      if (this.itemsList.options.first)
-        this.itemsList.options.first.selected = true;
+      if (this.matSelectionList.options.first)
+        this.matSelectionList.options.first.selected = true;
     }, 100);
   }
 

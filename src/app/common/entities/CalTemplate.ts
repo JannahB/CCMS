@@ -6,6 +6,6 @@ export class CalTemplate {
   name: string = '';
   description: string = '';
   courtOID: number = 5; // TODO: REMOVE 5 WHEN CAPTURING COURTOID IN CONTROLLER
-  days: CalTemplateTime;
+  days: CalTemplateTime[] = [];
 
 }
