@@ -143,7 +143,8 @@ export class CalTemplatesComponent implements OnInit {
       this.copySelectedItem();
     });
 
-    this.selectedTemplate = this.templates[0];
+    // Temp selected item
+    this.selectedTemplate = new CalTemplate();
   }
 
   ngOnDestroy() {
