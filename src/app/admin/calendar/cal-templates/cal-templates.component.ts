@@ -135,13 +135,6 @@ export class CalTemplatesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.templates = [
-      { id: 1, name: 'Standard Hours', description: 'Standard work week hours' },
-      { id: 2, name: 'Short Friday', description: 'Standard hours with 1-3 on Friday' },
-      { id: 3, name: 'Plus Sat Morning', description: 'Standard hours plus short Saturday' },
-      { id: 4, name: 'Wednesday Exempt', description: 'Standard week minus Wed for monthly conference' }
-    ];
-
     // Handle mat-selection-list selection change via dom element so we can DeselectAll
     this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
       this.matSelectionList.deselectAll();
@@ -168,7 +161,6 @@ export class CalTemplatesComponent implements OnInit {
       this.templates = result;
 
       this.setFirstListItem();
-
     });
   }
 
@@ -215,7 +207,6 @@ export class CalTemplatesComponent implements OnInit {
           () => {
             // final
           })
-
     }
   }
 
@@ -250,10 +241,6 @@ export class CalTemplatesComponent implements OnInit {
 
   hideModals() {
     this.showDeleteItemModal = false;
-  }
-
-  onSelectionChange() {
-    // handling change in mat-select
   }
 
   private serializeDPDateWithZone() {

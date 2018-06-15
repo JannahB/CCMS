@@ -10,7 +10,7 @@ export const environment = {
 
   allowDeleteLookupItems: false,
   allowResetPasswordFeature: false,
-  allowAdminWorkflowFeature: false,
+  allowAdminWorkflowFeature: true,
   allowAdminCalendarFeature: false,
 
 
