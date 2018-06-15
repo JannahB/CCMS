@@ -2,7 +2,7 @@
 
   <!-- HEADER -->
   <div class="ui-g-12 pv-0">
-    <h1 class="page-header mt-0">Templates</h1>
+    <h1 class="page-header mt-0">Facility Hours</h1>
   </div>
 
   <div class="ui-g-12 card">
@@ -12,78 +12,121 @@
 
       <mat-form-field class="width-full">
         <input matInput name="tiSearch" #tiSearch="ngModel" placeholder="Search"
-            [(ngModel)]="selectedTemplate.searchText">
+            [(ngModel)]="searchText">
 
       </mat-form-field>
 
       <!-- LIST -->
-      <!-- (selectionChange)="onSelectionChange($event)" -->
       <mat-selection-list #matSelectionList  class="items-list">
-        <mat-list-option *ngFor="let item of templates; let i=index; let itm" [class.hi]="selected" [value]="item">
+        <mat-list-option *ngFor="let item of facilities; let i=index; let itm" [class.hi]="selected" [value]="item">
           {{ item.name }}
         </mat-list-option>
       </mat-selection-list>
 
-      <button mat-raised-button color="primary" (click)="createNewTemplate()" class="mt-15 width-full">
-        <mat-icon aria-label="Add template button">add</mat-icon>
-        New Template
+      <button mat-raised-button color="primary" (click)="createNewFacility()" class="mt-15 width-full">
+        <mat-icon aria-label="Add facility button">add</mat-icon>
+        New Facility
       </button>
     </div>
 
     <!-- Column 2 -->
     <div class="ui-g-10 ui-sm-12">
-      <div class="ui-g-4">
-        <!-- <h2 class="mb-0">{{selectedTemplate?.name}}</h2> -->
-
+      <div class="ui-g-4 pt-20">
         <mat-form-field class="width-full">
-          <input matInput name="tiName" #tiName="ngModel" placeholder="Template name"
+          <input matInput name="tiName" #tiName="ngModel" placeholder="Facility name"
               [required]="true"
-              [(ngModel)]="selectedTemplate.name">
+              [(ngModel)]="selectedFacility.name">
             <div class="ui-message ui-messages-error ui-corner-all large"
                 *ngIf="tiName.errors?.required && tiName.touched" >
-                Please enter a Template Name
+                Please enter a Facility Name
             </div>
         </mat-form-field>
 
       </div>
-      <div class="ui-g-8 ta-r">
-        <mat-form-field class="width-full">
-          <input matInput name="tiDescription" #tiDescription="ngModel" placeholder="Template description"
-              [required]="true"
-              [(ngModel)]="selectedTemplate.description">
-            <div class="ui-message ui-messages-error ui-corner-all"
-                *ngIf="tiDescription.errors?.required && tiDescription.touched" >
-                Please enter a Template Description
-            </div>
-        </mat-form-field>
+      <div class="ui-g-8">
+
+        <label class="minimal primary block">Facility Tags</label>
+        <span class="ui-fluid">
+          <p-autoComplete name="acTags" #acTags="ngModel"
+              [required]="false"
+              field="name"
+              [(ngModel)]="selectedFacility.tags"
+              [suggestions]="filteredTags"
+              (completeMethod)="getTagsToFilter($event)"
+              styleClass="width-full"
+              [minLength]="1"
+              [dropdown]="true"
+              appendTo="body"
+              [multiple]="true">
+          </p-autoComplete>
+        </span>
+        <!-- <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="acTags.errors?.required && acTags.touched" >
+              One or more Facility Tags are required.
+        </div> -->
       </div>
 
       <div class="ui-g-12">
-        <div class="" *ngIf="selectedTemplate">
-          <p class="mv-0 muted-label">Click and drag to mark available hours. </p>
+        <div class="ui-g-3">
+          <label class="minimal primary block">Work Week</label>
+          <p-calendar id="dtWorkWeek" name="dtWorkWeek" #dtWorkWeek
+                [required]="true"
+                [disabled]="false"
+                [(ngModel)]="selectedWorkWeek"
+                dateFormat="mm/dd/yy"
+                placeholder="Work Week"
+                [showIcon]="true"
+                yearRange="2018:2038"
+                [yearNavigator]="false"
+                appendTo="body" ></p-calendar>
+                <!-- (onSelect)="generalDetailsOnBlur($event)" -->
+        </div>
+        <div class="ui-g-9 ta-r pt-25">
+          <!-- BUTTONS TO GO HERE ----------- -->
+          <button type="button"
+                  label="Choose Template"
+                  (click)="onChooseTemplate()"
+                  [disabled]="!selectedWorkWeek || !selectedFacility"
+                  class="ui-button-secondary smaller" pButton></button>
+          <button type="button"
+                  label="Save as Template"
+                  (click)="saveAsTemplate()"
+                  [disabled]="!selectedWorkWeek || !selectedFacility"
+                  class="ui-button-secondary smaller" pButton></button>
+          <button type="button"
+                  label="Apply to Future Weeks"
+                  (click)="applyToFutureWeeks()"
+                  [disabled]="!selectedWorkWeek || !selectedFacility"
+                  class="ui-button-secondary smaller"
+                  pButton></button>
+        </div>
+      </div>
+
+      <div class="ui-g-12">
+        <div class="" *ngIf="selectedFacility">
 
           <!-- CALENDAR -->
-          <daypilot-scheduler [config]="config" [events]="selectedTemplate.days" #scheduler></daypilot-scheduler>
+          <daypilot-scheduler [config]="config" [events]="selectedFacility.days" #scheduler></daypilot-scheduler>
 
+          <p class="mv-0 muted-label">Click and drag to mark available hours. </p>
         </div>
         <div class="ta-r">
-            <!-- <button label="Save Template" type="button" pButton icon="fa-check" (click)="hideModals()"></button> -->
-            <button mat-raised-button color="primary" (click)="deleteDataItemRequest()" class="mt-30 fl">
-              <mat-icon aria-label="Add template button">delete</mat-icon>
-              Delete Template
+            <button mat-raised-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
+              <mat-icon aria-label="Add facility button">delete</mat-icon>
+              Delete Facility
             </button>
             <button mat-raised-button color="primary" (click)="saveItem()" class="mt-30">
-              <mat-icon aria-label="Add template button">check</mat-icon>
-              Save Template
+              <mat-icon aria-label="Add facility button">check</mat-icon>
+              Save Facility
             </button>
-            <button mat-raised-button color="primary" (click)="cancelDataItemEdit()" class="mt-30">
-              <mat-icon aria-label="Add template button">clear</mat-icon>
+            <button mat-raised-button color="secondary" (click)="cancelDataItemEdit()" class="mt-30">
+              <mat-icon aria-label="Add facility button">clear</mat-icon>
               Cancel
             </button>
         </div>
       </div>
       <div class="ui-g-12">
-          <pre>{{selectedTemplate | json}}</pre>
+          <pre>{{selectedFacility | json}}</pre>
       </div>
     </div>
 

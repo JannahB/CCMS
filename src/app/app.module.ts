@@ -118,6 +118,7 @@ import { NewPasswordComponent } from './login/new-password/new-password.componen
 import { ReferenceDataIdToNamePipe } from './common/pipes/reference-data-id-to-name.pipe';
 import { NamePipe } from './common/pipes/name.pipe';
 import { CalendarService } from './common/services/http/calendar.service';
+import { CalFacilityService } from './common/services/http/calFacility.service';
 
 
 
@@ -240,6 +241,7 @@ import { CalendarService } from './common/services/http/calendar.service';
     AdminUserService,
     CourtService,
     CalendarService,
+    CalFacilityService,
     AppStateService,
     {
       provide: HTTP_INTERCEPTORS,

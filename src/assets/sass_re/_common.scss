@@ -63,28 +63,28 @@ label {
 }
 
 .primary{
-  color: #1A87BF;
+  color: #1A87BF !important;
 }
 .smaller {
-  font-size: 0.8em;
+  font-size: 0.8em !important;
 }
 .larger {
-  font-size: 1.25em;
+  font-size: 1.25em !important;
 }
 .large {
-  font-size: 1.5em;
+  font-size: 1.5em !important;
 }
 .text-muted {
-  color: #777777;
+  color: #777777 !important;
 }
 
 .muted-label{
-  font-size: 0.8em;
-  color: #777777;
+  font-size: 0.8em !important;
+  color: #777777 !important;
 }
 
 .muted {
-  color: #777777;
+  color: #777777 !important;
 }
 
 .col-button {

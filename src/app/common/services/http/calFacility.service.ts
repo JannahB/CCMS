@@ -1,4 +1,4 @@
-import { CalTemplateTime } from './../../entities/CalTemplateTime';
+import { CalFacilityTime } from './../../entities/CalFacilityTime';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Rx';
@@ -9,7 +9,7 @@ import { DayPilot } from 'daypilot-pro-angular';
 
 
 @Injectable()
-export class CalendarService extends HttpBaseService<any> {
+export class CalFacilityService extends HttpBaseService<any> {
 
   private mockFile: string = '';
 
@@ -24,17 +24,17 @@ export class CalendarService extends HttpBaseService<any> {
 
   // Override Base URL's set in Super
   protected getBaseUrl(): string {
-    return `${super.getBaseUrl()}/api/templates`;
+    return `${super.getBaseUrl()}/api/facilities`;
   }
 
   protected getBaseMockUrl(): string {
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
   }
 
-  deleteTemplateTimeBlock(id) {
-    let url: string = `${super.getBaseUrl()}/api/template-times/${id}`;
+  deleteFacilityTimeBlock(id) {
+    let url: string = `${super.getBaseUrl()}/api/facility-times/${id}`;
     return this.http
-      .delete<CalTemplateTime>(url)
+      .delete<CalFacilityTime>(url)
   }
 
 

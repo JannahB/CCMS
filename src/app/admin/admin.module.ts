@@ -8,7 +8,7 @@ import { DataComponent } from './data/data.component';
 import { AdminComponent } from './admin.component';
 import { CaseTypesComponent } from './data/case-types/case-types.component';
 import { CasePhasesComponent } from './data/case-phases/case-phases.component';
-import { ButtonModule, DropdownModule, DialogModule } from 'primeng/primeng';
+import { AutoCompleteModule, ButtonModule, CalendarModule, DropdownModule, DialogModule } from 'primeng/primeng';
 import { CustomMaterialModule } from '../common/modules/customMaterial.module';
 import { CaseStatusesComponent } from './data/case-statuses/case-statuses.component';
 import { CourtLocationsComponent } from './data/court-locations/court-locations.component';
@@ -24,6 +24,8 @@ import { DayPilotModule } from "daypilot-pro-angular";
 
 @NgModule({
   imports: [
+    AutoCompleteModule,
+    CalendarModule,
     CommonModule,
     FormsModule,
     AdminRoutingModule,

@@ -21,7 +21,6 @@ export class CalTemplatesComponent implements OnInit {
   @ViewChild(MatSelectionList)
   matSelectionList: MatSelectionList;
 
-  events: any[] = [];
   templates: any[] = [];
   selectedTemplate: any;
   selectedTemplateBak: any;
@@ -135,6 +134,9 @@ export class CalTemplatesComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.templates = [];
+
     // Handle mat-selection-list selection change via dom element so we can DeselectAll
     this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
       this.matSelectionList.deselectAll();
@@ -154,9 +156,6 @@ export class CalTemplatesComponent implements OnInit {
   ngAfterViewInit(): void {
     var from = this.scheduler.control.visibleStart();
     var to = this.scheduler.control.visibleEnd();
-    this.calendarSvc.getEvents(from, to).subscribe(result => {
-      this.events = result;
-    });
     this.calendarSvc.get().subscribe(result => {
       console.log('templates', result);
       this.templates = result;

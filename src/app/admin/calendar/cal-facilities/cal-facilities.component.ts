@@ -1,3 +1,5 @@
+import { CalFacilityService } from './../../../common/services/http/calFacility.service';
+import { CalFacilityTag } from './../../../common/entities/CalFacilityTag';
 import { ToastService } from './../../../common/services/utility/toast.service';
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import { BreadcrumbService } from './../../../breadcrumb.service';
@@ -7,6 +9,7 @@ import { CalendarService } from './../../../common/services/http/calendar.servic
 
 import * as moment from 'moment';
 import { CalTemplate } from '../../../common/entities/CalTemplate';
+import { CalFacility } from '../../../common/entities/CalFacility';
 
 @Component({
   selector: 'app-cal-facilities',
@@ -21,12 +24,18 @@ export class CalFacilitiesComponent implements OnInit {
   @ViewChild(MatSelectionList)
   matSelectionList: MatSelectionList;
 
-  events: any[] = [];
-  templates: any[] = [];
-  selectedTemplate: any;
-  selectedTemplateBak: any;
-  selectedTemplateIdx: number;
+  facilities: any[] = [];
+  selectedFacility: any;
+  selectedFacilityBak: any;
+  selectedFacilityIdx: number;
   showDeleteItemModal: boolean = false;
+  selectedWorkWeek: any;
+  searchText: String;
+
+  facilityTags: any[];
+  selectedTags: CalFacilityTag[];
+  filteredTags: CalFacilityTag[];
+
 
   config: any = {
     viewType: "Days",
@@ -87,10 +96,12 @@ export class CalFacilitiesComponent implements OnInit {
     onBeforeResHeaderRender: args => {
       let dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       // console.log("args.resource.html", args.resource);
-      args.resource.html = dow[args.resource.index];
+
+      // To Show day of week only use
+      // args.resource.html = dow[args.resource.index];
 
       // To Show Day & Date use
-      // args.resource.html = dow[args.resource.index] + ' ' + args.resource.html;
+      args.resource.html = dow[args.resource.index] + ' ' + args.resource.html;
 
       if (args.resource.loaded === false) {
         args.resource.html += " (loaded dynamically)";
@@ -110,7 +121,7 @@ export class CalFacilitiesComponent implements OnInit {
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
       // delete TemplateTime data.id
-      this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)
+      this.calFacilitySvc.deleteFacilityTimeBlock(args.e.data.id)
         .subscribe(result => {
           this.toastSvc.showInfoMessage('Time block deleted.');
         });
@@ -120,13 +131,13 @@ export class CalFacilitiesComponent implements OnInit {
 
 
   constructor(
-    private calendarSvc: CalendarService,
+    private calFacilitySvc: CalFacilityService,
     private breadCrumbSvc: BreadcrumbService,
     private toastSvc: ToastService
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Admin Calendars', routerLink: ['/admin/calendar'] },
-      { label: 'Templates', routerLink: ['/admin/calendar/templates'] }
+      { label: 'Facility Hours', routerLink: ['/admin/calendar/facilities'] }
     ]);
 
     let now = moment();
@@ -135,15 +146,22 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.facilities = [];
+    this.facilityTags = [
+      { id: 1, name: 'Jury Room' },
+      { id: 2, name: 'Near Detention Center' }
+    ];
+    this.filteredTags = this.facilityTags;
+
     // Handle mat-selection-list selection change via dom element so we can DeselectAll
     this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
       this.matSelectionList.deselectAll();
       event.option.selected = true;
-      this.selectedTemplate = event.option.value;
+      this.selectedFacility = event.option.value;
       this.copySelectedItem();
     });
 
-    this.selectedTemplate = this.templates[0];
+    this.selectedFacility = new CalFacility();
   }
 
   ngOnDestroy() {
@@ -153,32 +171,30 @@ export class CalFacilitiesComponent implements OnInit {
   ngAfterViewInit(): void {
     var from = this.scheduler.control.visibleStart();
     var to = this.scheduler.control.visibleEnd();
-    this.calendarSvc.getEvents(from, to).subscribe(result => {
-      this.events = result;
-    });
-    this.calendarSvc.get().subscribe(result => {
-      console.log('templates', result);
-      this.templates = result;
+
+    this.calFacilitySvc.get().subscribe(result => {
+      console.log('facilities', result);
+      this.facilities = result;
 
       this.setFirstListItem();
     });
   }
 
-  createNewTemplate() {
+  createNewFacility() {
     this.matSelectionList.deselectAll();
-    this.selectedTemplate = new CalTemplate();
+    this.selectedFacility = new CalFacility();
     this.copySelectedItem();
   }
 
   saveItem() {
-    console.log('1 Saving template:', this.selectedTemplate)
+    console.log('1 Saving facility:', this.selectedFacility)
 
     this.serializeDPDateWithZone();
 
-    if (this.selectedTemplate.id) {
-      console.log('2 Saving template:', this.selectedTemplate)
+    if (this.selectedFacility.id) {
+      console.log('2 Saving facility:', this.selectedFacility)
       // Update existing item PUT
-      this.calendarSvc.put(this.selectedTemplate.id, this.selectedTemplate)
+      this.calFacilitySvc.put(this.selectedFacility.id, this.selectedFacility)
         .subscribe(result => {
           this.updateList(result);
           this.hideModals();
@@ -193,7 +209,7 @@ export class CalFacilitiesComponent implements OnInit {
           })
     } else {
       // Add new item POST
-      this.calendarSvc.post(this.selectedTemplate)
+      this.calFacilitySvc.post(this.selectedFacility)
         .subscribe(result => {
           console.log('result', result);
           this.updateList(result);
@@ -211,8 +227,8 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   cancelDataItemEdit(event) {
-    this.selectedTemplate = Object.assign(new CalTemplate(), this.selectedTemplateBak);
-    this.templates[this.selectedTemplateIdx] = this.selectedTemplate;
+    this.selectedFacility = Object.assign(new CalTemplate(), this.selectedFacilityBak);
+    this.facilities[this.selectedFacilityIdx] = this.selectedFacility;
   }
 
   deleteDataItemRequest() {
@@ -224,11 +240,11 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.calendarSvc.delete(this.selectedTemplate.id)
+    this.calFacilitySvc.delete(this.selectedFacility.id)
       .subscribe(result => {
         this.toastSvc.showSuccessMessage('The item has been deleted.');
-        this.templates.splice(this.getIndexOfItem(), 1);
-        this.selectedTemplate = this.templates[0];
+        this.facilities.splice(this.getIndexOfItem(), 1);
+        this.selectedFacility = this.facilities[0];
       },
         (error) => {
           console.log(error);
@@ -243,9 +259,22 @@ export class CalFacilitiesComponent implements OnInit {
     this.showDeleteItemModal = false;
   }
 
+  onChooseTemplate() {
+    // TODO: Handle this
+  }
+
+  saveAsTemplate() {
+    // TODO: Handle this
+  }
+
+  applyToFutureWeeks() {
+    // TODO: Handle this
+  }
+
+
   private serializeDPDateWithZone() {
     // Serialize the Time Blocks before saving
-    this.selectedTemplate.days.forEach(block => {
+    this.selectedFacility.days.forEach(block => {
       // if a block is new, stretched or moved, the start and/or end date will be
       // converted to a DayPilot.Date which uses '.value' to hold the string date
       if (block.start.value) {
@@ -262,11 +291,27 @@ export class CalFacilitiesComponent implements OnInit {
     });
   }
 
+  getTagsToFilter(event) {
+    let query = event.query;
+    this.filteredTags = this.filterTags(query, this.facilityTags);
+  }
+
+  filterTags(query, facilityTags: any[]): any[] {
+    let filtered: any[] = [];
+    for (let i = 0; i < facilityTags.length; i++) {
+      let tag = facilityTags[i];
+      if (tag.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(tag);
+      }
+    }
+    return filtered;
+  }
+
   private setFirstListItem() {
-    if (!this.templates || !this.templates.length)
+    if (!this.facilities || !this.facilities.length)
       return;
 
-    this.selectedTemplate = this.templates[0];
+    this.selectedFacility = this.facilities[0];
     this.copySelectedItem();
     setTimeout(() => {
       if (this.matSelectionList.options.first)
@@ -278,19 +323,19 @@ export class CalFacilitiesComponent implements OnInit {
     let index: number = this.getIndexOfItem(result);
 
     if (index >= 0) {
-      this.templates[index] = result;
+      this.facilities[index] = result;
     } else {
-      this.templates.push(result);
+      this.facilities.push(result);
     }
   }
 
   private copySelectedItem() {
-    this.selectedTemplateBak = Object.assign({}, this.selectedTemplate);
-    this.selectedTemplateIdx = this.getIndexOfItem(this.selectedTemplate);
+    this.selectedFacilityBak = Object.assign({}, this.selectedFacility);
+    this.selectedFacilityIdx = this.getIndexOfItem(this.selectedFacility);
   }
 
-  private getIndexOfItem(item = this.selectedTemplate): number {
-    return this.templates
+  private getIndexOfItem(item = this.selectedFacility): number {
+    return this.facilities
       .findIndex(itm => itm.id == item.id);
   }
 
