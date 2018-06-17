@@ -149,7 +149,8 @@ export class CalFacilitiesComponent implements OnInit {
     this.facilities = [];
     this.facilityTags = [
       { id: 1, name: 'Jury Room' },
-      { id: 2, name: 'Near Detention Center' }
+      { id: 2, name: 'Near Detention Center' },
+      { id: 3, name: 'Video Conferencing' },
     ];
     this.filteredTags = this.facilityTags;
 

@@ -1,3 +1,117 @@
-<p>
-  cal-resources works!
-</p>
+<div class="ui-g">
+
+    <!-- HEADER -->
+    <div class="ui-g-12 pv-0">
+      <h1 class="page-header mt-0">Resource Hours</h1>
+    </div>
+
+    <div class="ui-g-12 card">
+
+      <!-- Column 1 -->
+      <div class="ui-g-2 ui-sm-12 mt-25">
+
+        <mat-form-field class="width-full">
+          <input matInput name="tiSearch" #tiSearch="ngModel" placeholder="Search"
+              [(ngModel)]="searchText">
+
+        </mat-form-field>
+
+        <!-- LIST -->
+        <mat-selection-list #matSelectionList  class="items-list">
+          <mat-list-option *ngFor="let item of resources; let i=index; let itm" [class.hi]="selected" [value]="item">
+            {{ item.name }}
+          </mat-list-option>
+        </mat-selection-list>
+
+        <!-- <button mat-raised-button color="primary" (click)="createNewFacility()" class="mt-15 width-full">
+          <mat-icon aria-label="Add facility button">add</mat-icon>
+          New Facility
+        </button> -->
+      </div>
+
+      <!-- Column 2 -->
+      <div class="ui-g-10 ui-sm-12">
+
+        <div class="ui-g-12 pt-20">
+          <h2>Justice Gonzales</h2>
+        </div>
+
+        <div class="ui-g-12">
+          <div class="ui-g-3">
+            <label class="minimal primary block">Work Week</label>
+            <p-calendar id="dtWorkWeek" name="dtWorkWeek" #dtWorkWeek
+                  [required]="true"
+                  [disabled]="false"
+                  [(ngModel)]="selectedWorkWeek"
+                  dateFormat="mm/dd/yy"
+                  placeholder="Work Week"
+                  [showIcon]="true"
+                  yearRange="2018:2038"
+                  [yearNavigator]="false"
+                  appendTo="body" ></p-calendar>
+                  <!-- (onSelect)="generalDetailsOnBlur($event)" -->
+          </div>
+          <div class="ui-g-9 ta-r pt-25">
+            <!-- BUTTONS TO GO HERE ----------- -->
+            <button type="button"
+                    label="Choose Template"
+                    (click)="onChooseTemplate()"
+                    [disabled]="!selectedWorkWeek || !selectedFacility"
+                    class="ui-button-secondary smaller" pButton></button>
+            <button type="button"
+                    label="Save as Template"
+                    (click)="saveAsTemplate()"
+                    [disabled]="!selectedWorkWeek || !selectedFacility"
+                    class="ui-button-secondary smaller" pButton></button>
+            <button type="button"
+                    label="Apply to Future Weeks"
+                    (click)="applyToFutureWeeks()"
+                    [disabled]="!selectedWorkWeek || !selectedFacility"
+                    class="ui-button-secondary smaller"
+                    pButton></button>
+          </div>
+        </div>
+
+        <div class="ui-g-12">
+          <div class="" *ngIf="selectedFacility">
+
+            <!-- CALENDAR -->
+            <daypilot-scheduler [config]="config" [events]="selectedFacility.days" #scheduler></daypilot-scheduler>
+
+            <p class="mv-0 muted-label">Click and drag to mark available hours. </p>
+          </div>
+          <div class="ta-r">
+              <button mat-raised-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
+                <mat-icon aria-label="Add facility button">delete</mat-icon>
+                Delete Resource Hours
+              </button>
+              <button mat-raised-button color="primary" (click)="saveItem()" class="mt-30">
+                <mat-icon aria-label="Add facility button">check</mat-icon>
+                Save Resource
+              </button>
+              <button mat-raised-button color="secondary" (click)="cancelDataItemEdit()" class="mt-30">
+                <mat-icon aria-label="Add facility button">clear</mat-icon>
+                Cancel
+              </button>
+          </div>
+        </div>
+        <div class="ui-g-12">
+            <pre>{{selectedFacility | json}}</pre>
+        </div>
+      </div>
+
+      <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteItemModal" [responsive]="true" showEffect="fade" [modal]="true"
+        [closable]="false">
+        <div>Are you sure you want to delete this item?</div>
+        <p-footer>
+          <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
+            <button label="Yes" type="button" pButton icon="fa-check" (click)="deleteDataItem()"></button>
+          </div>
+        </p-footer>
+      </p-dialog>
+
+
+
+    </div>
+  </div>
