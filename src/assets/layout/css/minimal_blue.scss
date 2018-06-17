@@ -1,81 +1,55 @@
-
-/* 
-
+/*
 DayPilot Scheduler Theme
 https://themes.daypilot.org/scheduler/theme/pgaii6
 
 Theme Designer Version: 2017.05.15.1032
-
 */
 
-.minimal_blue_main 
-{
+.minimal_blue_main {
 	border: 1px solid #e1e1e1;
 }
 
-.minimal_blue_main, .minimal_blue_main td 
-{
+.minimal_blue_main, .minimal_blue_main td {
 	font-family: Roboto, Arial, Helvetica, sans-serif;
 	font-size: 12px;
 }
 
-.minimal_blue_event { 
-	
+.minimal_blue_event {
 	-moz-border-radius: 1px;
 	-webkit-border-radius: 1px;
 	border-radius: 1px;
-	
 }
 
-.minimal_blue_event { 
+.minimal_blue_event {
 	color: #ffffff;
 }
 
-.minimal_blue_event_inner { 
+.minimal_blue_event_inner {
 	position: absolute;
-	
 	left: 0px;
 	right: 0px;
 	top: 0px;
 	bottom: 0px;
-	
 	margin: 1px;
 	overflow: hidden;
-
 	background-color: #03a9f4;
-	
-	
 	-moz-border-radius: 1px;
 	-webkit-border-radius: 1px;
 	border-radius: 1px;
-	
-	
 	padding: 4px;
-	
-	
-	
 	border: 1px solid #0495d9;
-	
-	
-	
-	
-	
 }
 
 .minimal_blue_timeheadergroup,
-.minimal_blue_timeheadercol
-{
+.minimal_blue_timeheadercol {
 	color: #777777;
 	background: #f9f9f9;
-	
 }
 
 .minimal_blue_rowheader,
-.minimal_blue_corner
-{
+.minimal_blue_corner {
 	color: #777777;
 	background: #f9f9f9;
-	
 }
 
 .minimal_blue_rowheader_inner {
@@ -83,14 +57,12 @@ Theme Designer Version: 2017.05.15.1032
 }
 
 .minimal_blue_timeheadergroup,
-.minimal_blue_timeheadercol
-{
+.minimal_blue_timeheadercol {
 	text-align: center;
 }
 
 .minimal_blue_timeheadergroup_inner,
-.minimal_blue_timeheadercol_inner
-{
+.minimal_blue_timeheadercol_inner {
 	position: absolute;
 	left: 0px;
 	right: 0px;
@@ -107,55 +79,42 @@ Theme Designer Version: 2017.05.15.1032
 .minimal_blue_divider,
 .minimal_blue_splitter,
 .minimal_blue_divider_horizontal,
-.minimal_blue_resourcedivider 
-{
+.minimal_blue_resourcedivider {
 	background-color: #e1e1e1;
 }
 
 .minimal_blue_matrix_vertical_line,
-.minimal_blue_matrix_horizontal_line 
-{
+.minimal_blue_matrix_horizontal_line {
 	background-color: #eeeeee;
 }
 
-.minimal_blue_cell 
-{
+.minimal_blue_cell {
 	background: #f9f9f9;
 }
 
-.minimal_blue_cell.minimal_blue_cell_business 
-{
+.minimal_blue_cell.minimal_blue_cell_business {
 	background: #ffffff;
 }
 
-.minimal_blue_message 
-{
+.minimal_blue_message {
 	padding: 10px;
 	opacity: 0.9;
 	filter: alpha(opacity=90);
-	
 	color: #ffffff;
 	background: #25bf6b;
-	
 }
 
-.minimal_blue_shadow_inner 
-{
+.minimal_blue_shadow_inner {
 	background-color: #666666;
 	opacity: 0.5;
 	filter: alpha(opacity=50);
 	height: 100%;
-	
 	-moz-border-radius: 1px;
 	-webkit-border-radius: 1px;
 	border-radius: 1px;
-	
 }
 
-
-
-.minimal_blue_matrix_vertical_break 
-{
+.minimal_blue_matrix_vertical_break {
 	background-color: #000;
 }
 
@@ -172,8 +131,7 @@ Theme Designer Version: 2017.05.15.1032
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAIAAABv85FHAAAAKXRFWHRDcmVhdGlvbiBUaW1lAHDhIDMwIEkgMjAwOSAwODo0NjozMSArMDEwMClDkt4AAAAHdElNRQfZAR4HLxB+p9DXAAAACXBIWXMAAA7CAAAOwgEVKEqAAAAABGdBTUEAALGPC/xhBQAAAENJREFUeNpjrK6s5uTl/P75OybJ0NLW8h8bAIozgeSxAaA4E1A7VjmgOAtEHyMjI7IE0EygOAtEH5CDqY9c+xjx+A8ANndK9WaZlP4AAAAASUVORK5CYII=);
 }
 
-.minimal_blue_columnheader 
-{
+.minimal_blue_columnheader {
 }
 
 .minimal_blue_columnheader_inner {
@@ -181,12 +139,14 @@ Theme Designer Version: 2017.05.15.1032
 }
 
 .minimal_blue_columnheader_cell {
-    background: -webkit-gradient(linear, left top, right top, from(#eeeeee), to(#dddddd));
-    background: -moz-linear-gradient(left, #eeeeee 0%, #dddddd);
-    background: -ms-linear-gradient(left, #eeeeee 0%, #dddddd);
-    background: -webkit-linear-gradient(left, #eeeeee 0%, #dddddd);
-    background: linear-gradient(left, #eeeeee 0%, #dddddd);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr="#eeeeee", endColorStr="#dddddd", GradientType=1);
+  background: rgba(238,238,238,1);
+  background: -moz-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(221,221,221,1) 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(238,238,238,1)), color-stop(100%, rgba(221,221,221,1)));
+  background: -webkit-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(221,221,221,1) 100%);
+  background: -o-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(221,221,221,1) 100%);
+  background: -ms-linear-gradient(top, rgba(238,238,238,1) 0%, rgba(221,221,221,1) 100%);
+  background: linear-gradient(to bottom, rgba(238,238,238,1) 0%, rgba(221,221,221,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#dddddd', GradientType=0 );
 }
 
 .minimal_blue_columnheader_splitter {
@@ -195,7 +155,7 @@ Theme Designer Version: 2017.05.15.1032
     filter: alpha(opacity=50);
 }
 .minimal_blue_columnheader_cell_inner {
-    padding: 2px;   
+    padding: 2px;
 }
 
 .minimal_blue_timeheader_float_inner {
@@ -203,10 +163,7 @@ Theme Designer Version: 2017.05.15.1032
 }
 
 .minimal_blue_event_float_inner {
-	
-	
     padding: 5px 4px 4px 9px;
-	
 }
 
 .minimal_blue_event_float_inner:after {
@@ -217,38 +174,40 @@ Theme Designer Version: 2017.05.15.1032
     width:0;
     height:0;
     position:absolute;
-	
-	top:6px;
+  	top:6px;
     left:-4px;
 }
 
 .minimal_blue_event_move_left {
-	box-sizing: border-box; 
+	box-sizing: border-box;
 	padding:2px;
 	border:1px solid #ccc;
 	background:#fff;
-	background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#eeeeee));
-	background: -webkit-linear-gradient(top, #ffffff 0%, #eeeeee);
-	background: -moz-linear-gradient(top, #ffffff 0%, #eeeeee);
-	background: -ms-linear-gradient(top, #ffffff 0%, #eeeeee);
-	background: -o-linear-gradient(top, #ffffff 0%, #eeeeee);
-	background: linear-gradient(top, #ffffff 0%, #eeeeee);
-	filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr="#ffffff", endColorStr="#eeeeee");
+	background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(238,238,238,1) 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255,255,255,1)), color-stop(100%, rgba(238,238,238,1)));
+  background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(238,238,238,1) 100%);
+  background: -o-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(238,238,238,1) 100%);
+  background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(238,238,238,1) 100%);
+  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(238,238,238,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0 );
+
 }
 
 .minimal_blue_event_move_right {
-	box-sizing: border-box; 
+	box-sizing: border-box;
 	padding:2px;
 	border:1px solid #ccc;
 	background:#fff;
-	background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#eeeeee));
-	background: -webkit-linear-gradient(top, #ffffff 0%, #eeeeee);
-	background: -moz-linear-gradient(top, #ffffff 0%, #eeeeee);
-	background: -ms-linear-gradient(top, #ffffff 0%, #eeeeee);
-	background: -o-linear-gradient(top, #ffffff 0%, #eeeeee);
-	background: linear-gradient(top, #ffffff 0%, #eeeeee);
-	filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr="#ffffff", endColorStr="#eeeeee");
+	background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(238,238,238,1) 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255,255,255,1)), color-stop(100%, rgba(238,238,238,1)));
+  background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(238,238,238,1) 100%);
+  background: -o-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(238,238,238,1) 100%);
+  background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(238,238,238,1) 100%);
+  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(238,238,238,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0 );
+
 }
+
 
 .minimal_blue_event_delete {
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjExR/NCNwAAAI5JREFUKFNtkLERgCAMRbmzdK8s4gAUlhYOYEHJEJYOYOEwDmGBPxC4kOPfvePy84MGR0RJ2N1A8H3N6DATwSQ57m2ql8NBG+AEM7D+UW+wjdfUPgerYNgB5gOLRHqhcasg84C2QxPMtrUhSqQIhg7ypy9VM2EUZPI/4rQ7rGxqo9sadTegw+UdjeDLAKUfhbaQUVPIfJYAAAAASUVORK5CYII=) center center no-repeat; opacity: 0.6; -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=60)';

@@ -38,6 +38,7 @@ export class CalFacilitiesComponent implements OnInit {
 
 
   config: any = {
+    theme: "minimal_blue",
     viewType: "Days",
     showNonBusiness: false,
     businessBeginsHour: 8,

@@ -40,6 +40,7 @@ export class CalResourcesComponent implements OnInit {
 
 
   config: any = {
+    theme: "minimal_blue",
     viewType: "Days",
     showNonBusiness: false,
     businessBeginsHour: 8,

@@ -28,6 +28,7 @@ export class CalTemplatesComponent implements OnInit {
   showDeleteItemModal: boolean = false;
 
   config: any = {
+    theme: "minimal_blue",
     viewType: "Days",
     showNonBusiness: false,
     businessBeginsHour: 8,
