@@ -32,7 +32,7 @@ export class CalTemplateService extends HttpBaseService<any> {
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
   }
 
-  saveTemplate(item: CalTemplate): Observable<CalTemplate> {
+  save(item: CalTemplate): Observable<CalTemplate> {
     item.days = this.serializeDPDateWithZone(item.days);
     if (item.id)
       return super.put(item.id, item);
@@ -50,12 +50,6 @@ export class CalTemplateService extends HttpBaseService<any> {
       }
       if (block.end.value) {
         block.end = block.end.value + "Z";
-      }
-      // if a guid (assigned to new blocks by calendar) then change to a
-      // number that will be overwritten by server to a server long type
-      if (block.id.length == 36) {
-        // delete block.id
-        block.id = Math.round((Math.random() * 10000000000000000));
       }
     });
     return days;
