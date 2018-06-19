@@ -1,11 +1,11 @@
-import { ToastService } from './../../../common/services/utility/toast.service';
-import { MatSelectionList, MatSelectionListChange } from '@angular/material';
-import { BreadcrumbService } from './../../../breadcrumb.service';
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
-import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
-import { CalendarService } from './../../../common/services/http/calendar.service';
-
+import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import * as moment from 'moment';
+import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
+
+import { BreadcrumbService } from './../../../breadcrumb.service';
+import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
+import { ToastService } from './../../../common/services/utility/toast.service';
 import { CalTemplate } from '../../../common/entities/CalTemplate';
 
 @Component({
@@ -127,7 +127,7 @@ export class CalTemplatesComponent implements OnInit {
 
 
   constructor(
-    private calendarSvc: CalendarService,
+    private calendarSvc: CalTemplateService,
     private breadCrumbSvc: BreadcrumbService,
     private toastSvc: ToastService
   ) {
