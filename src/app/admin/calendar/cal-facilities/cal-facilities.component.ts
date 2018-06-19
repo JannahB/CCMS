@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
+import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
+import { BreadcrumbService } from './../../../breadcrumb.service';
+import { ToastService } from './../../../common/services/utility/toast.service';
 import { CalTemplate } from '../../../common/entities/CalTemplate';
 import { CalFacility } from '../../../common/entities/CalFacility';
-import { CalFacilityService } from './../../../common/services/http/calFacility.service';
 import { CalFacilityTag } from './../../../common/entities/CalFacilityTag';
-import { ToastService } from './../../../common/services/utility/toast.service';
-import { MatSelectionList, MatSelectionListChange } from '@angular/material';
-import { BreadcrumbService } from './../../../breadcrumb.service';
+import { CalFacilityService } from './../../../common/services/http/calFacility.service';
 
 @Component({
   selector: 'app-cal-facilities',
@@ -56,21 +56,41 @@ export class CalFacilitiesComponent implements OnInit {
     startDate: "2018-01-01",
     heightSpec: "Max",
     height: 300,
+    eventDoubleClickHandling: true,
+
     onTimeRangeSelected: args => {
-      DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
-        var dp = args.control;
-        dp.clearSelection();
+      let dp = args.control;
+      dp.events.add(new DayPilot.Event({
+        start: args.start,
+        end: args.end,
+        id: Math.round((Math.random() * 10000000000000000)),
+        resource: args.resource,
+        text: 'Available'
+      }));
+
+      // -------- MODAL EVENT NAMING - Use this block to present a naming modal to user ------
+      // DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
+      //   var dp = args.control;
+      //   dp.clearSelection();
+      //   if (!modal.result) { return; }
+      //   // id: Math.random() * 1000000/1000000,
+      //   dp.events.add(new DayPilot.Event({
+      //     start: args.start,
+      //     end: args.end,
+      //     id: DayPilot.guid(),
+      //     resource: args.resource,
+      //     text: modal.result
+      //   }));
+      // });
+    },
+
+    onEventDoubleClick: args => {
+      DayPilot.Modal.prompt("Edit Time Block:", args.e.data.text).then(function (modal) {
         if (!modal.result) { return; }
-        // id: Math.random() * 1000000/1000000,
-        dp.events.add(new DayPilot.Event({
-          start: args.start,
-          end: args.end,
-          id: DayPilot.guid(),
-          resource: args.resource,
-          text: modal.result
-        }));
+        args.e.data.text = modal.result;
       });
     },
+
     onBeforeRowHeaderRender: args => {
       let duration = args.row.events.totalDuration();
       if (duration.totalSeconds() === 0) {
@@ -122,6 +142,7 @@ export class CalFacilitiesComponent implements OnInit {
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
       // delete TemplateTime data.id
+      this.selectedFacility.days = this.selectedFacility.days.slice();
       this.calFacilitySvc.deleteFacilityTimeBlock(args.e.data.id)
         .subscribe(result => {
           this.toastSvc.showInfoMessage('Time block deleted.');
@@ -189,43 +210,22 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   saveItem() {
-    console.log('1 Saving facility:', this.selectedFacility)
+    console.log('BEFORE Save Facility:', this.selectedFacility);
 
-    this.serializeDPDateWithZone();
-
-    if (this.selectedFacility.id) {
-      console.log('2 Saving facility:', this.selectedFacility)
-      // Update existing item PUT
-      this.calFacilitySvc.put(this.selectedFacility.id, this.selectedFacility)
-        .subscribe(result => {
-          this.updateList(result);
-          this.hideModals();
-          this.toastSvc.showSuccessMessage('Item Updated');
+    this.calFacilitySvc.save(this.selectedFacility)
+      .subscribe(result => {
+        console.log('AFTER Save Facility:', this.selectedFacility);
+        this.updateList(result);
+        this.hideModals();
+        this.toastSvc.showSuccessMessage('Item Saved');
+      },
+        (error) => {
+          console.log(error);
+          this.toastSvc.showErrorMessage('There was an error saving the item.');
         },
-          (error) => {
-            console.log(error);
-            this.toastSvc.showErrorMessage('There was an error saving the item.');
-          },
-          () => {
-            // final
-          })
-    } else {
-      // Add new item POST
-      this.calFacilitySvc.post(this.selectedFacility)
-        .subscribe(result => {
-          console.log('result', result);
-          this.updateList(result);
-          this.hideModals();
-          this.toastSvc.showSuccessMessage('Item Saved');
-        },
-          (error) => {
-            console.log(error);
-            this.toastSvc.showErrorMessage('There was an error saving the item.');
-          },
-          () => {
-            // final
-          })
-    }
+        () => {
+          // final
+        })
   }
 
   cancelDataItemEdit(event) {
@@ -234,10 +234,6 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   deleteDataItemRequest() {
-    // if(!this.allowDeleteItems) {
-    //   this.toastSvc.showInfoMessage('Delete support is currently not available.');
-    //   return;
-    // }
     this.showDeleteItemModal = true;
   }
 
@@ -247,6 +243,7 @@ export class CalFacilitiesComponent implements OnInit {
         this.toastSvc.showSuccessMessage('The item has been deleted.');
         this.facilities.splice(this.getIndexOfItem(), 1);
         this.selectedFacility = this.facilities[0];
+        this.hideModals();
       },
         (error) => {
           console.log(error);
@@ -274,24 +271,7 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
 
-  private serializeDPDateWithZone() {
-    // Serialize the Time Blocks before saving
-    this.selectedFacility.days.forEach(block => {
-      // if a block is new, stretched or moved, the start and/or end date will be
-      // converted to a DayPilot.Date which uses '.value' to hold the string date
-      if (block.start.value) {
-        block.start = block.start.value + "Z";
-      }
-      if (block.end.value) {
-        block.end = block.end.value + "Z";
-      }
-      // if a guid (assigned to new blocks by calendar) then change to a
-      // number that will be overwritten by server to a server long type
-      if (block.id.length == 36) {
-        block.id = Math.round((Math.random() * 10000000000000000));
-      }
-    });
-  }
+  // -------- TAGS MULTI-SELECT METHODS ---------- //
 
   getTagsToFilter(event) {
     let query = event.query;
@@ -308,6 +288,7 @@ export class CalFacilitiesComponent implements OnInit {
     }
     return filtered;
   }
+
 
   private setFirstListItem() {
     if (!this.facilities || !this.facilities.length)
@@ -326,9 +307,13 @@ export class CalFacilitiesComponent implements OnInit {
 
     if (index >= 0) {
       this.facilities[index] = result;
+      this.selectedFacility = this.facilities[index];
     } else {
       this.facilities.push(result);
+      this.selectedFacility = this.facilities[this.facilities.length - 1];
     }
+    // This prevents event doubling phenom
+    this.selectedFacility.days = this.selectedFacility.days.slice();
   }
 
   private copySelectedItem() {
