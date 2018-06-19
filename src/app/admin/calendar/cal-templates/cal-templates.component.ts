@@ -113,7 +113,9 @@ export class CalTemplatesComponent implements OnInit {
       this.selectedTemplate.days = this.selectedTemplate.days.slice();
       console.log('days after delete and slice', this.selectedTemplate.days);
 
-      // // delete TemplateTime data.id
+      // NOTE: Deleting this individually causes 500 error
+      //       EntityNotFoundException: Unable to find org.ncsc.ccms.domain.TemplateTimes with id 68
+      //
       // this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)
       //   .subscribe(result => {
       //     this.toastSvc.showInfoMessage('Time block deleted.');
