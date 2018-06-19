@@ -89,10 +89,11 @@ export class CalFacilitiesComponent implements OnInit {
       args.row.columns[0].html = str + " hours";
     },
     onBeforeEventRender: args => {
-      var duration = new DayPilot.Duration(args.data.start, args.data.end);
-      args.data.areas = [
-        { right: 2, top: 6, height: 20, width: 30, html: duration.toString("h:mm") }
-      ];
+      // This adds the event duration ex: 4:00 on the event
+      // var duration = new DayPilot.Duration(args.data.start, args.data.end);
+      // args.data.areas = [
+      //   { right: 2, top: 6, height: 20, width: 30, html: duration.toString("h:mm") }
+      // ];
     },
     onBeforeResHeaderRender: args => {
       let dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
