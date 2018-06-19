@@ -26,6 +26,7 @@ export class CalTemplatesComponent implements OnInit {
   selectedTemplateBak: any;
   selectedTemplateIdx: number;
   showDeleteItemModal: boolean = false;
+  searchText: String = '';
 
   config: any = {
     theme: "minimal_blue",
@@ -47,21 +48,41 @@ export class CalTemplatesComponent implements OnInit {
     startDate: "2018-01-01",
     heightSpec: "Max",
     height: 300,
+    eventDoubleClickHandling: true,
+
     onTimeRangeSelected: args => {
-      DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
-        var dp = args.control;
-        dp.clearSelection();
+      let dp = args.control;
+      dp.events.add(new DayPilot.Event({
+        start: args.start,
+        end: args.end,
+        id: Math.round((Math.random() * 10000000000000000)),
+        resource: args.resource,
+        text: 'Available'
+      }));
+
+      // -------- MODAL EVENT NAMING - Use this block to present a naming modal to user ------
+      // DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
+      //   var dp = args.control;
+      //   dp.clearSelection();
+      //   if (!modal.result) { return; }
+      //   // id: Math.random() * 1000000/1000000,
+      //   dp.events.add(new DayPilot.Event({
+      //     start: args.start,
+      //     end: args.end,
+      //     id: DayPilot.guid(),
+      //     resource: args.resource,
+      //     text: modal.result
+      //   }));
+      // });
+    },
+
+    onEventDoubleClick: args => {
+      DayPilot.Modal.prompt("Edit Time Block:", args.e.data.text).then(function (modal) {
         if (!modal.result) { return; }
-        // id: Math.random() * 1000000/1000000,
-        dp.events.add(new DayPilot.Event({
-          start: args.start,
-          end: args.end,
-          id: DayPilot.guid(),
-          resource: args.resource,
-          text: modal.result
-        }));
+        args.e.data.text = modal.result;
       });
     },
+
     onBeforeRowHeaderRender: args => {
       let duration = args.row.events.totalDuration();
       if (duration.totalSeconds() === 0) {
@@ -79,7 +100,7 @@ export class CalTemplatesComponent implements OnInit {
       args.row.columns[0].html = str + " hours";
     },
     onBeforeEventRender: args => {
-      // This adds the event duration ex: 4:00 on the event
+      // This adds the event duration ex: 4:00 on the event; NOT needed
       // var duration = new DayPilot.Duration(args.data.start, args.data.end);
       // args.data.areas = [
       //   { right: 2, top: 6, height: 20, width: 30, html: duration.toString("h:mm") }
@@ -114,14 +135,17 @@ export class CalTemplatesComponent implements OnInit {
       this.selectedTemplate.days = this.selectedTemplate.days.slice();
       console.log('days after delete and slice', this.selectedTemplate.days);
 
-      // NOTE: Deleting this individually causes 500 error
-      //       EntityNotFoundException: Unable to find org.ncsc.ccms.domain.TemplateTimes with id 68
-      //
-      // this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)
-      //   .subscribe(result => {
-      //     this.toastSvc.showInfoMessage('Time block deleted.');
-      //   });
-      // console.log('delete', args);
+      if (args.e.data.id.length != 36) {
+        // NOTE: Deleting this individually causes 500 error
+        //       EntityNotFoundException: Unable to find org.ncsc.ccms.domain.TemplateTimes with id 68
+        //
+        this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)
+          .subscribe(result => {
+            this.selectedTemplate.days = this.selectedTemplate.days.slice();
+            this.toastSvc.showInfoMessage('Time block deleted.');
+          });
+        console.log('delete', args);
+      }
     }
   };
 
@@ -142,9 +166,7 @@ export class CalTemplatesComponent implements OnInit {
   }
 
   ngOnInit() {
-
     this.templates = [];
-
     // Handle mat-selection-list selection change via dom element so we can DeselectAll
     this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
       this.matSelectionList.deselectAll();
@@ -180,7 +202,7 @@ export class CalTemplatesComponent implements OnInit {
 
   saveItem() {
 
-    this.calendarSvc.saveTemplate(this.selectedTemplate)
+    this.calendarSvc.save(this.selectedTemplate)
       .subscribe(result => {
         this.updateList(result);
         this.hideModals();
@@ -243,10 +265,11 @@ export class CalTemplatesComponent implements OnInit {
 
     if (index >= 0) {
       this.templates[index] = result;
+      this.selectedTemplate = this.templates[index];
     } else {
       this.templates.push(result);
+      this.selectedTemplate = this.templates[this.templates.length - 1];
     }
-    this.selectedTemplate = this.templates[index];
     // This prevents event doubling phenom
     this.selectedTemplate.days = this.selectedTemplate.days.slice();
   }

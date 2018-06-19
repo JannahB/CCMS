@@ -14,7 +14,7 @@
 
         <!-- ------------ TODO: Add Search ------------ -->
         <input matInput name="tiSearch" #tiSearch="ngModel" placeholder="Search"
-            [(ngModel)]="selectedTemplate.searchText">
+            [(ngModel)]="searchText">
 
       </mat-form-field>
 
@@ -41,7 +41,7 @@
           <input matInput name="tiName" #tiName="ngModel" placeholder="Template name"
               [required]="true"
               [(ngModel)]="selectedTemplate.name">
-            <div class="ui-message ui-messages-error ui-corner-all large"
+            <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="tiName.errors?.required && tiName.touched" >
                 Please enter a Template Name
             </div>
