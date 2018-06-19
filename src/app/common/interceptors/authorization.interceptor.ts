@@ -64,7 +64,8 @@ export class AuthorizationInterceptor implements HttpInterceptor {
           // Otherwise it hangs when refreshing a page when token is expired
           if (error instanceof HttpErrorResponse) {
 
-            if (error.status == 401 || error.status == 500) {
+            // if (error.status == 401 || error.status == 500) {
+            if (error.status == 401) {
               this.authenticationModel.returnUrl = this.router.url;
               AuthorizationInterceptor.authToken = null;
               this.toastSvc.showInfoMessage(
@@ -80,12 +81,12 @@ export class AuthorizationInterceptor implements HttpInterceptor {
               );
 
             }
-            // else if (error.status == 500) {
-            //   this.toastSvc.showErrorMessage(
-            //     'Please accept our apologies! An error occurred. Please report the steps that can be taken to reproduce this to your system administrator.',
-            //     'Server Error 500'
-            //   );
-            // }
+            else if (error.status == 500) {
+              this.toastSvc.showErrorMessage(
+                'Please accept our apologies! An error occurred. Please report the steps that can be taken to reproduce this to your system administrator.',
+                'Server Error 500'
+              );
+            }
 
             else {
               // anything else here
