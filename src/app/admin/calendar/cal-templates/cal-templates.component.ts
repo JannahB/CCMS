@@ -109,12 +109,16 @@ export class CalTemplatesComponent implements OnInit {
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
-      // delete TemplateTime data.id
-      this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)
-        .subscribe(result => {
-          this.toastSvc.showInfoMessage('Time block deleted.');
-        });
-      console.log('delete', args);
+      console.log('days after delete', this.selectedTemplate.days);
+      this.selectedTemplate.days = this.selectedTemplate.days.slice();
+      console.log('days after delete and slice', this.selectedTemplate.days);
+
+      // // delete TemplateTime data.id
+      // this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)
+      //   .subscribe(result => {
+      //     this.toastSvc.showInfoMessage('Time block deleted.');
+      //   });
+      // console.log('delete', args);
     }
   };
 
@@ -172,43 +176,20 @@ export class CalTemplatesComponent implements OnInit {
   }
 
   saveItem() {
-    console.log('1 Saving template:', this.selectedTemplate)
 
-    this.serializeDPDateWithZone();
-
-    if (this.selectedTemplate.id) {
-      console.log('2 Saving template:', this.selectedTemplate)
-      // Update existing item PUT
-      this.calendarSvc.put(this.selectedTemplate.id, this.selectedTemplate)
-        .subscribe(result => {
-          this.updateList(result);
-          this.hideModals();
-          this.toastSvc.showSuccessMessage('Item Updated');
+    this.calendarSvc.saveTemplate(this.selectedTemplate)
+      .subscribe(result => {
+        this.updateList(result);
+        this.hideModals();
+        this.toastSvc.showSuccessMessage('Item Saved');
+      },
+        (error) => {
+          console.error(error);
+          this.toastSvc.showErrorMessage('There was an error saving the item.');
         },
-          (error) => {
-            console.log(error);
-            this.toastSvc.showErrorMessage('There was an error saving the item.');
-          },
-          () => {
-            // final
-          })
-    } else {
-      // Add new item POST
-      this.calendarSvc.post(this.selectedTemplate)
-        .subscribe(result => {
-          console.log('result', result);
-          this.updateList(result);
-          this.hideModals();
-          this.toastSvc.showSuccessMessage('Item Saved');
-        },
-          (error) => {
-            console.log(error);
-            this.toastSvc.showErrorMessage('There was an error saving the item.');
-          },
-          () => {
-            // final
-          })
-    }
+        () => {
+          // final
+        })
   }
 
   cancelDataItemEdit(event) {
@@ -217,19 +198,17 @@ export class CalTemplatesComponent implements OnInit {
   }
 
   deleteDataItemRequest() {
-    // if(!this.allowDeleteItems) {
-    //   this.toastSvc.showInfoMessage('Delete support is currently not available.');
-    //   return;
-    // }
     this.showDeleteItemModal = true;
   }
 
   deleteDataItem() {
+
     this.calendarSvc.delete(this.selectedTemplate.id)
       .subscribe(result => {
         this.toastSvc.showSuccessMessage('The item has been deleted.');
         this.templates.splice(this.getIndexOfItem(), 1);
         this.selectedTemplate = this.templates[0];
+        this.hideModals();
       },
         (error) => {
           console.log(error);
@@ -242,25 +221,6 @@ export class CalTemplatesComponent implements OnInit {
 
   hideModals() {
     this.showDeleteItemModal = false;
-  }
-
-  private serializeDPDateWithZone() {
-    // Serialize the Time Blocks before saving
-    this.selectedTemplate.days.forEach(block => {
-      // if a block is new, stretched or moved, the start and/or end date will be
-      // converted to a DayPilot.Date which uses '.value' to hold the string date
-      if (block.start.value) {
-        block.start = block.start.value + "Z";
-      }
-      if (block.end.value) {
-        block.end = block.end.value + "Z";
-      }
-      // if a guid (assigned to new blocks by calendar) then change to a
-      // number that will be overwritten by server to a server long type
-      if (block.id.length == 36) {
-        block.id = Math.round((Math.random() * 10000000000000000));
-      }
-    });
   }
 
   private setFirstListItem() {
@@ -283,6 +243,9 @@ export class CalTemplatesComponent implements OnInit {
     } else {
       this.templates.push(result);
     }
+    this.selectedTemplate = this.templates[index];
+    // This prevents event doubling phenom
+    this.selectedTemplate.days = this.selectedTemplate.days.slice();
   }
 
   private copySelectedItem() {
