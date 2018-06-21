@@ -70,32 +70,44 @@
         <div class="ui-g-3">
           <label class="minimal primary block">Work Week</label>
           <p-calendar id="dtWorkWeek" name="dtWorkWeek" #dtWorkWeek
+                styleClass="larger"
                 [required]="true"
                 [disabled]="false"
                 [(ngModel)]="selectedWorkWeek"
+                (onSelect)="onSelectWorkWeek($event)"
                 dateFormat="mm/dd/yy"
                 placeholder="Work Week"
                 [showIcon]="true"
                 yearRange="2018:2038"
                 [yearNavigator]="false"
-                appendTo="body" ></p-calendar>
+                appendTo="body" >
+            <ng-template pTemplate="date" let-date>
+              <span [ngStyle]="{backgroundColor: (date.day >= selectedWorkWeek && date.day < selectedWorkWeek.addDays(7)) ? '#7cc67c' : 'inherit'}" style="border-radius:50%">{{date.day}}</span>
+            </ng-template>
+          </p-calendar>
                 <!-- (onSelect)="generalDetailsOnBlur($event)" -->
         </div>
         <div class="ui-g-9 ta-r pt-25">
+
+          <button type="button"
+                label="Refresh Calendar"
+                (click)="refreshCalendar()"
+                [disabled]="!selectedWorkWeek || !selectedFacility"
+                class="ui-button-secondary smaller" pButton></button>
           <!-- BUTTONS TO GO HERE ----------- -->
           <button type="button"
                   label="Choose Template"
                   (click)="onChooseTemplate()"
                   [disabled]="!selectedWorkWeek || !selectedFacility"
                   class="ui-button-secondary smaller" pButton></button>
-          <button type="button"
+          <!-- <button type="button"
                   label="Save as Template"
                   (click)="saveAsTemplate()"
                   [disabled]="!selectedWorkWeek || !selectedFacility"
-                  class="ui-button-secondary smaller" pButton></button>
+                  class="ui-button-secondary smaller" pButton></button> -->
           <button type="button"
-                  label="Apply to Future Weeks"
-                  (click)="applyToFutureWeeks()"
+                  label="Apply to Next Week"
+                  (click)="applyToNextWeek()"
                   [disabled]="!selectedWorkWeek || !selectedFacility"
                   class="ui-button-secondary smaller"
                   pButton></button>

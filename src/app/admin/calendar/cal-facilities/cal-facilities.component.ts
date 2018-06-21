@@ -53,7 +53,7 @@ export class CalFacilitiesComponent implements OnInit {
     cellDuration: 30,
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
     days: 7,
-    startDate: "2018-01-01",
+    startDate: this.selectedWorkWeek || this.getMonday(),
     heightSpec: "Max",
     height: 300,
     eventDoubleClickHandling: true,
@@ -63,10 +63,11 @@ export class CalFacilitiesComponent implements OnInit {
       dp.events.add(new DayPilot.Event({
         start: args.start,
         end: args.end,
-        id: Math.round((Math.random() * 10000000000000000)),
+        id: this.genLongId(),
         resource: args.resource,
         text: 'Available'
       }));
+      this.saveItem();
 
       // -------- MODAL EVENT NAMING - Use this block to present a naming modal to user ------
       // DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
@@ -133,30 +134,46 @@ export class CalFacilitiesComponent implements OnInit {
     onEventMoved: args => {
       console.log('move', args);
       // this.message("Event moved");
+      this.saveItem();
     },
     eventResizeHandling: "Update",
     onEventResized: args => {
       console.log('resize', args);
       // this.message("Event resized");
+      this.saveItem();
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
       // delete TemplateTime data.id
       this.selectedFacility.days = this.selectedFacility.days.slice();
-      this.calFacilitySvc.deleteFacilityTimeBlock(args.e.data.id)
-        .subscribe(result => {
-          this.toastSvc.showInfoMessage('Time block deleted.');
-        });
-      console.log('delete', args);
+      this.deleteTimeBlock(args.e.data.id, true);
+      // console.log('delete', args);
     }
   };
 
+  deleteTimeBlock(id, userInitiated = false) {
+    this.calFacilitySvc.deleteFacilityTimeBlock(id)
+      .subscribe(result => {
+        console.log('Deleted Block ID:', id);
+        //if(userInitiated) // TODO: Turn this on after testing complete
+        this.toastSvc.showInfoMessage('Time block deleted.');
+      });
+  }
 
   constructor(
     private calFacilitySvc: CalFacilityService,
     private breadCrumbSvc: BreadcrumbService,
     private toastSvc: ToastService
   ) {
+
+    // TODO: move this to a date util lib
+    Date.prototype.addDays = function (numberOfDays) {
+      // send negative number to subtract days
+      var dat = new Date(this.valueOf());
+      dat.setDate(dat.getDate() + numberOfDays);
+      return dat;
+    }
+
     this.breadCrumbSvc.setItems([
       { label: 'Admin Calendars', routerLink: ['/admin/calendar'] },
       { label: 'Facility Hours', routerLink: ['/admin/calendar/facilities'] }
@@ -165,9 +182,18 @@ export class CalFacilitiesComponent implements OnInit {
     let now = moment();
     console.log('hello date', now.format());
     console.log(now.add(7, 'days').format());
+    console.log('now after add 7', now.format())
+  }
+
+  genLongId() {
+    return Math.round((Math.random() * 10000000000000000))
   }
 
   ngOnInit() {
+
+    // this.selectedWorkWeek = this.getMonday('2018-11-10T08:30:00');
+    this.selectedWorkWeek = this.getMonday();
+
     this.facilities = [];
     this.facilityTags = [
       { id: 1, name: 'Jury Room' },
@@ -195,12 +221,35 @@ export class CalFacilitiesComponent implements OnInit {
     var from = this.scheduler.control.visibleStart();
     var to = this.scheduler.control.visibleEnd();
 
+    this.onSelectWorkWeek(this.selectedWorkWeek);
+
     this.calFacilitySvc.get().subscribe(result => {
       console.log('facilities', result);
       this.facilities = result;
 
       this.setFirstListItem();
     });
+  }
+
+  getMonday(date = new Date().toDateString()) {
+    console.log('date', date)
+    // '2018-11-10T08:30:00'
+    let d = new Date(date);
+    let diff = (d.getDate() - d.getDay()) + 1;
+
+    return new Date(d.setDate(diff));
+    // return new Date( d.getDate() - d.getDay() + 1).toUTCString();
+  }
+
+  onInput(e) {
+
+  }
+
+  onSelectWorkWeek(e) {
+    console.log('onSelectWorkWeek(e)', e)
+    this.selectedWorkWeek = this.getMonday(new Date(e).toDateString());
+    this.scheduler.control.startDate = this.selectedWorkWeek;
+    this.scheduler.control.update();
   }
 
   createNewFacility() {
@@ -254,6 +303,10 @@ export class CalFacilitiesComponent implements OnInit {
         })
   }
 
+  refreshCalendar() {
+    this.scheduler.control.update();
+  }
+
   hideModals() {
     this.showDeleteItemModal = false;
   }
@@ -266,9 +319,83 @@ export class CalFacilitiesComponent implements OnInit {
     // TODO: Handle this
   }
 
-  applyToFutureWeeks() {
-    // TODO: Handle this
+  applyToNextWeek() {
+
+    let days = this.selectedFacility.days;
+
+    // REMOVE TIME BLOCKS IN UPCOMING WEEK
+    let daysSansNextWeekDays = this.removeDatesWithinASpan(days, this.selectedWorkWeek.addDays(7), 6);
+    console.log('1. days Sans Next Weeks time blocks', daysSansNextWeekDays);
+
+    // FIND TIME BLOCKS IN THIS WEEK DATES TO APPLY TO NEXT WEEK
+    let newTimeBlocks = this.findDatesWithinASpan(days, this.selectedWorkWeek, 6);
+    console.log('2. matching Time Blocks', newTimeBlocks);
+
+    // CONVERT THIS WEEK'S TIME BLOCKS TO NEXT WEEK TIME BLOCKS
+    this.convertTimeBlocksToNextWeek(newTimeBlocks);
+    this.onSelectWorkWeek(this.selectedWorkWeek.addDays(7).toISOString());
+    this.scheduler.control.update();
+
+    setTimeout(() => {
+      this.saveItem()
+      this.toastSvc.showInfoMessage('Week Saved!', 'The calendar has advanced to the following week.')
+    }, 500);
+
   }
+
+
+  private isWithinSpanByDay(day, start, end) {
+    let s = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0);
+    let e = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59);
+    let d = new Date(day);
+    return d >= s && d <= e;
+  }
+
+  findDatesWithinASpan(arr, start, span) {
+    let rangeStart = new Date(start);
+    let rangeEnd = rangeStart.addDays(span);
+    let results = [];
+    arr.forEach(block => {
+      if (this.isWithinSpanByDay(block.start, rangeStart, rangeEnd)) {
+        // console.log('** is in range', block.start);
+        results.push(Object.assign({}, block));
+      }
+    })
+    return results;
+  }
+
+  removeDatesWithinASpan(arr, start, span) {
+    let rangeStart = new Date(start);
+    let rangeEnd = rangeStart.addDays(span);
+
+    let deletedItems = [];
+
+    for (var i = arr.length - 1; i >= 0; i--) {
+      if (this.isWithinSpanByDay(arr[i].start, rangeStart, rangeEnd)) {
+        // console.log('* deleting: ', arr[i].start);
+        deletedItems.push(Object.assign({}, arr[i]));
+        this.deleteTimeBlock(arr[i].id);
+        arr.splice(i, 1);
+        // console.log('arr.length', arr.length);
+      }
+    }
+    console.log('Deleted items', deletedItems);
+    return arr;
+  }
+
+  convertTimeBlocksToNextWeek(arr) {
+    let newItemsForComparison = [];
+    arr.forEach(block => {
+      block.start = new Date(block.start).addDays(7).toISOString();
+      block.end = new Date(block.end).addDays(7).toISOString();
+      block.id = this.genLongId();
+      this.selectedFacility.days.push(block);
+      // for comparison only
+      newItemsForComparison.push(block);
+    })
+    console.log('3. Next Weeks Time Blocks For Comparison', newItemsForComparison)
+  }
+
 
 
   // -------- TAGS MULTI-SELECT METHODS ---------- //
