@@ -23,9 +23,9 @@
           </mat-list-option>
         </mat-selection-list>
 
-        <!-- <button mat-raised-button color="primary" (click)="createNewFacility()" class="mt-15 width-full">
-          <mat-icon aria-label="Add facility button">add</mat-icon>
-          New Facility
+        <!-- <button mat-raised-button color="primary" (click)="createNewResource()" class="mt-15 width-full">
+          <mat-icon aria-label="Add resource button">add</mat-icon>
+          New Resource
         </button> -->
       </div>
 
@@ -33,16 +33,18 @@
       <div class="ui-g-10 ui-sm-12">
 
         <div class="ui-g-12 pt-20">
-          <h2>Justice Gonzales</h2>
+          <h2>{{selectedResource.name}}</h2>
         </div>
 
         <div class="ui-g-12">
           <div class="ui-g-3">
             <label class="minimal primary block">Work Week</label>
             <p-calendar id="dtWorkWeek" name="dtWorkWeek" #dtWorkWeek
-                  [required]="true"
+                  styleClass="larger"
+                  [required]="false"
                   [disabled]="false"
                   [(ngModel)]="selectedWorkWeek"
+                  (onSelect)="onSelectWorkWeek($event)"
                   dateFormat="mm/dd/yy"
                   placeholder="Work Week"
                   [showIcon]="true"
@@ -55,50 +57,52 @@
             <!-- BUTTONS TO GO HERE ----------- -->
             <button type="button"
                     label="Choose Template"
-                    (click)="onChooseTemplate()"
-                    [disabled]="!selectedWorkWeek || !selectedFacility"
+                    (click)="onShowChooseTemplateModal()"
+                    [disabled]="!selectedWorkWeek || !selectedResource"
                     class="ui-button-secondary smaller" pButton></button>
-            <button type="button"
+            <!-- <button type="button"
                     label="Save as Template"
                     (click)="saveAsTemplate()"
-                    [disabled]="!selectedWorkWeek || !selectedFacility"
-                    class="ui-button-secondary smaller" pButton></button>
+                    [disabled]="!selectedWorkWeek || !selectedResource"
+                    class="ui-button-secondary smaller" pButton></button> -->
             <button type="button"
-                    label="Apply to Future Weeks"
-                    (click)="applyToFutureWeeks()"
-                    [disabled]="!selectedWorkWeek || !selectedFacility"
+                    label="Apply to Next Week"
+                    (click)="applyToNextWeek()"
+                    [disabled]="!selectedWorkWeek || !selectedResource"
                     class="ui-button-secondary smaller"
                     pButton></button>
           </div>
         </div>
 
         <div class="ui-g-12">
-          <div class="" *ngIf="selectedFacility">
+          <div class="" *ngIf="selectedResource">
 
             <!-- CALENDAR -->
-            <daypilot-scheduler [config]="config" [events]="selectedFacility.days" #scheduler></daypilot-scheduler>
+            <daypilot-scheduler [config]="config" [events]="selectedResource.days" #scheduler></daypilot-scheduler>
 
             <p class="mv-0 muted-label">Click and drag to mark available hours. </p>
           </div>
           <div class="ta-r">
               <button mat-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
-                <mat-icon aria-label="Add facility button">delete</mat-icon>
+                <mat-icon aria-label="Add resource button">delete</mat-icon>
                 Delete Resource Hours
               </button>
               <button mat-raised-button color="primary" (click)="saveItem()" class="mt-30">
-                <mat-icon aria-label="Add facility button">check</mat-icon>
+                <mat-icon aria-label="Add resource button">check</mat-icon>
                 Save Resource
               </button>
               <button mat-button color="secondary" (click)="cancelDataItemEdit()" class="mt-30">
-                <mat-icon aria-label="Add facility button">clear</mat-icon>
+                <mat-icon aria-label="Add resource button">clear</mat-icon>
                 Cancel
               </button>
           </div>
         </div>
         <div class="ui-g-12">
-            <pre>{{selectedFacility | json}}</pre>
+            <pre>{{selectedResource | json}}</pre>
         </div>
       </div>
+
+      <!-- ---------------- MODALS ---------------- -->
 
       <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteItemModal" [responsive]="true" showEffect="fade" [modal]="true"
         [closable]="false">
@@ -111,6 +115,27 @@
         </p-footer>
       </p-dialog>
 
+
+      <p-dialog header="Choose Template" width="450" [(visible)]="showChooseTemplateModal"
+              [responsive]="true" showEffect="fade" [modal]="true" [closable]="true">
+      <div>Choose a template to apply to the current work week.</div>
+
+      <mat-selection-list class="items-list">
+        <mat-list-option *ngFor="let item of templates; let i=index; let template"
+                         [class.hi]="selected" [value]="template"
+                         (selectionChange)="onTemplateSelectionChange($event, template)">
+          <div>{{ item.name }}</div>
+          <div class="muted-label mt-0">{{ item.description }} </div>
+        </mat-list-option>
+      </mat-selection-list>
+
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+          <button label="Cancel" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
+          <button label="Apply Template" type="button" pButton icon="fa-check" (click)="onTemplateSelected()"></button>
+        </div>
+      </p-footer>
+    </p-dialog>
 
 
     </div>

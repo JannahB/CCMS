@@ -1,16 +1,15 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
-import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import * as moment from 'moment';
+import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
 import { BreadcrumbService } from './../../../breadcrumb.service';
-import { CalFacility } from '../../../common/entities/CalFacility';
 import { ToastService } from './../../../common/services/utility/toast.service';
-import { CalFacilityTag } from './../../../common/entities/CalFacilityTag';
-import { CalFacilityService } from './../../../common/services/http/calFacility.service';
-
-// TODO: Delete this after switching to CalResource below
 import { CalTemplate } from '../../../common/entities/CalTemplate';
+import { CalResourceService } from "../../../common/services/http/calResource.service";
+import { CalResource } from '../../../common/entities/CalResource';
+import { CalResourceTime } from './../../../common/entities/CalResourceTime';
+import { CalTemplateService } from './../../../common/services/http/calTemplate.service';
 
 @Component({
   selector: 'app-cal-resources',
@@ -27,18 +26,15 @@ export class CalResourcesComponent implements OnInit {
 
 
   resources: any[] = [];
-  facilities: any[] = [];
-  selectedFacility: any;
-  selectedFacilityBak: any;
-  selectedFacilityIdx: number;
+  selectedResource: any;
+  selectedResourceBak: any;
+  selectedResourceIdx: number;
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
   searchText: String;
-
-  facilityTags: any[];
-  selectedTags: CalFacilityTag[];
-  filteredTags: CalFacilityTag[];
-
+  templates: any[];
+  selectedTemplate: any;
+  showChooseTemplateModal: boolean = false;
 
   config: any = {
     theme: "minimal_blue",
@@ -57,24 +53,45 @@ export class CalResourcesComponent implements OnInit {
     cellDuration: 30,
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
     days: 7,
-    startDate: "2018-01-01",
+    startDate: this.selectedWorkWeek || this.getMonday(),
     heightSpec: "Max",
     height: 300,
+    eventDoubleClickHandling: true,
+
     onTimeRangeSelected: args => {
-      DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
-        var dp = args.control;
-        dp.clearSelection();
+      let dp = args.control;
+      dp.events.add(new DayPilot.Event({
+        start: args.start,
+        end: args.end,
+        id: this.genLongId(),
+        resource: args.resource,
+        text: 'Available'
+      }));
+      this.saveItem();
+
+      // -------- MODAL EVENT NAMING - Use this block to present a naming modal to user ------
+      // DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
+      //   var dp = args.control;
+      //   dp.clearSelection();
+      //   if (!modal.result) { return; }
+      //   // id: Math.random() * 1000000/1000000,
+      //   dp.events.add(new DayPilot.Event({
+      //     start: args.start,
+      //     end: args.end,
+      //     id: DayPilot.guid(),
+      //     resource: args.resource,
+      //     text: modal.result
+      //   }));
+      // });
+    },
+
+    onEventDoubleClick: args => {
+      DayPilot.Modal.prompt("Edit Time Block:", args.e.data.text).then(function (modal) {
         if (!modal.result) { return; }
-        // id: Math.random() * 1000000/1000000,
-        dp.events.add(new DayPilot.Event({
-          start: args.start,
-          end: args.end,
-          id: DayPilot.guid(),
-          resource: args.resource,
-          text: modal.result
-        }));
+        args.e.data.text = modal.result;
       });
     },
+
     onBeforeRowHeaderRender: args => {
       let duration = args.row.events.totalDuration();
       if (duration.totalSeconds() === 0) {
@@ -126,23 +143,31 @@ export class CalResourcesComponent implements OnInit {
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
       // delete TemplateTime data.id
-      this.calFacilitySvc.deleteFacilityTimeBlock(args.e.data.id)
-        .subscribe(result => {
-          this.toastSvc.showInfoMessage('Time block deleted.');
-        });
-      console.log('delete', args);
+      this.selectedResource.days = this.selectedResource.days.slice();
+      this.deleteTimeBlock(args.e.data.id, true);
+      // console.log('delete', args);
     }
   };
 
 
   constructor(
-    private calFacilitySvc: CalFacilityService,
+    private calResourceSvc: CalResourceService,
+    private calTemplateSvc: CalTemplateService,
     private breadCrumbSvc: BreadcrumbService,
     private toastSvc: ToastService
   ) {
+
+    // TODO: move this to a date util lib
+    Date.prototype.addDays = function (numberOfDays) {
+      // send negative number to subtract days
+      var dat = new Date(this.valueOf());
+      dat.setDate(dat.getDate() + numberOfDays);
+      return dat;
+    }
+
     this.breadCrumbSvc.setItems([
       { label: 'Admin Calendars', routerLink: ['/admin/calendar'] },
-      { label: 'Facility Hours', routerLink: ['/admin/calendar/facilities'] }
+      { label: 'Resource Hours', routerLink: ['/admin/calendar/resources'] }
     ]);
 
     let now = moment();
@@ -150,13 +175,16 @@ export class CalResourcesComponent implements OnInit {
     console.log(now.add(7, 'days').format());
   }
 
+  // TODO: Move to util lib
+  private genLongId() {
+    return Math.round((Math.random() * 10000000000000000))
+  }
+
   ngOnInit() {
-    this.facilities = [];
-    this.facilityTags = [
-      { id: 1, name: 'Jury Room' },
-      { id: 2, name: 'Near Detention Center' }
-    ];
-    this.filteredTags = this.facilityTags;
+
+    this.selectedWorkWeek = this.getMonday();
+
+    this.resources = [];
 
     this.resources =
       [
@@ -188,11 +216,11 @@ export class CalResourcesComponent implements OnInit {
     this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
       this.matSelectionList.deselectAll();
       event.option.selected = true;
-      this.selectedFacility = event.option.value;
+      this.selectedResource = event.option.value;
       this.copySelectedItem();
     });
 
-    this.selectedFacility = new CalFacility();
+    this.selectedResource = new CalResource();
   }
 
   ngOnDestroy() {
@@ -203,79 +231,79 @@ export class CalResourcesComponent implements OnInit {
     var from = this.scheduler.control.visibleStart();
     var to = this.scheduler.control.visibleEnd();
 
-    this.calFacilitySvc.get().subscribe(result => {
-      console.log('facilities', result);
-      this.facilities = result;
+    this.onSelectWorkWeek(this.selectedWorkWeek);
+
+    this.calResourceSvc.get().subscribe(result => {
+      console.log('resources', result);
+      this.resources = result;
 
       this.setFirstListItem();
     });
+
+    this.calTemplateSvc.get().subscribe(result => {
+      this.templates = result;
+    });
   }
 
-  createNewFacility() {
+  // TODO: move to util lib
+  getMonday(date = new Date().toDateString()) {
+    console.log('date', date)
+    // '2018-11-10T08:30:00'
+    let d = new Date(date);
+    let diff = (d.getDate() - d.getDay()) + 1;
+
+    return new Date(d.setDate(diff));
+  }
+
+
+  onSelectWorkWeek(e) {
+    console.log('onSelectWorkWeek(e)', e)
+    this.selectedWorkWeek = this.getMonday(new Date(e).toDateString());
+    this.scheduler.control.startDate = this.selectedWorkWeek;
+    this.scheduler.control.update();
+  }
+
+  createNewResource() {
     this.matSelectionList.deselectAll();
-    this.selectedFacility = new CalFacility();
+    this.selectedResource = new CalResource();
     this.copySelectedItem();
   }
 
   saveItem() {
-    console.log('1 Saving facility:', this.selectedFacility)
+    // console.log('BEFORE Save RESOURCE:', this.selectedResource);
 
-    this.serializeDPDateWithZone();
-
-    if (this.selectedFacility.id) {
-      console.log('2 Saving facility:', this.selectedFacility)
-      // Update existing item PUT
-      this.calFacilitySvc.put(this.selectedFacility.id, this.selectedFacility)
-        .subscribe(result => {
-          this.updateList(result);
-          this.hideModals();
-          this.toastSvc.showSuccessMessage('Item Updated');
+    this.calResourceSvc.save(this.selectedResource)
+      .subscribe(result => {
+        // console.log('AFTER Save RESOURCE:', this.selectedResource);
+        this.updateList(result);
+        this.hideModals();
+        this.toastSvc.showSuccessMessage('Item Saved');
+      },
+        (error) => {
+          console.log(error);
+          this.toastSvc.showErrorMessage('There was an error saving the item.');
         },
-          (error) => {
-            console.log(error);
-            this.toastSvc.showErrorMessage('There was an error saving the item.');
-          },
-          () => {
-            // final
-          })
-    } else {
-      // Add new item POST
-      this.calFacilitySvc.post(this.selectedFacility)
-        .subscribe(result => {
-          console.log('result', result);
-          this.updateList(result);
-          this.hideModals();
-          this.toastSvc.showSuccessMessage('Item Saved');
-        },
-          (error) => {
-            console.log(error);
-            this.toastSvc.showErrorMessage('There was an error saving the item.');
-          },
-          () => {
-            // final
-          })
-    }
+        () => {
+          // final
+        });
   }
 
   cancelDataItemEdit(event) {
-    this.selectedFacility = Object.assign(new CalTemplate(), this.selectedFacilityBak);
-    this.facilities[this.selectedFacilityIdx] = this.selectedFacility;
+    this.selectedResource = Object.assign(new CalResource(), this.selectedResourceBak);
+    this.resources[this.selectedResourceIdx] = this.selectedResource;
   }
 
   deleteDataItemRequest() {
-    // if(!this.allowDeleteItems) {
-    //   this.toastSvc.showInfoMessage('Delete support is currently not available.');
-    //   return;
-    // }
     this.showDeleteItemModal = true;
   }
 
   deleteDataItem() {
-    this.calFacilitySvc.delete(this.selectedFacility.id)
+    this.calResourceSvc.delete(this.selectedResource.id)
       .subscribe(result => {
         this.toastSvc.showSuccessMessage('The item has been deleted.');
-        this.facilities.splice(this.getIndexOfItem(), 1);
-        this.selectedFacility = this.facilities[0];
+        this.resources.splice(this.getIndexOfItem(), 1);
+        this.selectedResource = this.resources[0];
+        this.hideModals();
       },
         (error) => {
           console.log(error);
@@ -286,63 +314,246 @@ export class CalResourcesComponent implements OnInit {
         })
   }
 
+  deleteTimeBlock(id, userInitiated = false) {
+    this.calResourceSvc.deleteResourceTimeBlock(id)
+      .subscribe(result => {
+        console.log('Deleted Block ID:', id);
+        if (userInitiated) // TODO: Turn this on after testing complete
+          this.toastSvc.showInfoMessage('Time block deleted.');
+      });
+  }
+
+  refreshCalendar() {
+    this.scheduler.control.update();
+  }
+
   hideModals() {
     this.showDeleteItemModal = false;
+    this.showChooseTemplateModal = false;
   }
 
-  onChooseTemplate() {
-    // TODO: Handle this
+  // -------- APPLY TEMPLATE SECTION ------------ //
+  onShowChooseTemplateModal() {
+    this.showChooseTemplateModal = true;
   }
 
-  saveAsTemplate() {
-    // TODO: Handle this
+  // mat-selection-list "selectionChange" does not work when in a modal,
+  // so solving it by handling mat-list-option (selectionChange) here
+  onTemplateSelectionChange(event, template) {
+
+    // deselect all others & set selected
+    if (event.selected) {
+      event.source.selectionList.options.toArray().forEach(element => {
+        if (element.value.name != template.name) {
+          element.selected = false;
+        } else {
+          this.selectedTemplate = element.value;
+        }
+      });
+    }
   }
 
-  applyToFutureWeeks() {
-    // TODO: Handle this
+  onTemplateSelected() {
+    console.log('onTemplateSelected', this.selectedTemplate);
+    this.hideModals();
+    this.mapTemplateToThisWeek();
   }
 
+  mapTemplateToThisWeek() {
+    if (!this.selectedTemplate) {
+      this.toastSvc.showWarnMessage('No Template Selected', 'Please choose a template.');
+      return;
+    }
 
-  private serializeDPDateWithZone() {
-    // Serialize the Time Blocks before saving
-    this.selectedFacility.days.forEach(block => {
-      // if a block is new, stretched or moved, the start and/or end date will be
-      // converted to a DayPilot.Date which uses '.value' to hold the string date
-      if (block.start.value) {
-        block.start = block.start.value + "Z";
-      }
-      if (block.end.value) {
-        block.end = block.end.value + "Z";
-      }
-      // if a guid (assigned to new blocks by calendar) then change to a
-      // number that will be overwritten by server to a server long type
-      if (block.id.length == 36) {
-        block.id = Math.round((Math.random() * 10000000000000000));
-      }
+    console.log('BEFORE selectedResource.days', this.selectedResource.days);
+
+    let templateDays = this.selectedTemplate.days;
+    console.log('TEMPLATE DAYS', this.selectedTemplate.days);
+
+    // DELETE TIME BLOCKS IN THE CURRENT WEEK
+    let daysSansThisWeekDays = this.removeDatesWithinASpan(this.selectedResource.days, this.selectedWorkWeek, 6);
+    console.log('1. Time blocks sans THIS weeks time blocks', daysSansThisWeekDays);
+
+    // LOOP SELECTED TEMPLATE BLOCKS ASSIGN TO THIS WEEK
+    templateDays.forEach(block => {
+      let bs = new Date(block.start);
+      let be = new Date(block.end);
+      let bDay = bs.getDay();
+
+      // find the Date of the Day in the current week
+      let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);
+
+      // Create new Time Block
+      let newBlock = new CalResourceTime();
+      newBlock.id = this.genLongId();
+      newBlock.resourceId = this.selectedResource.id;
+      newBlock.text = 'Available';
+
+      console.log('TEMPLATE BLOCK .getTimezoneOffset', bs.getTimezoneOffset());
+      console.log('MATCHING DATE .getTimezoneOffset', matchingDate.getTimezoneOffset());
+
+      // merge TIME portion of 'block' into DATE portion of 'matchingDate'
+      newBlock.start = new Date(
+        matchingDate.getFullYear(),
+        matchingDate.getMonth(),
+        matchingDate.getDate(),
+        bs.getHours() + 1,  // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
+        bs.getMinutes(), 0
+      );
+      newBlock.end = new Date(
+        matchingDate.getFullYear(),
+        matchingDate.getMonth(),
+        matchingDate.getDate(),
+        be.getHours() + 1, // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
+        be.getMinutes(), 0
+      );
+      /*
+      NOTE ABOUT +1 getHours() ABOVE - JB:6/21/2018
+          When creating a new date in this client, the offset is -04:00.
+          When saving and retrieving, the offset becomes -05:00.
+          So as a temp measure, the +1 is used until we solve this issue.
+          The solution will need to consider:
+          -- Server hosted in other time zones
+          -- Server in a time zone that doesn't observe DST
+          -- User in other time zones
+          -- User in a time zone that doesn't observe DST
+      */
+
+      // Add the newBlock to Facility.days
+      this.selectedResource.days.push(newBlock);
+
     });
+
+    this.selectedResource.days = this.selectedResource.days.slice();
+    this.scheduler.control.update();
+    console.log('AFTER selectedResource.days', this.selectedResource.days);
+    // SAVE NEW BLOCKS
+    this.saveItem();
+
   }
 
-  getTagsToFilter(event) {
-    let query = event.query;
-    this.filteredTags = this.filterTags(query, this.facilityTags);
-  }
-
-  filterTags(query, facilityTags: any[]): any[] {
-    let filtered: any[] = [];
-    for (let i = 0; i < facilityTags.length; i++) {
-      let tag = facilityTags[i];
-      if (tag.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-        filtered.push(tag);
+  // TODO: move to Date Util Lib
+  private getDateObjByDay(day: number, start: any): Date {
+    let s = new Date(start);
+    let found = false;
+    while (!found) {
+      if (s.getDay() == day) {
+        found = true;
+        return s;
+      } else {
+        s = new Date(s.setDate(s.getDate() + 1))
       }
     }
-    return filtered;
   }
 
+  // TODO: move to Date Util Lib
+  private getARangeOfDatesAndDays(start, span) {
+    let s = new Date(start);
+    let e = s.addDays(span);
+    let a = [];
+
+    while (s <= e) {
+      let o = {};
+
+      o['day'] = s.getDay();
+      o['date'] = s.getDate();
+      a.push(o);
+      s = new Date(s.setDate(s.getDate() + 1))
+    }
+    return a;
+  };
+
+
+  // -------- APPLY TO NEXT WEEK SECTION ------------ //
+
+  applyToNextWeek() {
+
+    let days = this.selectedResource.days;
+
+    // REMOVE TIME BLOCKS IN UPCOMING WEEK
+    let daysSansNextWeekDays = this.removeDatesWithinASpan(days, this.selectedWorkWeek.addDays(7), 6);
+    console.log('1. days Sans Next Weeks time blocks', daysSansNextWeekDays);
+
+    // FIND TIME BLOCKS IN THIS WEEK DATES TO APPLY TO NEXT WEEK
+    let newTimeBlocks = this.findDatesWithinASpan(days, this.selectedWorkWeek, 6);
+    console.log('2. matching Time Blocks', newTimeBlocks);
+
+    // CONVERT THIS WEEK'S TIME BLOCKS TO NEXT WEEK TIME BLOCKS
+    this.convertTimeBlocksToNextWeek(newTimeBlocks);
+    this.onSelectWorkWeek(this.selectedWorkWeek.addDays(7).toISOString());
+    this.scheduler.control.update();
+
+    setTimeout(() => {
+      this.saveItem()
+      this.toastSvc.showInfoMessage('Week Saved!', 'The calendar has advanced to the following week.')
+    }, 300);
+  }
+
+  // TODO: move to util lib
+  private isWithinRangeByDay(day, start, end) {
+    let s = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0);
+    let e = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59);
+    let d = new Date(day);
+    return d >= s && d <= e;
+  }
+
+  // TODO: move to util lib
+  findDatesWithinASpan(arr, start, span) {
+    let rangeStart = new Date(start);
+    let rangeEnd = rangeStart.addDays(span);
+    let results = [];
+    arr.forEach(block => {
+      if (this.isWithinRangeByDay(block.start, rangeStart, rangeEnd)) {
+        results.push(Object.assign({}, block));
+      }
+    })
+    return results;
+  }
+
+  // TODO: move to util lib
+  /**
+   * @argument arr Array of time blocks
+   * @argument start:String a start date string
+   * @argument span number of days to span
+   * @description removes matching items from the array and calls delete EP
+   */
+  removeDatesWithinASpan(arr, start, span) {
+    let rangeStart = new Date(start);
+    let rangeEnd = rangeStart.addDays(span);
+
+    let deletedItems = []; // for debug only
+
+    for (var i = arr.length - 1; i >= 0; i--) {
+      if (this.isWithinRangeByDay(arr[i].start, rangeStart, rangeEnd)) {
+        deletedItems.push(Object.assign({}, arr[i]));
+        this.deleteTimeBlock(arr[i].id);
+        arr.splice(i, 1);
+      }
+    }
+    console.log('Deleted items', deletedItems);
+    return arr;
+  }
+
+  convertTimeBlocksToNextWeek(arr) {
+    let newItemsForComparison = [];
+    arr.forEach(block => {
+      block.start = new Date(block.start).addDays(7).toISOString();
+      block.end = new Date(block.end).addDays(7).toISOString();
+      block.id = this.genLongId();
+      this.selectedResource.days.push(block);
+      newItemsForComparison.push(block); // for debug only
+    })
+    console.log('3. Next Weeks Time Blocks For Comparison', newItemsForComparison)
+  }
+
+
+
+
   private setFirstListItem() {
-    if (!this.facilities || !this.facilities.length)
+    if (!this.resources || !this.resources.length)
       return;
 
-    this.selectedFacility = this.facilities[0];
+    this.selectedResource = this.resources[0];
     this.copySelectedItem();
     setTimeout(() => {
       if (this.matSelectionList.options.first)
@@ -354,19 +565,23 @@ export class CalResourcesComponent implements OnInit {
     let index: number = this.getIndexOfItem(result);
 
     if (index >= 0) {
-      this.facilities[index] = result;
+      this.resources[index] = result;
+      this.selectedResource = this.resources[index];
     } else {
-      this.facilities.push(result);
+      this.resources.push(result);
+      this.selectedResource = this.resources[this.resources.length - 1];
     }
+    // This prevents event doubling phenom
+    this.selectedResource.days = this.selectedResource.days.slice();
   }
 
   private copySelectedItem() {
-    this.selectedFacilityBak = Object.assign({}, this.selectedFacility);
-    this.selectedFacilityIdx = this.getIndexOfItem(this.selectedFacility);
+    this.selectedResourceBak = Object.assign({}, this.selectedResource);
+    this.selectedResourceIdx = this.getIndexOfItem(this.selectedResource);
   }
 
-  private getIndexOfItem(item = this.selectedFacility): number {
-    return this.facilities
+  private getIndexOfItem(item = this.selectedResource): number {
+    return this.resources
       .findIndex(itm => itm.id == item.id);
   }
 

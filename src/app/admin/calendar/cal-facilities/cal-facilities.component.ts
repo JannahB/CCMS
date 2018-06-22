@@ -182,7 +182,8 @@ export class CalFacilitiesComponent implements OnInit {
     console.log('now after add 7', now.format())
   }
 
-  genLongId() {
+  // TODO: Move to util lib
+  private genLongId() {
     return Math.round((Math.random() * 10000000000000000))
   }
 
@@ -232,6 +233,7 @@ export class CalFacilitiesComponent implements OnInit {
     });
   }
 
+  // TODO: move to util lib
   getMonday(date = new Date().toDateString()) {
     console.log('date', date)
     // '2018-11-10T08:30:00'
@@ -275,7 +277,7 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   cancelDataItemEdit(event) {
-    this.selectedFacility = Object.assign(new CalTemplate(), this.selectedFacilityBak);
+    this.selectedFacility = Object.assign(new CalFacility(), this.selectedFacilityBak);
     this.facilities[this.selectedFacilityIdx] = this.selectedFacility;
   }
 
@@ -304,8 +306,8 @@ export class CalFacilitiesComponent implements OnInit {
     this.calFacilitySvc.deleteFacilityTimeBlock(id)
       .subscribe(result => {
         console.log('Deleted Block ID:', id);
-        //if(userInitiated) // TODO: Turn this on after testing complete
-        this.toastSvc.showInfoMessage('Time block deleted.');
+        if (userInitiated) // TODO: Turn this on after testing complete
+          this.toastSvc.showInfoMessage('Time block deleted.');
       });
   }
 
@@ -414,7 +416,7 @@ export class CalFacilitiesComponent implements OnInit {
     this.scheduler.control.update();
     console.log('AFTER selectedFacility.days', this.selectedFacility.days);
     // SAVE NEW BLOCKS
-    // this.saveItem();
+    this.saveItem();
 
   }
 
@@ -475,6 +477,7 @@ export class CalFacilitiesComponent implements OnInit {
     }, 300);
   }
 
+  // TODO: move to util lib
   private isWithinRangeByDay(day, start, end) {
     let s = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0);
     let e = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59);
@@ -482,6 +485,7 @@ export class CalFacilitiesComponent implements OnInit {
     return d >= s && d <= e;
   }
 
+  // TODO: move to util lib
   findDatesWithinASpan(arr, start, span) {
     let rangeStart = new Date(start);
     let rangeEnd = rangeStart.addDays(span);
@@ -494,6 +498,7 @@ export class CalFacilitiesComponent implements OnInit {
     return results;
   }
 
+  // TODO: move to util lib
   /**
    * @argument arr Array of time blocks
    * @argument start:String a start date string

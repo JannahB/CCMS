@@ -119,6 +119,7 @@ import { ReferenceDataIdToNamePipe } from './common/pipes/reference-data-id-to-n
 import { NamePipe } from './common/pipes/name.pipe';
 import { CalTemplateService } from './common/services/http/calTemplate.service';
 import { CalFacilityService } from './common/services/http/calFacility.service';
+import { CalResourceService } from './common/services/http/calResource.service';
 
 
 
@@ -242,6 +243,7 @@ import { CalFacilityService } from './common/services/http/calFacility.service';
     CourtService,
     CalTemplateService,
     CalFacilityService,
+    CalResourceService,
     AppStateService,
     {
       provide: HTTP_INTERCEPTORS,
