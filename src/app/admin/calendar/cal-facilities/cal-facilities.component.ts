@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
-import { MatSelectionList, MatSelectionListChange } from '@angular/material';
+import { MatSelectionList, MatSelectionListChange, MatListOption } from '@angular/material';
 import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
@@ -9,6 +9,8 @@ import { CalTemplate } from '../../../common/entities/CalTemplate';
 import { CalFacility } from '../../../common/entities/CalFacility';
 import { CalFacilityTag } from './../../../common/entities/CalFacilityTag';
 import { CalFacilityService } from './../../../common/services/http/calFacility.service';
+import { CalFacilityTime } from './../../../common/entities/CalFacilityTime';
+import { CalTemplateService } from './../../../common/services/http/calTemplate.service';
 
 @Component({
   selector: 'app-cal-facilities',
@@ -30,6 +32,9 @@ export class CalFacilitiesComponent implements OnInit {
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
   searchText: String;
+  templates: any[];
+  selectedTemplate: any;
+  showChooseTemplateModal: boolean = false;
 
   facilityTags: any[];
   selectedTags: CalFacilityTag[];
@@ -151,17 +156,9 @@ export class CalFacilitiesComponent implements OnInit {
     }
   };
 
-  deleteTimeBlock(id, userInitiated = false) {
-    this.calFacilitySvc.deleteFacilityTimeBlock(id)
-      .subscribe(result => {
-        console.log('Deleted Block ID:', id);
-        //if(userInitiated) // TODO: Turn this on after testing complete
-        this.toastSvc.showInfoMessage('Time block deleted.');
-      });
-  }
-
   constructor(
     private calFacilitySvc: CalFacilityService,
+    private calTemplateSvc: CalTemplateService,
     private breadCrumbSvc: BreadcrumbService,
     private toastSvc: ToastService
   ) {
@@ -229,6 +226,10 @@ export class CalFacilitiesComponent implements OnInit {
 
       this.setFirstListItem();
     });
+
+    this.calTemplateSvc.get().subscribe(result => {
+      this.templates = result;
+    });
   }
 
   getMonday(date = new Date().toDateString()) {
@@ -238,12 +239,8 @@ export class CalFacilitiesComponent implements OnInit {
     let diff = (d.getDate() - d.getDay()) + 1;
 
     return new Date(d.setDate(diff));
-    // return new Date( d.getDate() - d.getDay() + 1).toUTCString();
   }
 
-  onInput(e) {
-
-  }
 
   onSelectWorkWeek(e) {
     console.log('onSelectWorkWeek(e)', e)
@@ -259,11 +256,11 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   saveItem() {
-    console.log('BEFORE Save Facility:', this.selectedFacility);
+    //console.log('BEFORE Save Facility:', this.selectedFacility);
 
     this.calFacilitySvc.save(this.selectedFacility)
       .subscribe(result => {
-        console.log('AFTER Save Facility:', this.selectedFacility);
+        // console.log('AFTER Save Facility:', this.selectedFacility);
         this.updateList(result);
         this.hideModals();
         this.toastSvc.showSuccessMessage('Item Saved');
@@ -303,21 +300,157 @@ export class CalFacilitiesComponent implements OnInit {
         })
   }
 
+  deleteTimeBlock(id, userInitiated = false) {
+    this.calFacilitySvc.deleteFacilityTimeBlock(id)
+      .subscribe(result => {
+        console.log('Deleted Block ID:', id);
+        //if(userInitiated) // TODO: Turn this on after testing complete
+        this.toastSvc.showInfoMessage('Time block deleted.');
+      });
+  }
+
   refreshCalendar() {
     this.scheduler.control.update();
   }
 
   hideModals() {
     this.showDeleteItemModal = false;
+    this.showChooseTemplateModal = false;
   }
 
-  onChooseTemplate() {
-    // TODO: Handle this
+  // -------- APPLY TEMPLATE SECTION ------------ //
+  onShowChooseTemplateModal() {
+    this.showChooseTemplateModal = true;
   }
 
-  saveAsTemplate() {
-    // TODO: Handle this
+  // mat-selection-list "selectionChange" does not work when in a modal,
+  // so solving it by handling mat-list-option (selectionChange) here
+  onTemplateSelectionChange(event, template) {
+
+    // deselect all others & set selected
+    if (event.selected) {
+      event.source.selectionList.options.toArray().forEach(element => {
+        if (element.value.name != template.name) {
+          element.selected = false;
+        } else {
+          this.selectedTemplate = element.value;
+        }
+      });
+    }
   }
+
+  onTemplateSelected() {
+    console.log('onTemplateSelected', this.selectedTemplate);
+    this.hideModals();
+    this.mapTemplateToThisWeek();
+  }
+
+  mapTemplateToThisWeek() {
+    if (!this.selectedTemplate) {
+      this.toastSvc.showWarnMessage('No Template Selected', 'Please choose a template.');
+      return;
+    }
+
+    console.log('BEFORE selectedFacility.days', this.selectedFacility.days);
+
+    let templateDays = this.selectedTemplate.days;
+    console.log('TEMPLATE DAYS', this.selectedTemplate.days);
+
+    // DELETE TIME BLOCKS IN THE CURRENT WEEK
+    let daysSansThisWeekDays = this.removeDatesWithinASpan(this.selectedFacility.days, this.selectedWorkWeek, 6);
+    console.log('1. Time blocks sans THIS weeks time blocks', daysSansThisWeekDays);
+
+    // LOOP SELECTED TEMPLATE BLOCKS ASSIGN TO THIS WEEK
+    templateDays.forEach(block => {
+      let bs = new Date(block.start);
+      let be = new Date(block.end);
+      let bDay = bs.getDay();
+
+      // find the Date of the Day in the current week
+      let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);
+
+      // Create new Time Block
+      let newBlock = new CalFacilityTime();
+      newBlock.id = this.genLongId();
+      newBlock.facilityId = this.selectedFacility.id;
+      newBlock.text = 'Available';
+
+      console.log('TEMPLATE BLOCK .getTimezoneOffset', bs.getTimezoneOffset());
+      console.log('MATCHING DATE .getTimezoneOffset', matchingDate.getTimezoneOffset());
+
+      // merge TIME portion of 'block' into DATE portion of 'matchingDate'
+      newBlock.start = new Date(
+        matchingDate.getFullYear(),
+        matchingDate.getMonth(),
+        matchingDate.getDate(),
+        bs.getHours() + 1,  // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
+        bs.getMinutes(), 0
+      );
+      newBlock.end = new Date(
+        matchingDate.getFullYear(),
+        matchingDate.getMonth(),
+        matchingDate.getDate(),
+        be.getHours() + 1, // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
+        be.getMinutes(), 0
+      );
+      /*
+      NOTE ABOUT +1 getHours() ABOVE - JB:6/21/2018
+          When creating a new date in this client, the offset is -04:00.
+          When saving and retrieving, the offset becomes -05:00.
+          So as a temp measure, the +1 is used until we solve this issue.
+          The solution will need to consider:
+          -- Server hosted in other time zones
+          -- Server in a time zone that doesn't observe DST
+          -- User in other time zones
+          -- User in a time zone that doesn't observe DST
+      */
+
+      // Add the newBlock to Facility.days
+      this.selectedFacility.days.push(newBlock);
+
+    });
+
+    this.selectedFacility.days = this.selectedFacility.days.slice();
+    this.scheduler.control.update();
+    console.log('AFTER selectedFacility.days', this.selectedFacility.days);
+    // SAVE NEW BLOCKS
+    // this.saveItem();
+
+  }
+
+  // TODO: move to Date Util Lib
+  private getDateObjByDay(day: number, start: any): Date {
+    let s = new Date(start);
+    let found = false;
+    while (!found) {
+      if (s.getDay() == day) {
+        found = true;
+        return s;
+      } else {
+        s = new Date(s.setDate(s.getDate() + 1))
+      }
+    }
+  }
+
+  // TODO: move to Date Util Lib
+  private getARangeOfDatesAndDays(start, span) {
+    let s = new Date(start);
+    let e = s.addDays(span);
+    let a = [];
+
+    while (s <= e) {
+      let o = {};
+
+      o['day'] = s.getDay();
+      o['date'] = s.getDate();
+      a.push(o);
+      s = new Date(s.setDate(s.getDate() + 1))
+    }
+    return a;
+  };
+
+
+  // -------- APPLY TO NEXT WEEK SECTION ------------ //
 
   applyToNextWeek() {
 
@@ -339,12 +472,10 @@ export class CalFacilitiesComponent implements OnInit {
     setTimeout(() => {
       this.saveItem()
       this.toastSvc.showInfoMessage('Week Saved!', 'The calendar has advanced to the following week.')
-    }, 500);
-
+    }, 300);
   }
 
-
-  private isWithinSpanByDay(day, start, end) {
+  private isWithinRangeByDay(day, start, end) {
     let s = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0);
     let e = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59);
     let d = new Date(day);
@@ -356,27 +487,30 @@ export class CalFacilitiesComponent implements OnInit {
     let rangeEnd = rangeStart.addDays(span);
     let results = [];
     arr.forEach(block => {
-      if (this.isWithinSpanByDay(block.start, rangeStart, rangeEnd)) {
-        // console.log('** is in range', block.start);
+      if (this.isWithinRangeByDay(block.start, rangeStart, rangeEnd)) {
         results.push(Object.assign({}, block));
       }
     })
     return results;
   }
 
+  /**
+   * @argument arr Array of time blocks
+   * @argument start:String a start date string
+   * @argument span number of days to span
+   * @description removes matching items from the array and calls delete EP
+   */
   removeDatesWithinASpan(arr, start, span) {
     let rangeStart = new Date(start);
     let rangeEnd = rangeStart.addDays(span);
 
-    let deletedItems = [];
+    let deletedItems = []; // for debug only
 
     for (var i = arr.length - 1; i >= 0; i--) {
-      if (this.isWithinSpanByDay(arr[i].start, rangeStart, rangeEnd)) {
-        // console.log('* deleting: ', arr[i].start);
+      if (this.isWithinRangeByDay(arr[i].start, rangeStart, rangeEnd)) {
         deletedItems.push(Object.assign({}, arr[i]));
         this.deleteTimeBlock(arr[i].id);
         arr.splice(i, 1);
-        // console.log('arr.length', arr.length);
       }
     }
     console.log('Deleted items', deletedItems);
@@ -390,8 +524,7 @@ export class CalFacilitiesComponent implements OnInit {
       block.end = new Date(block.end).addDays(7).toISOString();
       block.id = this.genLongId();
       this.selectedFacility.days.push(block);
-      // for comparison only
-      newItemsForComparison.push(block);
+      newItemsForComparison.push(block); // for debug only
     })
     console.log('3. Next Weeks Time Blocks For Comparison', newItemsForComparison)
   }
@@ -415,7 +548,6 @@ export class CalFacilitiesComponent implements OnInit {
     }
     return filtered;
   }
-
 
   private setFirstListItem() {
     if (!this.facilities || !this.facilities.length)
