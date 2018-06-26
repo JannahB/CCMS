@@ -92,9 +92,10 @@
           <!-- BUTTONS TO GO HERE ----------- -->
           <button type="button"
                   label="Choose Template"
+                  icon="ui-icon-content-copy"
                   (click)="onShowChooseTemplateModal()"
                   [disabled]="!selectedWorkWeek || !selectedFacility"
-                  class="ui-button-secondary smaller" pButton></button>
+                  class="ui-button-secondary smaller mr-20" pButton></button>
           <!-- <button type="button"
                   label="Save as Template"
                   (click)="saveAsTemplate()"
@@ -102,6 +103,7 @@
                   class="ui-button-secondary smaller" pButton></button> -->
           <button type="button"
                   label="Apply to Next Week"
+                  icon="ui-icon-queue-play-next"
                   (click)="applyToNextWeek()"
                   [disabled]="!selectedWorkWeek || !selectedFacility"
                   class="ui-button-secondary smaller"
@@ -168,7 +170,7 @@
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
           <button label="Cancel" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
-          <button label="Apply Template" type="button" pButton icon="fa-check" (click)="onTemplateSelected()"></button>
+          <button label="Apply Template" type="button" pButton icon="ui-icon-open-in-browser" (click)="onTemplateSelected()"></button>
         </div>
       </p-footer>
     </p-dialog>
