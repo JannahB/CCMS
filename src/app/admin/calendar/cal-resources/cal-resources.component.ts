@@ -56,8 +56,8 @@ export class CalResourcesComponent implements OnInit {
     startDate: this.selectedWorkWeek || this.getMonday(),
     heightSpec: "Max",
     height: 300,
-    eventDoubleClickHandling: true,
 
+    timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
     onTimeRangeSelected: args => {
       let dp = args.control;
       dp.events.add(new DayPilot.Event({
@@ -85,6 +85,7 @@ export class CalResourcesComponent implements OnInit {
       // });
     },
 
+    eventDoubleClickHandling: true,
     onEventDoubleClick: args => {
       DayPilot.Modal.prompt("Edit Time Block:", args.e.data.text).then(function (modal) {
         if (!modal.result) { return; }
