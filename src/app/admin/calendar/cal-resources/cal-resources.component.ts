@@ -56,6 +56,7 @@ export class CalResourcesComponent implements OnInit {
     startDate: this.selectedWorkWeek || this.getMonday(),
     heightSpec: "Max",
     height: 300,
+    allowEventOverlap: false,
 
     timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
     onTimeRangeSelected: args => {

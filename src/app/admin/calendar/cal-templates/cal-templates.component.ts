@@ -48,8 +48,9 @@ export class CalTemplatesComponent implements OnInit {
     startDate: "2018-01-01",
     heightSpec: "Max",
     height: 300,
-    eventDoubleClickHandling: true,
+    allowEventOverlap: false,
 
+    timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
     onTimeRangeSelected: args => {
       let dp = args.control;
       dp.events.add(new DayPilot.Event({
@@ -76,6 +77,7 @@ export class CalTemplatesComponent implements OnInit {
       // });
     },
 
+    eventDoubleClickHandling: true,
     onEventDoubleClick: args => {
       DayPilot.Modal.prompt("Edit Time Block:", args.e.data.text).then(function (modal) {
         if (!modal.result) { return; }
