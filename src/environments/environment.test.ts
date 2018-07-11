@@ -5,12 +5,12 @@
 
 export const environment = {
   production: false,
-  apiUrl: "https://testcms.ttlawcourts.org/CCMS3/",  // TEST
+  apiUrl: "https://testcms.ttlawcourts.org/CCMS3",  // TEST
   mockUrl: "assets/mockData/",
 
   allowDeleteLookupItems: false,
-  allowResetPasswordFeature: false,
-  allowAdminWorkflowFeature: false,
+  allowResetPasswordFeature: true,
+  allowAdminWorkflowFeature: true,
 
 
   VERSION: require('../../package.json').version

@@ -6,7 +6,8 @@
 export const environment = {
   production: false,
   // apiUrl: "http://209.10.74.232/CCMS3/",                // DEV
-  apiUrl: "http://68.169.61.22/CCMS3/",                // DEV
+  // apiUrl: "http://68.169.61.22/CCMS3/",                // DEV
+  apiUrl: "https://testcms.ttlawcourts.org/CCMS3",     // TEST
   mockUrl: "assets/mockData/",
 
   allowDeleteLookupItems: false,

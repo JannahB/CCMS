@@ -5,12 +5,12 @@
 
 export const environment = {
   production: false,
-  apiUrl: "https://traincms.ttlawcourts.org/CCMS3/",                // TRAINING
+  apiUrl: "https://traincms.ttlawcourts.org/CCMS3",                // TRAINING
   mockUrl: "assets/mockData/",
 
   allowDeleteLookupItems: false,
-  allowResetPasswordFeature: false,
-  allowAdminWorkflowFeature: false,
+  allowResetPasswordFeature: true,
+  allowAdminWorkflowFeature: true,
 
   VERSION: require('../../package.json').version
 };
