@@ -477,7 +477,7 @@
               <div class="ui-g-12 ui-md-6 ta-r">
                 <h4 class="mt-0 mb-10">Upload Document</h4>
 
-                  <p-fileUpload mode="basic" name="theFiles[]" url="{{baseURL}}GetAttachment" (onUpload)="onUpload($event)"
+                  <p-fileUpload mode="basic" name="theFiles[]" url="{{baseURL}}/GetAttachment" (onUpload)="onUpload($event)"
                       (onBeforeSend)="onBeforeSendFile($event)"
                       multiple="multiple" accept="application/pdf" maxFileSize="20000000">
                       <!-- accept="*.doc, *.docx, application/pdf" -->
