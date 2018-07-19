@@ -204,6 +204,8 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     --------------------  */
   savePartyDetails() {
     // TODO: Save Party functionality
+    console.log(this.party);
+
     this.saveParty();
   }
 
@@ -461,6 +463,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   }
 
   private saveParty(shouldShowSuccessMessage: boolean = true): void {
+    console.log(this.party);
     this.partySvc
       .saveParty(this.party)
       .subscribe(result => {

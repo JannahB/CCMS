@@ -113,10 +113,11 @@ export class PartyService extends HttpBaseService<Party> {
     party.spokenLanguages = data.spokenLanguages.map(language => language.languageName);
     party.firstName = data.firstName;
     party.lastName = data.lastName;
+    party.fullName = data.fullName;
     party.alternativeName = data.alternativeName;
     party.sex = data.sex;
     party.dob = this.datePipe.transform(data.dob, "yyyy-MM-dd");
-
+    party.isOrganization = (data.isOrganization ? "1" : "0");
     if (data.identifiers) {
       party.identifiers = [];
       data.identifiers.forEach(identifier => {

@@ -169,12 +169,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.loadingCase = true;
     this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe(kase => {
       this.loadingCase = false;
-
       if (!kase.caseOID) {
         this.toastSvc.showWarnMessage('There is no case with caseOID of ' + caseId + '.', 'No Case Found');
       } else {
         this.case = kase;
-
+        console.log(kase);
         // Remove all files with a '^' in the docName - they are orphans
         this.case.caseDocs = this.case.caseDocs.filter(cd => {
           return cd.documentName.indexOf('^') == -1;

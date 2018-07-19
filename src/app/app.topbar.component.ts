@@ -189,6 +189,7 @@ export class AppTopbarComponent {
       })
 
       this.loggedInUser = this.userSvc.loggedInUser;
+
     }
 
     sendThemeChange(theme:string) {

@@ -46,9 +46,9 @@
             </ng-template>
           </p-column>
           <p-column field="fullName" header="Full Name" [style]="{'width':'35%'}">
-            <!-- TODO: change first/lastName to fullName when available from server -->
+            <!-- Christian: changed first/lastName to fullName -->
               <ng-template pTemplate="body" let-item="rowData">
-                  {{item.firstName}} {{item.lastName}}
+                  {{item.fullName?item.fullName:item.firstName+" "+item.lastName}}
               </ng-template>
           </p-column>
           <p-column field="dob" header="DOB" styleClass="ta-c" [style]="{'width':'15%'}">
