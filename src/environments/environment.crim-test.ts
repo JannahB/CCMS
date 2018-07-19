@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: "https://129.150.194.137/CCMS3",  // TEST CRIMINAL 129.150.194.137 testcrim.ttlawcourts.org
+  apiUrl: "https://testcrim.ttlawcourts.org/CCMS3",  // TEST CRIMINAL 129.150.194.137 testcrim.ttlawcourts.org
   mockUrl: "assets/mockData/",
 
   allowDeleteLookupItems: false,
