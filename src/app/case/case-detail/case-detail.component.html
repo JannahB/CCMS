@@ -175,7 +175,7 @@
 
                 <p-column field="caseParty.isOrganization" header="Is Org?" [style]="{'width':'8%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      <i class="fa ui-icon-check task-done" *ngIf="item.isOrganization"></i>
+                      <i class="fa ui-icon-check task-done" *ngIf="item.caseParty.isOrganization"></i>
                   </ng-template>
                 </p-column>
 
@@ -183,9 +183,9 @@
 
                 <p-column header="Party Info" [style]="{'width':'30%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                      <div>{{ item.caseParty.firstName }} {{ item.caseParty.lastName }}</div>
-                      <!-- TODO: turn this on when fullName support on Server -->
-                      <div>{{ item.fullName }}</div>
+                      <div>{{item.caseParty.fullName?item.caseParty.fullName:item.caseParty.firstName+" "+item.caseParty.lastName}}</div>
+                      <!-- Christian : turned this on with fullName support on Server -->
+                      <div></div>
                       <div *ngIf="!item.caseParty.isOrganization">
                           <span class="smaller">
                           DOB: {{ item.caseParty.dob | date:'M/d/yyyy' }}
@@ -731,8 +731,8 @@
 
                 <p-column header="Party Info" [style]="{'width':'50%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                      <div>{{ item.firstName }} {{ item.lastName }}</div>
-                      <!-- TODO: turn this on when fullName support on Server -->
+                      <div>{{item.fullName?item.fullName:item.firstName+" "+item.lastName}}</div>
+                      <!-- Christian: turned on when fullName support on Server -->
                       <!-- <div>{{ item.fullName }}</div> -->
                       <div *ngIf="!item.isOrganization">
                           <span class="smaller">
@@ -766,7 +766,7 @@
 
             <div *ngIf="selectedSearchParty">
               <div class="ui-g-12 mb-0">
-                <h3 class="mb-0">{{selectedSearchParty.firstName}} {{selectedSearchParty.lastName}}</h3>
+                <h3 class="mb-0">{{selectedSearchParty.fullName?selectedSearchParty.fullName:selectedSearchParty.firstName+" "+selectedSearchParty.lastName}}</h3>
               </div>
               <div class="ui-g-12 mv-0">
                 <label class="minimal primary block">Party Role</label>
