@@ -5,18 +5,17 @@ import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
 import { BreadcrumbService } from './../../../breadcrumb.service';
 import { ToastService } from './../../../common/services/utility/toast.service';
-import { CalTemplate } from '../../../common/entities/CalTemplate';
 import { CalResourceService } from "../../../common/services/http/calResource.service";
 import { CalResource } from '../../../common/entities/CalResource';
 import { CalResourceTime } from './../../../common/entities/CalResourceTime';
 import { CalTemplateService } from './../../../common/services/http/calTemplate.service';
 
 @Component({
-  selector: 'app-cal-resources',
-  templateUrl: './cal-resources.component.html',
-  styleUrls: ['./cal-resources.component.scss']
+  selector: 'hearings',
+  templateUrl: './hearings.component.html',
+  styleUrls: ['./hearings.component.scss']
 })
-export class CalResourcesComponent implements OnInit {
+export class HearingsComponent implements OnInit {
 
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
@@ -56,7 +55,6 @@ export class CalResourcesComponent implements OnInit {
     startDate: this.selectedWorkWeek || this.getMonday(),
     heightSpec: "Max",
     height: 300,
-
     allowEventOverlap: false,
 
     timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
@@ -85,6 +83,13 @@ export class CalResourcesComponent implements OnInit {
       //     text: modal.result
       //   }));
       // });
+    },
+
+    // PREVENT UNAVAILABLE TIME BLOCKS FROM BEING SELECTED
+    onEventSelect: args => {
+      if (args.selected && args.e.text().indexOf("Unavailable") !== -1) {  // prevent selecting events that contain the text "Unavailable"
+        args.preventDefault();
+      }
     },
 
     eventDoubleClickHandling: true,
@@ -379,20 +384,12 @@ export class CalResourcesComponent implements OnInit {
 
     // LOOP SELECTED TEMPLATE BLOCKS ASSIGN TO THIS WEEK
     templateDays.forEach(block => {
-<<<<<<< HEAD
-      let bs = new Date(block.start); // -05:00
-=======
       let bs = new Date(block.start);
->>>>>>> cal
       let be = new Date(block.end);
       let bDay = bs.getDay();
 
       // find the Date of the Day in the current week
-<<<<<<< HEAD
-      let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);  // -04:00
-=======
       let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);
->>>>>>> cal
 
       // Create new Time Block
       let newBlock = new CalResourceTime();

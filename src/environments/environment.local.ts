@@ -5,14 +5,15 @@
 
 export const environment = {
   production: false,
-  // apiUrl: "http://localhost:8080",                // LOCAL
-  apiUrl: "http://206.189.224.74:8080/CCMS3",        // LOCAL DO Instance
+  apiUrl: "http://localhost:8080",                // LOCAL
+  // apiUrl: "http://206.189.224.74:8080/CCMS3",        // LOCAL DO Instance
 
   mockUrl: "assets/mockData/",
 
   allowDeleteLookupItems: false,
   allowResetPasswordFeature: true,
   allowAdminWorkflowFeature: true,
+  allowAdminCalendarFeature: true,
 
   VERSION: require('../../package.json').version
 };

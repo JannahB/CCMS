@@ -1,4 +1,3 @@
-import { environment } from './../environments/environment';
 import { UserService } from './common/services/utility/user.service';
 import { AuthenticationService } from './common/services/http/authentication.service';
 import { GlobalState } from './common/services/state/global.state';
@@ -6,6 +5,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { MenuItem } from 'primeng/primeng';
 import { AppComponent } from './app.component';
+import { environment } from './../environments/environment';
 
 @Component({
   selector: 'app-menu',
@@ -21,6 +21,7 @@ export class AppMenuComponent implements OnInit {
 
   adminMenuItems: any[];
   allowAdminWorkflowFeature: boolean = false;
+  allowAdminCalendarFeature: boolean = false;
   model: any[];
 
   constructor(
@@ -34,6 +35,7 @@ export class AppMenuComponent implements OnInit {
 
   ngOnInit() {
     this.allowAdminWorkflowFeature = environment.allowAdminWorkflowFeature;
+    this.allowAdminCalendarFeature = environment.allowAdminCalendarFeature;
 
     this.adminMenuItems = [
       { label: 'User Maintenance', icon: 'account_box', routerLink: ['/admin/users'] },
@@ -55,6 +57,20 @@ export class AppMenuComponent implements OnInit {
     if (this.allowAdminWorkflowFeature) {
       this.adminMenuItems.push(
         { label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
+      )
+    }
+
+    console.log('allowAdminCalendarFeature', this.allowAdminCalendarFeature)
+    if (this.allowAdminCalendarFeature) {
+      this.adminMenuItems.push(
+        {
+          label: 'Calendar', icon: 'today', items: [
+            { label: 'Holidays', icon: 'event_available', routerLink: ['/admin/calendar/holidays'] },
+            { label: 'Templates', icon: 'event', routerLink: ['/admin/calendar/templates'] },
+            { label: 'Resource Schedules', icon: 'perm_contact_calendar', routerLink: ['/admin/calendar/resources'] },
+            { label: 'Facility Schedules', icon: 'event_note', routerLink: ['/admin/calendar/facilities'] },
+          ]
+        }
       )
     }
 

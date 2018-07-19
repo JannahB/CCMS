@@ -1,22 +1,23 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
-import { MatSelectionList, MatSelectionListChange } from '@angular/material';
+import { MatSelectionList, MatSelectionListChange, MatListOption } from '@angular/material';
 import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
 import { BreadcrumbService } from './../../../breadcrumb.service';
 import { ToastService } from './../../../common/services/utility/toast.service';
 import { CalTemplate } from '../../../common/entities/CalTemplate';
-import { CalResourceService } from "../../../common/services/http/calResource.service";
-import { CalResource } from '../../../common/entities/CalResource';
-import { CalResourceTime } from './../../../common/entities/CalResourceTime';
+import { CalFacility } from '../../../common/entities/CalFacility';
+import { CalFacilityTag } from './../../../common/entities/CalFacilityTag';
+import { CalFacilityService } from './../../../common/services/http/calFacility.service';
+import { CalFacilityTime } from './../../../common/entities/CalFacilityTime';
 import { CalTemplateService } from './../../../common/services/http/calTemplate.service';
 
 @Component({
-  selector: 'app-cal-resources',
-  templateUrl: './cal-resources.component.html',
-  styleUrls: ['./cal-resources.component.scss']
+  selector: 'app-cal-facilities',
+  templateUrl: './cal-facilities.component.html',
+  styleUrls: ['./cal-facilities.component.scss']
 })
-export class CalResourcesComponent implements OnInit {
+export class CalFacilitiesComponent implements OnInit {
 
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
@@ -24,17 +25,21 @@ export class CalResourcesComponent implements OnInit {
   @ViewChild(MatSelectionList)
   matSelectionList: MatSelectionList;
 
-
-  resources: any[] = [];
-  selectedResource: any;
-  selectedResourceBak: any;
-  selectedResourceIdx: number;
+  facilities: any[] = [];
+  selectedFacility: any;
+  selectedFacilityBak: any;
+  selectedFacilityIdx: number;
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
   searchText: String;
   templates: any[];
   selectedTemplate: any;
   showChooseTemplateModal: boolean = false;
+
+  facilityTags: any[];
+  selectedTags: CalFacilityTag[];
+  filteredTags: CalFacilityTag[];
+
 
   config: any = {
     theme: "minimal_blue",
@@ -56,7 +61,6 @@ export class CalResourcesComponent implements OnInit {
     startDate: this.selectedWorkWeek || this.getMonday(),
     heightSpec: "Max",
     height: 300,
-
     allowEventOverlap: false,
 
     timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
@@ -137,24 +141,25 @@ export class CalResourcesComponent implements OnInit {
     onEventMoved: args => {
       console.log('move', args);
       // this.message("Event moved");
+      this.saveItem();
     },
     eventResizeHandling: "Update",
     onEventResized: args => {
       console.log('resize', args);
       // this.message("Event resized");
+      this.saveItem();
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
       // delete TemplateTime data.id
-      this.selectedResource.days = this.selectedResource.days.slice();
+      this.selectedFacility.days = this.selectedFacility.days.slice();
       this.deleteTimeBlock(args.e.data.id, true);
       // console.log('delete', args);
     }
   };
 
-
   constructor(
-    private calResourceSvc: CalResourceService,
+    private calFacilitySvc: CalFacilityService,
     private calTemplateSvc: CalTemplateService,
     private breadCrumbSvc: BreadcrumbService,
     private toastSvc: ToastService
@@ -170,12 +175,13 @@ export class CalResourcesComponent implements OnInit {
 
     this.breadCrumbSvc.setItems([
       { label: 'Admin Calendars', routerLink: ['/admin/calendar'] },
-      { label: 'Resource Hours', routerLink: ['/admin/calendar/resources'] }
+      { label: 'Facility Hours', routerLink: ['/admin/calendar/facilities'] }
     ]);
 
     let now = moment();
     console.log('hello date', now.format());
     console.log(now.add(7, 'days').format());
+    console.log('now after add 7', now.format())
   }
 
   // TODO: Move to util lib
@@ -185,45 +191,26 @@ export class CalResourcesComponent implements OnInit {
 
   ngOnInit() {
 
+    // this.selectedWorkWeek = this.getMonday('2018-11-10T08:30:00');
     this.selectedWorkWeek = this.getMonday();
 
-    this.resources = [];
-
-    this.resources =
-      [
-        {
-          "id": 1,
-          "name": "Justice Gonzales",
-          "description": "",
-          "court": 5,
-          "days": [{
-            "id": 9,
-            "start": "2018-01-01T04:00:00-05:00",
-            "end": "2018-01-01T07:00:00-05:00"
-          }]
-        },
-        {
-          "id": 2,
-          "name": "Master Cielto-Jones",
-          "description": "",
-          "court": 5,
-          "days": [{
-            "id": 9,
-            "start": "2018-01-02T04:00:00-05:00",
-            "end": "2018-01-02T07:00:00-05:00"
-          }]
-        }
-      ]
+    this.facilities = [];
+    this.facilityTags = [
+      { id: 1, name: 'Jury Room' },
+      { id: 2, name: 'Near Detention Center' },
+      { id: 3, name: 'Video Conferencing' },
+    ];
+    this.filteredTags = this.facilityTags;
 
     // Handle mat-selection-list selection change via dom element so we can DeselectAll
     this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
       this.matSelectionList.deselectAll();
       event.option.selected = true;
-      this.selectedResource = event.option.value;
+      this.selectedFacility = event.option.value;
       this.copySelectedItem();
     });
 
-    this.selectedResource = new CalResource();
+    this.selectedFacility = new CalFacility();
   }
 
   ngOnDestroy() {
@@ -236,9 +223,9 @@ export class CalResourcesComponent implements OnInit {
 
     this.onSelectWorkWeek(this.selectedWorkWeek);
 
-    this.calResourceSvc.get().subscribe(result => {
-      console.log('resources', result);
-      this.resources = result;
+    this.calFacilitySvc.get().subscribe(result => {
+      console.log('facilities', result);
+      this.facilities = result;
 
       this.setFirstListItem();
     });
@@ -266,18 +253,18 @@ export class CalResourcesComponent implements OnInit {
     this.scheduler.control.update();
   }
 
-  createNewResource() {
+  createNewFacility() {
     this.matSelectionList.deselectAll();
-    this.selectedResource = new CalResource();
+    this.selectedFacility = new CalFacility();
     this.copySelectedItem();
   }
 
   saveItem() {
-    // console.log('BEFORE Save RESOURCE:', this.selectedResource);
+    //console.log('BEFORE Save Facility:', this.selectedFacility);
 
-    this.calResourceSvc.save(this.selectedResource)
+    this.calFacilitySvc.save(this.selectedFacility)
       .subscribe(result => {
-        // console.log('AFTER Save RESOURCE:', this.selectedResource);
+        // console.log('AFTER Save Facility:', this.selectedFacility);
         this.updateList(result);
         this.hideModals();
         this.toastSvc.showSuccessMessage('Item Saved');
@@ -288,12 +275,12 @@ export class CalResourcesComponent implements OnInit {
         },
         () => {
           // final
-        });
+        })
   }
 
   cancelDataItemEdit(event) {
-    this.selectedResource = Object.assign(new CalResource(), this.selectedResourceBak);
-    this.resources[this.selectedResourceIdx] = this.selectedResource;
+    this.selectedFacility = Object.assign(new CalFacility(), this.selectedFacilityBak);
+    this.facilities[this.selectedFacilityIdx] = this.selectedFacility;
   }
 
   deleteDataItemRequest() {
@@ -301,11 +288,11 @@ export class CalResourcesComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.calResourceSvc.delete(this.selectedResource.id)
+    this.calFacilitySvc.delete(this.selectedFacility.id)
       .subscribe(result => {
         this.toastSvc.showSuccessMessage('The item has been deleted.');
-        this.resources.splice(this.getIndexOfItem(), 1);
-        this.selectedResource = this.resources[0];
+        this.facilities.splice(this.getIndexOfItem(), 1);
+        this.selectedFacility = this.facilities[0];
         this.hideModals();
       },
         (error) => {
@@ -318,7 +305,7 @@ export class CalResourcesComponent implements OnInit {
   }
 
   deleteTimeBlock(id, userInitiated = false) {
-    this.calResourceSvc.deleteResourceTimeBlock(id)
+    this.calFacilitySvc.deleteFacilityTimeBlock(id)
       .subscribe(result => {
         console.log('Deleted Block ID:', id);
         if (userInitiated) // TODO: Turn this on after testing complete
@@ -368,36 +355,28 @@ export class CalResourcesComponent implements OnInit {
       return;
     }
 
-    console.log('BEFORE selectedResource.days', this.selectedResource.days);
+    console.log('BEFORE selectedFacility.days', this.selectedFacility.days);
 
     let templateDays = this.selectedTemplate.days;
     console.log('TEMPLATE DAYS', this.selectedTemplate.days);
 
     // DELETE TIME BLOCKS IN THE CURRENT WEEK
-    let daysSansThisWeekDays = this.removeDatesWithinASpan(this.selectedResource.days, this.selectedWorkWeek, 6);
+    let daysSansThisWeekDays = this.removeDatesWithinASpan(this.selectedFacility.days, this.selectedWorkWeek, 6);
     console.log('1. Time blocks sans THIS weeks time blocks', daysSansThisWeekDays);
 
     // LOOP SELECTED TEMPLATE BLOCKS ASSIGN TO THIS WEEK
     templateDays.forEach(block => {
-<<<<<<< HEAD
-      let bs = new Date(block.start); // -05:00
-=======
       let bs = new Date(block.start);
->>>>>>> cal
       let be = new Date(block.end);
       let bDay = bs.getDay();
 
       // find the Date of the Day in the current week
-<<<<<<< HEAD
-      let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);  // -04:00
-=======
       let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);
->>>>>>> cal
 
       // Create new Time Block
-      let newBlock = new CalResourceTime();
+      let newBlock = new CalFacilityTime();
       newBlock.id = this.genLongId();
-      newBlock.resourceId = this.selectedResource.id;
+      newBlock.facilityId = this.selectedFacility.id;
       newBlock.text = 'Available';
 
       console.log('TEMPLATE BLOCK .getTimezoneOffset', bs.getTimezoneOffset());
@@ -431,13 +410,13 @@ export class CalResourcesComponent implements OnInit {
       */
 
       // Add the newBlock to Facility.days
-      this.selectedResource.days.push(newBlock);
+      this.selectedFacility.days.push(newBlock);
 
     });
 
-    this.selectedResource.days = this.selectedResource.days.slice();
+    this.selectedFacility.days = this.selectedFacility.days.slice();
     this.scheduler.control.update();
-    console.log('AFTER selectedResource.days', this.selectedResource.days);
+    console.log('AFTER selectedFacility.days', this.selectedFacility.days);
     // SAVE NEW BLOCKS
     this.saveItem();
 
@@ -479,7 +458,7 @@ export class CalResourcesComponent implements OnInit {
 
   applyToNextWeek() {
 
-    let days = this.selectedResource.days;
+    let days = this.selectedFacility.days;
 
     // REMOVE TIME BLOCKS IN UPCOMING WEEK
     let daysSansNextWeekDays = this.removeDatesWithinASpan(days, this.selectedWorkWeek.addDays(7), 6);
@@ -551,7 +530,7 @@ export class CalResourcesComponent implements OnInit {
       block.start = new Date(block.start).addDays(7).toISOString();
       block.end = new Date(block.end).addDays(7).toISOString();
       block.id = this.genLongId();
-      this.selectedResource.days.push(block);
+      this.selectedFacility.days.push(block);
       newItemsForComparison.push(block); // for debug only
     })
     console.log('3. Next Weeks Time Blocks For Comparison', newItemsForComparison)
@@ -559,12 +538,29 @@ export class CalResourcesComponent implements OnInit {
 
 
 
+  // -------- TAGS MULTI-SELECT METHODS ---------- //
+
+  getTagsToFilter(event) {
+    let query = event.query;
+    this.filteredTags = this.filterTags(query, this.facilityTags);
+  }
+
+  filterTags(query, facilityTags: any[]): any[] {
+    let filtered: any[] = [];
+    for (let i = 0; i < facilityTags.length; i++) {
+      let tag = facilityTags[i];
+      if (tag.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(tag);
+      }
+    }
+    return filtered;
+  }
 
   private setFirstListItem() {
-    if (!this.resources || !this.resources.length)
+    if (!this.facilities || !this.facilities.length)
       return;
 
-    this.selectedResource = this.resources[0];
+    this.selectedFacility = this.facilities[0];
     this.copySelectedItem();
     setTimeout(() => {
       if (this.matSelectionList.options.first)
@@ -576,23 +572,23 @@ export class CalResourcesComponent implements OnInit {
     let index: number = this.getIndexOfItem(result);
 
     if (index >= 0) {
-      this.resources[index] = result;
-      this.selectedResource = this.resources[index];
+      this.facilities[index] = result;
+      this.selectedFacility = this.facilities[index];
     } else {
-      this.resources.push(result);
-      this.selectedResource = this.resources[this.resources.length - 1];
+      this.facilities.push(result);
+      this.selectedFacility = this.facilities[this.facilities.length - 1];
     }
     // This prevents event doubling phenom
-    this.selectedResource.days = this.selectedResource.days.slice();
+    this.selectedFacility.days = this.selectedFacility.days.slice();
   }
 
   private copySelectedItem() {
-    this.selectedResourceBak = Object.assign({}, this.selectedResource);
-    this.selectedResourceIdx = this.getIndexOfItem(this.selectedResource);
+    this.selectedFacilityBak = Object.assign({}, this.selectedFacility);
+    this.selectedFacilityIdx = this.getIndexOfItem(this.selectedFacility);
   }
 
-  private getIndexOfItem(item = this.selectedResource): number {
-    return this.resources
+  private getIndexOfItem(item = this.selectedFacility): number {
+    return this.facilities
       .findIndex(itm => itm.id == item.id);
   }
 
