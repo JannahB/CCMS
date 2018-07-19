@@ -21,17 +21,17 @@
         "../node_modules/primeng/resources/primeng.min.css",
         "../node_modules/fullcalendar/dist/fullcalendar.min.css",
         "../node_modules/quill/dist/quill.snow.css",
-          "../node_modules/nanoscroller/bin/css/nanoscroller.css",
+        "../node_modules/nanoscroller/bin/css/nanoscroller.css",
         "styles.scss"
       ],
       "scripts": [
-          "../node_modules/jquery/dist/jquery.js",
-          "../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js",
-          "assets/layout/js/ripple.js",
-          "../node_modules/moment/moment.js",
-          "../node_modules/chart.js/dist/Chart.js",
-          "../node_modules/fullcalendar/dist/fullcalendar.js",
-          "../node_modules/quill/dist/quill.js"
+        "../node_modules/jquery/dist/jquery.js",
+        "../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js",
+        "assets/layout/js/ripple.js",
+        "../node_modules/moment/moment.js",
+        "../node_modules/chart.js/dist/Chart.js",
+        "../node_modules/fullcalendar/dist/fullcalendar.js",
+        "../node_modules/quill/dist/quill.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
@@ -39,7 +39,8 @@
         "prod": "environments/environment.prod.ts",
         "training": "environments/environment.training.ts",
         "test": "environments/environment.test.ts",
-        "local": "environments/environment.local.ts"
+        "local": "environments/environment.local.ts",
+        "crim-test": "environments/environment.crim-test.ts"
       }
     }
   ],
@@ -71,4 +72,4 @@
     "styleExt": "scss",
     "component": {}
   }
- }
+}

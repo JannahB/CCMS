@@ -119,19 +119,19 @@
 
         <div class="ui-g-12">
           <mat-form-field class="width-full" >
-            <label class="minimal primary block" for="timeDelay">Time Delay *Enter 0 for immediate</label>
+            <label class="minimal primary block" for="timeDelay">Days to Delay* (enter 0 for immediate)</label>
             <!-- <div>*Enter 0 for immediate</div> -->
             <input matInput name="timeDelay" #timeDelayField="ngModel"
                    [(ngModel)]="selectedStep.delayDays" required>
               <div class="ui-message ui-messages-error ui-corner-all"
                    *ngIf="timeDelayField.errors?.required && timeDelayField.touched" >
-                   Please enter a Time Delay
+                   Please enter number of days to delay
              </div>
           </mat-form-field>
         </div>
 
         <div class="ui-g-12">
-          <label class="minimal primary block" for="task">Task</label>
+          <label class="minimal primary block" for="task">Task*</label>
           <p-dropdown name="task" #taskField="ngModel" placeholder="choose Task..."
               [required]="true"
               [options]="taskTypes"
@@ -150,7 +150,7 @@
 
         <div class="ui-g-12">
           <!-- <label class="minimal primary block">Document</label> -->
-          <custom-autocomplete name="acDocument" id="acDocument" #acDocument="ngModel" placeholder="Document Template"
+          <custom-autocomplete name="acDocument" id="acDocument" #acDocument="ngModel" placeholder="Document Template*"
             [required]="true"
             [options]="documentTemplates"
             labelField="documentName"
@@ -210,7 +210,7 @@
 
         <div class="ui-g-12">
           <!-- <label class="minimal primary block">Assigned Resource</label> -->
-          <custom-autocomplete name="acResource" id="acResource" #acResource="ngModel" placeholder="Assigned Resource"
+          <custom-autocomplete name="acResource" id="acResource" #acResource="ngModel" placeholder="Assigned Resource*"
             [required]="true"
             [options]="poolParties"
             labelField="fullName"

@@ -379,20 +379,12 @@ export class CalResourcesComponent implements OnInit {
 
     // LOOP SELECTED TEMPLATE BLOCKS ASSIGN TO THIS WEEK
     templateDays.forEach(block => {
-<<<<<<< HEAD
       let bs = new Date(block.start); // -05:00
-=======
-      let bs = new Date(block.start);
->>>>>>> cal
       let be = new Date(block.end);
       let bDay = bs.getDay();
 
       // find the Date of the Day in the current week
-<<<<<<< HEAD
       let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);  // -04:00
-=======
-      let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);
->>>>>>> cal
 
       // Create new Time Block
       let newBlock = new CalResourceTime();
