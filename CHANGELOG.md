@@ -1,5 +1,50 @@
 # Change Log
 
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="1.4.5"></a>
+## [1.4.5](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.4.3...v1.4.5) (2018-07-23)
+
+
+### Bug Fixes
+
+* merge conflicts ([b6d76e1](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/b6d76e1))
+* standardize apiUrl; turn on feature flags; ([88722ec](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/88722ec))
+* **Case:** fix doc upload URL ([a9efe55](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/a9efe55))
+* **ENV:** add testcrim domain ([028f1b3](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/028f1b3))
+* **Workflow:** clarify labels ([094d321](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/094d321))
+
+
+### Features
+
+* add crim-test ENV ([409b50f](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/409b50f))
+* do not require login on 500 error ([bf396a0](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/bf396a0))
+* **Calendar:** add cal resources and holidays pages ([ecaff9f](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/ecaff9f))
+* **Calendar:** allow time block ID to persist all the way to the database ([e7982e4](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/e7982e4))
+* **Calendar:** apply template to facility week ([dfdbd3c](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/dfdbd3c))
+* **Calendar:** apply this week to next week functionality; autosave time blocks ([7433273](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/7433273))
+* **Calendar:** auto label new time blocks; rename time block; updateList assignment ([cd1ffc7](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/cd1ffc7))
+* **Calendar:** calendar section setup ([e6200d9](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/e6200d9))
+* **Calendar:** Calendar Template features ([bf5b5d9](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/bf5b5d9))
+* **Calendar:** complete Calendar feature ([7b11e48](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/7b11e48))
+* **Calendar:** custom calendar theme ([943ae50](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/943ae50))
+* **Calendar:** facility hours page 80% complete ([fa8407e](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/fa8407e))
+* **Calendar:** formatting ([2869a69](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/2869a69))
+* **Calendar:** handle delete template and fix double time block issue ([24b8bf4](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/24b8bf4))
+* **Calendar:** move POST/PUT logic and  serialization service ([6710d61](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/6710d61))
+* **Calendar:** prevent block overlap ([1425a16](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/1425a16))
+* **Calendar:** propagate cal-template code changes to cal-facility ([133234c](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/133234c))
+* **Calendar:** remove duration label from time block ([818c887](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/818c887))
+* **Calendar:** resource calendar section ([5e102d7](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/5e102d7))
+* **FullName:** sample change for AC-280 ([bcc1bb0](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/bcc1bb0))
+* **Organization:** fullname/org support for party search, party detail, case search and case detail ([256199e](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/256199e))
+* **Organization Party:** Modify UI to allow Organization and Party Full Name ([8741778](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/8741778))
+* **Organization Party:** timezone modification ([91fe8d0](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/91fe8d0))
+
+
+
+# Change Log
+
 
 ## [1.4.3](https://bitbucket.org/reurgency/ccms-fe2/compare/v1.4.2...v1.4.3) (2018-05-18)
 
