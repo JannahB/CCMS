@@ -1,29 +1,169 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { MatSelectionList, MatSelectionListChange } from "@angular/material";
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
-import { MatSelectionList, MatSelectionListChange } from '@angular/material';
-import * as moment from 'moment';
-
-import { CalFacilityService } from './../../../common/services/http/calFacility.service';
-import { CalFacilityTag } from './../../../common/entities/CalFacilityTag';
-import { ToastService } from './../../../common/services/utility/toast.service';
-import { BreadcrumbService } from './../../../breadcrumb.service';
-import { CalTemplate } from '../../../common/entities/CalTemplate';
-import { CalFacility } from '../../../common/entities/CalFacility';
+import * as moment from "moment";
+import { Calendar } from "../../../../../node_modules/primeng/primeng";
+import { CalFacility } from "../../../common/entities/CalFacility";
+import { CalTemplate } from "../../../common/entities/CalTemplate";
+import { Holiday } from "../../../common/entities/Holiday";
+import { HolidayService } from "../../../common/services/holiday.service";
+import { BreadcrumbService } from "./../../../breadcrumb.service";
+import { CalFacilityTag } from "./../../../common/entities/CalFacilityTag";
+import { CalFacilityService } from "./../../../common/services/http/calFacility.service";
+import { ToastService } from "./../../../common/services/utility/toast.service";
 
 @Component({
-  selector: 'app-holidays',
-  templateUrl: './holidays.component.html',
-  styleUrls: ['./holidays.component.scss']
+  selector: "app-holidays",
+  templateUrl: "./holidays.component.html",
+  styleUrls: ["./holidays.component.scss"]
 })
 export class HolidaysComponent implements OnInit {
+  @ViewChild("endDateCalendar") endDateCalendar: Calendar;
 
-  @ViewChild("scheduler")
-  scheduler: DayPilotSchedulerComponent;
+  holidays: Holiday[] = [];
+  selectedHoliday: Holiday = null;
 
-  @ViewChild(MatSelectionList)
-  matSelectionList: MatSelectionList;
+  searchText: String;
 
-  holidays: any[] = [];
+  //Model properties
+  public name: string;
+  public startDate: Date;
+  public endDate: Date;
+
+  constructor(
+    private calFacilitySvc: CalFacilityService,
+    private holidayService: HolidayService,
+    private breadCrumbSvc: BreadcrumbService,
+    private toastSvc: ToastService
+  ) {
+    this.breadCrumbSvc.setItems([
+      { label: "Admin Calendars", routerLink: ["/admin/calendar"] },
+      { label: "Facility Hours", routerLink: ["/admin/calendar/facilities"] }
+    ]);
+
+    let now = moment();
+    console.log("hello date", now.format());
+    console.log(now.add(7, "days").format());
+  }
+
+  ngOnInit() {
+    //TODO: add loading bar
+    //TODO: add exception handler
+    this.holidayService
+      .getAll()
+      .subscribe(holidays => (this.holidays = holidays));
+
+    this.facilities = [];
+    this.facilityTags = [
+      { id: 1, name: "Jury Room" },
+      { id: 2, name: "Near Detention Center" }
+    ];
+    this.filteredTags = this.facilityTags;
+
+    // Handle mat-selection-list selection change via dom element so we can DeselectAll
+    this.matSelectionList.selectionChange.subscribe(
+      (event: MatSelectionListChange) => {
+        this.matSelectionList.deselectAll();
+        event.option.selected = true;
+        this.selectedFacility = event.option.value;
+        this.copySelectedItem();
+      }
+    );
+
+    this.selectedFacility = new CalFacility();
+  }
+
+  startDateSelected(startDate: Date) {
+    if (this.endDate) {
+      return;
+    }
+
+    this.endDate = this.startDate;
+
+    let selectedMonth: number = startDate.getMonth();
+    let selectedYear: number = startDate.getFullYear();
+
+    this.endDateCalendar.currentMonth = selectedMonth;
+    this.endDateCalendar.currentYear = selectedYear;
+    this.endDateCalendar.createMonth(selectedMonth, selectedYear);
+  }
+
+  newClicked() {
+    this.reset();
+    this.selectedHoliday = new Holiday();
+  }
+
+  holidaySelected(change: MatSelectionListChange) {
+    let holiday: Holiday = change.option.value;
+    this.selectedHoliday = holiday;
+
+    let startDate = moment(holiday.day);
+
+    this.name = holiday.name;
+    this.startDate = startDate.toDate();
+    this.endDate = startDate.add(holiday.span - 1, "days").toDate();
+  }
+
+  saveClicked() {
+    if (!this.name) {
+      this.toastSvc.showWarnMessage("Holiday Name is Required");
+      return;
+    }
+
+    if (!this.startDate) {
+      this.toastSvc.showWarnMessage("Holiday Start Date is Required");
+      return;
+    }
+
+    if (!this.endDate) {
+      this.toastSvc.showWarnMessage("Holiday End Date is Required");
+      return;
+    }
+
+    let startDateMoment = moment(this.startDate);
+    let endDateMoment = moment(this.endDate);
+
+    this.selectedHoliday.name = this.name;
+    this.selectedHoliday.day = startDateMoment.format("YYYY-MM-DD");
+    this.selectedHoliday.span = endDateMoment.diff(startDateMoment, "days") + 1;
+
+    if (this.selectedHoliday.id) {
+      this.holidayService.put(this.selectedHoliday).subscribe(result => {
+        this.reset();
+      });
+      this.reset();
+    } else {
+      this.holidayService.post(this.selectedHoliday).subscribe(result => {
+        this.holidays.push(result);
+        this.reset();
+      });
+    }
+  }
+
+  deleteClicked() {
+    this.showDeleteItemModal = true;
+  }
+
+  deleteConfirmationClicked() {
+    this.holidayService.delete(this.selectedHoliday.id).subscribe(result => {
+      this.holidays.remove(this.selectedHoliday);
+      this.reset();
+      this.showDeleteItemModal = false;
+    });
+  }
+
+  reset() {
+    this.name = "";
+    this.startDate = null;
+    this.endDate = null;
+    this.selectedHoliday = null;
+  }
+
+  //#region This all looks like copy pasta
+
+  @ViewChild("scheduler") scheduler: DayPilotSchedulerComponent;
+
+  @ViewChild(MatSelectionList) matSelectionList: MatSelectionList;
 
   facilities: any[] = [];
   selectedFacility: any;
@@ -31,12 +171,9 @@ export class HolidaysComponent implements OnInit {
   selectedFacilityIdx: number;
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
-  searchText: String;
-
   facilityTags: any[];
   selectedTags: CalFacilityTag[];
   filteredTags: CalFacilityTag[];
-
 
   config: any = {
     viewType: "Days",
@@ -49,7 +186,7 @@ export class HolidaysComponent implements OnInit {
     ],
     eventHeight: 40,
     cellWidthSpec: "Auto",
-    timeHeaders: [{ "groupBy": "Hour" }, { "groupBy": "Cell", "format": "mm" }],
+    timeHeaders: [{ groupBy: "Hour" }, { groupBy: "Cell", format: "mm" }],
     scale: "CellDuration",
     cellDuration: 30,
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
@@ -58,18 +195,24 @@ export class HolidaysComponent implements OnInit {
     heightSpec: "Max",
     height: 300,
     onTimeRangeSelected: args => {
-      DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
+      DayPilot.Modal.prompt("Create a new task:", "Available").then(function(
+        modal
+      ) {
         var dp = args.control;
         dp.clearSelection();
-        if (!modal.result) { return; }
+        if (!modal.result) {
+          return;
+        }
         // id: Math.random() * 1000000/1000000,
-        dp.events.add(new DayPilot.Event({
-          start: args.start,
-          end: args.end,
-          id: DayPilot.guid(),
-          resource: args.resource,
-          text: modal.result
-        }));
+        dp.events.add(
+          new DayPilot.Event({
+            start: args.start,
+            end: args.end,
+            id: DayPilot.guid(),
+            resource: args.resource,
+            text: modal.result
+          })
+        );
       });
     },
     onBeforeRowHeaderRender: args => {
@@ -81,8 +224,7 @@ export class HolidaysComponent implements OnInit {
       let str;
       if (duration.totalDays() >= 1) {
         str = Math.floor(duration.totalHours()) + ":" + duration.toString("mm");
-      }
-      else {
+      } else {
         str = duration.toString("H:mm");
       }
 
@@ -91,18 +233,24 @@ export class HolidaysComponent implements OnInit {
     onBeforeEventRender: args => {
       var duration = new DayPilot.Duration(args.data.start, args.data.end);
       args.data.areas = [
-        { right: 2, top: 6, height: 20, width: 30, html: duration.toString("h:mm") }
+        {
+          right: 2,
+          top: 6,
+          height: 20,
+          width: 30,
+          html: duration.toString("h:mm")
+        }
       ];
     },
     onBeforeResHeaderRender: args => {
-      let dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      let dow = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
       // console.log("args.resource.html", args.resource);
 
       // To Show day of week only use
       // args.resource.html = dow[args.resource.index];
 
       // To Show Day & Date use
-      args.resource.html = dow[args.resource.index] + ' ' + args.resource.html;
+      args.resource.html = dow[args.resource.index] + " " + args.resource.html;
 
       if (args.resource.loaded === false) {
         args.resource.html += " (loaded dynamically)";
@@ -111,85 +259,25 @@ export class HolidaysComponent implements OnInit {
     },
     eventMoveHandling: "Update",
     onEventMoved: args => {
-      console.log('move', args);
+      console.log("move", args);
       // this.message("Event moved");
     },
     eventResizeHandling: "Update",
     onEventResized: args => {
-      console.log('resize', args);
+      console.log("resize", args);
       // this.message("Event resized");
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
       // delete TemplateTime data.id
-      this.calFacilitySvc.deleteFacilityTimeBlock(args.e.data.id)
+      this.calFacilitySvc
+        .deleteFacilityTimeBlock(args.e.data.id)
         .subscribe(result => {
-          this.toastSvc.showInfoMessage('Time block deleted.');
+          this.toastSvc.showInfoMessage("Time block deleted.");
         });
-      console.log('delete', args);
+      console.log("delete", args);
     }
   };
-
-
-  constructor(
-    private calFacilitySvc: CalFacilityService,
-    private breadCrumbSvc: BreadcrumbService,
-    private toastSvc: ToastService
-  ) {
-    this.breadCrumbSvc.setItems([
-      { label: 'Admin Calendars', routerLink: ['/admin/calendar'] },
-      { label: 'Facility Hours', routerLink: ['/admin/calendar/facilities'] }
-    ]);
-
-    let now = moment();
-    console.log('hello date', now.format());
-    console.log(now.add(7, 'days').format());
-  }
-
-  ngOnInit() {
-    this.facilities = [];
-    this.facilityTags = [
-      { id: 1, name: 'Jury Room' },
-      { id: 2, name: 'Near Detention Center' }
-    ];
-    this.filteredTags = this.facilityTags;
-
-    this.holidays =
-      [
-        {
-          "id": 1,
-          "name": "New Years Day",
-          "description": "",
-          "court": 5,
-          "days": [{
-            "id": 9,
-            "start": "2018-01-01T04:00:00-05:00",
-            "end": "2018-01-01T07:00:00-05:00"
-          }]
-        },
-        {
-          "id": 2,
-          "name": "Carnival",
-          "description": "",
-          "court": 5,
-          "days": [{
-            "id": 9,
-            "start": "2018-01-02T04:00:00-05:00",
-            "end": "2018-01-02T07:00:00-05:00"
-          }]
-        }
-      ]
-
-    // Handle mat-selection-list selection change via dom element so we can DeselectAll
-    this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
-      this.matSelectionList.deselectAll();
-      event.option.selected = true;
-      this.selectedFacility = event.option.value;
-      this.copySelectedItem();
-    });
-
-    this.selectedFacility = new CalFacility();
-  }
 
   ngOnDestroy() {
     // if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
@@ -200,7 +288,7 @@ export class HolidaysComponent implements OnInit {
     var to = this.scheduler.control.visibleEnd();
 
     this.calFacilitySvc.get().subscribe(result => {
-      console.log('facilities', result);
+      console.log("facilities", result);
       this.facilities = result;
 
       this.setFirstListItem();
@@ -214,47 +302,56 @@ export class HolidaysComponent implements OnInit {
   }
 
   saveItem() {
-    console.log('1 Saving facility:', this.selectedFacility)
+    console.log("1 Saving facility:", this.selectedFacility);
 
     this.serializeDPDateWithZone();
 
     if (this.selectedFacility.id) {
-      console.log('2 Saving facility:', this.selectedFacility)
+      console.log("2 Saving facility:", this.selectedFacility);
       // Update existing item PUT
-      this.calFacilitySvc.put(this.selectedFacility.id, this.selectedFacility)
-        .subscribe(result => {
-          this.updateList(result);
-          this.hideModals();
-          this.toastSvc.showSuccessMessage('Item Updated');
-        },
-          (error) => {
+      this.calFacilitySvc
+        .put(this.selectedFacility.id, this.selectedFacility)
+        .subscribe(
+          result => {
+            this.updateList(result);
+            this.hideModals();
+            this.toastSvc.showSuccessMessage("Item Updated");
+          },
+          error => {
             console.log(error);
-            this.toastSvc.showErrorMessage('There was an error saving the item.');
+            this.toastSvc.showErrorMessage(
+              "There was an error saving the item."
+            );
           },
           () => {
             // final
-          })
+          }
+        );
     } else {
       // Add new item POST
-      this.calFacilitySvc.post(this.selectedFacility)
-        .subscribe(result => {
-          console.log('result', result);
+      this.calFacilitySvc.post(this.selectedFacility).subscribe(
+        result => {
+          console.log("result", result);
           this.updateList(result);
           this.hideModals();
-          this.toastSvc.showSuccessMessage('Item Saved');
+          this.toastSvc.showSuccessMessage("Item Saved");
         },
-          (error) => {
-            console.log(error);
-            this.toastSvc.showErrorMessage('There was an error saving the item.');
-          },
-          () => {
-            // final
-          })
+        error => {
+          console.log(error);
+          this.toastSvc.showErrorMessage("There was an error saving the item.");
+        },
+        () => {
+          // final
+        }
+      );
     }
   }
 
   cancelDataItemEdit(event) {
-    this.selectedFacility = Object.assign(new CalTemplate(), this.selectedFacilityBak);
+    this.selectedFacility = Object.assign(
+      new CalTemplate(),
+      this.selectedFacilityBak
+    );
     this.facilities[this.selectedFacilityIdx] = this.selectedFacility;
   }
 
@@ -267,19 +364,20 @@ export class HolidaysComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.calFacilitySvc.delete(this.selectedFacility.id)
-      .subscribe(result => {
-        this.toastSvc.showSuccessMessage('The item has been deleted.');
+    this.calFacilitySvc.delete(this.selectedFacility.id).subscribe(
+      result => {
+        this.toastSvc.showSuccessMessage("The item has been deleted.");
         this.facilities.splice(this.getIndexOfItem(), 1);
         this.selectedFacility = this.facilities[0];
       },
-        (error) => {
-          console.log(error);
-          this.toastSvc.showErrorMessage('There was an error deleting the item.');
-        },
-        () => {
-          // final
-        })
+      error => {
+        console.log(error);
+        this.toastSvc.showErrorMessage("There was an error deleting the item.");
+      },
+      () => {
+        // final
+      }
+    );
   }
 
   hideModals() {
@@ -298,7 +396,6 @@ export class HolidaysComponent implements OnInit {
     // TODO: Handle this
   }
 
-
   private serializeDPDateWithZone() {
     // Serialize the Time Blocks before saving
     this.selectedFacility.days.forEach(block => {
@@ -313,7 +410,7 @@ export class HolidaysComponent implements OnInit {
       // if a guid (assigned to new blocks by calendar) then change to a
       // number that will be overwritten by server to a server long type
       if (block.id.length == 36) {
-        block.id = Math.round((Math.random() * 10000000000000000));
+        block.id = Math.round(Math.random() * 10000000000000000);
       }
     });
   }
@@ -335,8 +432,7 @@ export class HolidaysComponent implements OnInit {
   }
 
   private setFirstListItem() {
-    if (!this.facilities || !this.facilities.length)
-      return;
+    if (!this.facilities || !this.facilities.length) return;
 
     this.selectedFacility = this.facilities[0];
     this.copySelectedItem();
@@ -362,9 +458,7 @@ export class HolidaysComponent implements OnInit {
   }
 
   private getIndexOfItem(item = this.selectedFacility): number {
-    return this.facilities
-      .findIndex(itm => itm.id == item.id);
+    return this.facilities.findIndex(itm => itm.id == item.id);
   }
-
+  //#endregion
 }
-

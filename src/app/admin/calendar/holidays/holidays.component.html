@@ -1,116 +1,117 @@
 <div class="ui-g">
 
-    <!-- HEADER -->
-    <div class="ui-g-12 pv-0">
-      <h1 class="page-header mt-0">Holidays</h1>
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0">
+    <h1 class="page-header mt-0">Holidays</h1>
+  </div>
+
+  <div class="ui-g-12 card">
+
+    <!-- Column 1 -->
+    <div class="ui-g-2 ui-sm-12 mt-25">
+
+      <mat-form-field class="width-full">
+        <input matInput name="tiSearch" #tiSearch="ngModel" placeholder="Search" [(ngModel)]="searchText">
+
+      </mat-form-field>
+
+      <!-- LIST -->
+      <mat-selection-list #matSelectionList class="items-list" (selectionChange)="holidaySelected($event)">
+        <mat-list-option *ngFor="let item of holidays; let i=index; let itm" [class.hi]="selected" [value]="item">
+          {{ item.name }}
+        </mat-list-option>
+      </mat-selection-list>
+
+      <button mat-raised-button color="primary" (click)="newClicked()" class="mt-15 width-full">
+        <mat-icon aria-label="Add facility button">add</mat-icon>
+        New Holiday
+      </button>
     </div>
 
-    <div class="ui-g-12 card">
-
-      <!-- Column 1 -->
-      <div class="ui-g-2 ui-sm-12 mt-25">
-
+    <!-- Column 2 -->
+    <div class="ui-g-10 ui-sm-12">
+      <div class="ui-g-12 pt-20" *ngIf="selectedHoliday">
         <mat-form-field class="width-full">
-          <input matInput name="tiSearch" #tiSearch="ngModel" placeholder="Search"
-              [(ngModel)]="searchText">
-
+          <input matInput name="tiName" #tiName="ngModel" placeholder="Holiday name" [required]="true" [(ngModel)]="name">
+          <div class="ui-message ui-messages-error ui-corner-all large" *ngIf="tiName.errors?.required && tiName.touched">
+            Please enter a Holiday Name
+          </div>
         </mat-form-field>
 
-        <!-- LIST -->
-        <mat-selection-list #matSelectionList  class="items-list">
-          <mat-list-option *ngFor="let item of holidays; let i=index; let itm" [class.hi]="selected" [value]="item">
-            {{ item.name }}
-          </mat-list-option>
-        </mat-selection-list>
+      </div>
+      <div class="ui-g-12" *ngIf="selectedHoliday">
 
-        <button mat-raised-button color="primary" (click)="createNewFacility()" class="mt-15 width-full">
-          <mat-icon aria-label="Add facility button">add</mat-icon>
-          New Holiday
-        </button>
+        <div class="inline-block">
+          <label class="minimal primary">Holiday Start Date</label>
+          <br />
+          <p-calendar id="startDate" name="startDate" [required]="true" [inline]="true" [disabled]="false" [(ngModel)]="startDate"
+            dateFormat="mm/dd/yy" placeholder="Start Date" [showIcon]="true" yearRange="2018:2038" [yearNavigator]="false"
+            appendTo="body" (ngModelChange)="startDateSelected($event)"></p-calendar>
+        </div>
+
+        <div class="inline-block">
+          <label class="minimal primary">Holiday End Date</label>
+          <br />
+          <p-calendar id="endDate" name="endDate" #endDateCalendar [required]="true" [inline]="true" [disabled]="false" [(ngModel)]="endDate"
+            dateFormat="mm/dd/yy" placeholder="End Date" [showIcon]="true" yearRange="2018:2038" [yearNavigator]="false" appendTo="body"></p-calendar>
+        </div>
+
+        <!-- (onSelect)="generalDetailsOnBlur($event)" -->
+
       </div>
 
-      <!-- Column 2 -->
-      <div class="ui-g-10 ui-sm-12">
-        <div class="ui-g-12 pt-20">
-          <mat-form-field class="width-full">
-            <input matInput name="tiName" #tiName="ngModel" placeholder="Holiday name"
-                [required]="true"
-                [(ngModel)]="holidays[0].name">
-              <div class="ui-message ui-messages-error ui-corner-all large"
-                  *ngIf="tiName.errors?.required && tiName.touched" >
-                  Please enter a Holiday Name
-              </div>
-          </mat-form-field>
-
-        </div>
-        <div class="ui-g-12">
-
-            <label class="minimal primary block">Holdiday Date</label>
-            <p-calendar id="dtWorkWeek" name="dtWorkWeek" #dtWorkWeek
-                  [required]="true"
-                  [inline]="true"
-                  [disabled]="false"
-                  [(ngModel)]="selectedWorkWeek"
-                  dateFormat="mm/dd/yy"
-                  placeholder="Work Week"
-                  [showIcon]="true"
-                  yearRange="2018:2038"
-                  [yearNavigator]="false"
-                  appendTo="body" ></p-calendar>
-                  <!-- (onSelect)="generalDetailsOnBlur($event)" -->
-
-        </div>
-
-        <div class="ui-g-12">
-            <div class="ta-l">
-              <button mat-raised-button color="primary" (click)="saveItem()" class="mt-30 pr-20">
-                <mat-icon aria-label="Add facility button">check</mat-icon>
-                Save Holiday
-              </button>
-              <button mat-raised-button color="secondary" (click)="cancelDataItemEdit()" class="mt-30 pr-20">
-                <mat-icon aria-label="Add facility button">clear</mat-icon>
-                Cancel
-              </button>
-              <button mat-raised-button color="warn" (click)="deleteDataItemRequest()" class="mt-30">
-                <mat-icon aria-label="Add facility button">delete</mat-icon>
-                Delete Holiday
-              </button>
-            </div>
-        </div>
-
-        <div style="height:600px;">
-
-        </div>
-
-        <div class="ui-g-12" style="padding-top:400px;">
-          <div class="" *ngIf="selectedFacility">
-
-
-            <!-- CALENDAR -->
-            <daypilot-scheduler [config]="config" [events]="selectedFacility.days" #scheduler></daypilot-scheduler>
-            <!-- <div #scheduler></div> -->
-
-
-          </div>
-
-        </div>
-        <div class="ui-g-12">
-            <!-- <pre>{{selectedFacility | json}}</pre> -->
+      <div class="ui-g-12" *ngIf="selectedHoliday">
+        <div class="ta-l">
+          <button mat-raised-button color="primary" (click)="saveClicked()" class="mt-30 pr-20">
+            <mat-icon aria-label="Add facility button">check</mat-icon>
+            Save Holiday
+          </button>
+          <button mat-raised-button color="secondary" (click)="reset()" class="mt-30 pr-20">
+            <mat-icon aria-label="Add facility button">clear</mat-icon>
+            Cancel
+          </button>
+          <button mat-raised-button color="warn" (click)="deleteClicked()" class="mt-30">
+            <mat-icon aria-label="Add facility button">delete</mat-icon>
+            Delete Holiday
+          </button>
         </div>
       </div>
 
-      <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteItemModal" [responsive]="true" showEffect="fade" [modal]="true"
-        [closable]="false">
-        <div>Are you sure you want to delete this item?</div>
-        <p-footer>
-          <div class="ui-dialog-buttonpane ui-helper-clearfix">
-            <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
-            <button label="Yes" type="button" pButton icon="fa-check" (click)="deleteDataItem()"></button>
-          </div>
-        </p-footer>
-      </p-dialog>
+      <!-- Copy Pasta -->
+      <div style="height:600px;">
+
+      </div>
+
+      <div class="ui-g-12" style="padding-top:400px;">
+        <div class="" *ngIf="selectedFacility">
 
 
+          <!-- CALENDAR -->
+          <daypilot-scheduler [config]="config" [events]="selectedFacility.days" #scheduler></daypilot-scheduler>
+          <!-- <div #scheduler></div> -->
 
+
+        </div>
+
+      </div>
+      <div class="ui-g-12">
+        <!-- <pre>{{selectedFacility | json}}</pre> -->
+      </div>
+      <!-- End Copy Pasta -->
     </div>
+
+    <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteItemModal" [responsive]="true" showEffect="fade" [modal]="true"
+      [closable]="false">
+      <div>Are you sure you want to delete this item?</div>
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+          <button label="No" type="button" pButton icon="fa-close" (click)="showDeleteItemModal = false"></button>
+          <button label="Yes" type="button" pButton icon="fa-check" (click)="deleteConfirmationClicked()"></button>
+        </div>
+      </p-footer>
+    </p-dialog>
+
+
+
   </div>
+</div>
