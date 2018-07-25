@@ -17,7 +17,7 @@
 
       <!-- LIST -->
       <mat-selection-list #matSelectionList class="items-list" (selectionChange)="holidaySelected($event)">
-        <mat-list-option *ngFor="let item of holidays; let i=index; let itm" [class.hi]="selected" [value]="item">
+        <mat-list-option *ngFor="let item of holidays | nameFilter:searchText; let i=index; let itm" [class.hi]="selected" [value]="item">
           {{ item.name }}
         </mat-list-option>
       </mat-selection-list>

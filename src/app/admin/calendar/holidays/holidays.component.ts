@@ -131,10 +131,14 @@ export class HolidaysComponent implements OnInit {
       this.holidayService.put(this.selectedHoliday).subscribe(result => {
         this.reset();
       });
-      this.reset();
     } else {
       this.holidayService.post(this.selectedHoliday).subscribe(result => {
-        this.holidays.push(result);
+        //Assign the result id to the new holiday and push the new holiday to the collection
+        //because the result will not yet have a name.  Remove this and just use the result
+        //when "name" is added server side
+        this.selectedHoliday.id = result.id;
+        this.holidays.push(this.selectedHoliday);
+        //this.holidays.push(result);
         this.reset();
       });
     }
