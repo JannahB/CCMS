@@ -6,11 +6,13 @@ import {
   AutoCompleteModule,
   ButtonModule,
   CalendarModule,
+  CheckboxModule,
   DialogModule,
   DropdownModule
 } from "primeng/primeng";
 import { CustomMaterialModule } from "../common/modules/customMaterial.module";
 import { NameFilterPipe } from "../common/pipes/name-filter.pipe";
+import { YearFilterPipe } from "../common/pipes/year-filter.pipe";
 import { AdminRoutingModule } from "./admin-routing.module";
 import { AdminComponent } from "./admin.component";
 import { CalFacilitiesComponent } from "./calendar/cal-facilities/cal-facilities.component";
@@ -38,7 +40,8 @@ import { IccsCodesComponent } from "./data/iccs-codes/iccs-codes.component";
     DropdownModule,
     CustomMaterialModule,
     DialogModule,
-    DayPilotModule
+    DayPilotModule,
+    CheckboxModule
   ],
   declarations: [
     DataComponent,
@@ -55,7 +58,8 @@ import { IccsCodesComponent } from "./data/iccs-codes/iccs-codes.component";
     CalTemplatesComponent,
     CalResourcesComponent,
     CalFacilitiesComponent,
-    NameFilterPipe
+    NameFilterPipe,
+    YearFilterPipe
   ]
 })
 export class AdminModule {}

@@ -1,8 +1,11 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatSelectionList, MatSelectionListChange } from "@angular/material";
-import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
+import { DayPilotSchedulerComponent } from "daypilot-pro-angular";
 import * as moment from "moment";
-import { Calendar } from "../../../../../node_modules/primeng/primeng";
+import {
+  Calendar,
+  SelectItem
+} from "../../../../../node_modules/primeng/primeng";
 import { CalFacility } from "../../../common/entities/CalFacility";
 import { CalTemplate } from "../../../common/entities/CalTemplate";
 import { Holiday } from "../../../common/entities/Holiday";
@@ -25,10 +28,15 @@ export class HolidaysComponent implements OnInit {
 
   searchText: String;
 
+  filterYears: SelectItem[] = [];
+  selectedFilterYear: number = new Date().getFullYear();
+
   //Model properties
-  public name: string;
-  public startDate: Date;
-  public endDate: Date;
+  public name: string = "";
+  public startDate: Date = null;
+  public endDate: Date = null;
+
+  public isMultiDay: boolean = false;
 
   constructor(
     private calFacilitySvc: CalFacilityService,
@@ -44,6 +52,19 @@ export class HolidaysComponent implements OnInit {
     let now = moment();
     console.log("hello date", now.format());
     console.log(now.add(7, "days").format());
+
+    let filterYears: SelectItem[] = [];
+    let currentYear = new Date().getFullYear();
+    for (let index: number = -1; index < 20; index++) {
+      let year = currentYear;
+      year = year + index;
+      filterYears.push({
+        label: year.toString(),
+        value: year
+      });
+    }
+
+    this.filterYears = filterYears;
   }
 
   ngOnInit() {
@@ -101,7 +122,18 @@ export class HolidaysComponent implements OnInit {
 
     this.name = holiday.name;
     this.startDate = startDate.toDate();
-    this.endDate = startDate.add(holiday.span - 1, "days").toDate();
+
+    if (!holiday.span) {
+      this.endDate = this.startDate;
+    } else {
+      this.endDate = startDate.add(holiday.span - 1, "days").toDate();
+    }
+
+    if (this.startDate.getTime() != this.endDate.getTime()) {
+      this.isMultiDay = true;
+    } else {
+      this.isMultiDay = false;
+    }
   }
 
   saveClicked() {
@@ -122,6 +154,10 @@ export class HolidaysComponent implements OnInit {
 
     let startDateMoment = moment(this.startDate);
     let endDateMoment = moment(this.endDate);
+
+    if (!this.isMultiDay) {
+      endDateMoment = startDateMoment;
+    }
 
     this.selectedHoliday.name = this.name;
     this.selectedHoliday.day = startDateMoment.format("YYYY-MM-DD");
@@ -161,6 +197,7 @@ export class HolidaysComponent implements OnInit {
     this.startDate = null;
     this.endDate = null;
     this.selectedHoliday = null;
+    this.isMultiDay = false;
   }
 
   //#region This all looks like copy pasta
@@ -179,131 +216,131 @@ export class HolidaysComponent implements OnInit {
   selectedTags: CalFacilityTag[];
   filteredTags: CalFacilityTag[];
 
-  config: any = {
-    viewType: "Days",
-    showNonBusiness: false,
-    businessBeginsHour: 8,
-    businessEndsHour: 19,
-    rowHeaderColumns: [
-      { title: "Date" }
-      // {title: "Total"}
-    ],
-    eventHeight: 40,
-    cellWidthSpec: "Auto",
-    timeHeaders: [{ groupBy: "Hour" }, { groupBy: "Cell", format: "mm" }],
-    scale: "CellDuration",
-    cellDuration: 30,
-    // days: new DayPilot.Date("2017-07-01").daysInMonth(),
-    days: 7,
-    startDate: "2018-01-01",
-    heightSpec: "Max",
-    height: 300,
-    onTimeRangeSelected: args => {
-      DayPilot.Modal.prompt("Create a new task:", "Available").then(function(
-        modal
-      ) {
-        var dp = args.control;
-        dp.clearSelection();
-        if (!modal.result) {
-          return;
-        }
-        // id: Math.random() * 1000000/1000000,
-        dp.events.add(
-          new DayPilot.Event({
-            start: args.start,
-            end: args.end,
-            id: DayPilot.guid(),
-            resource: args.resource,
-            text: modal.result
-          })
-        );
-      });
-    },
-    onBeforeRowHeaderRender: args => {
-      let duration = args.row.events.totalDuration();
-      if (duration.totalSeconds() === 0) {
-        return;
-      }
+  // config: any = {
+  //   viewType: "Days",
+  //   showNonBusiness: false,
+  //   businessBeginsHour: 8,
+  //   businessEndsHour: 19,
+  //   rowHeaderColumns: [
+  //     { title: "Date" }
+  //     // {title: "Total"}
+  //   ],
+  //   eventHeight: 40,
+  //   cellWidthSpec: "Auto",
+  //   timeHeaders: [{ groupBy: "Hour" }, { groupBy: "Cell", format: "mm" }],
+  //   scale: "CellDuration",
+  //   cellDuration: 30,
+  //   // days: new DayPilot.Date("2017-07-01").daysInMonth(),
+  //   days: 7,
+  //   startDate: "2018-01-01",
+  //   heightSpec: "Max",
+  //   height: 300,
+  //   onTimeRangeSelected: args => {
+  //     DayPilot.Modal.prompt("Create a new task:", "Available").then(function(
+  //       modal
+  //     ) {
+  //       var dp = args.control;
+  //       dp.clearSelection();
+  //       if (!modal.result) {
+  //         return;
+  //       }
+  //       // id: Math.random() * 1000000/1000000,
+  //       dp.events.add(
+  //         new DayPilot.Event({
+  //           start: args.start,
+  //           end: args.end,
+  //           id: DayPilot.guid(),
+  //           resource: args.resource,
+  //           text: modal.result
+  //         })
+  //       );
+  //     });
+  //   },
+  //   onBeforeRowHeaderRender: args => {
+  //     let duration = args.row.events.totalDuration();
+  //     if (duration.totalSeconds() === 0) {
+  //       return;
+  //     }
 
-      let str;
-      if (duration.totalDays() >= 1) {
-        str = Math.floor(duration.totalHours()) + ":" + duration.toString("mm");
-      } else {
-        str = duration.toString("H:mm");
-      }
+  //     let str;
+  //     if (duration.totalDays() >= 1) {
+  //       str = Math.floor(duration.totalHours()) + ":" + duration.toString("mm");
+  //     } else {
+  //       str = duration.toString("H:mm");
+  //     }
 
-      args.row.columns[0].html = str + " hours";
-    },
-    onBeforeEventRender: args => {
-      var duration = new DayPilot.Duration(args.data.start, args.data.end);
-      args.data.areas = [
-        {
-          right: 2,
-          top: 6,
-          height: 20,
-          width: 30,
-          html: duration.toString("h:mm")
-        }
-      ];
-    },
-    onBeforeResHeaderRender: args => {
-      let dow = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-      // console.log("args.resource.html", args.resource);
+  //     args.row.columns[0].html = str + " hours";
+  //   },
+  //   onBeforeEventRender: args => {
+  //     var duration = new DayPilot.Duration(args.data.start, args.data.end);
+  //     args.data.areas = [
+  //       {
+  //         right: 2,
+  //         top: 6,
+  //         height: 20,
+  //         width: 30,
+  //         html: duration.toString("h:mm")
+  //       }
+  //     ];
+  //   },
+  //   onBeforeResHeaderRender: args => {
+  //     let dow = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  //     // console.log("args.resource.html", args.resource);
 
-      // To Show day of week only use
-      // args.resource.html = dow[args.resource.index];
+  //     // To Show day of week only use
+  //     // args.resource.html = dow[args.resource.index];
 
-      // To Show Day & Date use
-      args.resource.html = dow[args.resource.index] + " " + args.resource.html;
+  //     // To Show Day & Date use
+  //     args.resource.html = dow[args.resource.index] + " " + args.resource.html;
 
-      if (args.resource.loaded === false) {
-        args.resource.html += " (loaded dynamically)";
-        args.resource.backColor = "gray";
-      }
-    },
-    eventMoveHandling: "Update",
-    onEventMoved: args => {
-      console.log("move", args);
-      // this.message("Event moved");
-    },
-    eventResizeHandling: "Update",
-    onEventResized: args => {
-      console.log("resize", args);
-      // this.message("Event resized");
-    },
-    eventDeleteHandling: "Update",
-    onEventDeleted: args => {
-      // delete TemplateTime data.id
-      this.calFacilitySvc
-        .deleteFacilityTimeBlock(args.e.data.id)
-        .subscribe(result => {
-          this.toastSvc.showInfoMessage("Time block deleted.");
-        });
-      console.log("delete", args);
-    }
-  };
+  //     if (args.resource.loaded === false) {
+  //       args.resource.html += " (loaded dynamically)";
+  //       args.resource.backColor = "gray";
+  //     }
+  //   },
+  //   eventMoveHandling: "Update",
+  //   onEventMoved: args => {
+  //     console.log("move", args);
+  //     // this.message("Event moved");
+  //   },
+  //   eventResizeHandling: "Update",
+  //   onEventResized: args => {
+  //     console.log("resize", args);
+  //     // this.message("Event resized");
+  //   },
+  //   eventDeleteHandling: "Update",
+  //   onEventDeleted: args => {
+  //     // delete TemplateTime data.id
+  //     this.calFacilitySvc
+  //       .deleteFacilityTimeBlock(args.e.data.id)
+  //       .subscribe(result => {
+  //         this.toastSvc.showInfoMessage("Time block deleted.");
+  //       });
+  //     console.log("delete", args);
+  //   }
+  // };
 
   ngOnDestroy() {
     // if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
   }
 
-  ngAfterViewInit(): void {
-    var from = this.scheduler.control.visibleStart();
-    var to = this.scheduler.control.visibleEnd();
+  // ngAfterViewInit(): void {
+  //   var from = this.scheduler.control.visibleStart();
+  //   var to = this.scheduler.control.visibleEnd();
 
-    this.calFacilitySvc.get().subscribe(result => {
-      console.log("facilities", result);
-      this.facilities = result;
+  //   this.calFacilitySvc.get().subscribe(result => {
+  //     console.log("facilities", result);
+  //     this.facilities = result;
 
-      this.setFirstListItem();
-    });
-  }
+  //     this.setFirstListItem();
+  //   });
+  // }
 
-  createNewFacility() {
-    this.matSelectionList.deselectAll();
-    this.selectedFacility = new CalFacility();
-    this.copySelectedItem();
-  }
+  // createNewFacility() {
+  //   this.matSelectionList.deselectAll();
+  //   this.selectedFacility = new CalFacility();
+  //   this.copySelectedItem();
+  // }
 
   saveItem() {
     console.log("1 Saving facility:", this.selectedFacility);

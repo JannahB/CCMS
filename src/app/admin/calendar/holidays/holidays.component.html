@@ -10,6 +10,11 @@
     <!-- Column 1 -->
     <div class="ui-g-2 ui-sm-12 mt-25">
 
+      <div>
+        <label>Holiday Year:</label>
+        <p-dropdown [options]="filterYears" [(ngModel)]="selectedFilterYear"></p-dropdown>
+      </div>
+
       <mat-form-field class="width-full">
         <input matInput name="tiSearch" #tiSearch="ngModel" placeholder="Search" [(ngModel)]="searchText">
 
@@ -17,7 +22,8 @@
 
       <!-- LIST -->
       <mat-selection-list #matSelectionList class="items-list" (selectionChange)="holidaySelected($event)">
-        <mat-list-option *ngFor="let item of holidays | nameFilter:searchText; let i=index; let itm" [class.hi]="selected" [value]="item">
+        <mat-list-option *ngFor="let item of holidays | nameFilter:searchText | yearFilter:selectedFilterYear; let i=index; let itm"
+          [class.hi]="selected" [value]="item">
           {{ item.name }}
         </mat-list-option>
       </mat-selection-list>
@@ -47,9 +53,11 @@
           <p-calendar id="startDate" name="startDate" [required]="true" [inline]="true" [disabled]="false" [(ngModel)]="startDate"
             dateFormat="mm/dd/yy" placeholder="Start Date" [showIcon]="true" yearRange="2018:2038" [yearNavigator]="false"
             appendTo="body" (ngModelChange)="startDateSelected($event)"></p-calendar>
+          <br />
+          <p-checkbox [(ngModel)]="isMultiDay" label="Does this holiday span multiple days?" binary="true" name="isMultiDay"></p-checkbox>
         </div>
 
-        <div class="inline-block">
+        <div class="inline-block" *ngIf="isMultiDay" style="vertical-align: top">
           <label class="minimal primary">Holiday End Date</label>
           <br />
           <p-calendar id="endDate" name="endDate" #endDateCalendar [required]="true" [inline]="true" [disabled]="false" [(ngModel)]="endDate"
@@ -87,7 +95,7 @@
 
 
           <!-- CALENDAR -->
-          <daypilot-scheduler [config]="config" [events]="selectedFacility.days" #scheduler></daypilot-scheduler>
+          <!-- <daypilot-scheduler [config]="config" [events]="selectedFacility.days" #scheduler></daypilot-scheduler> -->
           <!-- <div #scheduler></div> -->
 
 
