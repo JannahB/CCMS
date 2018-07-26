@@ -57,7 +57,7 @@
           <p-checkbox [(ngModel)]="isMultiDay" label="Does this holiday span multiple days?" binary="true" name="isMultiDay"></p-checkbox>
         </div>
 
-        <div class="inline-block" *ngIf="isMultiDay" style="vertical-align: top">
+        <div class="inline-block" [ngClass]="{invisible: !isMultiDay}" style="vertical-align: top">
           <label class="minimal primary">Holiday End Date</label>
           <br />
           <p-calendar id="endDate" name="endDate" #endDateCalendar [required]="true" [inline]="true" [disabled]="false" [(ngModel)]="endDate"
