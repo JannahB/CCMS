@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.0"></a>
+# [1.5.0](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.4.6...v1.5.0) (2018-07-27)
+
+
+
 <a name="1.4.6"></a>
 ## [1.4.6](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.4.5...v1.4.6) (2018-07-27)
 
