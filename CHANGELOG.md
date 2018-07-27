@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.6"></a>
+## [1.4.6](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.4.5...v1.4.6) (2018-07-27)
+
+
+### Bug Fixes
+
+* **Calendar:** fix error when multiday is false ([1e0222b](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/1e0222b))
+* **Holiday:** refresh list when adding or deleting ([cb8d28a](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/cb8d28a))
+
+
+### Features
+
+* **Holiday:** holiday name filter ([0446ef3](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/0446ef3))
+* **Holiday:** holidays are a single day by default and only multiple if users choose.  ability to filter holidays by year ([106e15a](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/106e15a))
+* **Holidays:** crud operations for holidays ([f47c88a](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/f47c88a))
+
+
+
 <a name="1.4.5"></a>
 ## [1.4.5](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.4.3...v1.4.5) (2018-07-23)
 
