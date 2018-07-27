@@ -2,10 +2,7 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatSelectionList, MatSelectionListChange } from "@angular/material";
 import { DayPilotSchedulerComponent } from "daypilot-pro-angular";
 import * as moment from "moment";
-import {
-  Calendar,
-  SelectItem
-} from "../../../../../node_modules/primeng/primeng";
+import { Calendar, SelectItem } from "../../../../../node_modules/primeng/primeng";
 import { CalFacility } from "../../../common/entities/CalFacility";
 import { CalTemplate } from "../../../common/entities/CalTemplate";
 import { Holiday } from "../../../common/entities/Holiday";
@@ -174,6 +171,7 @@ export class HolidaysComponent implements OnInit {
         //when "name" is added server side
         this.selectedHoliday.id = result.id;
         this.holidays.push(this.selectedHoliday);
+        this.holidays = this.holidays.copy();
         //this.holidays.push(result);
         this.reset();
       });
@@ -187,6 +185,7 @@ export class HolidaysComponent implements OnInit {
   deleteConfirmationClicked() {
     this.holidayService.delete(this.selectedHoliday.id).subscribe(result => {
       this.holidays.remove(this.selectedHoliday);
+      this.holidays = this.holidays.copy();
       this.reset();
       this.showDeleteItemModal = false;
     });
