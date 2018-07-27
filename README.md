@@ -35,6 +35,15 @@ By default, API calls will be made on the `apiUrl` found in `environment.dev.ts`
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
+## Release
+Versioning
+Bump Release as major minor or patch (see standard-version)
+`npm run release -- --release-as [patch/minor/major]`
+*--Or as a specific build--*
+`npm run release -- --release-as 1.1.0`
+Push Sprint branch to repo
+
+
 ## Build
 
 Run `ng build:test` to build the project for the TEST env. 
