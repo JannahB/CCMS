@@ -1,14 +1,10 @@
+import { SelectItem } from 'primeng/primeng';
 import { CourtCount } from './../../common/entities/CourtCount';
 import { CaseCountsService } from './../../common/services/http/case-counts.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Party } from '../../common/entities/Party';
 import { Message } from 'primeng/components/common/api';
-import { UserService } from './../../common/services/utility/user.service';
-import { DateUtils } from '../../common/utils/date-utils';
-import { PartyService } from '../../common/services/http/party.service';
-import { Permission } from '../../common/entities/Permission';
 
 
 @Component({
@@ -19,47 +15,48 @@ import { Permission } from '../../common/entities/Permission';
 export class CaseCountsComponent implements OnInit {
 
   selectedCourt: any;
-  selectedYear: number;
   showRecordsFoundMessage: boolean = false;
   recordsFoundMessage: string;
-  caseCounts: any[];
   courtCounts: CourtCount[];
+  filterYears: SelectItem[];
+  selectedYear: number = new Date().getFullYear();
 
   constructor(
     private caseCountSvc: CaseCountsService,
-    private router: Router,
-    private userSvc: UserService
+    private router: Router
   ) { }
 
   ngOnInit() {
 
-    this.caseCounts = [
-      {
-        name: "theCourtName", id: 5, counts: {
-          casesYear: 15,
-          casesClosedYear: 10,
-          casesTwelve: 8,
-          casesActive: 5,
-          casesInactive: 53
-        }
-      }
-    ]
+    let filterYears: SelectItem[] = [];
+    let currentYear = new Date().getFullYear() - 5;
+    for (let index: number = 5; index > 0; index--) {
+      let year = currentYear;
+      year = year + index;
+      filterYears.push({
+        label: year.toString(),
+        value: year
+      });
+    }
 
-    this.selectedYear = 2018;
+    this.filterYears = filterYears;
     this.getCounts();
   }
 
   getCounts(): void {
     this.showRecordsFoundMessage = false;
-    this.caseCountSvc.getCaseCountsByYear()
+    this.caseCountSvc.getCaseCountsByYear(this.selectedYear)
       .subscribe((result) => {
         this.courtCounts = result;
         this.showNumberOfRecordsFound(result.length);
+        if (result) this.selectedCourt = this.courtCounts[0];
       });
   }
 
   onYearChange(event): void {
-    console.log(event)
+    console.log(event);
+    this.selectedYear = event.value;
+    this.getCounts();
   }
 
   showNumberOfRecordsFound(num) {
@@ -69,7 +66,8 @@ export class CaseCountsComponent implements OnInit {
   }
 
   onRowSelect(event) {
-    console.log(event)
+    console.log(event);
+    this.selectedCourt = event.data;
     // this.router.navigate(['party-detail', partyId]);
   }
 
