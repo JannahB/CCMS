@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.1"></a>
+## [1.5.1](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.5.0...v1.5.1) (2018-08-07)
+
+
+### Bug Fixes
+
+* **Docs:** fix text version of doc url ([6d17319](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/6d17319))
+* **Ftab:** fix casesClosedYear empty values ([3f61be3](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/3f61be3))
+
+
+### Features
+
+* **Ftab:** add Case Counts Report ([7d49a9b](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/7d49a9b))
+* **Ftab:** add chart to case counts report ([db17692](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/db17692))
+* **Ftab:** add year selector ([bf45c4f](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/bf45c4f))
+
+
+
 <a name="1.5.0"></a>
 # [1.5.0](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.4.6...v1.5.0) (2018-07-27)
 
