@@ -14,6 +14,8 @@ import { Message } from 'primeng/components/common/api';
 })
 export class CaseCountsComponent implements OnInit {
 
+  chartData: any;
+  chartOptions: any;
   selectedCourt: any;
   showRecordsFoundMessage: boolean = false;
   recordsFoundMessage: string;
@@ -39,6 +41,22 @@ export class CaseCountsComponent implements OnInit {
       });
     }
 
+    this.chartData = {
+      labels: [],
+      datasets: []
+    }
+
+    this.chartOptions = {
+      title: {
+        display: true,
+        text: 'Court Case Counts',
+        fontSize: 16
+      },
+      legend: {
+        position: 'bottom'
+      }
+    }
+
     this.filterYears = filterYears;
     this.getCounts();
   }
@@ -49,8 +67,13 @@ export class CaseCountsComponent implements OnInit {
       .subscribe((result) => {
         this.courtCounts = result;
         this.showNumberOfRecordsFound(result.length);
-        if (result) this.selectedCourt = this.courtCounts[0];
+        if (result) {
+          // this.selectedCourt = this.courtCounts[0];
+          this.makeChartData();
+        }
       });
+
+
   }
 
   onYearChange(event): void {
@@ -71,6 +94,25 @@ export class CaseCountsComponent implements OnInit {
     // this.router.navigate(['party-detail', partyId]);
   }
 
+  makeChartData() {
+
+    let bgs = ['#BAD9F1', '#3E86BA', '#5CBB73', '#2EBF93', '#BAD9F1', '#BF2E1A', '#BFBDAE',]
+    let arr = [];
+    this.courtCounts.forEach(c => {
+      let o = {};
+      o['label'] = c.name;
+      o['data'] = [c.casesYear, c.casesClosedYear, c.casesActive, c.casesInactive, c.casesTwelve]
+      o['backgroundColor'] = bgs.shift();
+      arr.push(o);
+    });
+
+    this.chartData = {
+      labels: ['Total', 'Closed', 'Active', 'Inactive', '12mo Rolling',],
+      datasets: arr
+    }
+
+    this.chartOptions.title.text = `Court Case Counts ${this.selectedYear}`;
+  }
 
 
 }
