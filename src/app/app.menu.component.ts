@@ -106,6 +106,12 @@ export class AppMenuComponent implements OnInit {
           { label: 'New Party', icon: 'folder_shared', routerLink: ['/party-detail/0'] },
         ]
       },
+      {
+        label: 'Reports', icon: 'view_day',
+        items: [
+          { label: 'Case Counts', icon: 'filter_1', routerLink: ['/reports/case-count'] },
+        ]
+      },
 
       // {
       //     label: 'Themes', icon: 'palette', badge: '2',

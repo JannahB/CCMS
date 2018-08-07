@@ -109,6 +109,7 @@ import { LanguageService } from "./common/services/http/language.service";
 import { LookupService } from "./common/services/http/lookup.service";
 import { PartyService } from "./common/services/http/party.service";
 import { AppStateService } from "./common/services/state/app.state.sevice";
+import { CaseCountsService } from './common/services/http/case-counts.service';
 import { GlobalState } from "./common/services/state/global.state";
 import { DateParserService } from "./common/services/utility/dates/date-parser.service";
 import { DateValidatorService } from "./common/services/utility/dates/date-validator.service";
@@ -123,6 +124,7 @@ import { NewPasswordComponent } from "./login/new-password/new-password.componen
 import { ResetPasswordComponent } from "./login/reset-password/reset-password.component";
 import { PartyDetailComponent } from "./party/party-detail/party-detail.component";
 import { PartySearchComponent } from "./party/party-search/party-search.component";
+import { CaseCountsComponent } from './reports/case-counts/case-counts.component';
 
 @NgModule({
   imports: [
@@ -215,7 +217,8 @@ import { PartySearchComponent } from "./party/party-search/party-search.componen
     NamePipe,
     CustomAutocompleteComponent,
     ResetPasswordComponent,
-    NewPasswordComponent
+    NewPasswordComponent,
+    CaseCountsComponent
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
@@ -249,6 +252,7 @@ import { PartySearchComponent } from "./party/party-search/party-search.componen
     CalResourceService,
     HolidayService,
     AppStateService,
+    CaseCountsService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthorizationInterceptor,
@@ -262,4 +266,4 @@ import { PartySearchComponent } from "./party/party-search/party-search.componen
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
