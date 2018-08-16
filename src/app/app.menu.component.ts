@@ -6,6 +6,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { MenuItem } from 'primeng/primeng';
 import { AppComponent } from './app.component';
 import { environment } from './../environments/environment';
+import { ConfigService } from './common/services/config/config.service';
 
 @Component({
   selector: 'app-menu',
@@ -28,8 +29,12 @@ export class AppMenuComponent implements OnInit {
     public app: AppComponent,
     public _state: GlobalState,
     public authSvc: AuthenticationService,
-    public userSvc: UserService
-  ) { }
+    public userSvc: UserService,
+    private configSvc: ConfigService
+  ) {
+    // this loads ENV variables at runtime
+    configSvc.loadConfiguration();
+  }
 
 
 
@@ -60,7 +65,7 @@ export class AppMenuComponent implements OnInit {
       )
     }
 
-    console.log('allowAdminCalendarFeature', this.allowAdminCalendarFeature)
+    // console.log('allowAdminCalendarFeature', this.allowAdminCalendarFeature)
     if (this.allowAdminCalendarFeature) {
       this.adminMenuItems.push(
         {

@@ -126,6 +126,7 @@ import { ResetPasswordComponent } from "./login/reset-password/reset-password.co
 import { PartyDetailComponent } from "./party/party-detail/party-detail.component";
 import { PartySearchComponent } from "./party/party-search/party-search.component";
 import { CaseCountsComponent } from './reports/case-counts/case-counts.component';
+import { ConfigService } from "./common/services/config/config.service";
 
 @NgModule({
   imports: [
@@ -255,6 +256,7 @@ import { CaseCountsComponent } from './reports/case-counts/case-counts.component
     HolidayService,
     AppStateService,
     CaseCountsService,
+    ConfigService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthorizationInterceptor,
