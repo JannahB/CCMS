@@ -10,9 +10,9 @@ export class ConfigService {
   public loadConfiguration(): void {
     console.log("**** loadingConfiguration()");
 
-    // `config` is implied  `window.config` loaded in index.html
-    if (typeof config === "undefined") {
-      console.log("typeof config === undefined")
+    // `config` is implied  `window.config` loaded in index.html /config/config.js
+    if (typeof config === "undefined" || Object.keys(config).length === 0) {
+      console.log("config object is null or keys.length === 0")
       return;
     }
 
