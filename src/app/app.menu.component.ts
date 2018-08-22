@@ -20,10 +20,16 @@ export class AppMenuComponent implements OnInit {
 
   @Input() reset: boolean;
 
-  adminMenuItems: any[];
   allowAdminWorkflowFeature: boolean = false;
   allowAdminCalendarFeature: boolean = false;
+  allowJudgeAssignMgmtFeature: boolean = false;
   model: any[];
+
+  baseMenuItems: any[];
+  adminMenuItems: any[];
+  courtManagerMenuItems: any[];
+  isAdmin: boolean = false;
+  isCourtManager: boolean = false;
 
   constructor(
     public app: AppComponent,
@@ -33,69 +39,18 @@ export class AppMenuComponent implements OnInit {
     private configSvc: ConfigService
   ) {
     // this loads ENV variables at runtime
-    configSvc.loadConfiguration();
+    this.configSvc.loadConfiguration();
   }
 
 
 
   ngOnInit() {
+
     this.allowAdminWorkflowFeature = environment.allowAdminWorkflowFeature;
     this.allowAdminCalendarFeature = environment.allowAdminCalendarFeature;
+    this.allowJudgeAssignMgmtFeature = environment.allowJudgeAssignMgmtFeature;
 
-    this.adminMenuItems = [
-      { label: 'User Maintenance', icon: 'account_box', routerLink: ['/admin/users'] },
-      {
-        label: 'Table Data', icon: 'chrome_reader_mode', items:
-          [
-            { label: 'Case Types', icon: 'chevron_right', routerLink: ['/admin/data/casetypes'] },
-            { label: 'Case Phases', icon: 'chevron_right', routerLink: ['/admin/data/casephases'] },
-            { label: 'Case Statuses', icon: 'chevron_right', routerLink: ['/admin/data/casestatuses'] },
-            { label: 'Court Locations', icon: 'chevron_right', routerLink: ['/admin/data/courtlocations'] },
-            { label: 'Case Party Roles', icon: 'chevron_right', routerLink: ['/admin/data/casepartyroles'] },
-            { label: 'Event Types', icon: 'chevron_right', routerLink: ['/admin/data/eventtypes'] },
-            { label: 'Hearing Types', icon: 'chevron_right', routerLink: ['/admin/data/hearingtypes'] },
-            // {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
-          ]
-      }
-    ];
-
-    if (this.allowAdminWorkflowFeature) {
-      this.adminMenuItems.push(
-        { label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
-      )
-    }
-
-    // console.log('allowAdminCalendarFeature', this.allowAdminCalendarFeature)
-    if (this.allowAdminCalendarFeature) {
-      this.adminMenuItems.push(
-        {
-          label: 'Calendar', icon: 'today', items: [
-            { label: 'Holidays', icon: 'event_available', routerLink: ['/admin/calendar/holidays'] },
-            { label: 'Templates', icon: 'event', routerLink: ['/admin/calendar/templates'] },
-            { label: 'Resource Schedules', icon: 'perm_contact_calendar', routerLink: ['/admin/calendar/resources'] },
-            { label: 'Facility Schedules', icon: 'event_note', routerLink: ['/admin/calendar/facilities'] },
-          ]
-        }
-      )
-    }
-
-    this._state.subscribe('theme.change', (theme) => {
-      this.changeTheme(theme);
-    });
-
-    this._state.subscribe('app.loggedOut', (count) => {
-      this.buildMenu();
-    });
-
-    this._state.subscribe('app.loggedIn', (count) => {
-      this.buildMenu();
-    });
-
-    this.buildMenu();
-  }
-
-  buildMenu() {
-    this.model = [
+    this.baseMenuItems = [
       { label: 'Dashboard', icon: 'dashboard', routerLink: ['/'] },
       {
         label: 'Case', icon: 'gavel',
@@ -130,14 +85,98 @@ export class AppMenuComponent implements OnInit {
 
     ];
 
-    if (this.userSvc.loggedInUser && this.userSvc.isAdminUser()) {
-      this.model.push(
+    this.adminMenuItems = [
+      { label: 'User Maintenance', icon: 'account_box', routerLink: ['/admin/users'] },
+    ];
+
+    this.courtManagerMenuItems = [
+      {
+        label: 'Table Data', icon: 'chrome_reader_mode', items:
+          [
+            { label: 'Case Types', icon: 'chevron_right', routerLink: ['/admin/data/casetypes'] },
+            { label: 'Case Phases', icon: 'chevron_right', routerLink: ['/admin/data/casephases'] },
+            { label: 'Case Statuses', icon: 'chevron_right', routerLink: ['/admin/data/casestatuses'] },
+            { label: 'Court Locations', icon: 'chevron_right', routerLink: ['/admin/data/courtlocations'] },
+            { label: 'Case Party Roles', icon: 'chevron_right', routerLink: ['/admin/data/casepartyroles'] },
+            { label: 'Event Types', icon: 'chevron_right', routerLink: ['/admin/data/eventtypes'] },
+            { label: 'Hearing Types', icon: 'chevron_right', routerLink: ['/admin/data/hearingtypes'] },
+            // {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
+          ]
+      }
+    ];
+
+    if (this.allowAdminWorkflowFeature) {
+      this.courtManagerMenuItems.push(
+        { label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
+      )
+    }
+
+    // console.log('allowAdminCalendarFeature', this.allowAdminCalendarFeature)
+    if (this.allowAdminCalendarFeature) {
+      this.courtManagerMenuItems.push(
         {
-          label: 'Admin', icon: 'security',
-          items: this.adminMenuItems
+          label: 'Calendar', icon: 'today', items: [
+            { label: 'Holidays', icon: 'event_available', routerLink: ['/admin/calendar/holidays'] },
+            { label: 'Templates', icon: 'event', routerLink: ['/admin/calendar/templates'] },
+            { label: 'Resource Schedules', icon: 'perm_contact_calendar', routerLink: ['/admin/calendar/resources'] },
+            { label: 'Facility Schedules', icon: 'event_note', routerLink: ['/admin/calendar/facilities'] },
+          ]
         }
       )
     }
+    if (this.allowJudgeAssignMgmtFeature) {
+      this.courtManagerMenuItems.push(
+        { label: 'Judicial Assignment', icon: 'perm_contact_calendar', routerLink: ['/admin/judge-assignment'] },
+      )
+    }
+
+
+
+    this._state.subscribe('theme.change', (theme) => {
+      this.changeTheme(theme);
+    });
+
+    this._state.subscribe('app.loggedOut', (count) => {
+      // this.buildMenu();
+      this.model = [];
+    });
+
+    this._state.subscribe('app.loggedIn', (count) => {
+      this.model = [];
+      this.buildMenu();
+    });
+
+    this.buildMenu();
+  }
+
+  buildMenu() {
+
+    this.isAdmin = (this.userSvc.loggedInUser && this.userSvc.isAdminUser());
+    this.isCourtManager = (this.userSvc.loggedInUser && (this.userSvc.isCourtManager() || this.userSvc.isAdminUser()));
+    console.log("isCourtManager", this.isCourtManager);
+
+    if (this.userSvc.loggedInUser) {
+      this.model = this.baseMenuItems;
+    }
+
+    if (this.isAdmin) {
+      this.model.push(
+        {
+          label: 'Admin', icon: 'security',
+          items: [...this.adminMenuItems, ...this.courtManagerMenuItems]
+        }
+      )
+    } else if (this.isCourtManager) {
+      this.model.push(
+        {
+          label: 'Manage', icon: 'security',
+          items: this.courtManagerMenuItems
+        }
+      )
+    }
+
+    this.model = this.model.slice();
+    console.log("*** BUILD MENU CALLED ***", this.model);
   }
 
   changeTheme(theme) {
