@@ -93,7 +93,7 @@ export class AdminWorkflowComponent implements OnInit {
     private partyService: PartyService
   ) {
     this.breadCrumbSvc.setItems([
-      { label: 'Admin Workflow', routerLink: ['/admin-workflow'] }
+      { label: 'Admin Workflow', routerLink: ['/admin/workflow'] }
     ]);
   }
 

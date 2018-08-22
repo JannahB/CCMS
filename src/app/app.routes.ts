@@ -8,8 +8,6 @@ import { CaseDetailComponent } from './case/case-detail/case-detail.component';
 
 import { PartyDetailComponent } from './party/party-detail/party-detail.component';
 import { PartySearchComponent } from './party/party-search/party-search.component';
-import { AdminWorkflowComponent } from './admin/admin-workflow/admin-workflow.component';
-import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
 import { LoginComponent } from './login/login.component';
 import { CanActivateAuthenticationGuard } from './common/guards/can-activate-authentication.guard';
 import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
@@ -25,8 +23,6 @@ export const routes: Routes = [
   { path: 'case-detail/:caseId', component: CaseDetailComponent, canActivate: [CanActivateAuthenticationGuard] },
   { path: 'case-search', component: CaseSearchComponent, canActivate: [CanActivateAuthenticationGuard] },
   { path: 'reports/case-count', component: CaseCountsComponent, canActivate: [CanActivateAuthenticationGuard] },
-  { path: 'admin-workflow', component: AdminWorkflowComponent, canActivate: [CanActivateAuthenticationGuard] },
-  { path: 'admin-users', component: AdminUsersComponent, canActivate: [CanActivateAuthenticationGuard] },
 
   // { path: 'admin', loadChildren: 'app/admin/admin.module#AdminModule'},
 

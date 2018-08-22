@@ -35,14 +35,14 @@ export class AdminUsersComponent implements OnInit {
   showResetPassword: boolean = false;
 
   constructor(
-    private breadCrumbSvc:BreadcrumbService,
+    private breadCrumbSvc: BreadcrumbService,
     private lookupSvc: LookupService,
     private adminSvc: AdminUserService,
     private toastSvc: ToastService,
     private partySvc: PartyService
   ) {
     this.breadCrumbSvc.setItems([
-      { label: 'Admin User Management', routerLink: ['/admin-users'] }
+      { label: 'Admin User Management', routerLink: ['/admin/users'] }
     ]);
   }
 
@@ -53,7 +53,7 @@ export class AdminUsersComponent implements OnInit {
 
   ngOnDestroy() {
     if (this.lookupSubscription) {
-        this.lookupSubscription.unsubscribe();
+      this.lookupSubscription.unsubscribe();
     }
   }
 
@@ -68,7 +68,7 @@ export class AdminUsersComponent implements OnInit {
       results => {
         this.courts = results[0] as Court[];
         this.staffRoles = results[1] as StaffRole[];
-    });
+      });
 
   }
 
@@ -94,8 +94,8 @@ export class AdminUsersComponent implements OnInit {
 
   addAuthCourt() {
     let authCourtsLen = this.user.authorizedCourts.push(new AuthorizedCourt());
-    this.user.authorizedCourts[authCourtsLen-1].roles.push(new Role());
-    this.selectedAuthCourt = this.user.authorizedCourts[authCourtsLen-1];
+    this.user.authorizedCourts[authCourtsLen - 1].roles.push(new Role());
+    this.selectedAuthCourt = this.user.authorizedCourts[authCourtsLen - 1];
     // console.log('this.user.authorizedCourts', this.user.authorizedCourts);
   }
 
@@ -116,8 +116,8 @@ export class AdminUsersComponent implements OnInit {
     this.user.authorizedCourts[authCourtIdx].roles = event.value;
   }
 
-  emailChanged(event){
-    if(!this.user.emails[0])
+  emailChanged(event) {
+    if (!this.user.emails[0])
       this.user.emails[0] = new Email();
 
     this.user.emails[0].emailAddress = event;
@@ -126,11 +126,11 @@ export class AdminUsersComponent implements OnInit {
   }
 
   getStaffRoleNames(acIdx: number) {
-    if(acIdx < 0) return;
-    let text:string = "";
-    let staffRoles:StaffRole[] = this.user.authorizedCourts[acIdx].roles;
-    staffRoles.map( staffRole => {
-      text += staffRole.staffRoleName +', ';
+    if (acIdx < 0) return;
+    let text: string = "";
+    let staffRoles: StaffRole[] = this.user.authorizedCourts[acIdx].roles;
+    staffRoles.map(staffRole => {
+      text += staffRole.staffRoleName + ', ';
     })
     let lastCommaIdx = text.lastIndexOf(', ');
     text = text.slice(0, lastCommaIdx);
@@ -145,7 +145,7 @@ export class AdminUsersComponent implements OnInit {
     return item1.staffRoleOID == item2.staffRoleOID;
   }
 
-  requestDeleteAuthCourt(authCourtIdx){
+  requestDeleteAuthCourt(authCourtIdx) {
     this.user.authorizedCourts.splice(authCourtIdx, 1);
   }
 
@@ -154,67 +154,67 @@ export class AdminUsersComponent implements OnInit {
     this.showResetPassword = true;
   }
 
-  saveUser(addUserForm){
-    if(this.validateAuthCourts() && this.passwordsSame()) {
+  saveUser(addUserForm) {
+    if (this.validateAuthCourts() && this.passwordsSame()) {
       this.loadingMessage = 'Saving User';
       this.loadingUser = true;
 
       this.adminSvc
-      .saveUser(this.user)
-      .subscribe(user => {
-        this.loadingUser = false;
-        this.user = user[0];
-        this.toastSvc.showSuccessMessage('User '+user[0].firstName+' '+user[0].lastName+' saved.', 'User Saved!');
-        console.log('user', user);
-      },
-      (error) => {
-        console.error(error);
-        this.loadingUser = false;
-        this.toastSvc.showErrorMessage('There was an error saving the user.')
-      },
-      () => {
-        this.loadingUser = false;
-      });
+        .saveUser(this.user)
+        .subscribe(user => {
+          this.loadingUser = false;
+          this.user = user[0];
+          this.toastSvc.showSuccessMessage('User ' + user[0].firstName + ' ' + user[0].lastName + ' saved.', 'User Saved!');
+          console.log('user', user);
+        },
+          (error) => {
+            console.error(error);
+            this.loadingUser = false;
+            this.toastSvc.showErrorMessage('There was an error saving the user.')
+          },
+          () => {
+            this.loadingUser = false;
+          });
     }
   }
 
-  private passwordsSame():boolean {
+  private passwordsSame(): boolean {
     // Don't validate previously saved user for now.
-    if(this.user.partyOID !== 0) return true;
-    if (this.user.password != this.password2){
+    if (this.user.partyOID !== 0) return true;
+    if (this.user.password != this.password2) {
       this.toastSvc.showWarnMessage('Passwords must match.');
       return false;
     }
     return true;
   }
 
-  private validateAuthCourts():boolean {
-    let acs:AuthorizedCourt[] = this.user.authorizedCourts;
+  private validateAuthCourts(): boolean {
+    let acs: AuthorizedCourt[] = this.user.authorizedCourts;
     let courtOIDs = [];
     let errorFound = false;
-    if(!acs || acs.length < 1) {
+    if (!acs || acs.length < 1) {
       this.toastSvc.showWarnMessage('Please add a court and role(s).');
       return false;
     }
 
     // acs.forEach(ac => {
-    acs.some( ac =>  {
+    acs.some(ac => {
       errorFound = false;
-      if(!ac.courtOID || !ac.roles.length){
+      if (!ac.courtOID || !ac.roles.length) {
         this.toastSvc.showWarnMessage('One of your Authorized Courts needs a Court and/or Role selection.');
         errorFound = true;
         return false;
       }
-      ac.roles.some( sr => {
-        if(!sr.staffRoleOID) {
+      ac.roles.some(sr => {
+        if (!sr.staffRoleOID) {
           this.toastSvc.showWarnMessage('One of your Authorized Courts needs a Role selection.');
           errorFound = true;
           return false;
         }
       })
 
-      let idx:number = courtOIDs.findIndex( id => id == ac.courtOID);
-      if(idx > -1) {
+      let idx: number = courtOIDs.findIndex(id => id == ac.courtOID);
+      if (idx > -1) {
         this.toastSvc.showWarnMessage('Each Court can only be used once.', 'Duplicate Court');
         errorFound = true;
         return false;
@@ -223,7 +223,7 @@ export class AdminUsersComponent implements OnInit {
 
     });
 
-    if(!errorFound)
+    if (!errorFound)
       return true;
   }
 
@@ -236,12 +236,12 @@ export class AdminUsersComponent implements OnInit {
   partyResults: Party[];
   recordsFoundMessage: string = '';
   isSearching: boolean = false;
-  selectedParty:Party;
+  selectedParty: Party;
 
-  onSearch():void{
+  onSearch(): void {
     this.showRecordsFoundMessage = false;
     this.isSearching = true;
-    let obj = { "partyName": this.partyNameText, courtUser:"true" };
+    let obj = { "partyName": this.partyNameText, courtUser: "true" };
     this.partySvc
       .fetchAny(obj)
       .subscribe((result) => {
@@ -249,15 +249,15 @@ export class AdminUsersComponent implements OnInit {
         this.partyResults = result;
         this.showNumberOfRecordsFound(result.length);
       },
-    (error) => {
-      this.isSearching = false;
-    },
-    () => {
-      this.isSearching = false;
-    });
+        (error) => {
+          this.isSearching = false;
+        },
+        () => {
+          this.isSearching = false;
+        });
   }
 
-  showNumberOfRecordsFound(num){
+  showNumberOfRecordsFound(num) {
     let text = num == 1 ? ' record found' : ' records found';
     this.showRecordsFoundMessage = true;
     this.recordsFoundMessage = num + text;
@@ -270,7 +270,7 @@ export class AdminUsersComponent implements OnInit {
     this.showResetPassword = false;
   }
 
-  onReset(){
+  onReset() {
     this.showRecordsFoundMessage = false;
     this.partyNameText = '';
     this.partyResults = [];
