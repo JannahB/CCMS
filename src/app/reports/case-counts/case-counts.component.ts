@@ -1,3 +1,5 @@
+import { ToastService } from './../../common/services/utility/toast.service';
+import { BreadcrumbService } from './../../breadcrumb.service';
 import { SelectItem } from 'primeng/primeng';
 import { CourtCount } from './../../common/entities/CourtCount';
 import { CaseCountsService } from './../../common/services/http/case-counts.service';
@@ -25,10 +27,17 @@ export class CaseCountsComponent implements OnInit {
 
   constructor(
     private caseCountSvc: CaseCountsService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private toastSvc: ToastService,
+    private breadCrumbSvc: BreadcrumbService
+  ) {
+    this.breadCrumbSvc.setItems([
+      { label: "Reports / Case Counts", routerLink: ["/reports/case-count"] }
+    ]);
+  }
 
   ngOnInit() {
+    // this.toastSvc.showInfoMessage('Sample toast.');
 
     let filterYears: SelectItem[] = [];
     let currentYear = new Date().getFullYear() - 5;
