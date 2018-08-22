@@ -126,7 +126,7 @@ export class AppMenuComponent implements OnInit {
     }
     if (this.allowJudgeAssignMgmtFeature) {
       this.courtManagerMenuItems.push(
-        { label: 'Judicial Assignment', icon: 'perm_contact_calendar', routerLink: ['/admin/judge-assignment'] },
+        { label: 'Assignment Manager', icon: 'perm_contact_calendar', routerLink: ['/admin/assignment-mgr'] },
       )
     }
 

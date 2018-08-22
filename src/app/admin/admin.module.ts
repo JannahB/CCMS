@@ -28,6 +28,7 @@ import { DataComponent } from "./data/data.component";
 import { EventTypesComponent } from "./data/event-types/event-types.component";
 import { HearingTypeComponent } from "./data/hearing-type/hearing-type.component";
 import { IccsCodesComponent } from "./data/iccs-codes/iccs-codes.component";
+import { AssignmentManagerComponent } from './assignment-manager/assignment-manager.component';
 
 @NgModule({
   imports: [
@@ -59,7 +60,8 @@ import { IccsCodesComponent } from "./data/iccs-codes/iccs-codes.component";
     CalResourcesComponent,
     CalFacilitiesComponent,
     NameFilterPipe,
-    YearFilterPipe
+    YearFilterPipe,
+    AssignmentManagerComponent
   ]
 })
 export class AdminModule {}

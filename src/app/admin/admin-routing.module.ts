@@ -19,6 +19,7 @@ import { CasePartyRolesComponent } from './data/case-party-roles/case-party-role
 import { EventTypesComponent } from './data/event-types/event-types.component';
 import { HearingTypeComponent } from './data/hearing-type/hearing-type.component';
 import { CanActivateIsCourtMgrGuard } from '../common/guards/can-activate-is-court-mgr.guard';
+import { AssignmentManagerComponent } from './assignment-manager/assignment-manager.component';
 
 const routes: Routes = [
   {
@@ -56,9 +57,9 @@ const routes: Routes = [
 
         ]
       },
-      // {
-      //   path: 'judge-assignment', component: JudgeAssignmentComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]
-      // }
+      {
+        path: 'assignment-mgr', component: AssignmentManagerComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]
+      }
 
 
     ]
