@@ -5,12 +5,12 @@
 
 export const environment = {
   production: false,
-  apiUrl: "https://testcms.ttlawcourts.org/CCMS3",
-  mockUrl: "assets/mockData/",
+  apiUrl: "",
+  mockUrl: "",
 
   allowDeleteLookupItems: false,
-  allowResetPasswordFeature: true,
-  allowAdminWorkflowFeature: true,
+  allowResetPasswordFeature: false,
+  allowAdminWorkflowFeature: false,
   allowAdminCalendarFeature: false,
   allowJudgeAssignMgmtFeature: false,
 
