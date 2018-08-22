@@ -88,6 +88,7 @@ import { CustomAutocompleteComponent } from "./common/components/custom-autocomp
 import { LoadingBarComponent } from "./common/components/loading-bar.component";
 import { CanActivateAuthenticationGuard } from "./common/guards/can-activate-authentication.guard";
 import { CanActivateIsCourtUserGuard } from "./common/guards/can-activate-is-court-user.guard";
+import { CanActivateIsCourtMgrGuard } from './common/guards/can-activate-is-court-mgr.guard';
 import { AuthorizationInterceptor } from "./common/interceptors/authorization.interceptor";
 import { AuthenticationModel } from "./common/model/authentication-model";
 import { CustomMaterialModule } from "./common/modules/customMaterial.module";
@@ -241,6 +242,7 @@ import { ConfigService } from "./common/services/config/config.service";
     LookupService,
     CanActivateAuthenticationGuard,
     CanActivateIsCourtUserGuard,
+    CanActivateIsCourtMgrGuard,
     AuthenticationService,
     LocalStorageService,
     UserService,
