@@ -12,6 +12,7 @@ export const environment = {
   allowAdminWorkflowFeature: true,
   allowResetPasswordFeature: true,
   allowAdminCalendarFeature: false,
+  allowJudgeAssignMgmtFeature: false,
 
   VERSION: require('../../package.json').version
 };
