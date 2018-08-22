@@ -18,6 +18,7 @@ import { CourtLocationsComponent } from './data/court-locations/court-locations.
 import { CasePartyRolesComponent } from './data/case-party-roles/case-party-roles.component';
 import { EventTypesComponent } from './data/event-types/event-types.component';
 import { HearingTypeComponent } from './data/hearing-type/hearing-type.component';
+import { CanActivateIsCourtMgrGuard } from '../common/guards/can-activate-is-court-mgr.guard';
 
 const routes: Routes = [
   {
@@ -48,13 +49,17 @@ const routes: Routes = [
         path: 'calendar',
         children: [
           { path: '', pathMatch: 'full', redirectTo: 'holidays' },
-          { path: 'holidays', component: HolidaysComponent },
-          { path: 'templates', component: CalTemplatesComponent },
-          { path: 'resources', component: CalResourcesComponent },
-          { path: 'facilities', component: CalFacilitiesComponent }
+          { path: 'holidays', component: HolidaysComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard] },
+          { path: 'templates', component: CalTemplatesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard] },
+          { path: 'resources', component: CalResourcesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard] },
+          { path: 'facilities', component: CalFacilitiesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard] }
 
         ]
       },
+      // {
+      //   path: 'judge-assignment', component: JudgeAssignmentComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]
+      // }
+
 
     ]
   },

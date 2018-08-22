@@ -46,6 +46,15 @@ export class UserService {
     return idx > -1;
   }
 
+  public isCourtManager(): boolean {
+    if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
+
+    let idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 5); // staffRoleName == "Court Manager"
+    console.log('Logged in user', this.loggedInUser.userName);
+    console.log('  Admin Role', (idx > -1));
+    return idx > -1;
+  }
+
   hasPermission(pmId: number, courtOID?: number): boolean {
     // console.log('pmId', pmId);
     if (!courtOID) courtOID = this.appState.selectedCourt.courtOID;
