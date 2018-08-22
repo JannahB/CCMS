@@ -1,3 +1,6 @@
+# Build Status
+[![Build status](https://reurgency.visualstudio.com/TT/_apis/build/status/TT-FE-Build)](https://reurgency.visualstudio.com/TT/_build/latest?definitionId=19)
+
 # CCMS
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.2. 
