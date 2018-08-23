@@ -64,9 +64,9 @@ export class AppMenuComponent implements OnInit {
       this.buildMenu();
     });
 
-
     this.buildMenu();
   }
+
 
   buildMenuItems() {
     this.baseMenuItems = [
