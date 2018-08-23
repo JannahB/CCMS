@@ -1,3 +1,4 @@
+import { PdfViewerComponent } from './pdf-viewer/pdf-viewer.component';
 import { CalFacilitiesComponent } from './calendar/cal-facilities/cal-facilities.component';
 import { CalResourcesComponent } from './calendar/cal-resources/cal-resources.component';
 import { CalTemplatesComponent } from './calendar/cal-templates/cal-templates.component';
@@ -59,6 +60,9 @@ const routes: Routes = [
       },
       {
         path: 'assignment-mgr', component: AssignmentManagerComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]
+      },
+      {
+        path: 'pdf-viewer', component: PdfViewerComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]
       }
 
 
