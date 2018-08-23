@@ -50,6 +50,25 @@ export class AppMenuComponent implements OnInit {
     this.allowAdminCalendarFeature = environment.allowAdminCalendarFeature;
     this.allowJudgeAssignMgmtFeature = environment.allowJudgeAssignMgmtFeature;
 
+    this._state.subscribe('theme.change', (theme) => {
+      this.changeTheme(theme);
+    });
+
+    this._state.subscribe('app.loggedOut', (count) => {
+      // this.buildMenu();
+      this.model = [];
+    });
+
+    this._state.subscribe('app.loggedIn', (count) => {
+      // this.model = [];
+      this.buildMenu();
+    });
+
+
+    this.buildMenu();
+  }
+
+  buildMenuItems() {
     this.baseMenuItems = [
       { label: 'Dashboard', icon: 'dashboard', routerLink: ['/'] },
       {
@@ -129,27 +148,11 @@ export class AppMenuComponent implements OnInit {
         { label: 'Assignment Manager', icon: 'perm_contact_calendar', routerLink: ['/admin/assignment-mgr'] },
       )
     }
-
-
-
-    this._state.subscribe('theme.change', (theme) => {
-      this.changeTheme(theme);
-    });
-
-    this._state.subscribe('app.loggedOut', (count) => {
-      // this.buildMenu();
-      this.model = [];
-    });
-
-    this._state.subscribe('app.loggedIn', (count) => {
-      this.model = [];
-      this.buildMenu();
-    });
-
-    this.buildMenu();
   }
 
   buildMenu() {
+
+    this.buildMenuItems();
 
     this.isAdmin = (this.userSvc.loggedInUser && this.userSvc.isAdminUser());
     this.isCourtManager = (this.userSvc.loggedInUser && (this.userSvc.isCourtManager() || this.userSvc.isAdminUser()));
@@ -157,6 +160,8 @@ export class AppMenuComponent implements OnInit {
 
     if (this.userSvc.loggedInUser) {
       this.model = this.baseMenuItems;
+    } else {
+      return;
     }
 
     if (this.isAdmin) {
