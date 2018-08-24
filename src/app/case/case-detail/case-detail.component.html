@@ -543,10 +543,10 @@
 
         <p-tabPanel header="Hearings" leftIcon="ui-icon-gavel" >
           <div class="ui-g">
-            <div class="ui-g-12">
+            <!-- <div class="ui-g-12">
                 <h2>Hearings</h2>
-            </div>
-
+            </div> -->
+<!--
             <div class="ui-g-12">
               <p-dataTable [value]="case.caseHearings"
                           selectionMode="single"
@@ -573,12 +573,7 @@
                       </ng-template>
                   </p-column>
 
-                  <!-- TODO: Turn this on when deleteHearing EP ready -->
-                  <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
-                    <ng-template let-item="rowData" pTemplate="body">
-                        <i class="material-icons delete-icon" (click)="requestDeleteHearing($event, item)">delete</i>
-                    </ng-template>
-                  </p-column>-->
+
               </p-dataTable>
             </div>
 
@@ -590,7 +585,7 @@
                     label="Add Hearing"
                     icon="ui-icon-add"
                     class="ui-button-secondary mr-15" pButton></button>
-            </div>
+            </div> -->
 
             <!-- ------ HEARINGs COMPONENT -->
             <hearings [case]="case"></hearings>
@@ -1583,17 +1578,17 @@
         <div class="ui-g-12 ph-0">
           <div class="ui-g-5">
             <!-- HEARING DATE -->
-              <label class="minimal primary block">Hearing Date</label>
-              <p-calendar id="hearingDate" name="hearingDate" #hearingDate="ngModel" placeholder="Hearing Date"
-                  [ngModel]="selectedHearing?.startDateTime"
-                  (ngModelChange)="hearingDateOnChange($event)"
-                  [showIcon]="true"
-                  dateFormat="mm/dd/yy"
-                  appendTo="body"></p-calendar>
-              <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="hearingDate.errors?.required && hearingDate.touched" >
-                    Please choose a Hearing Date
-              </div>
+            <label class="minimal primary block">Hearing Date</label>
+            <p-calendar id="hearingDate" name="hearingDate" #hearingDate="ngModel" placeholder="Hearing Date"
+                [ngModel]="selectedHearing?.startDateTime"
+                (ngModelChange)="hearingDateOnChange($event)"
+                [showIcon]="true"
+                dateFormat="mm/dd/yy"
+                appendTo="body"></p-calendar>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="hearingDate.errors?.required && hearingDate.touched" >
+                  Please choose a Hearing Date
+            </div>
           </div>
           <div class="ui-g-7">
             <label class="minimal primary block">Judicial Officer</label>

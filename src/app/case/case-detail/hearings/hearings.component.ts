@@ -1,15 +1,30 @@
+import { CollectionUtil } from './../../../common/utils/collection-util';
+import { CaseHearingDTO } from './../../../common/entities/CaseHearingDTO';
+import { DatePipe } from '@angular/common';
+import { JudicialOfficer } from './../../../common/entities/JudicialOfficer';
 import { Component, Input, OnInit, ViewChild, AfterViewInit } from "@angular/core";
-import { MatSelectionList, MatSelectionListChange } from '@angular/material';
+import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
+import { Observable } from 'rxjs/Observable';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
 import { Case } from './../../../common/entities/Case';
+import { CalResource } from '../../../common/entities/CalResource';
+import { HearingType } from './../../../common/entities/HearingType';
+import { CourtLocation } from './../../../common/entities/CourtLocation';
+import { CaseHearing } from './../../../common/entities/CaseHearing';
+import { CalResourceTime } from './../../../common/entities/CalResourceTime';
+import { Permission } from './../../../common/entities/Permission';
+
 import { BreadcrumbService } from './../../../breadcrumb.service';
 import { ToastService } from './../../../common/services/utility/toast.service';
+import { CaseService } from './../../../common/services/http/case.service';
+import { LookupService } from './../../../common/services/http/lookup.service';
+import { UserService } from './../../../common/services/utility/user.service';
+
 import { CalResourceService } from "../../../common/services/http/calResource.service";
-import { CalResource } from '../../../common/entities/CalResource';
-import { CalResourceTime } from './../../../common/entities/CalResourceTime';
 import { CalTemplateService } from './../../../common/services/http/calTemplate.service';
+
 
 @Component({
   selector: 'hearings',
@@ -21,10 +36,258 @@ export class HearingsComponent implements OnInit {
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
 
-  // @ViewChild(MatSelectionList)
-  // matSelectionList: MatSelectionList;
-
   @Input() case: Case;
+
+  public Permission: any = Permission;
+  datePipe: DatePipe = new DatePipe("en");
+
+  // -------------------------
+  //   HEARING
+  // ------------------------=
+
+  selectedHearing: CaseHearing;
+  showModalAddHearing: boolean = false;
+  loadingHearingLookups: boolean = false;
+  hearingLocations: CourtLocation[];
+  hearingTypes: HearingType[];
+  hearingSubscription: Subscription;
+  hearingConflicts: CaseHearing[];
+  loadingConflicts: boolean = false;
+  showDeleteHearingModal: boolean = false;
+  judges: JudicialOfficer[];
+
+
+  hasPermission(pm) {
+    if (!this.case) return false;
+    return this.userSvc.hasPermission(pm);
+    // if (!this.case || !this.case.court) return false;
+    // let courtOID = this.case.court.courtOID;
+    // return this.userSvc.hasPermission(pm, courtOID);
+  }
+
+  createHearing(hearingForm) {
+    this.selectedHearing = new CaseHearing();
+    hearingForm.reset();
+    this.onShowHearingModal();
+  }
+
+  hearingOnRowSelect(event) {
+
+    if (!this.hasPermission(this.Permission.UPDATE_CASE_HEARING)) return false;
+    if (this.showDeleteHearingModal) return;
+    this.selectedHearing = event.data;
+    this.onShowHearingModal();
+  }
+
+  onShowHearingModal() {
+    this.showModalAddHearing = true;
+    // FetchJudicialOfficer GET
+    // FetchHearingType GET
+    // FetchHearingLocation GET
+    this.loadingHearingLookups = true;
+    var source = Observable.forkJoin<any>(
+      this.lookupSvc.fetchLookup<JudicialOfficer>('FetchJudicialOfficer'),
+      this.lookupSvc.fetchLookup<CourtLocation>('FetchHearingLocation'),
+      this.lookupSvc.fetchLookup<HearingType>('FetchHearingType')
+    );
+    this.hearingSubscription = source.subscribe(
+      results => {
+        this.judges = results[0] as JudicialOfficer[];
+        this.hearingLocations = results[1] as CourtLocation[];
+        this.hearingTypes = results[2] as HearingType[];
+
+        this.initHearingModal();
+      },
+      (error) => {
+        console.log(error);
+        this.loadingHearingLookups = false;
+        this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
+      },
+      () => {
+        this.loadingHearingLookups = false;
+      });
+  }
+
+  initHearingModal() {
+    this.loadingHearingLookups = false;
+
+    // Pre-select Dropdowns
+    if (this.selectedHearing.judicialOfficer) {
+      this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == this.selectedHearing.judicialOfficer.partyOID);
+    }
+
+    if (this.selectedHearing.courtLoc) {
+      this.selectedHearing.courtLoc = this.hearingLocations.find(h => h.locationOID == this.selectedHearing.courtLoc.locationOID);
+    }
+
+    if (this.selectedHearing.hearingType) {
+      this.selectedHearing.hearingType = this.hearingTypes.find(ht => ht.hearingTypeOID == this.selectedHearing.hearingType.hearingTypeOID);
+    }
+  }
+
+  fetchMatchingHearings() {
+    if (!this.selectedHearing.startDateTime || !this.selectedHearing.judicialOfficer) return;
+    this.hearingConflicts = [];
+
+    // FetchHearing POST {hearingQueryDate: "2018-01-09", courtLoc: "1"}
+    let data = {};
+    let hearingDateString: string = this.datePipe.transform(this.selectedHearing.startDateTime, "yyyy-MM-dd");
+    data = Object.assign(data, { hearingQueryDate: hearingDateString });
+
+    // ?? DOES THE SEARCH NEED TO INCLUDE LOCATION ?? //
+    // CONCAT LOCATION TO QUERY OBJECT
+    // if( this.selectedHearing.courtLoc ) {
+    //   let hearingLocString: string = this.selectedHearing.courtLoc.locationOID.toString();
+    //   data = Object.assign(data, {courtLoc: hearingLocString} );
+    // }
+
+    // CONCAT JUDGE TO QUERY OBJECT
+    if (this.selectedHearing.judicialOfficer) {
+      // Note: The value of `selectedHearing.judicialOfficer` is indeed portyOID since using dropdownPipe
+      let judgeParam = { judicialOfficer: { partyOID: this.selectedHearing.judicialOfficer.partyOID.toString() } }
+      data = Object.assign(data, judgeParam);
+    }
+
+    // MAKE THE CALL
+    this.loadingConflicts = true;
+    this.caseSvc.fetchHearing(data).subscribe(results => {
+      this.hearingConflicts = results;
+    },
+      (error) => {
+        console.log(error);
+        this.loadingConflicts = false;
+        this.toastSvc.showErrorMessage('There was an error while searching hearings.')
+      },
+      () => {
+        this.loadingConflicts = false;
+      })
+
+  }
+
+  hearingDateOnChange(event) {
+    this.selectedHearing.startDateTime = event;
+
+    let start = moment(this.selectedHearing.startDateTime);
+    this.selectedHearing.endDateTime = start.add(1, 'hour').toDate();
+
+    this.fetchMatchingHearings();
+  }
+
+  hearingJudgeOnChange(event) {
+    this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == event.value);
+    this.fetchMatchingHearings();
+  }
+
+  hearingLocationOnChange(event) {
+    this.selectedHearing.courtLoc = event.value;
+    this.fetchMatchingHearings();
+  }
+
+  hearingStartTimeOnChange(event) {
+    // IF END DATE !touched, then set it to the same value as the StartTime
+    this.selectedHearing.startDateTime = event;
+  }
+
+  hearingEndTimeOnChange(event) {
+    this.selectedHearing.endDateTime = event;
+  }
+
+  hearingTypeOnChange(event) {
+    this.selectedHearing.hearingType = event.value;
+  }
+
+  hearingDescriptionOnChange(event) {
+    this.selectedHearing.description = event;
+  }
+
+  onCancelHearing(hearingForm) {
+    // hearingForm.reset();
+    this.hideModals();
+  }
+
+  saveHearing() {
+    let hearing: CaseHearingDTO = new CaseHearingDTO();
+    let sch: CaseHearing = this.selectedHearing;
+
+    // validate
+    // Start Time before End Time
+    if (sch.startDateTime.valueOf() >= sch.endDateTime.valueOf()) {
+      this.toastSvc.showWarnMessage('End Time must be after Start Time');
+      return;
+    }
+
+    // Is Hearing Type and Time unique
+    // TODO: this needs to be refined
+    // if(!sch.caseHearingOID || sch.caseHearingOID == 0) {
+    //   let dup: boolean = this.case.caseHearings
+    //       .findIndex( h =>
+    //         (h.hearingType.hearingTypeOID == sch.hearingType.hearingTypeOID) &&
+    //         (moment(h.startDateTime).isSame(sch.startDateTime, 'hour') )) > -1;
+    //   if( dup ) {
+    //     this.toastSvc.showWarnMessage('A hearing of this type and at this time has already been added to the case.', 'Duplicate Hearing');
+    //     return;
+    //   }
+    // }
+
+    // CREATE DTO
+    hearing.caseHearingOID = sch.caseHearingOID ? sch.caseHearingOID.toString() : null;
+    hearing.caseOID = this.case.caseOID.toString();
+    hearing.courtLoc = sch.courtLoc.locationOID.toString();
+    hearing.description = sch.description;
+    hearing.endDateTime = this.datePipe.transform(sch.endDateTime, "yyyy-MM-dd HH:mm");
+    hearing.hearingType = sch.hearingType.hearingTypeOID.toString();
+    hearing.judicialOfficer = sch.judicialOfficer.partyOID.toString(); // this is portyOID since using dropdownPipe
+    hearing.startDateTime = this.datePipe.transform(sch.startDateTime, "yyyy-MM-dd HH:mm");
+
+    this.caseSvc
+      .saveCaseHearing(hearing)
+      .subscribe(result => {
+        let resultHearing = result[0];
+
+        // Check if existing or new hearing
+        let index: number = this.case.caseHearings
+          .findIndex(a => a.caseHearingOID == resultHearing.caseHearingOID);
+
+        if (index >= 0) {
+          this.case.caseHearings[index] = resultHearing;
+        } else {
+          this.case.caseHearings.push(resultHearing);
+          this.case.caseHearings = this.case.caseHearings.slice();
+        }
+
+        console.log('caseHearings', this.case.caseHearings);
+
+        this.toastSvc.showSuccessMessage('Hearing Saved');
+        this.showModalAddHearing = false;
+      },
+        (error) => {
+          console.log(error);
+          this.showModalAddHearing = false;
+          this.toastSvc.showErrorMessage('There was an error while saving hearings.')
+        },
+        () => {
+          this.showModalAddHearing = false;
+        });
+
+  }
+
+  hearingConflictsOnRowSelect(event) {
+
+  }
+
+  requestDeleteHearing(event, hearing: CaseHearing): void {
+    this.showDeleteHearingModal = true;
+    event.preventDefault();
+    this.selectedHearing = hearing;
+  }
+
+  deleteHearing(): void {
+    CollectionUtil.removeArrayItem(this.case.caseHearings, this.selectedHearing);
+    this.case.caseHearings = this.case.caseHearings.slice();
+    this.showDeleteHearingModal = false;
+    // TODO: Get deleteHearing EP from Aaron
+    // SETUP DELETE HEARING SERVICE
+  }
 
 
   resources: any[] = [];
@@ -165,7 +428,10 @@ export class HearingsComponent implements OnInit {
     private calResourceSvc: CalResourceService,
     private calTemplateSvc: CalTemplateService,
     private breadCrumbSvc: BreadcrumbService,
-    private toastSvc: ToastService
+    private toastSvc: ToastService,
+    private userSvc: UserService,
+    private caseSvc: CaseService,
+    private lookupSvc: LookupService
   ) {
 
     // TODO: move this to a date util lib
