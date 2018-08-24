@@ -1,3 +1,5 @@
+import { DayPilotModule } from 'daypilot-pro-angular';
+import { HearingsComponent } from './case/case-detail/hearings/hearings.component';
 import {
   CommonModule,
   HashLocationStrategy,
@@ -196,7 +198,8 @@ import { ConfigService } from "./common/services/config/config.service";
     TreeTableModule,
     HttpClientModule,
     CustomMaterialModule,
-    AdminModule
+    AdminModule,
+    DayPilotModule
   ],
   declarations: [
     AppComponent,
@@ -222,7 +225,8 @@ import { ConfigService } from "./common/services/config/config.service";
     CustomAutocompleteComponent,
     ResetPasswordComponent,
     NewPasswordComponent,
-    CaseCountsComponent
+    CaseCountsComponent,
+    HearingsComponent
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

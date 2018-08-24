@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
+import { Component, Input, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
+import { Case } from './../../../common/entities/Case';
 import { BreadcrumbService } from './../../../breadcrumb.service';
 import { ToastService } from './../../../common/services/utility/toast.service';
 import { CalResourceService } from "../../../common/services/http/calResource.service";
@@ -20,8 +21,10 @@ export class HearingsComponent implements OnInit {
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
 
-  @ViewChild(MatSelectionList)
-  matSelectionList: MatSelectionList;
+  // @ViewChild(MatSelectionList)
+  // matSelectionList: MatSelectionList;
+
+  @Input() case: Case;
 
 
   resources: any[] = [];
@@ -173,10 +176,10 @@ export class HearingsComponent implements OnInit {
       return dat;
     }
 
-    this.breadCrumbSvc.setItems([
-      { label: 'Admin Calendars', routerLink: ['/admin/calendar'] },
-      { label: 'Resource Hours', routerLink: ['/admin/calendar/resources'] }
-    ]);
+    // this.breadCrumbSvc.setItems([
+    //   { label: 'Admin Calendars', routerLink: ['/admin/calendar'] },
+    //   { label: 'Resource Hours', routerLink: ['/admin/calendar/resources'] }
+    // ]);
 
     let now = moment();
     console.log('hello date', now.format());
@@ -220,13 +223,7 @@ export class HearingsComponent implements OnInit {
         }
       ]
 
-    // Handle mat-selection-list selection change via dom element so we can DeselectAll
-    this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
-      this.matSelectionList.deselectAll();
-      event.option.selected = true;
-      this.selectedResource = event.option.value;
-      this.copySelectedItem();
-    });
+
 
     this.selectedResource = new CalResource();
   }
@@ -272,7 +269,7 @@ export class HearingsComponent implements OnInit {
   }
 
   createNewResource() {
-    this.matSelectionList.deselectAll();
+    // TODO: deselect all in list
     this.selectedResource = new CalResource();
     this.copySelectedItem();
   }
@@ -563,10 +560,7 @@ export class HearingsComponent implements OnInit {
 
     this.selectedResource = this.resources[0];
     this.copySelectedItem();
-    setTimeout(() => {
-      if (this.matSelectionList.options.first)
-        this.matSelectionList.options.first.selected = true;
-    }, 100);
+
   }
 
   private updateList(result) {

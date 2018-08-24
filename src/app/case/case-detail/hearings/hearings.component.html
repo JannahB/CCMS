@@ -1,144 +1,146 @@
-<div class="ui-g">
+<div class="ui-g-12">
 
-    <!-- HEADER -->
-    <div class="ui-g-12 pv-0">
-      <h1 class="page-header mt-0">Resource Hours</h1>
+  <h1 class="page-header mt-0">Schedule Hearing</h1>
+
+  <!-- Column 1 -->
+  <div class="ui-g-3 ui-sm-12">
+
+
+    <!-- LIST -->
+    <!-- <mat-selection-list #matSelectionList  class="items-list">
+      <mat-list-option *ngFor="let item of resources; let i=index; let itm" [class.hi]="selected" [value]="item">
+        {{ item.name }}
+      </mat-list-option>
+    </mat-selection-list>
+
+    <hr/> -->
+
+    <p-dataTable [value]="case.caseHearings"
+                selectionMode="single"
+                [(selection)]="selectedHearing"
+                (onRowSelect)="hearingOnRowSelect($event)"
+                scrollable="true" scrollHeight="280px"
+                dataKey="judicialAssignmentOID" #dtJudicialAssignment>
+      <p-column field="" header="Hearings" [style]="{'width':'100%'}">
+        <ng-template pTemplate="body" let-item="rowData">
+          <h4 class="mb-10 mt-0">{{ item.hearingType.hearingName }}</h4>
+          <p class="muted-label mv-0" >{{ item.judicialOfficer.firstName }} {{ item.judicialOfficer.lastName }}</p>
+          <p class="muted-label mv-0" >{{ item.startDateTime | date:'MMM d, yyyy h:mm a' }} </p>
+        </ng-template>
+      </p-column>
+
+    </p-dataTable>
+
+  </div>
+
+    <!-- Column 2 -->
+    <div class="ui-g-9 ui-sm-12">
+
+      <div class="ui-g-12 pt-20">
+        <h2>{{selectedResource.name}}</h2>
+      </div>
+
+      <div class="ui-g-12">
+        <div class="ui-g-3">
+          <label class="minimal primary block">Work Week</label>
+          <p-calendar id="dtWorkWeek" name="dtWorkWeek" #dtWorkWeek
+                styleClass="larger"
+                [required]="false"
+                [disabled]="false"
+                [(ngModel)]="selectedWorkWeek"
+                (onSelect)="onSelectWorkWeek($event)"
+                dateFormat="mm/dd/yy"
+                placeholder="Work Week"
+                [showIcon]="true"
+                yearRange="2018:2038"
+                [yearNavigator]="false"
+                appendTo="body" ></p-calendar>
+                <!-- (onSelect)="generalDetailsOnBlur($event)" -->
+        </div>
+        <div class="ui-g-9 ta-r pt-25">
+          <!-- BUTTONS TO GO HERE ----------- -->
+          <button type="button"
+                  label="Choose Template"
+                  icon="ui-icon-content-copy"
+                  (click)="onShowChooseTemplateModal()"
+                  [disabled]="!selectedWorkWeek || !selectedResource"
+                  class="ui-button-secondary smaller mr-20" pButton></button>
+          <!-- <button type="button"
+                  label="Save as Template"
+                  (click)="saveAsTemplate()"
+                  [disabled]="!selectedWorkWeek || !selectedResource"
+                  class="ui-button-secondary smaller" pButton></button> -->
+          <button type="button"
+                  label="Apply to Next Week"
+                  icon="ui-icon-queue-play-next"
+                  (click)="applyToNextWeek()"
+                  [disabled]="!selectedWorkWeek || !selectedResource"
+                  class="ui-button-secondary smaller"
+                  pButton></button>
+        </div>
+      </div>
+
+      <div class="ui-g-12">
+        <div class="" *ngIf="selectedResource">
+
+          <!-- CALENDAR -->
+          <daypilot-scheduler [config]="config" [events]="selectedResource.days" #scheduler></daypilot-scheduler>
+
+          <p class="mv-0 muted-label">Click and drag to mark available hours. </p>
+        </div>
+        <div class="ta-r">
+            <button mat-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
+              <mat-icon aria-label="Add resource button">delete</mat-icon>
+              Delete Resource Hours
+            </button>
+            <button mat-raised-button color="primary" (click)="saveItem()" class="mt-30">
+              <mat-icon aria-label="Add resource button">check</mat-icon>
+              Save Resource
+            </button>
+            <button mat-button color="secondary" (click)="cancelDataItemEdit()" class="mt-30">
+              <mat-icon aria-label="Add resource button">clear</mat-icon>
+              Cancel
+            </button>
+        </div>
+      </div>
+      <div class="ui-g-12">
+          <pre>{{selectedResource | json}}</pre>
+      </div>
     </div>
 
-    <div class="ui-g-12 card">
+    <!-- ---------------- MODALS ---------------- -->
 
-      <!-- Column 1 -->
-      <div class="ui-g-2 ui-sm-12 mt-25">
-
-        <mat-form-field class="width-full">
-          <input matInput name="tiSearch" #tiSearch="ngModel" placeholder="Search"
-              [(ngModel)]="searchText">
-
-        </mat-form-field>
-
-        <!-- LIST -->
-        <mat-selection-list #matSelectionList  class="items-list">
-          <mat-list-option *ngFor="let item of resources; let i=index; let itm" [class.hi]="selected" [value]="item">
-            {{ item.name }}
-          </mat-list-option>
-        </mat-selection-list>
-
-        <!-- <button mat-raised-button color="primary" (click)="createNewResource()" class="mt-15 width-full">
-          <mat-icon aria-label="Add resource button">add</mat-icon>
-          New Resource
-        </button> -->
-      </div>
-
-      <!-- Column 2 -->
-      <div class="ui-g-10 ui-sm-12">
-
-        <div class="ui-g-12 pt-20">
-          <h2>{{selectedResource.name}}</h2>
-        </div>
-
-        <div class="ui-g-12">
-          <div class="ui-g-3">
-            <label class="minimal primary block">Work Week</label>
-            <p-calendar id="dtWorkWeek" name="dtWorkWeek" #dtWorkWeek
-                  styleClass="larger"
-                  [required]="false"
-                  [disabled]="false"
-                  [(ngModel)]="selectedWorkWeek"
-                  (onSelect)="onSelectWorkWeek($event)"
-                  dateFormat="mm/dd/yy"
-                  placeholder="Work Week"
-                  [showIcon]="true"
-                  yearRange="2018:2038"
-                  [yearNavigator]="false"
-                  appendTo="body" ></p-calendar>
-                  <!-- (onSelect)="generalDetailsOnBlur($event)" -->
-          </div>
-          <div class="ui-g-9 ta-r pt-25">
-            <!-- BUTTONS TO GO HERE ----------- -->
-            <button type="button"
-                    label="Choose Template"
-                    icon="ui-icon-content-copy"
-                    (click)="onShowChooseTemplateModal()"
-                    [disabled]="!selectedWorkWeek || !selectedResource"
-                    class="ui-button-secondary smaller mr-20" pButton></button>
-            <!-- <button type="button"
-                    label="Save as Template"
-                    (click)="saveAsTemplate()"
-                    [disabled]="!selectedWorkWeek || !selectedResource"
-                    class="ui-button-secondary smaller" pButton></button> -->
-            <button type="button"
-                    label="Apply to Next Week"
-                    icon="ui-icon-queue-play-next"
-                    (click)="applyToNextWeek()"
-                    [disabled]="!selectedWorkWeek || !selectedResource"
-                    class="ui-button-secondary smaller"
-                    pButton></button>
-          </div>
-        </div>
-
-        <div class="ui-g-12">
-          <div class="" *ngIf="selectedResource">
-
-            <!-- CALENDAR -->
-            <daypilot-scheduler [config]="config" [events]="selectedResource.days" #scheduler></daypilot-scheduler>
-
-            <p class="mv-0 muted-label">Click and drag to mark available hours. </p>
-          </div>
-          <div class="ta-r">
-              <button mat-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
-                <mat-icon aria-label="Add resource button">delete</mat-icon>
-                Delete Resource Hours
-              </button>
-              <button mat-raised-button color="primary" (click)="saveItem()" class="mt-30">
-                <mat-icon aria-label="Add resource button">check</mat-icon>
-                Save Resource
-              </button>
-              <button mat-button color="secondary" (click)="cancelDataItemEdit()" class="mt-30">
-                <mat-icon aria-label="Add resource button">clear</mat-icon>
-                Cancel
-              </button>
-          </div>
-        </div>
-        <div class="ui-g-12">
-            <pre>{{selectedResource | json}}</pre>
-        </div>
-      </div>
-
-      <!-- ---------------- MODALS ---------------- -->
-
-      <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteItemModal" [responsive]="true" showEffect="fade" [modal]="true"
-        [closable]="false">
-        <div>Are you sure you want to delete this item?</div>
-        <p-footer>
-          <div class="ui-dialog-buttonpane ui-helper-clearfix">
-            <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
-            <button label="Yes" type="button" pButton icon="fa-check" (click)="deleteDataItem()"></button>
-          </div>
-        </p-footer>
-      </p-dialog>
-
-
-      <p-dialog header="Choose Template" width="450" [(visible)]="showChooseTemplateModal"
-              [responsive]="true" showEffect="fade" [modal]="true" [closable]="true">
-      <div>Choose a template to apply to the current work week.</div>
-
-      <mat-selection-list class="items-list">
-        <mat-list-option *ngFor="let item of templates; let i=index; let template"
-                         [class.hi]="selected" [value]="template"
-                         (selectionChange)="onTemplateSelectionChange($event, template)">
-          <div>{{ item.name }}</div>
-          <div class="muted-label mt-0">{{ item.description }} </div>
-        </mat-list-option>
-      </mat-selection-list>
-
+    <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteItemModal" [responsive]="true" showEffect="fade" [modal]="true"
+      [closable]="false">
+      <div>Are you sure you want to delete this item?</div>
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
-          <button label="Cancel" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
-          <button label="Apply Template" type="button" pButton icon="ui-icon-open-in-browser" (click)="onTemplateSelected()"></button>
+          <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
+          <button label="Yes" type="button" pButton icon="fa-check" (click)="deleteDataItem()"></button>
         </div>
       </p-footer>
     </p-dialog>
 
 
-    </div>
-  </div>
+  <p-dialog header="Choose Template" width="450" [(visible)]="showChooseTemplateModal"
+            [responsive]="true" showEffect="fade" [modal]="true" [closable]="true">
+    <div>Choose a template to apply to the current work week.</div>
+
+    <mat-selection-list class="items-list">
+      <mat-list-option *ngFor="let item of templates; let i=index; let template"
+                        [class.hi]="selected" [value]="template"
+                        (selectionChange)="onTemplateSelectionChange($event, template)">
+        <div>{{ item.name }}</div>
+        <div class="muted-label mt-0">{{ item.description }} </div>
+      </mat-list-option>
+    </mat-selection-list>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix">
+        <button label="Cancel" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
+        <button label="Apply Template" type="button" pButton icon="ui-icon-open-in-browser" (click)="onTemplateSelected()"></button>
+      </div>
+    </p-footer>
+  </p-dialog>
+
+</div>

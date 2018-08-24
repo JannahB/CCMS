@@ -573,15 +573,16 @@
                       </ng-template>
                   </p-column>
 
-                  <!-- TODO: Turn this on when deleteHearing EP ready  -->
+                  <!-- TODO: Turn this on when deleteHearing EP ready -->
                   <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons delete-icon" (click)="requestDeleteHearing($event, item)">delete</i>
                     </ng-template>
-                  </p-column> -->
+                  </p-column>-->
               </p-dataTable>
-
             </div>
+
+
             <div class="ui-g-12">
                 <button type="button"
                     *ngIf="hasPermission(Permission.CREATE_CASE_HEARING)"
@@ -590,6 +591,10 @@
                     icon="ui-icon-add"
                     class="ui-button-secondary mr-15" pButton></button>
             </div>
+
+            <!-- ------ HEARINGs COMPONENT -->
+            <hearings [case]="case"></hearings>
+
           </div>
         </p-tabPanel>
 
