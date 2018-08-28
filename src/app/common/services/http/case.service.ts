@@ -1,19 +1,19 @@
-import { CaseTaskDTO } from './../../entities/CaseTaskDTO';
+import { CaseTaskDTO } from '../../entities/CaseTaskDTO';
 import { Injectable, forwardRef, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { CaseTask } from './../../entities/CaseTask';
-import { Address } from './../../entities/Address';
-import { Identifier } from './../../entities/Identifier';
-import { Party } from './../../entities/Party';
-import { CaseHearing } from './../../entities/CaseHearing';
-import { CaseEvent } from './../../entities/CaseEvent';
-import { CaseDocument } from './../../entities/CaseDocument';
-import { PhoneNumber } from './../../entities/PhoneNumber';
-import { DateConverter } from './../../utils/date-converter';
-import { HttpBaseService } from '../http/http-base.service';
-import { Case } from './../../entities/Case';
+import { CaseTask } from '../../entities/CaseTask';
+import { Address } from '../../entities/Address';
+import { Identifier } from '../../entities/Identifier';
+import { Party } from '../../entities/Party';
+import { CaseHearingDeprecated } from '../../entities/CaseHearingDeprecated';
+import { CaseEvent } from '../../entities/CaseEvent';
+import { CaseDocument } from '../../entities/CaseDocument';
+import { PhoneNumber } from '../../entities/PhoneNumber';
+import { DateConverter } from '../../utils/date-converter';
+import { HttpBaseService } from './http-base.service';
+import { Case } from '../../entities/Case';
 import { CaseHearings } from '../../entities/CaseHearings';
 import { Email } from '../../entities/Email';
 import { IccsCode } from '../../entities/IccsCode';
@@ -241,7 +241,7 @@ export class CaseService extends HttpBaseService<Case> {
         })
       }
 
-      let caseHearings: CaseHearing[] = kase.caseHearings;
+      let caseHearings: CaseHearingDeprecated[] = kase.caseHearings;
       if (caseHearings) {
         caseHearings.forEach(ch => {
           ch.startDateTime = DateConverter.convertDate(ch.startDateTime);
@@ -276,8 +276,8 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http.post<ChargeFactor[]>(url, "");
   }
 
-  public fetchLocalCharge():Observable<LocalCharge[]>{
-    let url:string = `${super.getBaseUrl()}/FetchLocalCharge`;
+  public fetchLocalCharge(): Observable<LocalCharge[]> {
+    let url: string = `${super.getBaseUrl()}/FetchLocalCharge`;
 
     return this.http
       .post<LocalCharge[]>(url, "");
@@ -373,14 +373,14 @@ export class CaseService extends HttpBaseService<Case> {
       .get<DocTemplate[]>(url);
   }
 
-  public saveCaseHearing(data: CaseHearingDTO): Observable<CaseHearing> {
+  public saveCaseHearing(data: CaseHearingDTO): Observable<CaseHearingDeprecated> {
     let url: string = `${super.getBaseUrl()}/SaveCaseHearing`;
     return this.http
-      .post<CaseHearing>(url, data)
+      .post<CaseHearingDeprecated>(url, data)
       .map(h => this.convertHearingDates(h))
   }
 
-  convertHearingDates(item: CaseHearing) {
+  convertHearingDates(item: CaseHearingDeprecated) {
     item.startDateTime = DateConverter.convertDate(item.startDateTime);
     item.endDateTime = DateConverter.convertDate(item.endDateTime);
     return item;
@@ -527,11 +527,11 @@ export class CaseService extends HttpBaseService<Case> {
       .post<CasePhase[]>(url, params);
   }
 
-  public fetchHearing(data: any): Observable<CaseHearing[]> {
+  public fetchHearing(data: any): Observable<CaseHearingDeprecated[]> {
     let url: string = `${super.getBaseUrl()}/FetchHearing`;
 
     return this.http
-      .post<CaseHearing[]>(url, data);
+      .post<CaseHearingDeprecated[]>(url, data);
   }
 
 }

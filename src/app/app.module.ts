@@ -130,6 +130,7 @@ import { PartyDetailComponent } from "./party/party-detail/party-detail.componen
 import { PartySearchComponent } from "./party/party-search/party-search.component";
 import { CaseCountsComponent } from './reports/case-counts/case-counts.component';
 import { ConfigService } from "./common/services/config/config.service";
+import { HearingsService } from './common/services/http/hearings.service';
 
 @NgModule({
   imports: [
@@ -263,6 +264,7 @@ import { ConfigService } from "./common/services/config/config.service";
     AppStateService,
     CaseCountsService,
     ConfigService,
+    HearingsService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthorizationInterceptor,

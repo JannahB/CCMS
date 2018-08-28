@@ -1,29 +1,33 @@
-import { CollectionUtil } from './../../../common/utils/collection-util';
-import { CaseHearingDTO } from './../../../common/entities/CaseHearingDTO';
+import { CaseHearingDeprecated } from './../../../common/entities/CaseHearingDeprecated';
+import { CollectionUtil } from '../../../common/utils/collection-util';
+import { CaseHearingDTO } from '../../../common/entities/CaseHearingDTO';
 import { DatePipe } from '@angular/common';
-import { JudicialOfficer } from './../../../common/entities/JudicialOfficer';
+import { JudicialOfficer } from '../../../common/entities/JudicialOfficer';
 import { Component, Input, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
-import { Case } from './../../../common/entities/Case';
+import { Case } from '../../../common/entities/Case';
 import { CalResource } from '../../../common/entities/CalResource';
-import { HearingType } from './../../../common/entities/HearingType';
-import { CourtLocation } from './../../../common/entities/CourtLocation';
-import { CaseHearing } from './../../../common/entities/CaseHearing';
-import { CalResourceTime } from './../../../common/entities/CalResourceTime';
-import { Permission } from './../../../common/entities/Permission';
+import { HearingType } from '../../../common/entities/HearingType';
+import { CourtLocation } from '../../../common/entities/CourtLocation';
+import { CaseHearing } from '../../../common/entities/CaseHearing';
+import { CalResourceTime } from '../../../common/entities/CalResourceTime';
+import { Permission } from '../../../common/entities/Permission';
 
-import { BreadcrumbService } from './../../../breadcrumb.service';
-import { ToastService } from './../../../common/services/utility/toast.service';
-import { CaseService } from './../../../common/services/http/case.service';
-import { LookupService } from './../../../common/services/http/lookup.service';
-import { UserService } from './../../../common/services/utility/user.service';
-
+import { BreadcrumbService } from '../../../breadcrumb.service';
+import { ToastService } from '../../../common/services/utility/toast.service';
+import { CaseService } from '../../../common/services/http/case.service';
+import { LookupService } from '../../../common/services/http/lookup.service';
+import { UserService } from '../../../common/services/utility/user.service';
 import { CalResourceService } from "../../../common/services/http/calResource.service";
-import { CalTemplateService } from './../../../common/services/http/calTemplate.service';
+import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
+
+// This is needed for pipe used in markup
+import { DropdownPipe } from '../../../common/pipes/dropdown.pipe';
+
 
 
 @Component({
@@ -45,13 +49,12 @@ export class HearingsComponent implements OnInit {
   //   HEARING
   // ------------------------=
 
-  selectedHearing: CaseHearing;
-  showModalAddHearing: boolean = false;
+  selectedHearing: CaseHearingDeprecated;
   loadingHearingLookups: boolean = false;
   hearingLocations: CourtLocation[];
   hearingTypes: HearingType[];
   hearingSubscription: Subscription;
-  hearingConflicts: CaseHearing[];
+  hearingConflicts: CaseHearingDeprecated[];
   loadingConflicts: boolean = false;
   showDeleteHearingModal: boolean = false;
   judges: JudicialOfficer[];
@@ -66,9 +69,9 @@ export class HearingsComponent implements OnInit {
   }
 
   createHearing(hearingForm) {
-    this.selectedHearing = new CaseHearing();
+    this.selectedHearing = new CaseHearingDeprecated();
     hearingForm.reset();
-    this.onShowHearingModal();
+    this.getLookups();
   }
 
   hearingOnRowSelect(event) {
@@ -76,14 +79,10 @@ export class HearingsComponent implements OnInit {
     if (!this.hasPermission(this.Permission.UPDATE_CASE_HEARING)) return false;
     if (this.showDeleteHearingModal) return;
     this.selectedHearing = event.data;
-    this.onShowHearingModal();
+    // this.onShowHearingModal();
   }
 
-  onShowHearingModal() {
-    this.showModalAddHearing = true;
-    // FetchJudicialOfficer GET
-    // FetchHearingType GET
-    // FetchHearingLocation GET
+  getLookups() {
     this.loadingHearingLookups = true;
     var source = Observable.forkJoin<any>(
       this.lookupSvc.fetchLookup<JudicialOfficer>('FetchJudicialOfficer'),
@@ -207,7 +206,7 @@ export class HearingsComponent implements OnInit {
 
   saveHearing() {
     let hearing: CaseHearingDTO = new CaseHearingDTO();
-    let sch: CaseHearing = this.selectedHearing;
+    let sch: CaseHearingDeprecated = this.selectedHearing;
 
     // validate
     // Start Time before End Time
@@ -257,16 +256,17 @@ export class HearingsComponent implements OnInit {
 
         console.log('caseHearings', this.case.caseHearings);
 
+
         this.toastSvc.showSuccessMessage('Hearing Saved');
-        this.showModalAddHearing = false;
+
       },
         (error) => {
           console.log(error);
-          this.showModalAddHearing = false;
+
           this.toastSvc.showErrorMessage('There was an error while saving hearings.')
         },
         () => {
-          this.showModalAddHearing = false;
+          // final
         });
 
   }
@@ -275,7 +275,7 @@ export class HearingsComponent implements OnInit {
 
   }
 
-  requestDeleteHearing(event, hearing: CaseHearing): void {
+  requestDeleteHearing(event, hearing: CaseHearingDeprecated): void {
     this.showDeleteHearingModal = true;
     event.preventDefault();
     this.selectedHearing = hearing;
