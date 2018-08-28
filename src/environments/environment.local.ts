@@ -5,8 +5,8 @@
 
 export const environment = {
   production: false,
-  // apiUrl: "http://localhost:8080",                // LOCAL
-  apiUrl: "https://testcms.ttlawcourts.org/CCMS3",     // TEST
+  apiUrl: "http://localhost:8080",                // LOCAL
+  // apiUrl: "https://testcms.ttlawcourts.org/CCMS3",     // TEST
   mockUrl: "assets/mockData/",
 
   allowDeleteLookupItems: false,
