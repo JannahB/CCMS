@@ -3,9 +3,9 @@ import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
-import { BreadcrumbService } from './../../../breadcrumb.service';
+import { BreadcrumbService } from '../../../breadcrumb.service';
 import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
-import { ToastService } from './../../../common/services/utility/toast.service';
+import { ToastService } from '../../../common/services/utility/toast.service';
 import { CalTemplate } from '../../../common/entities/CalTemplate';
 
 @Component({

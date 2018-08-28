@@ -1,4 +1,4 @@
-import { GlobalState } from './../common/services/state/global.state';
+import { GlobalState } from '../common/services/state/global.state';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 

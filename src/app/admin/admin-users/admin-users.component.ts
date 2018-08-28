@@ -3,16 +3,16 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import "rxjs/add/observable/forkJoin";
 
-import { AuthorizedCourt } from './../../common/entities/AuthorizedCourt';
-import { LookupService } from './../../common/services/http/lookup.service';
+import { AuthorizedCourt } from '../../common/entities/AuthorizedCourt';
+import { LookupService } from '../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../breadcrumb.service';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { Court } from '../../common/entities/Court';
-import { Role } from './../../common/entities/Role';
+import { Role } from '../../common/entities/Role';
 import { StaffRole } from '../../common/entities/StaffRole';
-import { User } from './../../common/entities/User';
+import { User } from '../../common/entities/User';
 import { AdminUserService } from '../../common/services/http/admin-user.service';
-import { PartyService } from './../../common/services/http/party.service';
+import { PartyService } from '../../common/services/http/party.service';
 import { Party } from '../../common/entities/Party';
 import { Email } from '../../common/entities/Email';
 

@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { forwardRef, Inject, Injectable } from "@angular/core";
-import { Observable } from "../../../../node_modules/rxjs";
+import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { Holiday } from "../entities/Holiday";
 
@@ -11,7 +11,7 @@ export class HolidayService {
   constructor(
     @Inject(forwardRef(() => HttpClient))
     protected http: HttpClient
-  ) {}
+  ) { }
 
   getAll(): Observable<Holiday[]> {
     return this.http.get<Holiday[]>(this.baseUrl);

@@ -2,15 +2,15 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatSelectionList, MatSelectionListChange } from "@angular/material";
 import { DayPilotSchedulerComponent } from "daypilot-pro-angular";
 import * as moment from "moment";
-import { Calendar, SelectItem } from "../../../../../node_modules/primeng/primeng";
+import { Calendar, SelectItem } from "primeng/primeng";
 import { CalFacility } from "../../../common/entities/CalFacility";
 import { CalTemplate } from "../../../common/entities/CalTemplate";
 import { Holiday } from "../../../common/entities/Holiday";
 import { HolidayService } from "../../../common/services/holiday.service";
-import { BreadcrumbService } from "./../../../breadcrumb.service";
-import { CalFacilityTag } from "./../../../common/entities/CalFacilityTag";
-import { CalFacilityService } from "./../../../common/services/http/calFacility.service";
-import { ToastService } from "./../../../common/services/utility/toast.service";
+import { BreadcrumbService } from "../../../breadcrumb.service";
+import { CalFacilityTag } from "../../../common/entities/CalFacilityTag";
+import { CalFacilityService } from "../../../common/services/http/calFacility.service";
+import { ToastService } from "../../../common/services/utility/toast.service";
 
 @Component({
   selector: "app-holidays",

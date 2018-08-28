@@ -3,13 +3,13 @@ import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
-import { BreadcrumbService } from './../../../breadcrumb.service';
-import { ToastService } from './../../../common/services/utility/toast.service';
+import { BreadcrumbService } from '../../../breadcrumb.service';
+import { ToastService } from '../../../common/services/utility/toast.service';
 import { CalTemplate } from '../../../common/entities/CalTemplate';
 import { CalResourceService } from "../../../common/services/http/calResource.service";
 import { CalResource } from '../../../common/entities/CalResource';
-import { CalResourceTime } from './../../../common/entities/CalResourceTime';
-import { CalTemplateService } from './../../../common/services/http/calTemplate.service';
+import { CalResourceTime } from '../../../common/entities/CalResourceTime';
+import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
 
 @Component({
   selector: 'app-cal-resources',

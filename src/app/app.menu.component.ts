@@ -5,7 +5,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { MenuItem } from 'primeng/primeng';
 import { AppComponent } from './app.component';
-import { environment } from './../environments/environment';
+import { environment } from '../environments/environment';
 import { ConfigService } from './common/services/config/config.service';
 
 @Component({

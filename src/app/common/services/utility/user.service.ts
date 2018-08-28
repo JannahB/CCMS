@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
-import { GlobalState } from './../state/global.state';
+import { GlobalState } from '../state/global.state';
 import { LocalStorageService } from './local-storage.service';
 import { Party } from '../../entities/Party';
-import { Role } from './../../entities/Role';
+import { Role } from '../../entities/Role';
 import { Permission } from '../../entities/Permission';
 import { AppStateService } from '../state/app.state.sevice';
 

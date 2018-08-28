@@ -2,12 +2,12 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
 
-import { LookupService } from './../../../common/services/http/lookup.service';
+import { LookupService } from '../../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { AdminDataService } from '../../../common/services/http/admin-data.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
-import { environment } from './../../../../environments/environment';
-import { HearingType } from './../../../common/entities/HearingType';
+import { environment } from '../../../../environments/environment';
+import { HearingType } from '../../../common/entities/HearingType';
 
 @Component({
   selector: 'app-hearing-type',

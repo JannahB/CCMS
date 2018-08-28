@@ -2,12 +2,12 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
 
-import { CaseType } from './../../../common/entities/CaseType';
-import { LookupService } from './../../../common/services/http/lookup.service';
+import { CaseType } from '../../../common/entities/CaseType';
+import { LookupService } from '../../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { AdminDataService } from '../../../common/services/http/admin-data.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
-import { environment } from './../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-case-types',
@@ -33,11 +33,11 @@ export class CaseTypesComponent implements OnInit {
   selectedItemBak: CaseType;
   showDeleteItemModal: boolean = false;
 
-  tableLabel:string = "Case Type"
+  tableLabel: string = "Case Type"
   refDataSubscription: Subscription;
 
   constructor(
-    private breadCrumbSvc:BreadcrumbService,
+    private breadCrumbSvc: BreadcrumbService,
     private lookupSvc: LookupService,
     private adminSvc: AdminDataService,
     private toastSvc: ToastService
@@ -46,11 +46,11 @@ export class CaseTypesComponent implements OnInit {
       { label: 'Data Table Maintenance', routerLink: ['/admin/data'] },
       { label: 'Case Types', routerLink: ['/admin/data/casetypes'] }
     ]);
-   }
+  }
 
   @ViewChild(MatSelectionList) itemsList: MatSelectionList;
 
-  ngOnInit(){
+  ngOnInit() {
     this.allowDeleteLookupItems = environment.allowDeleteLookupItems;
   }
 
@@ -69,7 +69,7 @@ export class CaseTypesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if(this.refDataSubscription) this.refDataSubscription.unsubscribe();
+    if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
   }
 
 
@@ -80,7 +80,7 @@ export class CaseTypesComponent implements OnInit {
       this.copySelectedItem();
       // If items in list, default to first item
       setTimeout(() => {
-        if( this.itemsList.options.first )
+        if (this.itemsList.options.first)
           this.itemsList.options.first.selected = true;
       }, 100);
 
@@ -98,41 +98,41 @@ export class CaseTypesComponent implements OnInit {
     this.copySelectedItem();
   }
 
-  saveDataItem(){
-    this.adminSvc.saveCaseType(this.selectedItem).subscribe( result => {
+  saveDataItem() {
+    this.adminSvc.saveCaseType(this.selectedItem).subscribe(result => {
       console.log('result', result);
 
-      let index:number = this.getIndexOfItem(result);
+      let index: number = this.getIndexOfItem(result);
 
-      if(index >= 0){
+      if (index >= 0) {
         this.typeItems[index] = result;
-      }else{
+      } else {
         this.typeItems.push(result);
       }
       this.toastSvc.showSuccessMessage('Item Saved');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error saving the item.');
-    },
-    () => {
-      // final
-    })
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error saving the item.');
+      },
+      () => {
+        // final
+      })
 
   }
 
   copySelectedItem() {
-    this.selectedItemBak = Object.assign( new CaseType(), this.selectedItem );
+    this.selectedItemBak = Object.assign(new CaseType(), this.selectedItem);
     this.selectedItemIdx = this.getIndexOfItem(this.selectedItem);
   }
 
   cancelDataItemEdit(event) {
-    this.selectedItem = Object.assign( new CaseType(), this.selectedItemBak );
+    this.selectedItem = Object.assign(new CaseType(), this.selectedItemBak);
     this.typeItems[this.selectedItemIdx] = this.selectedItem;
   }
 
   deleteDataItemRequest() {
-    if(!this.allowDeleteLookupItems) {
+    if (!this.allowDeleteLookupItems) {
       this.toastSvc.showInfoMessage('Delete support is currently not available.');
       return;
     }
@@ -140,27 +140,27 @@ export class CaseTypesComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.adminSvc.deleteLookupItem('CaseType', this.selectedItem.caseTypeOID).subscribe( result => {
+    this.adminSvc.deleteLookupItem('CaseType', this.selectedItem.caseTypeOID).subscribe(result => {
       this.typeItems.splice(this.getIndexOfItem(), 1);
       this.selectedItem = this.typeItems[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error deleting the item.');
-    },
-    () => {
-      // final
-    })
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error deleting the item.');
+      },
+      () => {
+        // final
+      })
   }
 
-  hideModals(){
+  hideModals() {
     this.showDeleteItemModal = false;
   }
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.typeItems
-        .findIndex(itm => itm.caseTypeOID == item.caseTypeOID);
+      .findIndex(itm => itm.caseTypeOID == item.caseTypeOID);
   }
 
 }

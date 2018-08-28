@@ -14,7 +14,7 @@ import { AdminUsersComponent } from './admin-users/admin-users.component';
 import { AdminComponent } from './admin.component';
 import { AdminWorkflowComponent } from './admin-workflow/admin-workflow.component';
 import { CanActivateAuthenticationGuard } from '../common/guards/can-activate-authentication.guard';
-import { CanActivateIsCourtUserGuard } from './../common/guards/can-activate-is-court-user.guard';
+import { CanActivateIsCourtUserGuard } from '../common/guards/can-activate-is-court-user.guard';
 import { CourtLocationsComponent } from './data/court-locations/court-locations.component';
 import { CasePartyRolesComponent } from './data/case-party-roles/case-party-roles.component';
 import { EventTypesComponent } from './data/event-types/event-types.component';

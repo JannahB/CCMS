@@ -1,8 +1,8 @@
-import { Language } from './../../entities/Language';
+import { Language } from '../../entities/Language';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { HttpBaseService } from '../http/http-base.service';
+import { HttpBaseService } from './http-base.service';
 
 
 @Injectable()

@@ -1,27 +1,27 @@
-import { UserService } from './../../common/services/utility/user.service';
+import { UserService } from '../../common/services/utility/user.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { SelectItem } from 'primeng/primeng';
 
-import { GenericTypesService } from './../../common/services/http/generic.types.service';
-import { PhoneNumber } from './../../common/entities/PhoneNumber';
-import { Address } from './../../common/entities/Address';
-import { PartyService } from './../../common/services/http/party.service';
-import { DropdownDataTransformService } from './../../common/services/utility/dropdown-data-transform.service';
+import { GenericTypesService } from '../../common/services/http/generic.types.service';
+import { PhoneNumber } from '../../common/entities/PhoneNumber';
+import { Address } from '../../common/entities/Address';
+import { PartyService } from '../../common/services/http/party.service';
+import { DropdownDataTransformService } from '../../common/services/utility/dropdown-data-transform.service';
 import { BreadcrumbService } from '../../breadcrumb.service';
-import { DateConverter } from './../../common/utils/date-converter';
-import { Identifier } from './../../common/entities/Identifier';
-import { IdentifierService } from './../../common/services/http/identifier.service';
+import { DateConverter } from '../../common/utils/date-converter';
+import { Identifier } from '../../common/entities/Identifier';
+import { IdentifierService } from '../../common/services/http/identifier.service';
 import { Language } from '../../common/entities/Language';
-import { LanguageService } from './../../common/services/http/language.service';
-import { Party } from './../../common/entities/Party';
+import { LanguageService } from '../../common/services/http/language.service';
+import { Party } from '../../common/entities/Party';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { Email } from '../../common/entities/Email';
 import { CountriesService } from '../../common/services/http/countries.service';
 import { CollectionUtil } from '../../common/utils/collection-util';
-import { Permission } from './../../common/entities/Permission';
+import { Permission } from '../../common/entities/Permission';
 
 
 @Component({

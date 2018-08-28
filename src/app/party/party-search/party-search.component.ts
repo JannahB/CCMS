@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { Party } from '../../common/entities/Party';
 import { Message } from 'primeng/components/common/api';
-import { UserService } from './../../common/services/utility/user.service';
+import { UserService } from '../../common/services/utility/user.service';
 import { DateUtils } from '../../common/utils/date-utils';
 import { PartyService } from '../../common/services/http/party.service';
 import { Permission } from '../../common/entities/Permission';

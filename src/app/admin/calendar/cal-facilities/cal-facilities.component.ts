@@ -3,14 +3,14 @@ import { MatSelectionList, MatSelectionListChange, MatListOption } from '@angula
 import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
-import { BreadcrumbService } from './../../../breadcrumb.service';
-import { ToastService } from './../../../common/services/utility/toast.service';
+import { BreadcrumbService } from '../../../breadcrumb.service';
+import { ToastService } from '../../../common/services/utility/toast.service';
 import { CalTemplate } from '../../../common/entities/CalTemplate';
 import { CalFacility } from '../../../common/entities/CalFacility';
-import { CalFacilityTag } from './../../../common/entities/CalFacilityTag';
-import { CalFacilityService } from './../../../common/services/http/calFacility.service';
-import { CalFacilityTime } from './../../../common/entities/CalFacilityTime';
-import { CalTemplateService } from './../../../common/services/http/calTemplate.service';
+import { CalFacilityTag } from '../../../common/entities/CalFacilityTag';
+import { CalFacilityService } from '../../../common/services/http/calFacility.service';
+import { CalFacilityTime } from '../../../common/entities/CalFacilityTime';
+import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
 
 @Component({
   selector: 'app-cal-facilities',

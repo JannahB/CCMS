@@ -2,12 +2,12 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
 
-import { CaseType } from './../../../common/entities/CaseType';
-import { LookupService } from './../../../common/services/http/lookup.service';
+import { CaseType } from '../../../common/entities/CaseType';
+import { LookupService } from '../../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { AdminDataService } from '../../../common/services/http/admin-data.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
-import { environment } from './../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { CasePhase } from '../../../common/entities/CasePhase';
 
 
@@ -37,12 +37,12 @@ export class CasePhasesComponent implements OnInit {
   showDeleteItemModal: boolean = false;
   editing: boolean = false;
 
-  tableLabel:string = "Case Phase"
+  tableLabel: string = "Case Phase"
   refDataSubscription: Subscription;
   parentRefDataSubscription: Subscription;
 
   constructor(
-    private breadCrumbSvc:BreadcrumbService,
+    private breadCrumbSvc: BreadcrumbService,
     private lookupSvc: LookupService,
     private adminSvc: AdminDataService,
     private toastSvc: ToastService
@@ -51,11 +51,11 @@ export class CasePhasesComponent implements OnInit {
       { label: 'Data Table Maintenance', routerLink: ['/admin/data'] },
       { label: 'Case Phase', routerLink: ['/admin/data/casephases'] }
     ]);
-   }
+  }
 
   @ViewChild(MatSelectionList) itemsList: MatSelectionList;
 
-  ngOnInit(){
+  ngOnInit() {
     this.allowDeleteLookupItems = environment.allowDeleteLookupItems;
   }
 
@@ -75,8 +75,8 @@ export class CasePhasesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if(this.refDataSubscription) this.refDataSubscription.unsubscribe();
-    if(this.parentRefDataSubscription) this.parentRefDataSubscription.unsubscribe();
+    if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
+    if (this.parentRefDataSubscription) this.parentRefDataSubscription.unsubscribe();
   }
 
 
@@ -97,17 +97,17 @@ export class CasePhasesComponent implements OnInit {
         this.copySelectedItem();
         // If items in list, default to first item
         setTimeout(() => {
-          if( this.itemsList.options.first )
+          if (this.itemsList.options.first)
             this.itemsList.options.first.selected = true;
         }, 100);
 
 
-    })
+      })
   }
 
   parentItemOnChange(event) {
     let parentTypeId = event.value;
-    this.selectedParentItem = this.parentItems.find( itm => itm.caseTypeOID == parentTypeId);
+    this.selectedParentItem = this.parentItems.find(itm => itm.caseTypeOID == parentTypeId);
     this.getRefDataItems();
   }
 
@@ -119,43 +119,43 @@ export class CasePhasesComponent implements OnInit {
     this.copySelectedItem();
   }
 
-  saveDataItem(){
-    this.adminSvc.saveCasePhase(this.selectedItem).subscribe( result => {
+  saveDataItem() {
+    this.adminSvc.saveCasePhase(this.selectedItem).subscribe(result => {
       console.log('result', result);
-      let savedItem:CasePhase = result[0]
+      let savedItem: CasePhase = result[0]
 
-      let index:number = this.getIndexOfItem(savedItem);
+      let index: number = this.getIndexOfItem(savedItem);
 
-      if(index >= 0){
+      if (index >= 0) {
         this.typeItems[index] = savedItem;
-      }else{
+      } else {
         this.typeItems.push(savedItem);
       }
       this.typeItems = this.typeItems.slice();
       this.toastSvc.showSuccessMessage('Item Saved');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error saving the item.');
-    },
-    () => {
-      this.editing = false;
-    })
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error saving the item.');
+      },
+      () => {
+        this.editing = false;
+      })
   }
 
   copySelectedItem() {
-    this.selectedItemBak = Object.assign( new CasePhase(), this.selectedItem );
+    this.selectedItemBak = Object.assign(new CasePhase(), this.selectedItem);
     this.selectedItemIdx = this.getIndexOfItem(this.selectedItem);
   }
 
   cancelDataItemEdit(event) {
     this.editing = false;
-    this.selectedItem = Object.assign( new CasePhase(), this.selectedItemBak );
+    this.selectedItem = Object.assign(new CasePhase(), this.selectedItemBak);
     this.typeItems[this.selectedItemIdx] = this.selectedItem;
   }
 
   deleteDataItemRequest() {
-    if(!this.allowDeleteLookupItems) {
+    if (!this.allowDeleteLookupItems) {
       this.toastSvc.showInfoMessage('Delete support is currently not available.');
       return;
     }
@@ -163,27 +163,27 @@ export class CasePhasesComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.adminSvc.deleteLookupItem('CasePhase', this.selectedItem.caseTypeOID).subscribe( result => {
+    this.adminSvc.deleteLookupItem('CasePhase', this.selectedItem.caseTypeOID).subscribe(result => {
       this.typeItems.splice(this.getIndexOfItem(), 1);
       this.selectedItem = this.typeItems[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error deleting the item.');
-    },
-    () => {
-      // final
-    })
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error deleting the item.');
+      },
+      () => {
+        // final
+      })
   }
 
-  hideModals(){
+  hideModals() {
     this.showDeleteItemModal = false;
   }
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.typeItems
-        .findIndex(itm => itm.casePhaseOID == item.casePhaseOID);
+      .findIndex(itm => itm.casePhaseOID == item.casePhaseOID);
   }
 
 }

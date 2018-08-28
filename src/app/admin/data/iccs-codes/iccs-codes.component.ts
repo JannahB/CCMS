@@ -4,13 +4,12 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import "rxjs/add/observable/forkJoin";
 
-import { CaseType } from './../../../common/entities/CaseType';
-import { LookupService } from './../../../common/services/http/lookup.service';
+import { LookupService } from '../../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { AdminDataService } from '../../../common/services/http/admin-data.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
-import { environment } from './../../../../environments/environment';
-import { IccsCode } from './../../../common/entities/IccsCode';
+import { environment } from '../../../../environments/environment';
+import { IccsCode } from '../../../common/entities/IccsCode';
 
 
 @Component({
@@ -49,12 +48,12 @@ export class IccsCodesComponent implements OnInit {
   showDeleteItemModal: boolean = false;
   editing: boolean = false;
 
-  tableLabel:string = "ICCS Code"
+  tableLabel: string = "ICCS Code"
   refDataSubscription: Subscription;
   parentRefDataSubscription: Subscription;
 
   constructor(
-    private breadCrumbSvc:BreadcrumbService,
+    private breadCrumbSvc: BreadcrumbService,
     private lookupSvc: LookupService,
     private adminSvc: AdminDataService,
     private toastSvc: ToastService
@@ -63,11 +62,11 @@ export class IccsCodesComponent implements OnInit {
       { label: 'Data Table Maintenance', routerLink: ['/admin/data'] },
       { label: 'ICCS Codes', routerLink: ['/admin/data/iccscodes'] }
     ]);
-   }
+  }
 
   @ViewChild(MatSelectionList) itemsList: MatSelectionList;
 
-  ngOnInit(){
+  ngOnInit() {
     this.allowDeleteLookupItems = environment.allowDeleteLookupItems;
   }
 
@@ -87,18 +86,18 @@ export class IccsCodesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if(this.refDataSubscription) this.refDataSubscription.unsubscribe();
-    if(this.parentRefDataSubscription) this.parentRefDataSubscription.unsubscribe();
+    if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
+    if (this.parentRefDataSubscription) this.parentRefDataSubscription.unsubscribe();
   }
 
 
   getParentRefData() {
 
     this.categories = [
-      {id: 1, name: 'Section'},
-      {id: 2, name: 'Division'},
-      {id: 3, name: 'Group'},
-      {id: 4, name: 'Class'}
+      { id: 1, name: 'Section' },
+      { id: 2, name: 'Division' },
+      { id: 3, name: 'Group' },
+      { id: 4, name: 'Class' }
     ];
 
     var source = Observable.forkJoin<any>(
@@ -114,7 +113,7 @@ export class IccsCodesComponent implements OnInit {
         this.parentList1 = results[1] as IccsCode[];
         this.parentList2 = results[2] as IccsCode[];
         this.parentList3 = results[3] as IccsCode[];
-    });
+      });
 
     this.parentRefDataSubscription = this.adminSvc.fetchICCSCodeParent<IccsCode>(1)
       .subscribe(result => {
@@ -129,7 +128,7 @@ export class IccsCodesComponent implements OnInit {
 
   selectedTabIndexChange(event) {
     console.log(event);
-    this.parentList = this['parentList'+ event];
+    this.parentList = this['parentList' + event];
     this.setSelectedParent(event);
   }
 
@@ -138,17 +137,17 @@ export class IccsCodesComponent implements OnInit {
     this.setSelectedParent(event.value);
   }
 
-  setSelectedParent(idx = 0){
+  setSelectedParent(idx = 0) {
     this.selectedParentItem = this.parentList[idx];
     this.setList(idx);
   }
 
-  setList(idx = 0){
-    this.activeList = this['list'+idx];
+  setList(idx = 0) {
+    this.activeList = this['list' + idx];
     this.setSelectedItem(0);
   }
 
-  setSelectedItem(idx = 0){
+  setSelectedItem(idx = 0) {
     this.selectedItem = this.activeList[idx];
     this.selectedItems = [];
     this.selectedItems.push(this.selectedItem);
@@ -156,7 +155,7 @@ export class IccsCodesComponent implements OnInit {
     this.genBreadCrumb();
   }
 
-  genBreadCrumb(){
+  genBreadCrumb() {
     let part1 = this.categories[this.selectedCatIdx].name;
     let part2 = this.selectedParentItem ? '  |  ' + this.selectedParentItem.categoryName : '';
     let part3 = this.selectedItem ? '  |  ' + this.selectedItem.categoryName : ''
@@ -175,17 +174,17 @@ export class IccsCodesComponent implements OnInit {
         this.copySelectedItem();
         // If items in list, default to first item
         setTimeout(() => {
-          if( this.itemsList.options.first )
+          if (this.itemsList.options.first)
             this.itemsList.options.first.selected = true;
         }, 100);
 
 
-    })
+      })
   }
 
   parentItemOnChange(event) {
     let parentTypeId = event.value;
-    this.selectedParentItem = this.parentList.find( itm => itm.iccsCodeOID == parentTypeId);
+    this.selectedParentItem = this.parentList.find(itm => itm.iccsCodeOID == parentTypeId);
     this.getRefDataItems();
   }
 
@@ -197,43 +196,43 @@ export class IccsCodesComponent implements OnInit {
     this.copySelectedItem();
   }
 
-  saveDataItem(){
-    this.adminSvc.saveICCSCode(this.selectedItem).subscribe( result => {
+  saveDataItem() {
+    this.adminSvc.saveICCSCode(this.selectedItem).subscribe(result => {
       console.log('result', result);
-      let savedItem:IccsCode = result[0]
+      let savedItem: IccsCode = result[0]
 
-      let index:number = this.getIndexOfItem(savedItem);
+      let index: number = this.getIndexOfItem(savedItem);
 
-      if(index >= 0){
+      if (index >= 0) {
         this.activeList[index] = savedItem;
-      }else{
+      } else {
         this.activeList.push(savedItem);
       }
       this.activeList = this.activeList.slice();
       this.toastSvc.showSuccessMessage('Item Saved');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error saving the item.');
-    },
-    () => {
-      this.editing = false;
-    })
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error saving the item.');
+      },
+      () => {
+        this.editing = false;
+      })
   }
 
   copySelectedItem() {
-    this.selectedItemBak = Object.assign( new IccsCode(), this.selectedItem );
+    this.selectedItemBak = Object.assign(new IccsCode(), this.selectedItem);
     this.selectedItemIdx = this.getIndexOfItem(this.selectedItem);
   }
 
   cancelDataItemEdit(event) {
     this.editing = false;
-    this.selectedItem = Object.assign( new IccsCode(), this.selectedItemBak );
+    this.selectedItem = Object.assign(new IccsCode(), this.selectedItemBak);
     this.activeList[this.selectedItemIdx] = this.selectedItem;
   }
 
   deleteDataItemRequest() {
-    if(!this.allowDeleteLookupItems) {
+    if (!this.allowDeleteLookupItems) {
       this.toastSvc.showInfoMessage('Delete support is currently not available.');
       return;
     }
@@ -241,27 +240,27 @@ export class IccsCodesComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.adminSvc.deleteLookupItem('IccsCode', this.selectedItem.iccsCodeOID).subscribe( result => {
+    this.adminSvc.deleteLookupItem('IccsCode', this.selectedItem.iccsCodeOID).subscribe(result => {
       this.activeList.splice(this.getIndexOfItem(), 1);
       this.selectedItem = this.activeList[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error deleting the item.');
-    },
-    () => {
-      // final
-    })
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error deleting the item.');
+      },
+      () => {
+        // final
+      })
   }
 
-  hideModals(){
+  hideModals() {
     this.showDeleteItemModal = false;
   }
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.activeList
-        .findIndex(itm => itm.iccsCodeOID == item.iccsCodeOID);
+      .findIndex(itm => itm.iccsCodeOID == item.iccsCodeOID);
   }
 
 }

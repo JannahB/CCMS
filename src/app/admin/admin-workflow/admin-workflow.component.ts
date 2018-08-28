@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { BreadcrumbService } from '../../breadcrumb.service';
-import { CaseEvent } from './../../common/entities/CaseEvent';
+import { CaseEvent } from '../../common/entities/CaseEvent';
 import { LookupService } from '../../common/services/http/lookup.service';
 import { EventType } from '../../common/entities/EventType';
 import { AdminDataService } from '../../common/services/http/admin-data.service';
