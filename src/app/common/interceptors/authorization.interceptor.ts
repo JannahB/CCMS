@@ -1,13 +1,13 @@
-import { ToastService } from './../services/utility/toast.service';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { RequestOptions, RequestOptionsArgs, Headers } from '@angular/http';
 import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
-import { LocalStorageService } from '../services/utility/local-storage.service';
-import { Router } from '@angular/router';
+
 import { AuthenticationModel } from '../model/authentication-model';
+import { LocalStorageService } from '../services/utility/local-storage.service';
+import { ToastService } from '../services/utility/toast.service';
 
 @Injectable()
 export class AuthorizationInterceptor implements HttpInterceptor {
@@ -63,6 +63,10 @@ export class AuthorizationInterceptor implements HttpInterceptor {
           // Until the server sends a 401 status code, leave this commented
           // Otherwise it hangs when refreshing a page when token is expired
           if (error instanceof HttpErrorResponse) {
+
+            // JB: Trying to eliminate multiple 500 errors after 401 is thrown
+            // If this doesn't work, check if on /login url ?
+            if (AuthorizationInterceptor.authToken == null) return;
 
             // if (error.status == 401 || error.status == 500) {
             if (error.status == 401) {
