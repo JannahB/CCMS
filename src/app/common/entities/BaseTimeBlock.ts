@@ -3,6 +3,5 @@ export class BaseTimeBlock {
   text: string = '';
   start: Date = new Date();
   end: Date = new Date();
-
-
+  tags: string[];
 }
