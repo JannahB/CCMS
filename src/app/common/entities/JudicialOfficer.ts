@@ -1,7 +1,6 @@
 import { Party } from "./Party";
 
 export class JudicialOfficer extends Party {
-    public get name():string{
-        return `${this.firstName} ${this.lastName}`;
-    }
+
+  public name: string; // used to concat first and last name in code
 }
