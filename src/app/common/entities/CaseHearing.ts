@@ -11,15 +11,15 @@ export class CaseHearing {
   courtLocationId: number;
   hearingTypeId: number;
   judicialOfficerId: number;
-  days: CaseHearingTimesDTO[];
-  description: string;
-  location: string;
+  days: CaseHearingTimesDTO[] = [];
+  description: string = '';
+  location: string = '';
 
   // Transient Properties
   hearingType: HearingType;
   judicialOfficer: JudicialOfficer;
   hearingLocation: CourtLocation;
-  hearingStartDateTime: Date; // timestamp of first obj in days[]
-  hearingEndDateTime: Date; // timestamp of first obj in days[]
+  hearingStartDateTime: Date = new Date();
+  hearingEndDateTime: Date = new Date();
 
 }
