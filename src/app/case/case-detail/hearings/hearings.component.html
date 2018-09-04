@@ -2,7 +2,7 @@
 
 <div class="ui-g-12">
 
-  <div class="ui-g-12 ph-0 pt-0">
+  <div class="ui-g-12 pad-0">
     <div class="ui-g-6 pad-0">
       <h2>Hearings</h2>
     </div>
@@ -37,7 +37,7 @@
   </div>
 
   <!-- Column 2 -->
-  <div class="ui-g-9 ui-sm-12">
+  <div class="ui-g-9 ui-sm-12 pt-0">
 
 
     <!-- BEGIN FORM GROUP ----------------- -->
@@ -50,7 +50,7 @@
             <!-- HEARING DATE -->
             <label class="minimal primary block">Hearing Date</label>
             <p-calendar id="hearingDate" name="hearingDate" #hearingDate="ngModel" placeholder="Hearing Date"
-                [ngModel]="selectedHearing?.startDateTime"
+                [ngModel]="selectedHearing?.hearingStartDateTime"
                 (ngModelChange)="hearingDateOnChange($event)"
                 [showIcon]="true"
                 dateFormat="mm/dd/yy"
@@ -61,14 +61,14 @@
             </div>
           </div>
 
-          <div class="ui-g-9 ui-sm-12 ph-0">
-            <div class="ui-g-6 mb-20">
+          <div class="ui-g-9 ui-sm-12 ph-0 pt-0">
+            <div class="ui-g-6 mb-10">
               <label class="minimal primary block">Hearing Type</label>
               <p-dropdown name="ddHearingType" id="ddHearingType" #ddHearingType="ngModel" placeholder="choose Hearing Type..."
                   [required]="true"
                   [options]="hearingTypes"
-                  optionLabel="hearingName"
-                  [ngModel]="selectedHearing?.hearingTypeId"
+                  optionLabel="name"
+                  [ngModel]="selectedHearing?.hearingType"
                   (onChange)="hearingTypeOnChange($event)"
                   styleClass="width-full">
               </p-dropdown>
@@ -77,27 +77,14 @@
                     Please choose a Hearing Location
               </div>
             </div>
-            <div class="ui-g-6 mb-20">
-              <label class="minimal primary block">Hearing Location</label>
-              <p-dropdown name="ddHearingLocation" id="ddHearingLocation" #ddHearingLocation="ngModel" placeholder="choose Hearing Location..."
-                  [required]="true"
-                  [options]="hearingLocations"
-                  optionLabel="locationID"
-                  [ngModel]="selectedHearing?.courtLocationId"
-                  (onChange)="hearingLocationOnChange($event)"
-                  styleClass="width-full">
-              </p-dropdown>
-              <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="ddHearingLocation.errors?.required && ddHearingLocation.touched" >
-                    Please choose a Hearing Location
-              </div>
-            </div>
-            <div class="ui-g-6 mb-20">
+            <div class="ui-g-6 mb-10">
               <label class="minimal primary block">Judicial Officer</label>
+              <!-- [options]="judges | dropdownPipe: ['firstName', 'lastName'] : 'id' : 'choose Judge...'" -->
               <p-dropdown name="ddHearingJudge" id="ddHearingJudge" #ddHearingJudge="ngModel" placeholder="choose Judgicial Officer..."
                   [required]="true"
-                  [options]="judges | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Judge...'"
-                  [ngModel]="selectedHearing?.judicialOfficerId"
+                  [options]="judges"
+                  optionLabel="name"
+                  [ngModel]="selectedHearing?.judicialOfficer"
                   (onChange)="hearingJudgeOnChange($event)"
                   styleClass="width-full">
               </p-dropdown>
@@ -106,13 +93,28 @@
                     Please select a Judicial Officer
               </div>
             </div>
+            <div class="ui-g-6 mb-10">
+              <label class="minimal primary block">Hearing Location</label>
+              <p-dropdown name="ddHearingLocation" id="ddHearingLocation" #ddHearingLocation="ngModel" placeholder="choose Hearing Location..."
+                  [required]="true"
+                  [options]="hearingLocations"
+                  optionLabel="courtroom"
+                  [ngModel]="selectedHearing?.hearingLocation"
+                  (onChange)="hearingLocationOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="ddHearingLocation.errors?.required && ddHearingLocation.touched" >
+                    Please choose a Hearing Location
+              </div>
+            </div>
 
-            <div class="ui-g-12">
+            <div class="ui-g-6 mb-10">
                 <label class="minimal primary block">Description</label>
                 <textarea name="tiHearingDescription"
                           [ngModel]="selectedHearing?.description"
                           (ngModelChange)="hearingDescriptionOnChange($event)"
-                          [rows]="2"
+                          [rows]="1"
                           pInputTextarea
                           autoResize="autoResize"
                           class="width-full"></textarea>
@@ -121,44 +123,7 @@
 
 
           </div>
-
-          <!-- <div class="ui-g-12 ph-0">
-            <div class="ui-g-12 ui-md-6 ta-r">
-                <label class="minimal primary block ta-c">Start Time</label>
-                <p-calendar id="hearingStartTime" name="hearingStartTime" #hearingStartTime="ngModel" placeholder="Start Time"
-                    [ngModel]="selectedHearing?.startDateTime"
-                    (ngModelChange)="hearingStartTimeOnChange($event)"
-                    [inline]="true"
-                    hourFormat="12"
-                    [timeOnly]="true"
-                    class="time-picker"></p-calendar>
-                <div class="ui-message ui-messages-error ui-corner-all"
-                      *ngIf="hearingStartTime.errors?.required && hearingStartTime.touched" >
-                      Please choose a Start Time
-                </div>
-            </div>
-
-            <div class="ui-g-12 ui-md-6">
-              <label class="minimal primary block ta-c">End Time</label>
-              <p-calendar id="hearingEndTime" name="hearingEndTime" #hearingEndTime="ngModel" placeholder="End Time"
-                  [ngModel]="selectedHearing?.endDateTime"
-                  (ngModelChange)="hearingEndTimeOnChange($event)"
-                  [inline]="true"
-                  hourFormat="12"
-                  [timeOnly]="true"
-                  class="time-picker"></p-calendar>
-              <div class="ui-message ui-messages-error ui-corner-all"
-                    *ngIf="hearingEndTime.errors?.required && hearingEndTime.touched" >
-                    Please choose a End Time
-              </div>
-            </div>
-          </div> -->
-
         </div>
-
-
-
-
 
     </form>
     <!-- // END FORM GROUP ------------------ -->
@@ -195,7 +160,7 @@
       </div>
       <div class="ta-r">
 
-        <div class="ui-g-12 mt-30">
+        <div class="ui-g-12 mt-10">
           <button label="Save Hearing" type="submit" pButton icon="fa-check" [disabled]="!hearingForm.form.valid"></button>
           <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
                   (click)="onCancelEditHearing(hearingForm)" ></button>

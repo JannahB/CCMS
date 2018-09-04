@@ -65,234 +65,8 @@ export class HearingsComponent implements OnInit {
   showDeleteHearingModal: boolean = false;
   judges: JudicialOfficer[];
 
-
-  hasPermission(pm) {
-    if (!this.case) return false;
-    return this.userSvc.hasPermission(pm);
-    // if (!this.case || !this.case.court) return false;
-    // let courtOID = this.case.court.courtOID;
-    // return this.userSvc.hasPermission(pm, courtOID);
-  }
-
-  createHearing(hearingForm) {
-    this.selectedHearing = new CaseHearing();
-    // hearingForm.reset();
-    // this.getLookups();
-  }
-
-  hearingOnRowSelect(event) {
-
-    if (!this.hasPermission(this.Permission.UPDATE_CASE_HEARING)) return false;
-    if (this.showDeleteHearingModal) return;
-    this.selectedHearing = event.data;
-    // this.onShowHearingModal();
-  }
-
-  getLookups() {
-    this.loadingDataFlag = true;
-    var source = Observable.forkJoin<any>(
-      // this.lookupSvc.fetchLookup<JudicialOfficer>('FetchJudicialOfficer'),
-      // this.lookupSvc.fetchLookup<CourtLocation>('FetchHearingLocation'),
-      // this.lookupSvc.fetchLookup<HearingType>('FetchHearingType')
-      this.hearingSvc.getJudicialOfficer(),
-      this.hearingSvc.getCourtLocations(),
-      this.hearingSvc.getHearingTypes(),
-    );
-    this.hearingSubscription = source.subscribe(
-      results => {
-        this.judges = results[0] as JudicialOfficer[];
-        this.hearingLocations = results[1] as CourtLocation[];
-        this.hearingTypes = results[2] as HearingType[];
-
-        this.getHearings();
-      },
-      (error) => {
-        console.log(error);
-        this.loadingDataFlag = false;
-        this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
-      },
-      () => {
-        this.loadingDataFlag = false;
-      });
-  }
-
-  getHearings() {
-    this.hearingSvc.getByCaseId(this.case.caseOID).subscribe(data => {
-      this.hearings = data;
-      this.initHearingData();
-      this.setFirstHearingItem();
-    });
-  }
-
-  setFirstHearingItem() {
-    if (this.hearings && this.hearings.length)
-      this.selectedHearing = this.hearings[0]
-  }
-
-  initHearingData() {
-    this.loadingDataFlag = false;
-
-    // Loop thru caseHearings and append properties
-    this.hearings.map(h => h.judicialOfficer = this.judges.find(j => j.id == h.judicialOfficerId));
-    this.hearings.map(h => h.hearingType = this.hearingTypes.find(ht => ht.id == h.hearingTypeId));
-    this.hearings.map(h => h.hearingLocation = this.hearingLocations.find(loc => loc.id == h.courtLocationId));
-    this.hearings.map(h => h.hearingStartDateTime = h.days[0].start);
-    this.hearings.map(h => h.hearingEndDateTime = h.days[0].end);
-
-    console.log('hearings', this.hearings);
-
-    // Pre-select Dropdowns
-    // if (this.selectedHearing.judicialOfficerId) {
-    //   this.selectedHearing.judicialOfficer = this.judges.find(j => j.id == this.selectedHearing.judicialOfficerId);
-    // }
-
-    // if (this.selectedHearing.courtLocationId) {
-    //   this.selectedHearing.courtLoc = this.hearingLocations.find(h => h.locationOID == this.selectedHearing.courtLoc.locationOID);
-    // }
-
-    // if (this.selectedHearing.hearingType) {
-    //   this.selectedHearing.hearingType = this.hearingTypes.find(ht => ht.hearingTypeOID == this.selectedHearing.hearingType.hearingTypeOID);
-    // }
-  }
-
-  getUnavailableFacilityAndResourceBlocks() {
-
-    if (!this.hearingDate
-      || !this.selectedHearing.judicialOfficerId
-      || !this.selectedHearing.courtLocationId) {
-
-      return;
-    }
-
-    this.loadingDataFlag = true;
-    this.hearingConflicts = [];
-    this.hearingSvc.unavailableFacilityAndResourceBlocks(
-      this.hearingDate,
-      this.selectedHearing.courtLocationId,
-      this.selectedHearing.judicialOfficerId)
-      .subscribe(data => {
-        this.hearingConflicts = data;
-        this.loadingDataFlag = false;
-      },
-        (error) => {
-          console.log(error);
-          this.loadingDataFlag = false;
-          this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
-        },
-        () => {
-          this.loadingDataFlag = false;
-        });
-
-    // FetchHearing POST {hearingQueryDate: "2018-01-09", courtLoc: "1"}
-    // let hearingDateString: string = this.datePipe.transform(this.selectedHearing.startDateTime, "yyyy-MM-dd");
-
-  }
-
-  hearingDateOnChange(event) {
-    this.hearingDate = event;
-    this.getUnavailableFacilityAndResourceBlocks();
-  }
-
-  hearingJudgeOnChange(event) {
-    // TODO: Make sure the judicialOfficerId is changed with ngModel binding
-    // this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == event.value);
-    this.getUnavailableFacilityAndResourceBlocks();
-  }
-
-  hearingLocationOnChange(event) {
-    // TODO: Make sure the courtLocationId is changed with ngModel binding
-    // this.selectedHearing.courtLoc = event.value;
-    this.getUnavailableFacilityAndResourceBlocks();
-  }
-
-  hearingStartTimeOnChange(event) {
-    // IF END DATE !touched, then set it to the same value as the StartTime
-    // this.selectedHearing.startDateTime = event;
-  }
-
-  hearingEndTimeOnChange(event) {
-    // this.selectedHearing.endDateTime = event;
-  }
-
-  hearingTypeOnChange(event) {
-    // TODO: Make sure the hearingTypeId is changed with ngModel binding
-    // this.selectedHearing.hearingType = event.value;
-  }
-
-  hearingDescriptionOnChange(event) {
-    // TODO: Check to see if selectedHearing.description is changed with ngModel binding
-    this.selectedHearing.description = event;
-  }
-
-  onCancelEditHearing(hearingForm) {
-    // hearingForm.reset();
-    this.hideModals();
-  }
-
-  saveHearing() {
-    // let hearing: CaseHearingDTO = new CaseHearingDTO();
-    // let sch: CaseHearing = this.selectedHearing;
-
-    // CREATE DTO
-    // hearing.caseHearingOID = sch.caseHearingOID ? sch.caseHearingOID.toString() : null;
-    // hearing.caseOID = this.case.caseOID.toString();
-    // hearing.courtLoc = sch.courtLoc.locationOID.toString();
-    // hearing.description = sch.description;
-    // hearing.endDateTime = this.datePipe.transform(sch.endDateTime, "yyyy-MM-dd HH:mm");
-    // hearing.hearingType = sch.hearingType.hearingTypeOID.toString();
-    // hearing.judicialOfficer = sch.judicialOfficer.partyOID.toString(); // this is portyOID since using dropdownPipe
-    // hearing.startDateTime = this.datePipe.transform(sch.startDateTime, "yyyy-MM-dd HH:mm");
-
-    /*
-    this.caseSvc
-      .saveCaseHearing(hearing)
-      .subscribe(result => {
-        let resultHearing = result[0];
-
-        // Check if existing or new hearing
-        let index: number = this.case.caseHearings
-          .findIndex(a => a.caseHearingOID == resultHearing.caseHearingOID);
-
-        if (index >= 0) {
-          this.case.caseHearings[index] = resultHearing;
-        } else {
-          this.case.caseHearings.push(resultHearing);
-          this.case.caseHearings = this.case.caseHearings.slice();
-        }
-
-        console.log('caseHearings', this.case.caseHearings);
-        this.toastSvc.showSuccessMessage('Hearing Saved');
-      },
-        (error) => {
-          console.log(error);
-
-          this.toastSvc.showErrorMessage('There was an error while saving hearings.')
-        },
-        () => {
-          // final
-        });
-    */
-  }
-
-
-  requestDeleteHearing(event, hearing: CaseHearing): void {
-    this.showDeleteHearingModal = true;
-    event.preventDefault();
-    this.selectedHearing = hearing;
-  }
-
-  deleteHearing(): void {
-    CollectionUtil.removeArrayItem(this.hearings, this.selectedHearing);
-    this.hearings = this.hearings.slice();
-    this.showDeleteHearingModal = false;
-    // TODO: Get deleteHearing EP from Aaron
-    // SETUP DELETE HEARING SERVICE
-  }
-
-
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
-
 
   // CALENDAR CONFIG OBJECT -----------
   // ----------------------------------
@@ -306,14 +80,14 @@ export class HearingsComponent implements OnInit {
       { title: "Date" }
       // {title: "Total"}
     ],
-    eventHeight: 40,
+    eventHeight: 36,
     cellWidthSpec: "Auto",
     timeHeaders: [{ "groupBy": "Hour" }, { "groupBy": "Cell", "format": "mm" }],
     scale: "CellDuration",
     cellDuration: 30,
+    // startDate: this.selectedWorkWeek,
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
-    days: 7,
-    startDate: this.selectedWorkWeek || this.getMonday(),
+    days: 8, // not sure why I have to set to 8 to see 6!?
     heightSpec: "Max",
     height: 350,
     allowEventOverlap: true,
@@ -443,76 +217,278 @@ export class HearingsComponent implements OnInit {
     //   { label: 'Resource Hours', routerLink: ['/admin/calendar/resources'] }
     // ]);
 
-    let now = moment();
-    console.log('hello date', now.format());
-    console.log(now.add(7, 'days').format());
   }
 
   ngOnInit() {
 
     this.getLookups();
-
-    this.selectedWorkWeek = this.getMonday();
-
     this.hearings = [];
-    // this.hearings =
-    //   [
-    //     {
-    //       "id": null,
-    //       "courtId": 0,
-    //       "hearingTypeId": 0,
-    //       "description": "",
-    //       "caseId": 0,
-    //       "location": "I see nothing",
-    //       "judicialOfficerId": 0,
-    //       "courtLocationId": 0,
-
-    //       "hearingType": null,
-    //       "judicialOfficer": null,
-    //       "hearingLocation": null,
-    //       "hearingStartDateTime": "2018-08-30T16:00:00Z",
-    //       "hearingEndDateTime": "2018-08-30T16:00:00Z",
-
-    //       "days": [
-    //         {
-    //           "id": 0,
-    //           "start": "2018-08-30T14:00:00Z",
-    //           "end": "2018-08-30T15:00:00Z",
-    //           "text": "A block 1",
-    //           "caseHearingId": null
-    //         },
-    //         {
-    //           "id": 0,
-    //           "start": "2018-08-30T16:00:00Z",
-    //           "end": "2018-08-30T17:00:00Z",
-    //           "text": "Block 2",
-    //           "caseHearingId": null
-    //         }
-
-    //       ]
-    //     }
-    //   ]
-
     this.selectedHearing = new CaseHearing();
   }
 
-  ngOnDestroy() {
-    // if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
-  }
 
   ngAfterViewInit(): void {
     // var from = this.scheduler.control.visibleStart();
     // var to = this.scheduler.control.visibleEnd();
 
-    this.onSelectWorkWeek(this.selectedWorkWeek);
+    // this.setWorkWeek(this.selectedWorkWeek);
+  }
+
+  ngOnDestroy() {
+    if (this.hearingSubscription) this.hearingSubscription.unsubscribe();
+  }
+
+  getLookups() {
+    this.loadingDataFlag = true;
+    var source = Observable.forkJoin<any>(
+      // this.lookupSvc.fetchLookup<JudicialOfficer>('FetchJudicialOfficer'),
+      // this.lookupSvc.fetchLookup<CourtLocation>('FetchHearingLocation'),
+      // this.lookupSvc.fetchLookup<HearingType>('FetchHearingType')
+      this.hearingSvc.getJudicialOfficer(),
+      this.hearingSvc.getCourtLocations(),
+      this.hearingSvc.getHearingTypes(),
+    );
+    this.hearingSubscription = source.subscribe(
+      results => {
+        this.judges = results[0] as JudicialOfficer[];
+        this.hearingLocations = results[1] as CourtLocation[];
+        this.hearingTypes = results[2] as HearingType[];
+
+        console.log('judges1', this.judges);
+        console.log('hearing locations', this.hearingLocations);
+        console.log('hearing types', this.hearingTypes);
+
+        this.enhanceJudges();
+        this.getHearings();
+      },
+      (error) => {
+        console.log(error);
+        this.loadingDataFlag = false;
+        this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
+      },
+      () => {
+        this.loadingDataFlag = false;
+      });
+  }
+
+  getHearings() {
+    this.hearingSvc.getByCaseId(this.case.caseOID).subscribe(data => {
+      this.hearings = data;
+      this.loadingDataFlag = false;
+      if (this.hearings.length) {
+        this.initHearingData();
+        this.setSelectedHearing(this.hearings[0]);
+      } else {
+        this.setWorkWeek(new Date());
+      }
+    });
+  }
+
+  private enhanceJudges() {
+    this.judges.map(j => j.name = j.firstName + ' ' + j.lastName); // concat first and last name
+    console.log('judges2', this.judges);
+  }
+
+  initHearingData() {
+    // Loop thru caseHearings and append properties
+    this.hearings.map(h => h.judicialOfficer = this.judges.find(j => j.id == h.judicialOfficerId));
+    this.hearings.map(h => h.hearingType = this.hearingTypes.find(ht => ht.id == h.hearingTypeId));
+    this.hearings.map(h => h.hearingLocation = this.hearingLocations.find(loc => loc.id == h.courtLocationId));
+    this.hearings.map(h => h.hearingStartDateTime = h.days && h.days.length ? new Date(h.days[0].start) : new Date());
+    this.hearings.map(h => h.hearingEndDateTime = h.days && h.days.length ? new Date(h.days[0].end) : new Date());
+
+    console.log('hearings', this.hearings);
+
+    // Pre-select Dropdowns
+    if (this.selectedHearing.judicialOfficerId) {
+      this.selectedHearing.judicialOfficer = this.judges.find(j => j.id == this.selectedHearing.judicialOfficerId);
+    }
+
+    if (this.selectedHearing.courtLocationId) {
+      this.selectedHearing.hearingLocation = this.hearingLocations.find(h => h.id == this.selectedHearing.courtLocationId);
+    }
+
+    if (this.selectedHearing.hearingTypeId) {
+      this.selectedHearing.hearingType = this.hearingTypes.find(ht => ht.id == this.selectedHearing.hearingTypeId);
+    }
+  }
+
+  getUnavailableFacilityAndResourceBlocks() {
+
+    if (!this.hearingDate
+      || !this.selectedHearing.judicialOfficerId
+      || !this.selectedHearing.courtLocationId) {
+
+      return;
+    }
+
+    this.loadingDataFlag = true;
+    this.hearingConflicts = [];
+    this.hearingSvc.unavailableFacilityAndResourceBlocks(
+      this.hearingDate,
+      this.selectedHearing.courtLocationId,
+      this.selectedHearing.judicialOfficerId)
+      .subscribe(data => {
+        this.hearingConflicts = data;
+        this.loadingDataFlag = false;
+        console.log('hearing conflicts', this.hearingConflicts);
+      },
+        (error) => {
+          console.log(error);
+          this.loadingDataFlag = false;
+          this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
+        },
+        () => {
+          this.loadingDataFlag = false;
+        });
+
+    // FetchHearing POST {hearingQueryDate: "2018-01-09", courtLoc: "1"}
+    // let hearingDateString: string = this.datePipe.transform(this.selectedHearing.startDateTime, "yyyy-MM-dd");
+
+  }
+
+  hasPermission(pm) {
+    if (!this.case) return false;
+    return this.userSvc.hasPermission(pm);
+    // if (!this.case || !this.case.court) return false;
+    // let courtOID = this.case.court.courtOID;
+    // return this.userSvc.hasPermission(pm, courtOID);
+  }
+
+  createHearing(hearingForm) {
+    let newHearing = new CaseHearing();
+    this.selectedHearing = newHearing;
+    this.hearings.push(newHearing);
+    this.initHearingData(); // TODO: make sure this does no duplicate data on subsequent inits
+    this.selectedHearing.hearingStartDateTime = new Date();
+    this.setWorkWeek(this.selectedHearing.hearingStartDateTime);
+    // hearingForm.reset();
+    // this.getLookups();
+  }
+
+  hearingOnRowSelect(event) {
+
+    if (!this.hasPermission(this.Permission.UPDATE_CASE_HEARING)) return false;
+    if (this.showDeleteHearingModal) return;
+    this.setSelectedHearing(event.data);
+    // this.onShowHearingModal();
+    this.setWorkWeek(this.selectedHearing.hearingStartDateTime);
+  }
+
+  setSelectedHearing(h: CaseHearing) {
+    this.selectedHearing = h;
+    this.setWorkWeek(this.selectedHearing.hearingStartDateTime);
+  }
+
+  hearingDateOnChange(event) {
+    this.hearingDate = event;
+    this.selectedHearing.hearingStartDateTime = event;
+    this.setWorkWeek(event);
+    this.getUnavailableFacilityAndResourceBlocks();
+  }
+
+  hearingJudgeOnChange(event) {
+    // TODO: Make sure the judicialOfficerId is changed with ngModel binding
+    // this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == event.value);
+    this.getUnavailableFacilityAndResourceBlocks();
+  }
+
+  hearingLocationOnChange(event) {
+    // TODO: Make sure the courtLocationId is changed with ngModel binding
+    // this.selectedHearing.courtLoc = event.value;
+    this.getUnavailableFacilityAndResourceBlocks();
+  }
+
+  hearingStartTimeOnChange(event) {
+    // IF END DATE !touched, then set it to the same value as the StartTime
+    // this.selectedHearing.startDateTime = event;
+  }
+
+  hearingEndTimeOnChange(event) {
+    // this.selectedHearing.endDateTime = event;
+  }
+
+  hearingTypeOnChange(event) {
+    // TODO: Make sure the hearingTypeId is changed with ngModel binding
+    // this.selectedHearing.hearingType = event.value;
+  }
+
+  hearingDescriptionOnChange(event) {
+    // TODO: Check to see if selectedHearing.description is changed with ngModel binding
+    this.selectedHearing.description = event;
+  }
+
+  onCancelEditHearing(hearingForm) {
+    // hearingForm.reset();
+    this.hideModals();
+  }
+
+  saveHearing() {
+    // let hearing: CaseHearingDTO = new CaseHearingDTO();
+    // let sch: CaseHearing = this.selectedHearing;
+
+    // CREATE DTO
+    // hearing.caseHearingOID = sch.caseHearingOID ? sch.caseHearingOID.toString() : null;
+    // hearing.caseOID = this.case.caseOID.toString();
+    // hearing.courtLoc = sch.courtLoc.locationOID.toString();
+    // hearing.description = sch.description;
+    // hearing.endDateTime = this.datePipe.transform(sch.endDateTime, "yyyy-MM-dd HH:mm");
+    // hearing.hearingType = sch.hearingType.hearingTypeOID.toString();
+    // hearing.judicialOfficer = sch.judicialOfficer.partyOID.toString(); // this is portyOID since using dropdownPipe
+    // hearing.startDateTime = this.datePipe.transform(sch.startDateTime, "yyyy-MM-dd HH:mm");
+
+    /*
+    this.caseSvc
+      .saveCaseHearing(hearing)
+      .subscribe(result => {
+        let resultHearing = result[0];
+
+        // Check if existing or new hearing
+        let index: number = this.case.caseHearings
+          .findIndex(a => a.caseHearingOID == resultHearing.caseHearingOID);
+
+        if (index >= 0) {
+          this.case.caseHearings[index] = resultHearing;
+        } else {
+          this.case.caseHearings.push(resultHearing);
+          this.case.caseHearings = this.case.caseHearings.slice();
+        }
+
+        console.log('caseHearings', this.case.caseHearings);
+        this.toastSvc.showSuccessMessage('Hearing Saved');
+      },
+        (error) => {
+          console.log(error);
+
+          this.toastSvc.showErrorMessage('There was an error while saving hearings.')
+        },
+        () => {
+          // final
+        });
+    */
   }
 
 
-  onSelectWorkWeek(e) {
-    console.log('onSelectWorkWeek(e)', e)
+  requestDeleteHearing(event, hearing: CaseHearing): void {
+    this.showDeleteHearingModal = true;
+    event.preventDefault();
+    this.selectedHearing = hearing;
+  }
+
+  deleteHearing(): void {
+    CollectionUtil.removeArrayItem(this.hearings, this.selectedHearing);
+    this.hearings = this.hearings.slice();
+    this.showDeleteHearingModal = false;
+    // TODO: Get deleteHearing EP from Aaron
+    // SETUP DELETE HEARING SERVICE
+  }
+
+  setWorkWeek(e) {
+    console.log('setWorkWeek(e)', e)
     this.selectedWorkWeek = this.getMonday(new Date(e).toDateString());
     this.scheduler.control.startDate = this.selectedWorkWeek;
     this.scheduler.control.update();
+    console.log('selectedWorkWeek', this.selectedWorkWeek);
   }
 
   saveItem() {
