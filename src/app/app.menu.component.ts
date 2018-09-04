@@ -110,17 +110,18 @@ export class AppMenuComponent implements OnInit {
 
     this.courtManagerMenuItems = [
       {
-        label: 'Table Data', icon: 'chrome_reader_mode', items:
-          [
-            { label: 'Case Types', icon: 'chevron_right', routerLink: ['/admin/data/casetypes'] },
-            { label: 'Case Phases', icon: 'chevron_right', routerLink: ['/admin/data/casephases'] },
-            { label: 'Case Statuses', icon: 'chevron_right', routerLink: ['/admin/data/casestatuses'] },
-            { label: 'Court Locations', icon: 'chevron_right', routerLink: ['/admin/data/courtlocations'] },
-            { label: 'Case Party Roles', icon: 'chevron_right', routerLink: ['/admin/data/casepartyroles'] },
-            { label: 'Event Types', icon: 'chevron_right', routerLink: ['/admin/data/eventtypes'] },
-            { label: 'Hearing Types', icon: 'chevron_right', routerLink: ['/admin/data/hearingtypes'] },
-            // {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
-          ]
+        label: 'Lookup Tables', icon: 'chrome_reader_mode', routerLink: ['/admin/data/casetypes'],
+        // items:
+        //   [
+        //     { label: 'Case Types', icon: 'chevron_right', routerLink: ['/admin/data/casetypes'] },
+        //     { label: 'Case Phases', icon: 'chevron_right', routerLink: ['/admin/data/casephases'] },
+        //     { label: 'Case Statuses', icon: 'chevron_right', routerLink: ['/admin/data/casestatuses'] },
+        //     { label: 'Court Locations', icon: 'chevron_right', routerLink: ['/admin/data/courtlocations'] },
+        //     { label: 'Case Party Roles', icon: 'chevron_right', routerLink: ['/admin/data/casepartyroles'] },
+        //     { label: 'Event Types', icon: 'chevron_right', routerLink: ['/admin/data/eventtypes'] },
+        //     { label: 'Hearing Types', icon: 'chevron_right', routerLink: ['/admin/data/hearingtypes'] },
+        //     // {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
+        //   ]
       }
     ];
 
