@@ -1,4 +1,4 @@
-<loading-bar [visible]="loadingHearingLookups" [message]="'loading hearing data...'"></loading-bar>
+<loading-bar [visible]="loadingDataFlag" [message]="'loading hearing data...'"></loading-bar>
 
 <div class="ui-g-12">
 
@@ -20,17 +20,17 @@
   <!-- Column 1 -->
   <div class="ui-g-3 ui-sm-12 pl-0 pr-30">
 
-    <p-dataTable [value]="case.caseHearings"
+    <p-dataTable [value]="hearings"
                 selectionMode="single"
                 [(selection)]="selectedHearing"
                 (onRowSelect)="hearingOnRowSelect($event)"
                 scrollable="true" scrollHeight="360px"
-                dataKey="judicialAssignmentOID" #dtJudicialAssignment>
+                dataKey="id" #dtHearings>
       <p-column field="" header="Hearings" >
         <ng-template pTemplate="body" let-item="rowData">
-          <h4 class="mb-10 mt-0">{{ item.hearingType.hearingName }}</h4>
-          <p class="muted-label mv-0" >{{ item.judicialOfficer.firstName }} {{ item.judicialOfficer.lastName }}</p>
-          <p class="muted-label mv-0" >{{ item.startDateTime | date:'MMM d, yyyy h:mm a' }} </p>
+          <h4 class="mb-10 mt-0">{{ item.hearingType.name }}</h4>
+          <p class=" mv-0" >{{ item.judicialOfficer.firstName }} {{ item.judicialOfficer.lastName }}</p>
+          <p class=" mv-0" >{{ item.hearingStartDateTime | date:'MMM d, yyyy h:mm a' }} </p>
         </ng-template>
       </p-column>
     </p-dataTable>
@@ -68,7 +68,7 @@
                   [required]="true"
                   [options]="hearingTypes"
                   optionLabel="hearingName"
-                  [ngModel]="selectedHearing?.hearingType"
+                  [ngModel]="selectedHearing?.hearingTypeId"
                   (onChange)="hearingTypeOnChange($event)"
                   styleClass="width-full">
               </p-dropdown>
@@ -83,7 +83,7 @@
                   [required]="true"
                   [options]="hearingLocations"
                   optionLabel="locationID"
-                  [ngModel]="selectedHearing?.courtLoc"
+                  [ngModel]="selectedHearing?.courtLocationId"
                   (onChange)="hearingLocationOnChange($event)"
                   styleClass="width-full">
               </p-dropdown>
@@ -97,7 +97,7 @@
               <p-dropdown name="ddHearingJudge" id="ddHearingJudge" #ddHearingJudge="ngModel" placeholder="choose Judgicial Officer..."
                   [required]="true"
                   [options]="judges | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Judge...'"
-                  [ngModel]="selectedHearing?.judicialOfficer?.partyOID"
+                  [ngModel]="selectedHearing?.judicialOfficerId"
                   (onChange)="hearingJudgeOnChange($event)"
                   styleClass="width-full">
               </p-dropdown>
@@ -188,9 +188,9 @@
     </div> -->
 
     <div class="ui-g-12">
-      <div class="" *ngIf="selectedResource">
+      <div class="" *ngIf="selectedHearing">
         <!-- CALENDAR -->
-        <daypilot-scheduler [config]="config" [events]="selectedResource.days" #scheduler></daypilot-scheduler>
+        <daypilot-scheduler [config]="config" [events]="selectedHearing.days" #scheduler></daypilot-scheduler>
         <p class="mv-0 muted-label">Click and drag to mark hours. </p>
       </div>
       <div class="ta-r">
@@ -198,7 +198,7 @@
         <div class="ui-g-12 mt-30">
           <button label="Save Hearing" type="submit" pButton icon="fa-check" [disabled]="!hearingForm.form.valid"></button>
           <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
-                  (click)="onCancelHearing(hearingForm)" ></button>
+                  (click)="onCancelEditHearing(hearingForm)" ></button>
         </div>
 
         <!-- <button mat-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">

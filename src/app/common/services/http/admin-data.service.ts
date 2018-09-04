@@ -276,6 +276,24 @@ export class AdminDataService {
     )
   }
 
+  // This is for testing new EP - not used yet-------------
+  saveHearingTypeNew(data: HearingType): Observable<HearingType> {
+    let url: string = this.getBaseUrl() + '/api/hearing-types';
+    let obj = {
+      id: data.hearingTypeOID ? data.hearingTypeOID.toString() : null,
+      name: data.hearingName,
+      durationMin: data.durationInMinutes ? data.durationInMinutes.toString() : "0",
+      description: data.description ? data.description.toString() : null,
+      courtId: data.courtOID
+    };
+
+    if (obj.id) {
+      return this.http.put<HearingType>(url, obj)
+    } else {
+      return this.http.post<HearingType>(url, obj)
+    }
+  }
+
   /**
    * @name saveCourtLocationType
    * @param data
@@ -283,6 +301,9 @@ export class AdminDataService {
      locationName:"Courtroom #1"
      locationOID:"1"
    */
+
+  // TODO: change CourtLocation EPs to use new /court-location EPs
+
   saveCourtLocationType(data: CourtLocation): Observable<CourtLocation> {
     let url: string = this.getBaseUrl() + '/SaveCourtLocation';
     let obj = {

@@ -1,13 +1,17 @@
-import { CaseHearingDeprecated } from './../../../common/entities/CaseHearingDeprecated';
-import { CollectionUtil } from '../../../common/utils/collection-util';
-import { CaseHearingDTO } from '../../../common/entities/CaseHearingDTO';
-import { DatePipe } from '@angular/common';
-import { JudicialOfficer } from '../../../common/entities/JudicialOfficer';
 import { Component, Input, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
+
+import { CaseHearingUnavailableBlock } from './../../../common/entities/CaseHearingUnavailableBlock';
+import { CaseHearings } from './../../../common/entities/CaseHearings';
+import { HearingsService } from './../../../common/services/http/hearings.service';
+import { CaseHearingDeprecated } from './../../../common/entities/CaseHearingDeprecated';
+import { CollectionUtil } from '../../../common/utils/collection-util';
+import { CaseHearingDTO } from '../../../common/entities/CaseHearingDTO';
+import { DatePipe } from '@angular/common';
+import { JudicialOfficer } from '../../../common/entities/JudicialOfficer';
 
 import { Case } from '../../../common/entities/Case';
 import { CalResource } from '../../../common/entities/CalResource';
@@ -29,7 +33,6 @@ import { CalTemplateService } from '../../../common/services/http/calTemplate.se
 import { DropdownPipe } from '../../../common/pipes/dropdown.pipe';
 
 
-
 @Component({
   selector: 'hearings',
   templateUrl: './hearings.component.html',
@@ -49,12 +52,15 @@ export class HearingsComponent implements OnInit {
   //   HEARING
   // ------------------------=
 
-  selectedHearing: CaseHearingDeprecated;
-  loadingHearingLookups: boolean = false;
+  hearings: CaseHearing[];
+  selectedHearing: CaseHearing;
+  selectedHearingBak: CaseHearing;
+  hearingDate: Date;
+  loadingDataFlag: boolean = false;
   hearingLocations: CourtLocation[];
   hearingTypes: HearingType[];
   hearingSubscription: Subscription;
-  hearingConflicts: CaseHearingDeprecated[];
+  hearingConflicts: CaseHearingUnavailableBlock[];
   loadingConflicts: boolean = false;
   showDeleteHearingModal: boolean = false;
   judges: JudicialOfficer[];
@@ -69,9 +75,9 @@ export class HearingsComponent implements OnInit {
   }
 
   createHearing(hearingForm) {
-    this.selectedHearing = new CaseHearingDeprecated();
-    hearingForm.reset();
-    this.getLookups();
+    this.selectedHearing = new CaseHearing();
+    // hearingForm.reset();
+    // this.getLookups();
   }
 
   hearingOnRowSelect(event) {
@@ -83,11 +89,14 @@ export class HearingsComponent implements OnInit {
   }
 
   getLookups() {
-    this.loadingHearingLookups = true;
+    this.loadingDataFlag = true;
     var source = Observable.forkJoin<any>(
-      this.lookupSvc.fetchLookup<JudicialOfficer>('FetchJudicialOfficer'),
-      this.lookupSvc.fetchLookup<CourtLocation>('FetchHearingLocation'),
-      this.lookupSvc.fetchLookup<HearingType>('FetchHearingType')
+      // this.lookupSvc.fetchLookup<JudicialOfficer>('FetchJudicialOfficer'),
+      // this.lookupSvc.fetchLookup<CourtLocation>('FetchHearingLocation'),
+      // this.lookupSvc.fetchLookup<HearingType>('FetchHearingType')
+      this.hearingSvc.getJudicialOfficer(),
+      this.hearingSvc.getCourtLocations(),
+      this.hearingSvc.getHearingTypes(),
     );
     this.hearingSubscription = source.subscribe(
       results => {
@@ -95,149 +104,146 @@ export class HearingsComponent implements OnInit {
         this.hearingLocations = results[1] as CourtLocation[];
         this.hearingTypes = results[2] as HearingType[];
 
-        this.initHearingModal();
+        this.getHearings();
       },
       (error) => {
         console.log(error);
-        this.loadingHearingLookups = false;
+        this.loadingDataFlag = false;
         this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
       },
       () => {
-        this.loadingHearingLookups = false;
+        this.loadingDataFlag = false;
       });
   }
 
-  initHearingModal() {
-    this.loadingHearingLookups = false;
-
-    // Pre-select Dropdowns
-    if (this.selectedHearing.judicialOfficer) {
-      this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == this.selectedHearing.judicialOfficer.partyOID);
-    }
-
-    if (this.selectedHearing.courtLoc) {
-      this.selectedHearing.courtLoc = this.hearingLocations.find(h => h.locationOID == this.selectedHearing.courtLoc.locationOID);
-    }
-
-    if (this.selectedHearing.hearingType) {
-      this.selectedHearing.hearingType = this.hearingTypes.find(ht => ht.hearingTypeOID == this.selectedHearing.hearingType.hearingTypeOID);
-    }
+  getHearings() {
+    this.hearingSvc.getByCaseId(this.case.caseOID).subscribe(data => {
+      this.hearings = data;
+      this.initHearingData();
+      this.setFirstHearingItem();
+    });
   }
 
-  fetchMatchingHearings() {
-    if (!this.selectedHearing.startDateTime || !this.selectedHearing.judicialOfficer) return;
-    this.hearingConflicts = [];
+  setFirstHearingItem() {
+    if (this.hearings && this.hearings.length)
+      this.selectedHearing = this.hearings[0]
+  }
 
-    // FetchHearing POST {hearingQueryDate: "2018-01-09", courtLoc: "1"}
-    let data = {};
-    let hearingDateString: string = this.datePipe.transform(this.selectedHearing.startDateTime, "yyyy-MM-dd");
-    data = Object.assign(data, { hearingQueryDate: hearingDateString });
+  initHearingData() {
+    this.loadingDataFlag = false;
 
-    // ?? DOES THE SEARCH NEED TO INCLUDE LOCATION ?? //
-    // CONCAT LOCATION TO QUERY OBJECT
-    // if( this.selectedHearing.courtLoc ) {
-    //   let hearingLocString: string = this.selectedHearing.courtLoc.locationOID.toString();
-    //   data = Object.assign(data, {courtLoc: hearingLocString} );
+    // Loop thru caseHearings and append properties
+    this.hearings.map(h => h.judicialOfficer = this.judges.find(j => j.id == h.judicialOfficerId));
+    this.hearings.map(h => h.hearingType = this.hearingTypes.find(ht => ht.id == h.hearingTypeId));
+    this.hearings.map(h => h.hearingLocation = this.hearingLocations.find(loc => loc.id == h.courtLocationId));
+    this.hearings.map(h => h.hearingStartDateTime = h.days[0].start);
+    this.hearings.map(h => h.hearingEndDateTime = h.days[0].end);
+
+    console.log('hearings', this.hearings);
+
+    // Pre-select Dropdowns
+    // if (this.selectedHearing.judicialOfficerId) {
+    //   this.selectedHearing.judicialOfficer = this.judges.find(j => j.id == this.selectedHearing.judicialOfficerId);
     // }
 
-    // CONCAT JUDGE TO QUERY OBJECT
-    if (this.selectedHearing.judicialOfficer) {
-      // Note: The value of `selectedHearing.judicialOfficer` is indeed portyOID since using dropdownPipe
-      let judgeParam = { judicialOfficer: { partyOID: this.selectedHearing.judicialOfficer.partyOID.toString() } }
-      data = Object.assign(data, judgeParam);
+    // if (this.selectedHearing.courtLocationId) {
+    //   this.selectedHearing.courtLoc = this.hearingLocations.find(h => h.locationOID == this.selectedHearing.courtLoc.locationOID);
+    // }
+
+    // if (this.selectedHearing.hearingType) {
+    //   this.selectedHearing.hearingType = this.hearingTypes.find(ht => ht.hearingTypeOID == this.selectedHearing.hearingType.hearingTypeOID);
+    // }
+  }
+
+  getUnavailableFacilityAndResourceBlocks() {
+
+    if (!this.hearingDate
+      || !this.selectedHearing.judicialOfficerId
+      || !this.selectedHearing.courtLocationId) {
+
+      return;
     }
 
-    // MAKE THE CALL
-    this.loadingConflicts = true;
-    this.caseSvc.fetchHearing(data).subscribe(results => {
-      this.hearingConflicts = results;
-    },
-      (error) => {
-        console.log(error);
-        this.loadingConflicts = false;
-        this.toastSvc.showErrorMessage('There was an error while searching hearings.')
+    this.loadingDataFlag = true;
+    this.hearingConflicts = [];
+    this.hearingSvc.unavailableFacilityAndResourceBlocks(
+      this.hearingDate,
+      this.selectedHearing.courtLocationId,
+      this.selectedHearing.judicialOfficerId)
+      .subscribe(data => {
+        this.hearingConflicts = data;
+        this.loadingDataFlag = false;
       },
-      () => {
-        this.loadingConflicts = false;
-      })
+        (error) => {
+          console.log(error);
+          this.loadingDataFlag = false;
+          this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
+        },
+        () => {
+          this.loadingDataFlag = false;
+        });
+
+    // FetchHearing POST {hearingQueryDate: "2018-01-09", courtLoc: "1"}
+    // let hearingDateString: string = this.datePipe.transform(this.selectedHearing.startDateTime, "yyyy-MM-dd");
 
   }
 
   hearingDateOnChange(event) {
-    this.selectedHearing.startDateTime = event;
-
-    let start = moment(this.selectedHearing.startDateTime);
-    this.selectedHearing.endDateTime = start.add(1, 'hour').toDate();
-
-    this.fetchMatchingHearings();
+    this.hearingDate = event;
+    this.getUnavailableFacilityAndResourceBlocks();
   }
 
   hearingJudgeOnChange(event) {
-    this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == event.value);
-    this.fetchMatchingHearings();
+    // TODO: Make sure the judicialOfficerId is changed with ngModel binding
+    // this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == event.value);
+    this.getUnavailableFacilityAndResourceBlocks();
   }
 
   hearingLocationOnChange(event) {
-    this.selectedHearing.courtLoc = event.value;
-    this.fetchMatchingHearings();
+    // TODO: Make sure the courtLocationId is changed with ngModel binding
+    // this.selectedHearing.courtLoc = event.value;
+    this.getUnavailableFacilityAndResourceBlocks();
   }
 
   hearingStartTimeOnChange(event) {
     // IF END DATE !touched, then set it to the same value as the StartTime
-    this.selectedHearing.startDateTime = event;
+    // this.selectedHearing.startDateTime = event;
   }
 
   hearingEndTimeOnChange(event) {
-    this.selectedHearing.endDateTime = event;
+    // this.selectedHearing.endDateTime = event;
   }
 
   hearingTypeOnChange(event) {
-    this.selectedHearing.hearingType = event.value;
+    // TODO: Make sure the hearingTypeId is changed with ngModel binding
+    // this.selectedHearing.hearingType = event.value;
   }
 
   hearingDescriptionOnChange(event) {
+    // TODO: Check to see if selectedHearing.description is changed with ngModel binding
     this.selectedHearing.description = event;
   }
 
-  onCancelHearing(hearingForm) {
+  onCancelEditHearing(hearingForm) {
     // hearingForm.reset();
     this.hideModals();
   }
 
   saveHearing() {
-    let hearing: CaseHearingDTO = new CaseHearingDTO();
-    let sch: CaseHearingDeprecated = this.selectedHearing;
-
-    // validate
-    // Start Time before End Time
-    if (sch.startDateTime.valueOf() >= sch.endDateTime.valueOf()) {
-      this.toastSvc.showWarnMessage('End Time must be after Start Time');
-      return;
-    }
-
-    // Is Hearing Type and Time unique
-    // TODO: this needs to be refined
-    // if(!sch.caseHearingOID || sch.caseHearingOID == 0) {
-    //   let dup: boolean = this.case.caseHearings
-    //       .findIndex( h =>
-    //         (h.hearingType.hearingTypeOID == sch.hearingType.hearingTypeOID) &&
-    //         (moment(h.startDateTime).isSame(sch.startDateTime, 'hour') )) > -1;
-    //   if( dup ) {
-    //     this.toastSvc.showWarnMessage('A hearing of this type and at this time has already been added to the case.', 'Duplicate Hearing');
-    //     return;
-    //   }
-    // }
+    // let hearing: CaseHearingDTO = new CaseHearingDTO();
+    // let sch: CaseHearing = this.selectedHearing;
 
     // CREATE DTO
-    hearing.caseHearingOID = sch.caseHearingOID ? sch.caseHearingOID.toString() : null;
-    hearing.caseOID = this.case.caseOID.toString();
-    hearing.courtLoc = sch.courtLoc.locationOID.toString();
-    hearing.description = sch.description;
-    hearing.endDateTime = this.datePipe.transform(sch.endDateTime, "yyyy-MM-dd HH:mm");
-    hearing.hearingType = sch.hearingType.hearingTypeOID.toString();
-    hearing.judicialOfficer = sch.judicialOfficer.partyOID.toString(); // this is portyOID since using dropdownPipe
-    hearing.startDateTime = this.datePipe.transform(sch.startDateTime, "yyyy-MM-dd HH:mm");
+    // hearing.caseHearingOID = sch.caseHearingOID ? sch.caseHearingOID.toString() : null;
+    // hearing.caseOID = this.case.caseOID.toString();
+    // hearing.courtLoc = sch.courtLoc.locationOID.toString();
+    // hearing.description = sch.description;
+    // hearing.endDateTime = this.datePipe.transform(sch.endDateTime, "yyyy-MM-dd HH:mm");
+    // hearing.hearingType = sch.hearingType.hearingTypeOID.toString();
+    // hearing.judicialOfficer = sch.judicialOfficer.partyOID.toString(); // this is portyOID since using dropdownPipe
+    // hearing.startDateTime = this.datePipe.transform(sch.startDateTime, "yyyy-MM-dd HH:mm");
 
+    /*
     this.caseSvc
       .saveCaseHearing(hearing)
       .subscribe(result => {
@@ -255,10 +261,7 @@ export class HearingsComponent implements OnInit {
         }
 
         console.log('caseHearings', this.case.caseHearings);
-
-
         this.toastSvc.showSuccessMessage('Hearing Saved');
-
       },
         (error) => {
           console.log(error);
@@ -268,39 +271,31 @@ export class HearingsComponent implements OnInit {
         () => {
           // final
         });
-
+    */
   }
 
-  hearingConflictsOnRowSelect(event) {
 
-  }
-
-  requestDeleteHearing(event, hearing: CaseHearingDeprecated): void {
+  requestDeleteHearing(event, hearing: CaseHearing): void {
     this.showDeleteHearingModal = true;
     event.preventDefault();
     this.selectedHearing = hearing;
   }
 
   deleteHearing(): void {
-    CollectionUtil.removeArrayItem(this.case.caseHearings, this.selectedHearing);
-    this.case.caseHearings = this.case.caseHearings.slice();
+    CollectionUtil.removeArrayItem(this.hearings, this.selectedHearing);
+    this.hearings = this.hearings.slice();
     this.showDeleteHearingModal = false;
     // TODO: Get deleteHearing EP from Aaron
     // SETUP DELETE HEARING SERVICE
   }
 
 
-  resources: any[] = [];
-  selectedResource: any;
-  selectedResourceBak: any;
-  selectedResourceIdx: number;
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
-  searchText: String;
-  templates: any[];
-  selectedTemplate: any;
-  showChooseTemplateModal: boolean = false;
 
+
+  // CALENDAR CONFIG OBJECT -----------
+  // ----------------------------------
   config: any = {
     theme: "minimal_blue",
     viewType: "Days",
@@ -320,8 +315,8 @@ export class HearingsComponent implements OnInit {
     days: 7,
     startDate: this.selectedWorkWeek || this.getMonday(),
     heightSpec: "Max",
-    height: 300,
-    allowEventOverlap: false,
+    height: 350,
+    allowEventOverlap: true,
 
     timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
     onTimeRangeSelected: args => {
@@ -331,7 +326,7 @@ export class HearingsComponent implements OnInit {
         end: args.end,
         id: this.genLongId(),
         resource: args.resource,
-        text: 'Available'
+        text: 'Hearing'
       }));
       this.saveItem();
 
@@ -383,7 +378,9 @@ export class HearingsComponent implements OnInit {
       args.row.columns[0].html = str + " hours";
     },
     onBeforeEventRender: args => {
-      // This adds the event duration ex: 4:00 on the event
+      // TODO: Use this to style events as unavailable or current hearing block
+      // ----------------------------------------
+      // Below adds the event duration ex: 4:00 on the event
       // var duration = new DayPilot.Duration(args.data.start, args.data.end);
       // args.data.areas = [
       //   { right: 2, top: 6, height: 20, width: 30, html: duration.toString("h:mm") }
@@ -416,10 +413,8 @@ export class HearingsComponent implements OnInit {
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
-      // delete TemplateTime data.id
-      this.selectedResource.days = this.selectedResource.days.slice();
+      // this.selectedResource.days = this.selectedResource.days.slice();
       this.deleteTimeBlock(args.e.data.id, true);
-      // console.log('delete', args);
     }
   };
 
@@ -431,7 +426,8 @@ export class HearingsComponent implements OnInit {
     private toastSvc: ToastService,
     private userSvc: UserService,
     private caseSvc: CaseService,
-    private lookupSvc: LookupService
+    private lookupSvc: LookupService,
+    private hearingSvc: HearingsService
   ) {
 
     // TODO: move this to a date util lib
@@ -452,46 +448,52 @@ export class HearingsComponent implements OnInit {
     console.log(now.add(7, 'days').format());
   }
 
-  // TODO: Move to util lib
-  private genLongId() {
-    return Math.round((Math.random() * 10000000000000000))
-  }
-
   ngOnInit() {
+
+    this.getLookups();
 
     this.selectedWorkWeek = this.getMonday();
 
-    this.resources = [];
+    this.hearings = [];
+    // this.hearings =
+    //   [
+    //     {
+    //       "id": null,
+    //       "courtId": 0,
+    //       "hearingTypeId": 0,
+    //       "description": "",
+    //       "caseId": 0,
+    //       "location": "I see nothing",
+    //       "judicialOfficerId": 0,
+    //       "courtLocationId": 0,
 
-    this.resources =
-      [
-        {
-          "id": 1,
-          "name": "Justice Gonzales",
-          "description": "",
-          "court": 5,
-          "days": [{
-            "id": 9,
-            "start": "2018-01-01T04:00:00-05:00",
-            "end": "2018-01-01T07:00:00-05:00"
-          }]
-        },
-        {
-          "id": 2,
-          "name": "Master Cielto-Jones",
-          "description": "",
-          "court": 5,
-          "days": [{
-            "id": 9,
-            "start": "2018-01-02T04:00:00-05:00",
-            "end": "2018-01-02T07:00:00-05:00"
-          }]
-        }
-      ]
+    //       "hearingType": null,
+    //       "judicialOfficer": null,
+    //       "hearingLocation": null,
+    //       "hearingStartDateTime": "2018-08-30T16:00:00Z",
+    //       "hearingEndDateTime": "2018-08-30T16:00:00Z",
 
+    //       "days": [
+    //         {
+    //           "id": 0,
+    //           "start": "2018-08-30T14:00:00Z",
+    //           "end": "2018-08-30T15:00:00Z",
+    //           "text": "A block 1",
+    //           "caseHearingId": null
+    //         },
+    //         {
+    //           "id": 0,
+    //           "start": "2018-08-30T16:00:00Z",
+    //           "end": "2018-08-30T17:00:00Z",
+    //           "text": "Block 2",
+    //           "caseHearingId": null
+    //         }
 
+    //       ]
+    //     }
+    //   ]
 
-    this.selectedResource = new CalResource();
+    this.selectedHearing = new CaseHearing();
   }
 
   ngOnDestroy() {
@@ -499,31 +501,10 @@ export class HearingsComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    var from = this.scheduler.control.visibleStart();
-    var to = this.scheduler.control.visibleEnd();
+    // var from = this.scheduler.control.visibleStart();
+    // var to = this.scheduler.control.visibleEnd();
 
     this.onSelectWorkWeek(this.selectedWorkWeek);
-
-    this.calResourceSvc.get().subscribe(result => {
-      console.log('resources', result);
-      this.resources = result;
-
-      this.setFirstListItem();
-    });
-
-    this.calTemplateSvc.get().subscribe(result => {
-      this.templates = result;
-    });
-  }
-
-  // TODO: move to util lib
-  getMonday(date = new Date().toDateString()) {
-    console.log('date', date)
-    // '2018-11-10T08:30:00'
-    let d = new Date(date);
-    let diff = (d.getDate() - d.getDay()) + 1;
-
-    return new Date(d.setDate(diff));
   }
 
 
@@ -534,34 +515,14 @@ export class HearingsComponent implements OnInit {
     this.scheduler.control.update();
   }
 
-  createNewResource() {
-    // TODO: deselect all in list
-    this.selectedResource = new CalResource();
-    this.copySelectedItem();
-  }
-
   saveItem() {
     // console.log('BEFORE Save RESOURCE:', this.selectedResource);
 
-    this.calResourceSvc.save(this.selectedResource)
-      .subscribe(result => {
-        // console.log('AFTER Save RESOURCE:', this.selectedResource);
-        this.updateList(result);
-        this.hideModals();
-        this.toastSvc.showSuccessMessage('Item Saved');
-      },
-        (error) => {
-          console.log(error);
-          this.toastSvc.showErrorMessage('There was an error saving the item.');
-        },
-        () => {
-          // final
-        });
   }
 
   cancelDataItemEdit(event) {
-    this.selectedResource = Object.assign(new CalResource(), this.selectedResourceBak);
-    this.resources[this.selectedResourceIdx] = this.selectedResource;
+    this.selectedHearing = Object.assign(new CaseHearing(), this.selectedHearingBak);
+    // this.resources[this.selectedResourceIdx] = this.selectedResource;
   }
 
   deleteDataItemRequest() {
@@ -569,20 +530,20 @@ export class HearingsComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.calResourceSvc.delete(this.selectedResource.id)
-      .subscribe(result => {
-        this.toastSvc.showSuccessMessage('The item has been deleted.');
-        this.resources.splice(this.getIndexOfItem(), 1);
-        this.selectedResource = this.resources[0];
-        this.hideModals();
-      },
-        (error) => {
-          console.log(error);
-          this.toastSvc.showErrorMessage('There was an error deleting the item.');
-        },
-        () => {
-          // final
-        })
+    // this.calResourceSvc.delete(this.selectedResource.id)
+    //   .subscribe(result => {
+    //     this.toastSvc.showSuccessMessage('The item has been deleted.');
+    //     this.resources.splice(this.getIndexOfItem(), 1);
+    //     this.selectedResource = this.resources[0];
+    //     this.hideModals();
+    //   },
+    //     (error) => {
+    //       console.log(error);
+    //       this.toastSvc.showErrorMessage('There was an error deleting the item.');
+    //     },
+    //     () => {
+    //       // final
+    //     })
   }
 
   deleteTimeBlock(id, userInitiated = false) {
@@ -600,107 +561,23 @@ export class HearingsComponent implements OnInit {
 
   hideModals() {
     this.showDeleteItemModal = false;
-    this.showChooseTemplateModal = false;
+
   }
 
-  // -------- APPLY TEMPLATE SECTION ------------ //
-  onShowChooseTemplateModal() {
-    this.showChooseTemplateModal = true;
+
+  // TODO: Move to util lib
+  private genLongId() {
+    return Math.round((Math.random() * 10000000000000000))
   }
 
-  // mat-selection-list "selectionChange" does not work when in a modal,
-  // so solving it by handling mat-list-option (selectionChange) here
-  onTemplateSelectionChange(event, template) {
+  // TODO: move to util lib
+  private getMonday(date = new Date().toDateString()) {
+    console.log('date', date)
+    // '2018-11-10T08:30:00'
+    let d = new Date(date);
+    let diff = (d.getDate() - d.getDay()) + 1;
 
-    // deselect all others & set selected
-    if (event.selected) {
-      event.source.selectionList.options.toArray().forEach(element => {
-        if (element.value.name != template.name) {
-          element.selected = false;
-        } else {
-          this.selectedTemplate = element.value;
-        }
-      });
-    }
-  }
-
-  onTemplateSelected() {
-    console.log('onTemplateSelected', this.selectedTemplate);
-    this.hideModals();
-    this.mapTemplateToThisWeek();
-  }
-
-  mapTemplateToThisWeek() {
-    if (!this.selectedTemplate) {
-      this.toastSvc.showWarnMessage('No Template Selected', 'Please choose a template.');
-      return;
-    }
-
-    console.log('BEFORE selectedResource.days', this.selectedResource.days);
-
-    let templateDays = this.selectedTemplate.days;
-    console.log('TEMPLATE DAYS', this.selectedTemplate.days);
-
-    // DELETE TIME BLOCKS IN THE CURRENT WEEK
-    let daysSansThisWeekDays = this.removeDatesWithinASpan(this.selectedResource.days, this.selectedWorkWeek, 6);
-    console.log('1. Time blocks sans THIS weeks time blocks', daysSansThisWeekDays);
-
-    // LOOP SELECTED TEMPLATE BLOCKS ASSIGN TO THIS WEEK
-    templateDays.forEach(block => {
-      let bs = new Date(block.start);
-      let be = new Date(block.end);
-      let bDay = bs.getDay();
-
-      // find the Date of the Day in the current week
-      let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);
-
-      // Create new Time Block
-      let newBlock = new CalResourceTime();
-      newBlock.id = this.genLongId();
-      newBlock.resourceId = this.selectedResource.id;
-      newBlock.text = 'Available';
-
-      console.log('TEMPLATE BLOCK .getTimezoneOffset', bs.getTimezoneOffset());
-      console.log('MATCHING DATE .getTimezoneOffset', matchingDate.getTimezoneOffset());
-
-      // merge TIME portion of 'block' into DATE portion of 'matchingDate'
-      newBlock.start = new Date(
-        matchingDate.getFullYear(),
-        matchingDate.getMonth(),
-        matchingDate.getDate(),
-        bs.getHours() + 1,  // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
-        bs.getMinutes(), 0
-      );
-      newBlock.end = new Date(
-        matchingDate.getFullYear(),
-        matchingDate.getMonth(),
-        matchingDate.getDate(),
-        be.getHours() + 1, // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
-        be.getMinutes(), 0
-      );
-      /*
-      NOTE ABOUT +1 getHours() ABOVE - JB:6/21/2018
-          When creating a new date in this client, the offset is -04:00.
-          When saving and retrieving, the offset becomes -05:00.
-          So as a temp measure, the +1 is used until we solve this issue.
-          The solution will need to consider:
-          -- Server hosted in other time zones
-          -- Server in a time zone that doesn't observe DST
-          -- User in other time zones
-          -- User in a time zone that doesn't observe DST
-      */
-
-      // Add the newBlock to Facility.days
-      this.selectedResource.days.push(newBlock);
-
-    });
-
-    this.selectedResource.days = this.selectedResource.days.slice();
-    this.scheduler.control.update();
-    console.log('AFTER selectedResource.days', this.selectedResource.days);
-    // SAVE NEW BLOCKS
-    this.saveItem();
-
+    return new Date(d.setDate(diff));
   }
 
   // TODO: move to Date Util Lib
@@ -735,123 +612,14 @@ export class HearingsComponent implements OnInit {
   };
 
 
-  // -------- APPLY TO NEXT WEEK SECTION ------------ //
-
-  applyToNextWeek() {
-
-    let days = this.selectedResource.days;
-
-    // REMOVE TIME BLOCKS IN UPCOMING WEEK
-    let daysSansNextWeekDays = this.removeDatesWithinASpan(days, this.selectedWorkWeek.addDays(7), 6);
-    console.log('1. days Sans Next Weeks time blocks', daysSansNextWeekDays);
-
-    // FIND TIME BLOCKS IN THIS WEEK DATES TO APPLY TO NEXT WEEK
-    let newTimeBlocks = this.findDatesWithinASpan(days, this.selectedWorkWeek, 6);
-    console.log('2. matching Time Blocks', newTimeBlocks);
-
-    // CONVERT THIS WEEK'S TIME BLOCKS TO NEXT WEEK TIME BLOCKS
-    this.convertTimeBlocksToNextWeek(newTimeBlocks);
-    this.onSelectWorkWeek(this.selectedWorkWeek.addDays(7).toISOString());
-    this.scheduler.control.update();
-
-    setTimeout(() => {
-      this.saveItem()
-      this.toastSvc.showInfoMessage('Week Saved!', 'The calendar has advanced to the following week.')
-    }, 300);
-  }
-
-  // TODO: move to util lib
-  private isWithinRangeByDay(day, start, end) {
-    let s = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0);
-    let e = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59);
-    let d = new Date(day);
-    return d >= s && d <= e;
-  }
-
-  // TODO: move to util lib
-  findDatesWithinASpan(arr, start, span) {
-    let rangeStart = new Date(start);
-    let rangeEnd = rangeStart.addDays(span);
-    let results = [];
-    arr.forEach(block => {
-      if (this.isWithinRangeByDay(block.start, rangeStart, rangeEnd)) {
-        results.push(Object.assign({}, block));
-      }
-    })
-    return results;
-  }
-
-  // TODO: move to util lib
-  /**
-   * @argument arr Array of time blocks
-   * @argument start:String a start date string
-   * @argument span number of days to span
-   * @description removes matching items from the array and calls delete EP
-   */
-  removeDatesWithinASpan(arr, start, span) {
-    let rangeStart = new Date(start);
-    let rangeEnd = rangeStart.addDays(span);
-
-    let deletedItems = []; // for debug only
-
-    for (var i = arr.length - 1; i >= 0; i--) {
-      if (this.isWithinRangeByDay(arr[i].start, rangeStart, rangeEnd)) {
-        deletedItems.push(Object.assign({}, arr[i]));
-        this.deleteTimeBlock(arr[i].id);
-        arr.splice(i, 1);
-      }
-    }
-    console.log('Deleted items', deletedItems);
-    return arr;
-  }
-
-  convertTimeBlocksToNextWeek(arr) {
-    let newItemsForComparison = [];
-    arr.forEach(block => {
-      block.start = new Date(block.start).addDays(7).toISOString();
-      block.end = new Date(block.end).addDays(7).toISOString();
-      block.id = this.genLongId();
-      this.selectedResource.days.push(block);
-      newItemsForComparison.push(block); // for debug only
-    })
-    console.log('3. Next Weeks Time Blocks For Comparison', newItemsForComparison)
-  }
-
-
-
-
-  private setFirstListItem() {
-    if (!this.resources || !this.resources.length)
-      return;
-
-    this.selectedResource = this.resources[0];
-    this.copySelectedItem();
-
-  }
-
-  private updateList(result) {
-    let index: number = this.getIndexOfItem(result);
-
-    if (index >= 0) {
-      this.resources[index] = result;
-      this.selectedResource = this.resources[index];
-    } else {
-      this.resources.push(result);
-      this.selectedResource = this.resources[this.resources.length - 1];
-    }
-    // This prevents event doubling phenom
-    this.selectedResource.days = this.selectedResource.days.slice();
-  }
-
   private copySelectedItem() {
-    this.selectedResourceBak = Object.assign({}, this.selectedResource);
-    this.selectedResourceIdx = this.getIndexOfItem(this.selectedResource);
+    this.selectedHearingBak = Object.assign({}, this.selectedHearing);
+    // this.selectedResourceIdx = this.getIndexOfItem(this.selectedResource);
   }
 
-  private getIndexOfItem(item = this.selectedResource): number {
-    return this.resources
+  private getIndexOfItem(item = this.selectedHearing): number {
+    return this.hearings
       .findIndex(itm => itm.id == item.id);
   }
 
 }
-
