@@ -55,7 +55,6 @@ export class HearingsComponent implements OnInit {
   hearings: CaseHearing[];
   selectedHearing: CaseHearing;
   selectedHearingBak: CaseHearing;
-  hearingDate: Date;
   loadingDataFlag: boolean = false;
   hearingLocations: CourtLocation[];
   hearingTypes: HearingType[];
@@ -87,7 +86,8 @@ export class HearingsComponent implements OnInit {
     cellDuration: 30,
     // startDate: this.selectedWorkWeek,
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
-    days: 8, // not sure why I have to set to 8 to see 6!?
+    days: 6,
+    businessWeekends: true,
     heightSpec: "Max",
     height: 350,
     allowEventOverlap: true,
@@ -262,7 +262,7 @@ export class HearingsComponent implements OnInit {
         this.getHearings();
       },
       (error) => {
-        console.log(error);
+        console.log('getLookups error', error);
         this.loadingDataFlag = false;
         this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
       },
@@ -272,16 +272,26 @@ export class HearingsComponent implements OnInit {
   }
 
   getHearings() {
+    this.loadingDataFlag = true;
     this.hearingSvc.getByCaseId(this.case.caseOID).subscribe(data => {
       this.hearings = data;
       this.loadingDataFlag = false;
       if (this.hearings.length) {
         this.initHearingData();
         this.setSelectedHearing(this.hearings[0]);
+        this.getUnavailableBlocks();
       } else {
         this.setWorkWeek(new Date());
       }
-    });
+    },
+      (error) => {
+        console.log('getHearings error', error);
+        this.loadingDataFlag = false;
+        this.toastSvc.showErrorMessage('There was an error fetching hearings.')
+      },
+      () => {
+        this.loadingDataFlag = false;
+      });
   }
 
   private enhanceJudges() {
@@ -313,9 +323,9 @@ export class HearingsComponent implements OnInit {
     }
   }
 
-  getUnavailableFacilityAndResourceBlocks() {
+  getUnavailableBlocks() {
 
-    if (!this.hearingDate
+    if (!this.selectedHearing.hearingStartDateTime
       || !this.selectedHearing.judicialOfficerId
       || !this.selectedHearing.courtLocationId) {
 
@@ -325,7 +335,7 @@ export class HearingsComponent implements OnInit {
     this.loadingDataFlag = true;
     this.hearingConflicts = [];
     this.hearingSvc.unavailableFacilityAndResourceBlocks(
-      this.hearingDate,
+      this.selectedHearing.hearingStartDateTime,
       this.selectedHearing.courtLocationId,
       this.selectedHearing.judicialOfficerId)
       .subscribe(data => {
@@ -336,7 +346,7 @@ export class HearingsComponent implements OnInit {
         (error) => {
           console.log(error);
           this.loadingDataFlag = false;
-          this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
+          this.toastSvc.showErrorMessage('There was an error fetching hearing conflicts data.')
         },
         () => {
           this.loadingDataFlag = false;
@@ -367,12 +377,9 @@ export class HearingsComponent implements OnInit {
   }
 
   hearingOnRowSelect(event) {
-
     if (!this.hasPermission(this.Permission.UPDATE_CASE_HEARING)) return false;
     if (this.showDeleteHearingModal) return;
     this.setSelectedHearing(event.data);
-    // this.onShowHearingModal();
-    this.setWorkWeek(this.selectedHearing.hearingStartDateTime);
   }
 
   setSelectedHearing(h: CaseHearing) {
@@ -381,22 +388,21 @@ export class HearingsComponent implements OnInit {
   }
 
   hearingDateOnChange(event) {
-    this.hearingDate = event;
     this.selectedHearing.hearingStartDateTime = event;
     this.setWorkWeek(event);
-    this.getUnavailableFacilityAndResourceBlocks();
+    this.getUnavailableBlocks();
   }
 
   hearingJudgeOnChange(event) {
     // TODO: Make sure the judicialOfficerId is changed with ngModel binding
     // this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == event.value);
-    this.getUnavailableFacilityAndResourceBlocks();
+    this.getUnavailableBlocks();
   }
 
   hearingLocationOnChange(event) {
     // TODO: Make sure the courtLocationId is changed with ngModel binding
     // this.selectedHearing.courtLoc = event.value;
-    this.getUnavailableFacilityAndResourceBlocks();
+    this.getUnavailableBlocks();
   }
 
   hearingStartTimeOnChange(event) {
