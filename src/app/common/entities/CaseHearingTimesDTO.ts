@@ -1,9 +1,7 @@
+import { BaseTimeBlock } from "./BaseTimeBlock";
 
-export class CaseHearingTimesDTO {
+export class CaseHearingTimesDTO extends BaseTimeBlock {
 
-  id: number;
   caseHearingId: number;
-  start: string;
-  end: string;
-  text: string;
+
 }
