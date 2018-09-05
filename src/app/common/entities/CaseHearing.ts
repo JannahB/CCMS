@@ -5,11 +5,11 @@ import { HearingType } from './HearingType';
 
 // This is the new CaseHearing Entity using SpringBoot Framework
 export class CaseHearing {
-  id: number;
-  courtId: number;
-  caseId: number;
-  courtLocationId: number;
-  hearingTypeId: number;
+  id: number = null;
+  courtId: number = 0;
+  caseId: number = 0;
+  courtLocationId: number = 0;
+  hearingTypeId: number = 0;
   judicialOfficerId: number;
   days: CaseHearingTimesDTO[] = [];
   description: string = '';
