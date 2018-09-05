@@ -1,33 +1,23 @@
 import { Component, Input, OnInit, ViewChild, AfterViewInit } from "@angular/core";
+import { DatePipe } from '@angular/common';
+import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
-import { Observable } from 'rxjs/Observable';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
-import { CaseHearingUnavailableBlock } from './../../../common/entities/CaseHearingUnavailableBlock';
-import { CaseHearings } from './../../../common/entities/CaseHearings';
-import { HearingsService } from './../../../common/services/http/hearings.service';
-import { CaseHearingDeprecated } from './../../../common/entities/CaseHearingDeprecated';
-import { CollectionUtil } from '../../../common/utils/collection-util';
-import { CaseHearingDTO } from '../../../common/entities/CaseHearingDTO';
-import { DatePipe } from '@angular/common';
-import { JudicialOfficer } from '../../../common/entities/JudicialOfficer';
-
 import { Case } from '../../../common/entities/Case';
-import { CalResource } from '../../../common/entities/CalResource';
-import { HearingType } from '../../../common/entities/HearingType';
-import { CourtLocation } from '../../../common/entities/CourtLocation';
 import { CaseHearing } from '../../../common/entities/CaseHearing';
-import { CalResourceTime } from '../../../common/entities/CalResourceTime';
+import { CaseHearingUnavailableBlock } from './../../../common/entities/CaseHearingUnavailableBlock';
+import { CourtLocation } from '../../../common/entities/CourtLocation';
+import { HearingType } from '../../../common/entities/HearingType';
+import { JudicialOfficer } from '../../../common/entities/JudicialOfficer';
 import { Permission } from '../../../common/entities/Permission';
 
+import { CollectionUtil } from '../../../common/utils/collection-util';
 import { BreadcrumbService } from '../../../breadcrumb.service';
+import { HearingsService } from './../../../common/services/http/hearings.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
-import { CaseService } from '../../../common/services/http/case.service';
-import { LookupService } from '../../../common/services/http/lookup.service';
 import { UserService } from '../../../common/services/utility/user.service';
-import { CalResourceService } from "../../../common/services/http/calResource.service";
-import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
 
 // This is needed for pipe used in markup
 import { DropdownPipe } from '../../../common/pipes/dropdown.pipe';
@@ -79,7 +69,7 @@ export class HearingsComponent implements OnInit {
       { title: "Date" }
       // {title: "Total"}
     ],
-    eventHeight: 36,
+    eventHeight: 30,
     cellWidthSpec: "Auto",
     timeHeaders: [{ "groupBy": "Hour" }, { "groupBy": "Cell", "format": "mm" }],
     scale: "CellDuration",
@@ -89,7 +79,7 @@ export class HearingsComponent implements OnInit {
     days: 6,
     businessWeekends: true,
     heightSpec: "Max",
-    height: 350,
+    height: 300,
     allowEventOverlap: true,
 
     timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
@@ -175,6 +165,14 @@ export class HearingsComponent implements OnInit {
         args.resource.backColor = "gray";
       }
     },
+    onBeforeCellRender: args => {
+      let saturday = 6;
+      let sunday = 0;
+      let dayOfWeek = args.cell.start.dayOfWeek();
+      if (dayOfWeek === sunday || dayOfWeek === saturday) {
+        args.cell.backColor = "#f7f7f7"; // apply highlighting
+      }
+    },
     eventMoveHandling: "Update",
     onEventMoved: args => {
       console.log('move', args);
@@ -194,13 +192,9 @@ export class HearingsComponent implements OnInit {
 
 
   constructor(
-    private calResourceSvc: CalResourceService,
-    private calTemplateSvc: CalTemplateService,
     private breadCrumbSvc: BreadcrumbService,
     private toastSvc: ToastService,
     private userSvc: UserService,
-    private caseSvc: CaseService,
-    private lookupSvc: LookupService,
     private hearingSvc: HearingsService
   ) {
 
@@ -220,18 +214,13 @@ export class HearingsComponent implements OnInit {
   }
 
   ngOnInit() {
-
     this.getLookups();
     this.hearings = [];
     this.selectedHearing = new CaseHearing();
   }
 
-
   ngAfterViewInit(): void {
-    // var from = this.scheduler.control.visibleStart();
-    // var to = this.scheduler.control.visibleEnd();
 
-    // this.setWorkWeek(this.selectedWorkWeek);
   }
 
   ngOnDestroy() {
@@ -241,9 +230,6 @@ export class HearingsComponent implements OnInit {
   getLookups() {
     this.loadingDataFlag = true;
     var source = Observable.forkJoin<any>(
-      // this.lookupSvc.fetchLookup<JudicialOfficer>('FetchJudicialOfficer'),
-      // this.lookupSvc.fetchLookup<CourtLocation>('FetchHearingLocation'),
-      // this.lookupSvc.fetchLookup<HearingType>('FetchHearingType')
       this.hearingSvc.getJudicialOfficer(),
       this.hearingSvc.getCourtLocations(),
       this.hearingSvc.getHearingTypes(),
@@ -254,12 +240,12 @@ export class HearingsComponent implements OnInit {
         this.hearingLocations = results[1] as CourtLocation[];
         this.hearingTypes = results[2] as HearingType[];
 
-        console.log('judges1', this.judges);
-        console.log('hearing locations', this.hearingLocations);
-        console.log('hearing types', this.hearingTypes);
-
         this.enhanceJudges();
         this.getHearings();
+
+        console.log('judges', this.judges);
+        console.log('hearing locations', this.hearingLocations);
+        console.log('hearing types', this.hearingTypes);
       },
       (error) => {
         console.log('getLookups error', error);
@@ -296,7 +282,6 @@ export class HearingsComponent implements OnInit {
 
   private enhanceJudges() {
     this.judges.map(j => j.name = j.firstName + ' ' + j.lastName); // concat first and last name
-    console.log('judges2', this.judges);
   }
 
   initHearingData() {
@@ -367,13 +352,17 @@ export class HearingsComponent implements OnInit {
 
   createHearing(hearingForm) {
     let newHearing = new CaseHearing();
+    newHearing.description = 'New hearing description...';
+    newHearing.caseId = this.case.caseOID;
     this.selectedHearing = newHearing;
     this.hearings.push(newHearing);
-    this.initHearingData(); // TODO: make sure this does no duplicate data on subsequent inits
+    this.hearings = this.hearings.slice();
+    this.initHearingData();
     this.selectedHearing.hearingStartDateTime = new Date();
     this.setWorkWeek(this.selectedHearing.hearingStartDateTime);
     // hearingForm.reset();
     // this.getLookups();
+    console.log('hearings', this.hearings);
   }
 
   hearingOnRowSelect(event) {
@@ -394,14 +383,19 @@ export class HearingsComponent implements OnInit {
   }
 
   hearingJudgeOnChange(event) {
-    // TODO: Make sure the judicialOfficerId is changed with ngModel binding
-    // this.selectedHearing.judicialOfficer = this.judges.find(j => j.partyOID == event.value);
+    console.log('hearingJudgeOnChange event', event);
+    this.selectedHearing.judicialOfficer = event.value;
+    this.selectedHearing.judicialOfficerId = event.value.id;
+    console.log('selectedHearing hearingJudgeOnChange', this.selectedHearing);
     this.getUnavailableBlocks();
   }
 
   hearingLocationOnChange(event) {
-    // TODO: Make sure the courtLocationId is changed with ngModel binding
-    // this.selectedHearing.courtLoc = event.value;
+    console.log('hearingJudgeOnChange event', event);
+    this.selectedHearing.hearingLocation = event.value;
+    this.selectedHearing.courtLocationId = event.value.id;
+    this.selectedHearing.courtId = event.value.courtId;
+    console.log('selectedHearing hearingLocationOnChange', this.selectedHearing);
     this.getUnavailableBlocks();
   }
 
@@ -415,8 +409,11 @@ export class HearingsComponent implements OnInit {
   }
 
   hearingTypeOnChange(event) {
+    console.log('hearingTypeOnChange event', event);
     // TODO: Make sure the hearingTypeId is changed with ngModel binding
-    // this.selectedHearing.hearingType = event.value;
+    this.selectedHearing.hearingType = event.value;
+    this.selectedHearing.hearingTypeId = event.value.id;
+    console.log('selectedHearing hearingTypeOnChange', this.selectedHearing);
   }
 
   hearingDescriptionOnChange(event) {
@@ -430,48 +427,43 @@ export class HearingsComponent implements OnInit {
   }
 
   saveHearing() {
-    // let hearing: CaseHearingDTO = new CaseHearingDTO();
-    // let sch: CaseHearing = this.selectedHearing;
+    let h = this.selectedHearing
+    if (!h.courtLocationId || !h.hearingTypeId || !h.judicialOfficerId) {
+      this.toastSvc.showInfoMessage('Please complete all fields and try again.');
+      return;
+    }
+    if (!h.days || !h.days.length) {
+      this.toastSvc.showInfoMessage('Please add a hearing time block by click & drag on the calendar.');
+      return;
+    }
 
-    // CREATE DTO
-    // hearing.caseHearingOID = sch.caseHearingOID ? sch.caseHearingOID.toString() : null;
-    // hearing.caseOID = this.case.caseOID.toString();
-    // hearing.courtLoc = sch.courtLoc.locationOID.toString();
-    // hearing.description = sch.description;
-    // hearing.endDateTime = this.datePipe.transform(sch.endDateTime, "yyyy-MM-dd HH:mm");
-    // hearing.hearingType = sch.hearingType.hearingTypeOID.toString();
-    // hearing.judicialOfficer = sch.judicialOfficer.partyOID.toString(); // this is portyOID since using dropdownPipe
-    // hearing.startDateTime = this.datePipe.transform(sch.startDateTime, "yyyy-MM-dd HH:mm");
-
-    /*
-    this.caseSvc
-      .saveCaseHearing(hearing)
+    this.hearingSvc
+      .save(h)
       .subscribe(result => {
-        let resultHearing = result[0];
+        let resultHearing = result;
 
-        // Check if existing or new hearing
-        let index: number = this.case.caseHearings
-          .findIndex(a => a.caseHearingOID == resultHearing.caseHearingOID);
+        // Get Index of Selected Hearing
+        let index: number = this.hearings.findIndex(a => a == this.selectedHearing);
 
         if (index >= 0) {
-          this.case.caseHearings[index] = resultHearing;
+          this.hearings[index] = resultHearing;
         } else {
-          this.case.caseHearings.push(resultHearing);
-          this.case.caseHearings = this.case.caseHearings.slice();
+          this.hearings.push(resultHearing);
         }
+        this.initHearingData();
+        this.hearings = this.hearings.slice();
 
-        console.log('caseHearings', this.case.caseHearings);
+        console.log('hearings after save', this.hearings);
         this.toastSvc.showSuccessMessage('Hearing Saved');
       },
         (error) => {
           console.log(error);
-
           this.toastSvc.showErrorMessage('There was an error while saving hearings.')
         },
         () => {
           // final
         });
-    */
+
   }
 
 
@@ -499,7 +491,6 @@ export class HearingsComponent implements OnInit {
 
   saveItem() {
     // console.log('BEFORE Save RESOURCE:', this.selectedResource);
-
   }
 
   cancelDataItemEdit(event) {

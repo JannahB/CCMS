@@ -28,8 +28,8 @@
                 dataKey="id" #dtHearings>
       <p-column field="" header="Hearings" >
         <ng-template pTemplate="body" let-item="rowData">
-          <h4 class="mb-10 mt-0">{{ item.hearingType.name }}</h4>
-          <p class=" mv-0" >{{ item.judicialOfficer.firstName }} {{ item.judicialOfficer.lastName }}</p>
+          <h4 class="mb-10 mt-0">{{ item.hearingType?.name }}</h4>
+          <p class=" mv-0" >{{ item.judicialOfficer?.firstName }} {{ item.judicialOfficer?.lastName }}</p>
           <p class=" mv-0" >{{ item.hearingStartDateTime | date:'MMM d, yyyy h:mm a' }} </p>
         </ng-template>
       </p-column>
@@ -122,6 +122,22 @@
             </div>
 
 
+            <div class="ui-g-12">
+              <div class="" *ngIf="selectedHearing">
+                <!-- CALENDAR -->
+                <daypilot-scheduler [config]="config" [events]="selectedHearing.days" #scheduler></daypilot-scheduler>
+                <p class="mv-0 muted-label">Click and drag to mark hours. </p>
+              </div>
+              <div class="ta-r">
+
+                <div class="ui-g-12 mt-10">
+                  <button label="Save Hearing" class="mr-20" type="submit" pButton icon="fa-check" [disabled]="!hearingForm.form.valid"></button>
+                  <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+                          (click)="onCancelEditHearing(hearingForm)" ></button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -152,36 +168,7 @@
       </div>
     </div> -->
 
-    <div class="ui-g-12">
-      <div class="" *ngIf="selectedHearing">
-        <!-- CALENDAR -->
-        <daypilot-scheduler [config]="config" [events]="selectedHearing.days" #scheduler></daypilot-scheduler>
-        <p class="mv-0 muted-label">Click and drag to mark hours. </p>
-      </div>
-      <div class="ta-r">
 
-        <div class="ui-g-12 mt-10">
-          <button label="Save Hearing" type="submit" pButton icon="fa-check" [disabled]="!hearingForm.form.valid"></button>
-          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
-                  (click)="onCancelEditHearing(hearingForm)" ></button>
-        </div>
-
-        <!-- <button mat-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
-          <mat-icon aria-label="Add resource button">delete</mat-icon>
-          Delete Resource Hours
-        </button>
-        <button mat-raised-button color="primary" (click)="saveItem()" class="mt-30">
-          <mat-icon aria-label="Add resource button">check</mat-icon>
-          Save Resource
-        </button>
-        <button mat-button color="secondary" (click)="cancelDataItemEdit()" class="mt-30">
-          <mat-icon aria-label="Add resource button">clear</mat-icon>
-          Cancel
-        </button> -->
-
-
-      </div>
-    </div>
     <div class="ui-g-12">
         <pre>{{selectedResource | json}}</pre>
     </div>
