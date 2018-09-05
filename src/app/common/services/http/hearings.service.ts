@@ -48,6 +48,15 @@ export class HearingsService extends HttpBaseService<any> {
     return this.http.get<CaseHearingUnavailableBlock[]>(url, { params: params });
   }
 
+  public save(hearing: CaseHearing): Observable<CaseHearing> {
+    if (hearing.id) {
+      return this.http.put<CaseHearing>(this.getBaseUrl(), hearing);
+    } else {
+      return this.http.post<CaseHearing>(this.getBaseUrl(), hearing);
+    }
+
+  }
+
   protected getBaseMockUrl(): string {
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
   }
