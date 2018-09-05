@@ -12,7 +12,7 @@ export class LanguageService extends HttpBaseService<Language> {
 
   // Override Base URL's set in Super
   protected getBaseUrl():string{
-    return `${super.getBaseUrl()}/FetchLanguage`;
+    return `${super.getBaseUrl()}/api/language-types`;
   }
 
   protected getBaseMockUrl():string{

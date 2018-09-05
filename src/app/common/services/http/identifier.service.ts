@@ -12,7 +12,7 @@ export class IdentifierService extends HttpBaseService<Identifier> {
 
   // Override Base URL's set in Super
   protected getBaseUrl():string{
-    return `${super.getBaseUrl()}/FetchIdentifiers`;
+    return `${super.getBaseUrl()}/api/person-identification-types`;
   }
 
   protected getBaseMockUrl():string{
