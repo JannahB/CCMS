@@ -41,7 +41,7 @@ export class HearingsService extends HttpBaseService<any> {
 
   // Ex url:
   // http://localhost:8080/api/unavailableFacilityAndResourceBlocks?week=2018-08-30T15%3A34%3A38.051Z&partyId=2553128234054282&facilityId=1
-  public unavailableFacilityAndResourceBlocks(week: Date, partyId: number, facilityId: number): Observable<CaseHearingUnavailableBlock[]> {
+  public unavailableFacilityAndResourceBlocks(week: Date, facilityId: number, partyId: number): Observable<CaseHearingUnavailableBlock[]> {
     let url: string = `${super.getBaseUrl()}/api/case-hearings/unavailableBlocks`;
     // Note: url params must be strings
     let params = { 'week': week.toISOString(), 'partyId': partyId.toString(), 'facilityId': facilityId.toString() }

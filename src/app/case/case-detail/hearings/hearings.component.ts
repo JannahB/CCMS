@@ -172,6 +172,18 @@ export class HearingsComponent implements OnInit {
       if (dayOfWeek === sunday || dayOfWeek === saturday) {
         args.cell.backColor = "#f7f7f7"; // apply highlighting
       }
+      // TODO: if cell falls in blocked resource/facility range
+      let s = args.cell.start.value;
+      let e = args.cell.end.value;
+
+      this.blockedHoursOfOperation.forEach(item => {
+        if (s >= item.start && e <= item.end) {
+          args.cell.backColor = "#CCCCCC";
+        }
+
+      });
+      //console.log('cell args', args);
+
     },
     eventMoveHandling: "Update",
     onEventMoved: args => {
@@ -308,6 +320,7 @@ export class HearingsComponent implements OnInit {
     }
   }
 
+
   getUnavailableBlocks() {
 
     if (!this.selectedHearing.hearingStartDateTime
@@ -325,8 +338,9 @@ export class HearingsComponent implements OnInit {
       this.selectedHearing.judicialOfficerId)
       .subscribe(data => {
         this.hearingConflicts = data;
-        this.loadingDataFlag = false;
         console.log('hearing conflicts', this.hearingConflicts);
+        this.createBlockedArrays();
+        this.loadingDataFlag = false;
       },
         (error) => {
           console.log(error);
@@ -339,6 +353,24 @@ export class HearingsComponent implements OnInit {
 
     // FetchHearing POST {hearingQueryDate: "2018-01-09", courtLoc: "1"}
     // let hearingDateString: string = this.datePipe.transform(this.selectedHearing.startDateTime, "yyyy-MM-dd");
+
+  }
+
+  blockedHoursOfOperation = [];
+  blockedHearings = [];
+
+  createBlockedArrays() {
+    let blockedHoo = this.hearingConflicts.filter(item => item.type == 'Facility' || item.type == 'Resource');
+    let days = []
+
+    this.hearingConflicts.forEach(element => {
+      if (element.type == 'Facility' || element.type == 'Resource') {
+        days = [...days, ...element.days];
+      }
+    });
+    console.log('days', days);
+    this.blockedHoursOfOperation = days;
+    this.refreshCalendar();
 
   }
 
@@ -486,6 +518,7 @@ export class HearingsComponent implements OnInit {
     this.selectedWorkWeek = this.getMonday(new Date(e).toDateString());
     this.scheduler.control.startDate = this.selectedWorkWeek;
     this.scheduler.control.update();
+    this.getUnavailableBlocks();
     console.log('selectedWorkWeek', this.selectedWorkWeek);
   }
 
