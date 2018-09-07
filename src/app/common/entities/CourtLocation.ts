@@ -1,3 +1,4 @@
+import { CalFacilityTime } from "./CalFacilityTime";
 
 export class CourtLocation {
 
@@ -11,4 +12,5 @@ export class CourtLocation {
   id: number;
   courtId: number;
   courtroom: string;
+  days: CalFacilityTime[];
 }

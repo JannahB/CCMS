@@ -5,12 +5,11 @@ import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
-import { CalTemplate } from '../../../common/entities/CalTemplate';
 import { CalFacility } from '../../../common/entities/CalFacility';
 import { CalFacilityTag } from '../../../common/entities/CalFacilityTag';
-import { CalFacilityService } from '../../../common/services/http/calFacility.service';
 import { CalFacilityTime } from '../../../common/entities/CalFacilityTime';
 import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
+import { CalCourtLocationService } from "../../../common/services/http/calCourtLocation.service";
 
 @Component({
   selector: 'app-cal-facilities',
@@ -159,7 +158,7 @@ export class CalFacilitiesComponent implements OnInit {
   };
 
   constructor(
-    private calFacilitySvc: CalFacilityService,
+    private calCourtLocationSvc: CalCourtLocationService,
     private calTemplateSvc: CalTemplateService,
     private breadCrumbSvc: BreadcrumbService,
     private toastSvc: ToastService
@@ -223,8 +222,8 @@ export class CalFacilitiesComponent implements OnInit {
 
     this.onSelectWorkWeek(this.selectedWorkWeek);
 
-    this.calFacilitySvc.get().subscribe(result => {
-      console.log('facilities', result);
+    this.calCourtLocationSvc.get().subscribe(result => {
+      console.log('court locations', result);
       this.facilities = result;
 
       this.setFirstListItem();
@@ -262,7 +261,7 @@ export class CalFacilitiesComponent implements OnInit {
   saveItem() {
     //console.log('BEFORE Save Facility:', this.selectedFacility);
 
-    this.calFacilitySvc.save(this.selectedFacility)
+    this.calCourtLocationSvc.save(this.selectedFacility)
       .subscribe(result => {
         // console.log('AFTER Save Facility:', this.selectedFacility);
         this.updateList(result);
@@ -288,7 +287,7 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.calFacilitySvc.delete(this.selectedFacility.id)
+    this.calCourtLocationSvc.delete(this.selectedFacility.id)
       .subscribe(result => {
         this.toastSvc.showSuccessMessage('The item has been deleted.');
         this.facilities.splice(this.getIndexOfItem(), 1);
@@ -305,7 +304,7 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   deleteTimeBlock(id, userInitiated = false) {
-    this.calFacilitySvc.deleteFacilityTimeBlock(id)
+    this.calCourtLocationSvc.deleteFacilityTimeBlock(id)
       .subscribe(result => {
         console.log('Deleted Block ID:', id);
         if (userInitiated) // TODO: Turn this on after testing complete
