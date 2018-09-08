@@ -49,13 +49,15 @@ export class HearingsComponent implements OnInit {
   hearingLocations: CourtLocation[];
   hearingTypes: HearingType[];
   hearingSubscription: Subscription;
-  hearingConflicts: CaseHearingUnavailableBlock[];
+  conflicts: CaseHearingUnavailableBlock[];
   loadingConflicts: boolean = false;
   showDeleteHearingModal: boolean = false;
   judges: JudicialOfficer[];
-
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
+  blockedHours = [];
+  blockedFacilityColor = '#dddddd';
+  blockedJudgeColor = '#bbc5cc';
 
   // CALENDAR CONFIG OBJECT -----------
   // ----------------------------------
@@ -166,24 +168,26 @@ export class HearingsComponent implements OnInit {
       }
     },
     onBeforeCellRender: args => {
-      let saturday = 6;
-      let sunday = 0;
-      let dayOfWeek = args.cell.start.dayOfWeek();
-      if (dayOfWeek === sunday || dayOfWeek === saturday) {
-        args.cell.backColor = "#f7f7f7"; // apply highlighting
-      }
-      // TODO: if cell falls in blocked resource/facility range
-      let s = args.cell.start.value;
-      let e = args.cell.end.value;
+      // let saturday = 6;
+      // let sunday = 0;
+      // let dayOfWeek = args.cell.start.dayOfWeek();
+      // if (dayOfWeek === sunday || dayOfWeek === saturday) {
+      //   args.cell.backColor = "#f7f7f7"; // apply highlighting
+      // }
+      let cellStart = args.cell.start.getTotalTicks();
+      let cellEnd = args.cell.end.getTotalTicks();
 
-      this.blockedHoursOfOperation.forEach(item => {
-        if (s >= item.start && e <= item.end) {
-          args.cell.backColor = "#CCCCCC";
+      this.blockedHours.forEach(item => {
+        let denyStart = new DayPilot.Date(item.start).getTotalTicks();
+        let denyEnd = new DayPilot.Date(item.end).getTotalTicks();
+
+        if (cellStart >= denyStart && cellEnd <= denyEnd) {
+          if (item.tag == 'Facility')
+            args.cell.backColor = this.blockedFacilityColor;
+          else if (item.tag == 'Resource')
+            args.cell.backColor = this.blockedJudgeColor;
         }
-
       });
-      //console.log('cell args', args);
-
     },
     eventMoveHandling: "Update",
     onEventMoved: args => {
@@ -331,21 +335,21 @@ export class HearingsComponent implements OnInit {
     }
 
     this.loadingDataFlag = true;
-    this.hearingConflicts = [];
+    this.conflicts = [];
     this.hearingSvc.unavailableFacilityAndResourceBlocks(
       this.selectedHearing.hearingStartDateTime,
       this.selectedHearing.courtLocationId,
       this.selectedHearing.judicialOfficerId)
       .subscribe(data => {
-        this.hearingConflicts = data;
-        console.log('hearing conflicts', this.hearingConflicts);
+        this.conflicts = data;
+        console.log('conflicts', this.conflicts);
         this.createBlockedArrays();
         this.loadingDataFlag = false;
       },
         (error) => {
           console.log(error);
           this.loadingDataFlag = false;
-          this.toastSvc.showErrorMessage('There was an error fetching hearing conflicts data.')
+          this.toastSvc.showErrorMessage('There was an error fetching hearing conflicts data.');
         },
         () => {
           this.loadingDataFlag = false;
@@ -356,20 +360,16 @@ export class HearingsComponent implements OnInit {
 
   }
 
-  blockedHoursOfOperation = [];
-  blockedHearings = [];
 
   createBlockedArrays() {
-    let blockedHoo = this.hearingConflicts.filter(item => item.type == 'Facility' || item.type == 'Resource');
-    let days = []
+    let days = [];
 
-    this.hearingConflicts.forEach(element => {
-      if (element.type == 'Facility' || element.type == 'Resource') {
+    this.conflicts.forEach(element => {
+      if (element.type == 'Facility' || element.type == 'Resource')
         days = [...days, ...element.days];
-      }
     });
-    console.log('days', days);
-    this.blockedHoursOfOperation = days;
+    this.blockedHours = days;
+    console.log('blockedHours', days);
     this.refreshCalendar();
 
   }
@@ -553,11 +553,11 @@ export class HearingsComponent implements OnInit {
   }
 
   deleteTimeBlock(id, userInitiated = false) {
-    this.calResourceSvc.deleteResourceTimeBlock(id)
+    this.hearingSvc.deleteCaseHearingTimeBlock(id)
       .subscribe(result => {
         console.log('Deleted Block ID:', id);
         if (userInitiated) // TODO: Turn this on after testing complete
-          this.toastSvc.showInfoMessage('Time block deleted.');
+          this.toastSvc.showInfoMessage('Hearing time block deleted.');
       });
   }
 
