@@ -1,3 +1,4 @@
+import { CaseHearingTimesDTO } from './../../entities/CaseHearingTimesDTO';
 import { CaseHearingUnavailableBlock } from './../../entities/CaseHearingUnavailableBlock';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -49,12 +50,34 @@ export class HearingsService extends HttpBaseService<any> {
   }
 
   public save(hearing: CaseHearing): Observable<CaseHearing> {
+    hearing.days = this.serializeDPDateWithZone(hearing.days);
     if (hearing.id) {
-      return this.http.put<CaseHearing>(this.getBaseUrl(), hearing);
+      return this.put<CaseHearing>(hearing.id, hearing);
     } else {
-      return this.http.post<CaseHearing>(this.getBaseUrl(), hearing);
+      return this.post<CaseHearing>(hearing);
     }
+  }
 
+
+  private serializeDPDateWithZone(days: any[]): any[] {
+    // Serialize the Time Blocks before saving
+    days.forEach(block => {
+      // if a block is new, stretched or moved, the start and/or end date will be
+      // converted to a DayPilot.Date which uses '.value' to hold the string date
+      if (block.start.value) {
+        block.start = block.start.value + "Z";
+      }
+      if (block.end.value) {
+        block.end = block.end.value + "Z";
+      }
+    });
+    return days;
+  }
+
+  deleteCaseHearingTimeBlock(id) {
+    let url: string = `${super.getBaseUrl()}/api/case-hearing-times/${id}`;
+    return this.http
+      .delete<CaseHearingTimesDTO>(url)
   }
 
   protected getBaseMockUrl(): string {
