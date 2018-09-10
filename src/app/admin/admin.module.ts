@@ -8,7 +8,8 @@ import {
   CalendarModule,
   CheckboxModule,
   DialogModule,
-  DropdownModule
+  DropdownModule,
+  DataTableModule
 } from "primeng/primeng";
 import { CustomMaterialModule } from "../common/modules/customMaterial.module";
 import { NameFilterPipe } from "../common/pipes/name-filter.pipe";
@@ -43,7 +44,8 @@ import { PdfViewerComponent } from './pdf-viewer/pdf-viewer.component';
     CustomMaterialModule,
     DialogModule,
     DayPilotModule,
-    CheckboxModule
+    CheckboxModule,
+    DataTableModule
   ],
   declarations: [
     DataComponent,
@@ -66,4 +68,4 @@ import { PdfViewerComponent } from './pdf-viewer/pdf-viewer.component';
     PdfViewerComponent
   ]
 })
-export class AdminModule {}
+export class AdminModule { }
