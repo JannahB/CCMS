@@ -1,3 +1,4 @@
+import { CourtLocation } from './../../../common/entities/CourtLocation';
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { MatSelectionList, MatSelectionListChange, MatListOption } from '@angular/material';
 import * as moment from 'moment';
@@ -21,8 +22,8 @@ export class CalFacilitiesComponent implements OnInit {
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
 
-  @ViewChild(MatSelectionList)
-  matSelectionList: MatSelectionList;
+  // @ViewChild(MatSelectionList)
+  // matSelectionList: MatSelectionList;
 
   facilities: any[] = [];
   selectedFacility: any;
@@ -203,14 +204,23 @@ export class CalFacilitiesComponent implements OnInit {
     this.filteredTags = this.facilityTags;
 
     // Handle mat-selection-list selection change via dom element so we can DeselectAll
-    this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
-      this.matSelectionList.deselectAll();
-      event.option.selected = true;
-      this.selectedFacility = event.option.value;
-      this.copySelectedItem();
-    });
+    // this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
+    //   this.matSelectionList.deselectAll();
+    //   event.option.selected = true;
+    //   this.selectedFacility = event.option.value;
+    //   this.copySelectedItem();
+    // });
 
     this.selectedFacility = new CalFacility();
+  }
+
+  locationOnRowSelect(event) {
+    this.setSelectedLocation(event.data);
+  }
+
+  setSelectedLocation(facility) {
+    this.selectedFacility = facility;
+    this.copySelectedItem();
   }
 
   ngOnDestroy() {
@@ -254,7 +264,7 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   createNewFacility() {
-    this.matSelectionList.deselectAll();
+    // this.matSelectionList.deselectAll();
     this.selectedFacility = new CalFacility();
     this.copySelectedItem();
   }
@@ -562,10 +572,7 @@ export class CalFacilitiesComponent implements OnInit {
 
     this.selectedFacility = this.facilities[0];
     this.copySelectedItem();
-    setTimeout(() => {
-      if (this.matSelectionList.options.first)
-        this.matSelectionList.options.first.selected = true;
-    }, 100);
+
   }
 
   private updateList(result) {
