@@ -236,3 +236,17 @@ body {
 .mat-selection-list .mat-list-option {
   font-size: 14px !important;
 }
+
+// TEXT INPUT PLACEHOLDER --------------------------
+body .ui-column-filter::placeholder {
+  color: #a1c8da;
+}
+body .ui-column-filter::-ms-input-placeholder {
+  color: #a1c8da;
+}
+
+body .ui-column-filter {
+  color:white;
+  border-bottom-color: #a1c8da;
+  border-bottom-width: 1px;
+}

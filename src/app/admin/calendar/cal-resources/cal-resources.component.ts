@@ -21,8 +21,8 @@ export class CalResourcesComponent implements OnInit {
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
 
-  @ViewChild(MatSelectionList)
-  matSelectionList: MatSelectionList;
+  // @ViewChild(MatSelectionList)
+  // matSelectionList: MatSelectionList;
 
 
   resources: any[] = [];
@@ -52,7 +52,8 @@ export class CalResourcesComponent implements OnInit {
     scale: "CellDuration",
     cellDuration: 30,
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
-    days: 7,
+    days: 6,
+    businessWeekends: true,
     startDate: this.selectedWorkWeek || this.getMonday(),
     heightSpec: "Max",
     height: 300,
@@ -185,45 +186,27 @@ export class CalResourcesComponent implements OnInit {
 
   ngOnInit() {
 
+    this.resources = [];
     this.selectedWorkWeek = this.getMonday();
 
-    this.resources = [];
-
-    this.resources =
-      [
-        {
-          "id": 1,
-          "name": "Justice Gonzales",
-          "description": "",
-          "court": 5,
-          "days": [{
-            "id": 9,
-            "start": "2018-01-01T04:00:00-05:00",
-            "end": "2018-01-01T07:00:00-05:00"
-          }]
-        },
-        {
-          "id": 2,
-          "name": "Master Cielto-Jones",
-          "description": "",
-          "court": 5,
-          "days": [{
-            "id": 9,
-            "start": "2018-01-02T04:00:00-05:00",
-            "end": "2018-01-02T07:00:00-05:00"
-          }]
-        }
-      ]
-
     // Handle mat-selection-list selection change via dom element so we can DeselectAll
-    this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
-      this.matSelectionList.deselectAll();
-      event.option.selected = true;
-      this.selectedResource = event.option.value;
-      this.copySelectedItem();
-    });
+    // this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
+    //   this.matSelectionList.deselectAll();
+    //   event.option.selected = true;
+    //   this.selectedResource = event.option.value;
+    //   this.copySelectedItem();
+    // });
 
     this.selectedResource = new CalResource();
+  }
+
+  resourceOnRowSelect(event) {
+    this.setSelectedLocation(event.data);
+  }
+
+  setSelectedLocation(resource) {
+    this.selectedResource = resource;
+    this.copySelectedItem();
   }
 
   ngOnDestroy() {
@@ -267,7 +250,7 @@ export class CalResourcesComponent implements OnInit {
   }
 
   createNewResource() {
-    this.matSelectionList.deselectAll();
+    // this.matSelectionList.deselectAll();
     this.selectedResource = new CalResource();
     this.copySelectedItem();
   }
@@ -558,10 +541,6 @@ export class CalResourcesComponent implements OnInit {
 
     this.selectedResource = this.resources[0];
     this.copySelectedItem();
-    setTimeout(() => {
-      if (this.matSelectionList.options.first)
-        this.matSelectionList.options.first.selected = true;
-    }, 100);
   }
 
   private updateList(result) {
