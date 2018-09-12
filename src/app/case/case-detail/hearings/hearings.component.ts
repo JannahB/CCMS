@@ -411,6 +411,8 @@ export class HearingsComponent implements OnInit {
   hearingOnRowSelect(event) {
     if (!this.hasPermission(this.Permission.UPDATE_CASE_HEARING)) return false;
     if (this.showDeleteHearingModal) return;
+    // this removes the gray box of the previously selected event
+    this.scheduler.control.clearSelection();
     this.setSelectedHearing(event.data);
   }
 
