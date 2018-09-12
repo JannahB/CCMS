@@ -18,14 +18,15 @@
   </div>
 
   <!-- Column 1 -->
-  <div class="ui-g-3 ui-sm-12 pl-0 pr-30">
+  <div class="ui-g-3 ui-sm-12 pl-0 pr-30 lite-table">
 
     <p-dataTable [value]="hearings"
                 selectionMode="single"
                 [(selection)]="selectedHearing"
                 (onRowSelect)="hearingOnRowSelect($event)"
                 scrollable="true" scrollHeight="360px"
-                dataKey="id" #dtHearings>
+                dataKey="id" #dtHearings
+                styleClass="lite-header">
       <p-column field="" header="Hearings" >
         <ng-template pTemplate="body" let-item="rowData">
           <h4 class="mb-10 mt-0">{{ item.hearingType?.name }}</h4>
@@ -183,9 +184,9 @@
     </div> -->
 
 
-    <div class="ui-g-12">
+    <!-- <div class="ui-g-12">
         <pre>{{selectedResource | json}}</pre>
-    </div>
+    </div> -->
   </div>
 
     <!-- ---------------- MODALS ---------------- -->

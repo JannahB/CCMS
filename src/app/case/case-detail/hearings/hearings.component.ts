@@ -57,8 +57,8 @@ export class HearingsComponent implements OnInit {
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
   blockedHours = [];
-  blockedFacilityColor = '#ddd2d2';
-  blockedJudgeColor = '#d3dee6';
+  blockedFacilityColor = '#e9e8e8';
+  blockedJudgeColor = '#eaedf0';
 
   // CALENDAR CONFIG OBJECT -----------
   // ----------------------------------

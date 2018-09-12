@@ -8,7 +8,7 @@
     <div class="ui-g-12 card">
 
       <!-- Column 1 -->
-      <div class="ui-g-3 ui-sm-12 mt-25">
+      <div class="ui-g-3 ui-sm-12 mt-25 lite-table">
         <p-dataTable [value]="resources"
                     selectionMode="single"
                     [(selection)]="selectedResource"
@@ -101,9 +101,9 @@
               </button>
           </div>
         </div>
-        <div class="ui-g-12">
+        <!-- <div class="ui-g-12">
             <pre>{{selectedResource | json}}</pre>
-        </div>
+        </div> -->
       </div>
 
       <!-- ---------------- MODALS ---------------- -->
