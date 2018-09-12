@@ -563,12 +563,18 @@ export class HearingsComponent implements OnInit {
   }
 
   deleteTimeBlock(id, userInitiated = false) {
-    this.hearingSvc.deleteCaseHearingTimeBlock(id)
-      .subscribe(result => {
-        console.log('Deleted Block ID:', id);
-        if (userInitiated) // TODO: Turn this on after testing complete
-          this.toastSvc.showInfoMessage('Hearing time block deleted.');
-      });
+    let idx = this.selectedHearing.days.findIndex(item => item.id == id);
+    if (idx > -1) {
+      this.hearings.splice(idx, 1);
+      this.saveHearing();
+    }
+
+    // this.hearingSvc.deleteCaseHearingTimeBlock(id)
+    //   .subscribe(result => {
+    //     console.log('Deleted Block ID:', id);
+    //     if (userInitiated) // TODO: Turn this on after testing complete
+    //       this.toastSvc.showInfoMessage('Hearing time block deleted.');
+    //   });
   }
 
   refreshCalendar() {
