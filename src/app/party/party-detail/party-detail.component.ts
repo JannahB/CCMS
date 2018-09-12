@@ -106,25 +106,25 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     });
     */
 
-    this.languageSubscription = this.languageSvc.getMock().subscribe(langs => {
+    this.languageSubscription = this.languageSvc.get().subscribe(langs => {
       this.languages = langs;
       // this.projectCopy = { ...this.project }
       console.log('languages', langs);
     });
 
-    this.identifierSubscription = this.identifierSvc.getMock().subscribe(items => {
+    this.identifierSubscription = this.identifierSvc.get().subscribe(items => {
       this.identifierTypes = items;
       this.identifierTypeOptions = this.dropdownSvc.transformSameLabelAndValue(this.identifierTypes, 'name');
     });
 
-    this.genericSubsciption = this.genericTypeSvc.getMock().subscribe(types => {
+    this.genericSubsciption = this.genericTypeSvc.get().subscribe(types => {
       let gTypes = this.dropdownSvc.transformSameLabelAndValue(types, 'name');
       this.emailTypes = gTypes;
       this.addressTypes = gTypes;
       this.phoneTypes = gTypes;
     });
 
-    this.countriesSubscription = this.countriesSvc.getMock().subscribe(countries => {
+    this.countriesSubscription = this.countriesSvc.get().subscribe(countries => {
       this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
     })
 

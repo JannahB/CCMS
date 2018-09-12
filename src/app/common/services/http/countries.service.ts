@@ -11,7 +11,7 @@ export class CountriesService extends HttpBaseService<any> {
 
   // Override Base URL's set in Super
   protected getBaseUrl(): string {
-    return `${super.getBaseUrl()}/FetchCountries`;
+    return `${super.getBaseUrl()}/api/countries`;
   }
 
   protected getBaseMockUrl(): string {

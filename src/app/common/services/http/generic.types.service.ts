@@ -11,7 +11,7 @@ export class GenericTypesService extends HttpBaseService<any> {
 
   // Override Base URL's set in Super
   protected getBaseUrl():string{
-    return `${super.getBaseUrl()}/FetchGenericTypes`;
+    return `${super.getBaseUrl()}/api/contact-types`;
   }
 
   protected getBaseMockUrl():string{
