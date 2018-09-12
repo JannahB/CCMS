@@ -45,6 +45,7 @@ export class HearingsComponent implements OnInit {
   hearings: CaseHearing[];
   selectedHearing: CaseHearing;
   selectedHearingBak: CaseHearing;
+  selectedHearingIdx: number;
   loadingDataFlag: boolean = false;
   hearingLocations: CourtLocation[];
   hearingTypes: HearingType[];
@@ -56,8 +57,8 @@ export class HearingsComponent implements OnInit {
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
   blockedHours = [];
-  blockedFacilityColor = '#dddddd';
-  blockedJudgeColor = '#bbc5cc';
+  blockedFacilityColor = '#ddd2d2';
+  blockedJudgeColor = '#d3dee6';
 
   // CALENDAR CONFIG OBJECT -----------
   // ----------------------------------
@@ -92,9 +93,9 @@ export class HearingsComponent implements OnInit {
         end: args.end,
         id: this.genLongId(),
         resource: args.resource,
-        text: 'Hearing'
+        text: this.getHearingName(),
       }));
-      this.saveItem();
+      this.saveHearing();
 
       // -------- MODAL EVENT NAMING - Use this block to present a naming modal to user ------
       // DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
@@ -192,17 +193,23 @@ export class HearingsComponent implements OnInit {
     eventMoveHandling: "Update",
     onEventMoved: args => {
       console.log('move', args);
+      this.saveHearing();
       // this.message("Event moved");
     },
     eventResizeHandling: "Update",
     onEventResized: args => {
       console.log('resize', args);
+      this.saveHearing();
       // this.message("Event resized");
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
+      console.log('--- selectedHearing 1', this.selectedHearing);
       // this.selectedResource.days = this.selectedResource.days.slice();
+      // var e = this.scheduler.events.find('123');
+      // this.scheduler.events.remove(e).notify();
       this.deleteTimeBlock(args.e.data.id, true);
+      console.log('--- selectedHearing 2', this.selectedHearing);
     }
   };
 
@@ -241,6 +248,10 @@ export class HearingsComponent implements OnInit {
 
   ngOnDestroy() {
     if (this.hearingSubscription) this.hearingSubscription.unsubscribe();
+  }
+
+  getHearingName() {
+    return this.selectedHearing.hearingType.hearingName || "New Hearing";
   }
 
   getLookups() {
@@ -472,16 +483,17 @@ export class HearingsComponent implements OnInit {
     this.hearingSvc
       .save(h)
       .subscribe(result => {
-        let resultHearing = result;
+        // let resultHearing = result;
+        this.updateList(result);
 
         // Get Index of Selected Hearing
-        let index: number = this.hearings.findIndex(a => a == this.selectedHearing);
+        // let index: number = this.hearings.findIndex(a => a == this.selectedHearing);
 
-        if (index >= 0) {
-          this.hearings[index] = resultHearing;
-        } else {
-          this.hearings.push(resultHearing);
-        }
+        // if (index >= 0) {
+        //   this.hearings[index] = resultHearing;
+        // } else {
+        //   this.hearings.push(resultHearing);
+        // }
         this.initHearingData();
         this.hearings = this.hearings.slice();
 
@@ -520,10 +532,6 @@ export class HearingsComponent implements OnInit {
     this.scheduler.control.update();
     this.getUnavailableBlocks();
     console.log('selectedWorkWeek', this.selectedWorkWeek);
-  }
-
-  saveItem() {
-    // console.log('BEFORE Save RESOURCE:', this.selectedResource);
   }
 
   cancelDataItemEdit(event) {
@@ -570,6 +578,38 @@ export class HearingsComponent implements OnInit {
 
   }
 
+  private setFirstListItem() {
+    if (!this.hearings || !this.hearings.length)
+      return;
+
+    this.selectedHearing = this.hearings[0];
+    this.copySelectedItem();
+  }
+
+  private updateList(result) {
+    let index: number = this.getIndexOfItem(result);
+
+    if (index >= 0) {
+      this.hearings[index] = result;
+      this.selectedHearing = this.hearings[index];
+    } else {
+      this.hearings.push(result);
+      this.selectedHearing = this.hearings[this.hearings.length - 1];
+    }
+    // This prevents event doubling phenom
+    this.selectedHearing.days = this.selectedHearing.days.slice();
+  }
+
+
+  private copySelectedItem() {
+    this.selectedHearingBak = Object.assign({}, this.selectedHearing);
+    this.selectedHearingIdx = this.getIndexOfItem(this.selectedHearing);
+  }
+
+  private getIndexOfItem(item = this.selectedHearing): number {
+    return this.hearings
+      .findIndex(itm => itm.id == item.id);
+  }
 
   // TODO: Move to util lib
   private genLongId() {
@@ -618,14 +658,6 @@ export class HearingsComponent implements OnInit {
   };
 
 
-  private copySelectedItem() {
-    this.selectedHearingBak = Object.assign({}, this.selectedHearing);
-    // this.selectedResourceIdx = this.getIndexOfItem(this.selectedResource);
-  }
 
-  private getIndexOfItem(item = this.selectedHearing): number {
-    return this.hearings
-      .findIndex(itm => itm.id == item.id);
-  }
 
 }
