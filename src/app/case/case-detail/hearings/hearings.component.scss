@@ -1,4 +1,35 @@
+$blockedFacilityColor: #ddd2d2;
+$blockedJudgeColor:#d3dee6;
+$bgAvailable: #ffffff;
+
+
 h2 {
   font-weight: 300;
   text-transform: uppercase;
+}
+
+.legend .item {
+  display: inline;
+  margin-right: 18px;
+
+  .box {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+  }
+  .txt {
+    font-size: 0.8em;
+    color: #777777;
+  }
+}
+
+.bg-loc {
+  background-color: $blockedFacilityColor;
+}
+.bg-res {
+  background-color: $blockedJudgeColor;
+}
+.bg-available {
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
 }

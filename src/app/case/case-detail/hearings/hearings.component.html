@@ -125,8 +125,22 @@
             <div class="ui-g-12">
               <div class="" *ngIf="selectedHearing">
                 <!-- CALENDAR -->
-                <daypilot-scheduler [config]="config" [events]="selectedHearing.days" #scheduler></daypilot-scheduler>
                 <p class="mv-0 muted-label">Click and drag to mark hours. </p>
+                <daypilot-scheduler [config]="config" [events]="selectedHearing.days" #scheduler></daypilot-scheduler>
+                <div class="legend mt-10">
+                  <div class="item">
+                    <div class="box bg-available" ></div>
+                    <span class="txt">Available</span>
+                  </div>
+                  <div class="item">
+                    <div class="box bg-loc"></div>
+                    <span class="txt">Location Unavailable</span>
+                  </div>
+                  <div class="item">
+                    <div class="box bg-res" ></div>
+                    <span class="txt">Judge Unavailable</span>
+                  </div>
+                </div>
               </div>
               <div class="ta-r">
 
