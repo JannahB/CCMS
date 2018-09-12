@@ -25,9 +25,9 @@ export class CalResourcesComponent implements OnInit {
   // matSelectionList: MatSelectionList;
 
 
-  resources: any[] = [];
-  selectedResource: any;
-  selectedResourceBak: any;
+  resources: CalResource[] = [];
+  selectedResource: CalResource;
+  selectedResourceBak: CalResource;
   selectedResourceIdx: number;
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
@@ -137,17 +137,20 @@ export class CalResourcesComponent implements OnInit {
     eventMoveHandling: "Update",
     onEventMoved: args => {
       console.log('move', args);
+      this.saveItem();
       // this.message("Event moved");
     },
     eventResizeHandling: "Update",
     onEventResized: args => {
       console.log('resize', args);
+      this.saveItem();
       // this.message("Event resized");
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
       // delete TemplateTime data.id
       this.selectedResource.days = this.selectedResource.days.slice();
+      this.saveItem();
       this.deleteTimeBlock(args.e.data.id, true);
       // console.log('delete', args);
     }
@@ -301,12 +304,18 @@ export class CalResourcesComponent implements OnInit {
   }
 
   deleteTimeBlock(id, userInitiated = false) {
-    this.calResourceSvc.deleteResourceTimeBlock(id)
-      .subscribe(result => {
-        console.log('Deleted Block ID:', id);
-        if (userInitiated) // TODO: Turn this on after testing complete
-          this.toastSvc.showInfoMessage('Time block deleted.');
-      });
+    let idx = this.selectedResource.days.findIndex(item => item.id == id);
+    if (idx > -1) {
+      this.resources.splice(idx, 1);
+      this.saveItem();
+    }
+
+    // this.calResourceSvc.deleteResourceTimeBlock(id)
+    //   .subscribe(result => {
+    //     console.log('Deleted Block ID:', id);
+    //     if (userInitiated) // TODO: Turn this on after testing complete
+    //       this.toastSvc.showInfoMessage('Time block deleted.');
+    //   });
   }
 
   refreshCalendar() {

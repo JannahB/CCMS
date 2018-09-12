@@ -315,12 +315,17 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   deleteTimeBlock(id, userInitiated = false) {
-    this.calCourtLocationSvc.deleteFacilityTimeBlock(id)
-      .subscribe(result => {
-        console.log('Deleted Block ID:', id);
-        if (userInitiated) // TODO: Turn this on after testing complete
-          this.toastSvc.showInfoMessage('Time block deleted.');
-      });
+    let idx = this.selectedFacility.days.findIndex(item => item.id == id);
+    if (idx > -1) {
+      this.facilities.splice(idx, 1);
+      this.saveItem();
+    }
+    // this.calCourtLocationSvc.deleteFacilityTimeBlock(id)
+    //   .subscribe(result => {
+    //     console.log('Deleted Block ID:', id);
+    //     if (userInitiated) // TODO: Turn this on after testing complete
+    //       this.toastSvc.showInfoMessage('Time block deleted.');
+    //   });
   }
 
   refreshCalendar() {
