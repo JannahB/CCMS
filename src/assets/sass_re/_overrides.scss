@@ -1,6 +1,9 @@
 // Overrides -------------
 
 body {
+
+  background: linear-gradient(to bottom, #E6EFF6, #e9fffb);
+
   .layout-wrapper{
     height: 100%;
     width: 100%;
@@ -259,7 +262,9 @@ body .ui-column-filter {
 // DATA TABLE --------------------------------------
 body .lite-table .ui-datatable {
 
-   .ui-datatable-thead > tr th {
+  box-shadow: 0px 3px 24px 0px #dddddd;
+
+  .ui-datatable-thead > tr th {
     background-color: white;
     color: #1A87BF;
   }
@@ -274,7 +279,7 @@ body .lite-table .ui-datatable {
     border: 1px solid #d1e3f1;
     box-shadow: 0px 4px 10px 1px #cccccc;
   }
-  // TEXT INPUT PLACEHOLDER --------------------------
+  // TEXT INPUT PLACEHOLDER within a p-datatable --------------------------
   .ui-column-filter::placeholder {
     color: #adadad;
   }
@@ -285,5 +290,6 @@ body .lite-table .ui-datatable {
     color: #1A87BF;
     border-bottom-color: #a1c8da;
     border-bottom-width: 1px;
+    margin-top: 15px;
   }
 }

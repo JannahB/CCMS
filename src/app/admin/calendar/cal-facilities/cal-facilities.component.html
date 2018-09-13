@@ -2,7 +2,7 @@
 
   <!-- HEADER -->
   <div class="ui-g-12 pv-0">
-    <h1 class="page-header mt-0">Facility Hours</h1>
+    <h1 class="page-header mt-0">Location Hours</h1>
   </div>
 
   <div class="ui-g-12 card">
@@ -13,27 +13,30 @@
                   selectionMode="single"
                   [(selection)]="selectedFacility"
                   (onRowSelect)="locationOnRowSelect($event)"
-                  scrollable="true" scrollHeight="338px"
+                  scrollable="true" scrollHeight="400px"
                   dataKey="id" #dtHearings>
         <p-column field="courtroom" header="Locations"
                   filter="true"
                   filterPlaceholder="search location name..."
                   filterMatchMode="contains" >
           <ng-template pTemplate="body" let-item="rowData">
-            <h4 class="mb-10 mt-0">{{ item?.courtroom }}</h4>
+            <p class="mv-5">{{ item?.courtroom }}</p>
           </ng-template>
         </p-column>
       </p-dataTable>
 
-      <button mat-raised-button color="primary" (click)="createNewFacility()" class="mt-15 width-full">
+      <!-- <button mat-raised-button color="primary" (click)="createNewFacility()" class="mt-15 width-full">
         <mat-icon aria-label="Add facility button">add</mat-icon>
         New Facility
-      </button>
+      </button> -->
     </div>
 
     <!-- Column 2 -->
     <div class="ui-g-9 ui-sm-12">
-      <div class="ui-g-4 pt-20">
+      <div class="ui-g-12 pt-20">
+        <h2 class="mv-0">{{ selectedFacility?.courtroom }} </h2>
+      </div>
+      <!-- <div class="ui-g-4 pt-20">
         <mat-form-field class="width-full">
           <input matInput name="tiName" #tiName="ngModel" placeholder="Facility name"
               [required]="true"
@@ -43,11 +46,11 @@
                 Please enter a Facility Name
             </div>
         </mat-form-field>
+      </div> -->
 
-      </div>
-      <div class="ui-g-8">
+      <div class="ui-g-12">
 
-        <label class="minimal primary block">Facility Tags</label>
+        <label class="minimal primary block">Location Tags</label>
         <span class="ui-fluid">
           <p-autoComplete name="acTags" #acTags="ngModel"
               [required]="false"
@@ -122,16 +125,16 @@
           <p class="mv-0 muted-label">Click and drag to mark available hours. </p>
         </div>
         <div class="ta-r">
-            <button mat-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
+            <!-- <button mat-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
               <mat-icon aria-label="Add facility button">delete</mat-icon>
               Delete Facility
-            </button>
+            </button> -->
             <button mat-raised-button color="primary" (click)="saveItem()" class="mt-30">
-              <mat-icon aria-label="Add facility button">check</mat-icon>
-              Save Facility
+              <mat-icon aria-label="Save location button">check</mat-icon>
+              Save Location Hours
             </button>
             <button mat-button color="secondary" (click)="cancelDataItemEdit()" class="mt-30">
-              <mat-icon aria-label="Add facility button">clear</mat-icon>
+              <mat-icon aria-label="Cancel facility hours button">clear</mat-icon>
               Cancel
             </button>
         </div>
