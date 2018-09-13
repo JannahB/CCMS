@@ -1,6 +1,4 @@
-import { CourtLocation } from './../../../common/entities/CourtLocation';
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
-import { MatSelectionList, MatSelectionListChange, MatListOption } from '@angular/material';
 import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
@@ -11,6 +9,7 @@ import { CalFacilityTag } from '../../../common/entities/CalFacilityTag';
 import { CalFacilityTime } from '../../../common/entities/CalFacilityTime';
 import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
 import { CalCourtLocationService } from "../../../common/services/http/calCourtLocation.service";
+import { CourtLocation } from './../../../common/entities/CourtLocation';
 
 @Component({
   selector: 'app-cal-facilities',
@@ -21,9 +20,6 @@ export class CalFacilitiesComponent implements OnInit {
 
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
-
-  // @ViewChild(MatSelectionList)
-  // matSelectionList: MatSelectionList;
 
   facilities: any[] = [];
   selectedFacility: any;
@@ -202,20 +198,13 @@ export class CalFacilitiesComponent implements OnInit {
       { id: 3, name: 'Video Conferencing' },
     ];
     this.filteredTags = this.facilityTags;
-
-    // Handle mat-selection-list selection change via dom element so we can DeselectAll
-    // this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
-    //   this.matSelectionList.deselectAll();
-    //   event.option.selected = true;
-    //   this.selectedFacility = event.option.value;
-    //   this.copySelectedItem();
-    // });
-
     this.selectedFacility = new CalFacility();
   }
 
   locationOnRowSelect(event) {
+    this.scheduler.control.clearSelection();
     this.setSelectedLocation(event.data);
+
   }
 
   setSelectedLocation(facility) {
@@ -270,8 +259,7 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   saveItem() {
-    //console.log('BEFORE Save Facility:', this.selectedFacility);
-
+    this.scheduler.control.clearSelection();
     this.calCourtLocationSvc.save(this.selectedFacility)
       .subscribe(result => {
         // console.log('AFTER Save Facility:', this.selectedFacility);

@@ -1,11 +1,9 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
-import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
-import { CalTemplate } from '../../../common/entities/CalTemplate';
 import { CalResourceService } from "../../../common/services/http/calResource.service";
 import { CalResource } from '../../../common/entities/CalResource';
 import { CalResourceTime } from '../../../common/entities/CalResourceTime';
@@ -148,11 +146,8 @@ export class CalResourcesComponent implements OnInit {
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
-      // delete TemplateTime data.id
-      this.selectedResource.days = this.selectedResource.days.slice();
       this.saveItem();
       this.deleteTimeBlock(args.e.data.id, true);
-      // console.log('delete', args);
     }
   };
 
@@ -191,19 +186,11 @@ export class CalResourcesComponent implements OnInit {
 
     this.resources = [];
     this.selectedWorkWeek = this.getMonday();
-
-    // Handle mat-selection-list selection change via dom element so we can DeselectAll
-    // this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
-    //   this.matSelectionList.deselectAll();
-    //   event.option.selected = true;
-    //   this.selectedResource = event.option.value;
-    //   this.copySelectedItem();
-    // });
-
     this.selectedResource = new CalResource();
   }
 
   resourceOnRowSelect(event) {
+    this.scheduler.control.clearSelection();
     this.setSelectedLocation(event.data);
   }
 
@@ -260,7 +247,7 @@ export class CalResourcesComponent implements OnInit {
 
   saveItem() {
     // console.log('BEFORE Save RESOURCE:', this.selectedResource);
-
+    this.scheduler.control.clearSelection();
     this.calResourceSvc.save(this.selectedResource)
       .subscribe(result => {
         // console.log('AFTER Save RESOURCE:', this.selectedResource);
@@ -309,13 +296,6 @@ export class CalResourcesComponent implements OnInit {
       this.resources.splice(idx, 1);
       this.saveItem();
     }
-
-    // this.calResourceSvc.deleteResourceTimeBlock(id)
-    //   .subscribe(result => {
-    //     console.log('Deleted Block ID:', id);
-    //     if (userInitiated) // TODO: Turn this on after testing complete
-    //       this.toastSvc.showInfoMessage('Time block deleted.');
-    //   });
   }
 
   refreshCalendar() {
@@ -332,8 +312,6 @@ export class CalResourcesComponent implements OnInit {
     this.showChooseTemplateModal = true;
   }
 
-  // mat-selection-list "selectionChange" does not work when in a modal,
-  // so solving it by handling mat-list-option (selectionChange) here
   onTemplateSelectionChange(event, template) {
 
     // deselect all others & set selected

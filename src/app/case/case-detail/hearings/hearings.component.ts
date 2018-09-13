@@ -472,6 +472,7 @@ export class HearingsComponent implements OnInit {
   }
 
   saveHearing() {
+    this.scheduler.control.clearSelection();
     let h = this.selectedHearing
     if (!h.courtLocationId || !h.hearingTypeId || !h.judicialOfficerId) {
       this.toastSvc.showInfoMessage('Please complete all fields and try again.');

@@ -182,6 +182,7 @@ export class CalTemplatesComponent implements OnInit {
       event.option.selected = true;
       this.selectedTemplate = event.option.value;
       this.copySelectedItem();
+      this.scheduler.control.clearSelection();
     });
 
     // Temp selected item
@@ -210,7 +211,7 @@ export class CalTemplatesComponent implements OnInit {
   }
 
   saveItem() {
-
+    this.scheduler.control.clearSelection();
     this.calendarSvc.save(this.selectedTemplate)
       .subscribe(result => {
         this.updateList(result);
