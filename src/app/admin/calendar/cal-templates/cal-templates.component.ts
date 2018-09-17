@@ -147,6 +147,7 @@ export class CalTemplatesComponent implements OnInit {
         //
 
         this.deleteTimeBlock(args.e.data.id);
+        this.saveItem();
 
         // this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)
         //   .subscribe(result => {
@@ -235,8 +236,8 @@ export class CalTemplatesComponent implements OnInit {
   deleteTimeBlock(id, userInitiated = false) {
     let idx = this.selectedTemplate.days.findIndex(item => item.id == id);
     if (idx > -1) {
-      this.templates.splice(idx, 1);
-      this.saveItem();
+      this.selectedTemplate.days.splice(idx, 1);
+      // this.saveItem();
     }
   }
 

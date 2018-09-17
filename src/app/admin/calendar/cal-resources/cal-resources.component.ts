@@ -146,8 +146,8 @@ export class CalResourcesComponent implements OnInit {
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
-      this.saveItem();
       this.deleteTimeBlock(args.e.data.id, true);
+      this.saveItem();
     }
   };
 
@@ -293,8 +293,8 @@ export class CalResourcesComponent implements OnInit {
   deleteTimeBlock(id, userInitiated = false) {
     let idx = this.selectedResource.days.findIndex(item => item.id == id);
     if (idx > -1) {
-      this.resources.splice(idx, 1);
-      this.saveItem();
+      this.selectedResource.days.splice(idx, 1);
+      // this.saveItem();
     }
   }
 

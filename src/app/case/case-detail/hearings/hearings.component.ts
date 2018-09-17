@@ -566,7 +566,7 @@ export class HearingsComponent implements OnInit {
   deleteTimeBlock(id, userInitiated = false) {
     let idx = this.selectedHearing.days.findIndex(item => item.id == id);
     if (idx > -1) {
-      this.hearings.splice(idx, 1);
+      this.selectedHearing.days.splice(idx, 1);
       this.saveHearing();
     }
 
