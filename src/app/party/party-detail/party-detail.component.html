@@ -53,10 +53,25 @@
                    Please enter the Full Name
               </div>
             </div>
-            <div class="ui-g-12 mb-0">
+
+            <div class="ui-g-12 mb-20">
               <span class="md-inputfield">
                 <input type="text" pInputText [(ngModel)]="party.alternativeName">
-                <label>Alternative Name</label>
+                <label>Alias 1</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                <input type="text" pInputText [(ngModel)]="party.alternativeName2">
+                <label>Alias 2</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 mb-20      ">
+              <span class="md-inputfield">
+                <input type="text" pInputText [(ngModel)]="party.alternativeName3">
+                <label>Alias 3</label>
               </span>
             </div>
           </div>
@@ -85,7 +100,7 @@
             <div class="ui-g-12 mb-0">
               <label class="minimal primary block">Sex</label>
                 <p-dropdown
-                    placeholder="choose gender"
+                    placeholder="Choose Sex"
 
                     [options]="genderTypes"
                     [(ngModel)]="party.sex"
@@ -124,8 +139,12 @@
 
           <div class="ui-g-12 pt-0">
             <label class="minimal block primary">Notes</label>
-            <textarea [rows]="3" [cols]="30" [(ngModel)]="party.notes" pInputTextarea placeholder="Notes" styleClass="width-full" autoResize="autoResize"></textarea>
+            <textarea [rows]="3" [cols]="30" [(ngModel)]="party.notes" 
+            pInputTextarea placeholder="Notes" 
+            styleClass="width-full" 
+            autoResize="autoResize"></textarea>
           </div>
+          
           <div class="ui-g-12 ta-r" *ngIf="hasPermission(Permission.UPDATE_PARTY)">
               <button type="button"
                       label="Cancel"
@@ -565,21 +584,21 @@
           <div class="ui-g-12 ui-md-4 mb-20">
             <span class="md-inputfield">
               <input [(ngModel)]="selectedAddress.address1"  type="text" pInputText>
-              <label>Address 1</label>
+              <label>LP# / House Number</label>
             </span>
           </div>
 
           <div class="ui-g-12 ui-md-4 mb-20">
             <span class="md-inputfield">
               <input [(ngModel)]="selectedAddress.address2"  type="text" pInputText>
-              <label>Address 2</label>
+              <label>Street Name 1</label>
             </span>
           </div>
 
           <div class="ui-g-12 ui-md-4 mb-20">
             <span class="md-inputfield">
               <input [(ngModel)]="selectedAddress.address3" type="text" pInputText>
-              <label>Address 3</label>
+              <label>Street Name 2</label>
             </span>
           </div>
 
@@ -607,14 +626,14 @@
           <div class="ui-g-12 ui-md-6 mb-20">
             <span class="md-inputfield">
               <input [(ngModel)]="selectedAddress.municipalityName"  type="text" pInputText>
-              <label>City</label>
+              <label>City / Town </label>
             </span>
           </div>
 
           <div class="ui-g-12 ui-md-6 mb-20 mt-n-20">
             <label class="minimal primary block">Country</label>
             <p-dropdown
-              placeholder="choose country"
+              placeholder="Choose Country"
               [(ngModel)]="selectedAddress.countryName"
               [options]="countries"
               [style]="{'width':'100%'}"

@@ -20,6 +20,7 @@ import { IccsCode } from '../../entities/IccsCode';
 import { DatePipe } from '@angular/common';
 import { CaseParty } from '../../entities/CaseParty';
 import { ChargeFactor } from '../../entities/ChargeFactor';
+import { ChargeFactorVariable } from '../../entities/ChargeFactorVariable';
 import { CasePartyRole } from '../../entities/CasePartyRole';
 import { DocTemplate } from '../../entities/DocTemplate';
 import { Http, RequestOptionsArgs, Headers, ResponseContentType } from '@angular/http';
@@ -33,6 +34,7 @@ import { CaseStatus } from '../../entities/CaseStatus';
 import { CasePhase } from '../../entities/CasePhase';
 import { CaseHearingDTO } from '../../entities/CaseHearingDTO';
 import { LocalCharge } from '../../entities/LocalCharge';
+import { nullSafeIsEquivalent } from '@angular/compiler/src/output/output_ast';
 
 
 @Injectable()
@@ -275,6 +277,12 @@ export class CaseService extends HttpBaseService<Case> {
 
     return this.http.post<ChargeFactor[]>(url, "");
   }
+  //RS Implementing Charge Factor Variables ---- This needs to be implemented on the BackEnd of in the Service Folder
+  public fetchChargeFactorVariables(): Observable<ChargeFactorVariable[]> {
+    let url: string = `${super.getBaseUrl()}/FetchChargeFactorVariables`;
+
+    return this.http.post<ChargeFactorVariable[]>(url, "");
+  }
 
   public fetchLocalCharge():Observable<LocalCharge[]>{
     let url:string = `${super.getBaseUrl()}/FetchLocalCharge`;
@@ -284,6 +292,7 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public saveCourtCase(data: Case): Observable<Case> {
+    
     var caseData: any = {
       caseCaption: data.caseCaption || '',
       caseFilingDate: null,
@@ -292,8 +301,19 @@ export class CaseService extends HttpBaseService<Case> {
       casePhase: null,
       caseWeight: "0",
       caseParties: [],
-      caseCharges: []
+      caseCharges: [],
+      prevCaseNumber: null,
+      caseNotes: null
+
     };
+    //RS
+    if (data.prevCaseNumber)
+    caseData.prevCaseNumber = data.prevCaseNumber.toString();
+
+    if (data.caseNotes)
+      caseData.caseNotes = data.caseNotes.toString();
+    //RS
+
     if (data.caseOID)
       caseData.caseOID = data.caseOID.toString();
 
@@ -331,7 +351,7 @@ export class CaseService extends HttpBaseService<Case> {
         };
         if (value.localCharge)
           charge.localChargeOID = value.localCharge.localChargeOID.toString();
-        value.chargeFactors.forEach(factor => {
+          value.chargeFactors.forEach(factor => {
           charge.factors.push(factor.chargeFactorOID.toString());
         });
         caseData.caseCharges.push(charge);

@@ -1,6 +1,7 @@
 import { IccsCode } from './IccsCode';
 import { CasePhase } from './CasePhase';
 import { ChargeFactor } from './ChargeFactor';
+import {ChargeFactorVariable} from './ChargeFactorVariable';
 import { CaseType } from './CaseType';
 import { TaskType } from './TaskType';
 import { CaseStatus } from './CaseStatus';
@@ -19,6 +20,7 @@ export class Court {
   caseTaskTypes: TaskType[];
   caseTypes: CaseType[];
   chargeFactors: ChargeFactor[];
+  chargeFactorVariable: ChargeFactorVariable[];
   courtLocations: CourtLocation[];
   courtName: string; 
   courtOID: number; 

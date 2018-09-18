@@ -24,6 +24,7 @@ import { Party } from './../../common/entities/Party';
 import { TaskType } from '../../common/entities/TaskType';
 import { IccsCode } from '../../common/entities/IccsCode';
 import { ChargeFactor } from '../../common/entities/ChargeFactor';
+import { ChargeFactorVariable } from '../../common/entities/ChargeFactorVariable'; //RS
 import { ToastService } from '../../common/services/utility/toast.service';
 import { CollectionUtil } from '../../common/utils/collection-util';
 import { PartyService } from '../../common/services/http/party.service';
@@ -46,7 +47,6 @@ import { UserService } from './../../common/services/utility/user.service';
 import { Permission } from './../../common/entities/Permission';
 import { LocalCharge } from '../../common/entities/LocalCharge';
 import { IccsCodeCategory } from '../../common/entities/IccsCodeCategory';
-
 
 @Component({
   selector: 'app-case-detail',
@@ -515,10 +515,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   chargeLawTypes: any[];
   selectedChargeLawType: any;
   leaLeadChargeText: string;
+
   chargeFactorTypes: ChargeFactor[];        // FetchChargeFactor GET
   selectedChargeFactors: ChargeFactor[];
   filteredChargeFactorTypes: ChargeFactor[];
   lastSelectedTypeLocalCharges: any[] = [];
+
+  //RS Implementing Charge Factor Variables
+  chargeFactorVariables: ChargeFactorVariable[];        
+  selectedChargeFactorVariables: ChargeFactorVariable[];
+  filteredChargeFactorVariables: ChargeFactorVariable[];
+  
 
   onAddCaseCharge(caseChargeForm) {
     if (!this.case.caseOID || this.case.caseOID == 0) {
@@ -541,6 +548,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .subscribe(chargeFactors => {
         this.chargeFactorTypes = chargeFactors;
         this.filteredChargeFactorTypes = chargeFactors;
+      });
+
+      
+      //RS Implementing Charge Factor Variables in UI
+
+      this.caseSvc
+      .fetchChargeFactorVariables()
+      .subscribe(chargeFactorVariables => {
+        this.chargeFactorVariables = chargeFactorVariables;
+        this.filteredChargeFactorVariables = chargeFactorVariables;
       });
   }
 
@@ -674,6 +691,50 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     return filtered;
   }
 
+  //RS Implementing Charge Factor Variables, the results returned are based on the user's selection of a charge factor
+  getChargeFactorsVariablesToFilter(event) {
+    let query = event.query;
+    this.filteredChargeFactorVariables = this.filterChargeFactorVariables(query, this.chargeFactorVariables);
+  }
+
+  filterChargeFactorVariables(query, cfVariable: any[]): any[] {
+    
+    let filtered: any [] = cfVariable;
+    let desc: string = null;
+
+    for (let i = 0; i < cfVariable.length; i++) {
+      
+        if(this.chargeFactorVariables[i].chargeFactorName = 'At')
+        console.log(this.chargeFactorVariables[i].chargeFactorVariableDescription);
+     
+    }
+    return filtered;
+  }
+
+  /*filterChargeFactorsVariables(query, chargeFactorVariables: any[]): any[] {
+    
+    let cfname: string = this.selectedChargeFactors.toString();
+    let filtered: any[] = [];
+
+
+     console.log(cfname);
+
+      for (let j = 0; j< this.chargeFactorVariables.length; j++){
+
+          let cfv = this.chargeFactorVariables[j];
+          if (cfname == cfv.chargeFactorVariableDescription) {
+            console.log("Charge Factor Variable Name is "+ cfv.chargeFactorName + " "+cfv.chargeFactorVariableDescription);
+            filtered.push(cfv.chargeFactorVariableDescription);
+          }
+      }
+ 
+    return filtered;
+  }
+  //RS Implementing Charge Factor Variables*/
+  
+
+
+
   saveCaseCharge() {
     let charge: CaseCharge;
 
@@ -695,6 +756,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     charge.courtOID = this.case.court.courtOID;
     charge.chargeFactors = this.selectedChargeFactors;
     charge.iccsCode = iccsCode;
+
+    //RS Retrieve Charge Factor Variables from
+    charge.chargeFactorVariables = this.chargeFactorVariables
 
     if (iccsCode) {
       charge.iccsChargeCategoryOID = iccsCode.iccsCodeOID;

@@ -34,6 +34,8 @@
       </div>
     </div>
 
+    
+
     <div class="ui-g-12 ">
       <form #caseForm="ngForm" novalidate>
         <div *ngIf="case">
@@ -74,10 +76,24 @@
                 </div>
             </div>
 
-            <div class="ui-g-12 ui-md-6 mt-25" *ngIf="case.caseOID > 0">
+            <!-- Adding Previous Case Number -->
+            <div class="ui-g-12 ui-md-3 mt-25" *ngIf="case.caseOID > 0">
+                <span class="md-inputfield">
+                  <input pInputText type="text" 
+                        #tiprevCaseNumber="ngModel" 
+                        required name="tiprevCaseNumber"
+                        [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                        [(ngModel)]="case.prevCaseNumber"
+                        class="width-full" >
+                  <label>Previous Case Number</label>
+                </span>
+                
+              </div>            
+
+            <!-- Case Caption Field -->  
+            <div class="ui-g-12 ui-md-3 mt-25" *ngIf="case.caseOID > 0">
               <span class="md-inputfield">
-                <!-- TODO: HANDLE BOTH CREATE_CASE &&  -->
-                <input pInputText type="text" #tiCaseCaption="ngModel" required name="tiCaseCaption"
+                  <input pInputText type="text" #tiCaseCaption="ngModel" required name="tiCaseCaption"
                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                       [(ngModel)]="case.caseCaption"
                       class="width-full" >
@@ -88,7 +104,10 @@
                     Please enter a Case Caption
               </div>
             </div>
+
           </div>
+
+
 
           <div class="ui-g-12 ui">
 
@@ -145,10 +164,29 @@
                     Please choose a Case Phase
               </div>
             </div>
+                      
+            
           </div>
+            
+          <!-- Adding Case Notes Field  -->
+            <div class="ui-g-12 mb-20" *ngIf="case.caseOID > 0">
+                <label class="minimal primary block">Case Notes</label>
+                  <textarea name="tiCaseNotes"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      [rows]="2"
+                      [cols]="30"
+                      autoResize="autoResize"
+                      pInputTextarea placeholder="Enter Case Notes"
+                      [(ngModel)]="case.caseNotes"
+                      class="width-full">
+                   </textarea>
+            </div>
 
 
-          <!-- CASE PARTIES TABLE -->
+
+         
+
+        <!-- CASE PARTIES TABLE -->
 
           <div class="ui-g-12 mt-20 ph-0">
 
@@ -293,8 +331,8 @@
                           scrollable="true" scrollHeight="200px"
                           dataKey="caseChargeOID" #dtCharges>
                 <p-column field="iccsCode.categoryIdentifier" header="UN Code" [style]="{'width':'7%'}"></p-column>
-                <p-column field="iccsCode.categoryName" header="Description" [style]="{'width':'15%'}"></p-column>
-                <p-column field="leaChargingDetails" header="Charge Description" [style]="{'width':'15%'}"></p-column>
+                <p-column field="iccsCode.categoryName" header="UNODC Charge Description" [style]="{'width':'15%'}"></p-column>
+                <p-column field="leaChargingDetails" header="Police Description" [style]="{'width':'15%'}"></p-column>
                 <p-column field="" header="Charge Factors" [style]="{'width':'25%'}">
                     <ng-template pTemplate="body" let-item="rowData">
                       <div *ngFor="let factor of item.chargeFactors; let i = index">
@@ -302,7 +340,7 @@
                       </div>
                     </ng-template>
                 </p-column>
-                <p-column field="localCharge.localLaw" header="Charge/Law" [style]="{'width':'30%'}"></p-column>
+                <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
                 <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
@@ -567,7 +605,7 @@
 
                   <p-column field="hearingType.hearingName" header="Hearing Type" [style]="{'width':'25%'}"></p-column>
                   <p-column field="courtLoc.locationID" header="Location" [style]="{'width':'15%'}"></p-column>
-                  <p-column field="" header="Assigned" [style]="{'width':'20%'}">
+                  <p-column field="" header="Sitting Judicial Officer" [style]="{'width':'20%'}">
                       <ng-template pTemplate="body" let-item="rowData">
                           {{ item.judicialOfficer?.firstName + ' ' + item.judicialOfficer?.lastName }}
                       </ng-template>
@@ -1180,10 +1218,10 @@
         </div>
 
         <div class="ui-g-12 mb-0 feature-box">
-          <p>Enter Charge/Law First</p>
+          <p>Enter Charge</p>
           <div class="feature-box-inner">
-            <label class="minimal primary block">Charge/Law</label>
-            <custom-autocomplete name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel" placeholder="choose Charge/Law..."
+            <label class="minimal primary block">Charge</label>
+            <custom-autocomplete name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel" placeholder="choose Charge..."
               [required]="true"
               [options]="chargeLawTypes"
               labelField="localCharge"
@@ -1214,7 +1252,7 @@
         </div>
 
         <div class="ui-g-12">
-          <label class="minimal primary block" for="tiLea">Police Lead Charge</label>
+          <label class="minimal primary block" for="tiLea">Police Description</label>
           <textarea id="tiLea" name="tiLea" #tiLea="ngModel"
                     [required]="true"
                     [(ngModel)]="leaLeadChargeText"
@@ -1224,11 +1262,13 @@
                     class="width-full"></textarea>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="tiLea.errors?.required && tiLea.touched" >
-                Police Lead Charge is required
+                Police Description is required
           </div>
         </div>
 
         <div class="ui-g-12 ">
+
+          <div class="ui-g-12 ui-md-6">
           <label class="minimal primary block">Charge Factors</label>
           <span class="ui-fluid">
             <p-autoComplete name="acChargeFactors" #acChargeFactors="ngModel"
@@ -1242,13 +1282,41 @@
                 placeholder="select Charge Factors"
                 [dropdown]="true"
                 appendTo="body"
-                [multiple]="true">
+                [multiple]="false">
             </p-autoComplete>
           </span>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="acChargeFactors.errors?.required && acChargeFactors.touched" >
                 One or more Charge Factors are required.
           </div>
+        </div>
+
+        <!--(completeMethod)="getChargeFactorsVariablesToFilter($event)" Taken out by RS-->
+        <div class="ui-g-12 ui-md-6">
+            <label class="minimal primary block">Charge Factor Variable</label>
+            <span class="ui-fluid">
+              <p-autoComplete name="acChargeFactorVariable" #acChargeFactorVariable="ngModel"
+                  [required]="false"
+                  field="chargeFactorVariableDesc"
+                  (completeMethod)= "getChargeFactorsVariablesToFilter($event)"
+                  [(ngModel)]="selectedChargeFactorVariables"
+                  [suggestions]="filteredChargeFactorVariables"
+                  styleClass="width-full"
+                  [minLength]="1"
+                  placeholder="select Charge Factor Variables"
+                  [dropdown]="true"
+                  appendTo="body"
+                  [multiple]="false">
+              </p-autoComplete>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="acChargeFactors.errors?.required && acChargeFactors.touched" >
+                  One or more Charge Factor Variables are required.
+            </div>
+          </div>
+
+
+
         </div>
 
       </div>
@@ -1260,6 +1328,8 @@
                   (click)="saveCaseCharge()"
                   [disabled]="!caseChargeForm.form.valid"></button>
           <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+
+          <!--Add button to add multiple charge factors-->
         </div>
     </p-footer>
 
