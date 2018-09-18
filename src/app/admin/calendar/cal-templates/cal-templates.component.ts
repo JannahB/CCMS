@@ -146,7 +146,9 @@ export class CalTemplatesComponent implements OnInit {
         //       EntityNotFoundException: Unable to find org.ncsc.ccms.domain.TemplateTimes with id 68
         //
 
-        this.deleteTimeBlock(args.e.data.id);
+        // NOTE: no need for explicit remove since binding removes the time block
+        // this.deleteTimeBlock(args.e.data.id, true);
+        this.selectedTemplate.days = this.selectedTemplate.days.slice();
         this.saveItem();
 
         // this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)

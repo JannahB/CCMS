@@ -205,10 +205,12 @@ export class HearingsComponent implements OnInit {
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
       console.log('--- selectedHearing 1', this.selectedHearing);
-      // this.selectedResource.days = this.selectedResource.days.slice();
       // var e = this.scheduler.events.find('123');
       // this.scheduler.events.remove(e).notify();
-      this.deleteTimeBlock(args.e.data.id, true);
+      // NOTE: no need for explicit remove since binding removes the time block
+      // this.deleteTimeBlock(args.e.data.id, true);
+      this.selectedHearing.days = this.selectedHearing.days.slice();
+      this.saveHearing();
       console.log('--- selectedHearing 2', this.selectedHearing);
     }
   };
