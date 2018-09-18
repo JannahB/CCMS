@@ -2,6 +2,71 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.0"></a>
+# [1.9.0](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.5.2...v1.9.0) (2018-09-18)
+
+
+### Bug Fixes
+
+* **app:** remove unused routes ([0a4c7ad](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/0a4c7ad))
+* **Calendar:** remove more instances of pesky gray selection box ([7634df7](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/7634df7))
+* **Calendar:** replace direct timeblock delete with save parent object ([04e43a1](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/04e43a1))
+* **Calendar:** save parent item on delete time block ([1562ec0](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/1562ec0))
+* **CourtManager:** add route guard to app module imports ([c98fc4c](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/c98fc4c))
+* **env:** change comment tag to javascript valid tag ([fc1f127](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/fc1f127))
+* **Hearing:** replace Date with DayPilot.Date to neutralize time zone issues ([0c3394b](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/0c3394b))
+* **Hearing:** save parent item on time block delete ([fab8413](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/fab8413))
+* **Hearings:** remove direct time block delete ([eda0acf](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/eda0acf))
+* **Hearings:** remove pesky gray selection box ([303e7e9](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/303e7e9))
+* **Menu:** dynamic menu duplicating admin menu ([adedbfa](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/adedbfa))
+* **Security:** AC-333 attempt to suppress excessive 500s after a 401 is thrown ([cfd93c4](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/cfd93c4))
+
+
+### Features
+
+* environment variables set at release time ([ceb4b7f](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/ceb4b7f))
+* **app:** cast generic <T> to put and post ([2cd4e42](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/2cd4e42))
+* **app:** simplify Table Data menu item ([0374ae4](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/0374ae4))
+* **app:** zero-out environment.ts ([dcf594b](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/dcf594b))
+* **Assignment:** add allowJudgeAssignMgmtFeature flag ([3db5ab5](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/3db5ab5))
+* **AssignmentMgr:** add assignment manager component, routes and menu item ([bfda192](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/bfda192))
+* **Calendar:** add text search for cal facilities ([23b07c7](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/23b07c7))
+* **Calendar:** add text search for cal resources ([2f5ea9b](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/2f5ea9b))
+* **Calendar:** calUtils used by cal-facilities, cal-resources, and hearings ([7a700f4](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/7a700f4))
+* **Calendar:** factor out calendar util methods ([5c1b049](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/5c1b049))
+* **Calendar:** refactor Facilities to use CourtLocation ([aa45b0a](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/aa45b0a))
+* **Calendar:** show saturday on facility calendar ([797cd80](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/797cd80))
+* **Calendar:** type cast start/end dates as any to support DayPilot.Date ([c4090c0](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/c4090c0))
+* **CaseCounts:** add breadcrumb ([4be98ff](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/4be98ff))
+* **CourtManager:** add support for court manager user role ([47ee0c3](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/47ee0c3))
+* **CourtManager:** dynamic menu for admin or court manager ([2773e28](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/2773e28))
+* **Hearings:** add `tags` property to BaseTimeBlock ([b3941fc](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/b3941fc))
+* **Hearings:** add hearing service ([af55d4d](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/af55d4d))
+* **Hearings:** bind controls to selectedHearing ([6fd5394](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/6fd5394))
+* **Hearings:** facility unavailable layer ([821c8b4](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/821c8b4))
+* **Hearings:** format blocked hour cells for location and judge ([ffcaa98](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/ffcaa98))
+* **Hearings:** got baseline enities and service working w legacy EPs. ([4101a30](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/4101a30))
+* **Hearings:** hearings component to support new lookups and hearing entity ([21209fa](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/21209fa))
+* **Hearings:** initialize caseHearing data on instantiation ([e5047f8](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/e5047f8))
+* **Hearings:** make name field settable to support first/last name concat ([cdd8503](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/cdd8503))
+* **Hearings:** refactor entities to support new proper definitions ([bcdd66f](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/bcdd66f))
+* **Hearings:** refactor unavailableBlocks EP ([47f00fd](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/47f00fd))
+* **Hearings:** save caseHearing sans time blocks ([3f4cbdf](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/3f4cbdf))
+* **Hearings:** serialize outbound dates as Zulu ([989f9d5](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/989f9d5))
+* **Hearings:** set instantiation defaults on casehearing entity ([5014516](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/5014516))
+* **Hearings:** setup getUnavailableBlocks() ([da5424d](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/da5424d))
+* **Hearings:** support post & put with single save() service method ([3f46867](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/3f46867))
+* **lookups:** Changing mockup calls to actual EPs ([38b2e3e](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/38b2e3e))
+* **PdfViewer:** add placeholder for pdfViewer pages ([d1cfd81](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/d1cfd81))
+* **Pipeline:** exit on empty config object to allow ENVs to work during development ([6cd37ce](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/6cd37ce))
+* **Schedule:** add legend ([cb01063](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/cb01063))
+* **Schedule:** ligter style ([eec0854](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/eec0854))
+* **Schedule:** save hearing on all time block edits ([7096488](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/7096488))
+* **Scheduling:** initial hearings page controls layout ([7eb1b3a](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/7eb1b3a))
+* **Scheduling:** initial wiring of hearings component ([15dbf95](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/15dbf95))
+
+
+
 <a name="1.5.2"></a>
 ## [1.5.2](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.5.1...v1.5.2) (2018-08-07)
 
