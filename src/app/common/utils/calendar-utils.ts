@@ -1,3 +1,4 @@
+import { DayPilot } from 'daypilot-pro-angular';
 import { DateValidatorService } from '../services/utility/dates/date-validator.service';
 import * as moment from 'moment';
 
@@ -10,6 +11,12 @@ export class CalendarUtils {
     if (!dob || !this.dateValidator.isDate(dob)) return;
 
     return moment().diff(dob, 'years');
+  }
+
+  public static getMonday(date = new Date().toDateString()) {
+    let d = new Date(date);
+    let diff = (d.getDate() - d.getDay()) + 1;
+    return new Date(d.setDate(diff));
   }
 
   public static makeDPDateConstructorString(y, m, d, hr, mn): string {
@@ -57,31 +64,6 @@ export class CalendarUtils {
   };
 
 
-  // -------- APPLY TO NEXT WEEK SECTION ------------ //
-
-  // public applyToNextWeek() {
-
-  //   let days = this.selectedFacility.days;
-
-  //   // REMOVE TIME BLOCKS IN UPCOMING WEEK
-  //   let daysSansNextWeekDays = this.removeDatesWithinASpan(days, this.selectedWorkWeek.addDays(7), 6);
-  //   console.log('1. days Sans Next Weeks time blocks', daysSansNextWeekDays);
-
-  //   // FIND TIME BLOCKS IN THIS WEEK DATES TO APPLY TO NEXT WEEK
-  //   let newTimeBlocks = this.findDatesWithinASpan(days, this.selectedWorkWeek, 6);
-  //   console.log('2. matching Time Blocks', newTimeBlocks);
-
-  //   // CONVERT THIS WEEK'S TIME BLOCKS TO NEXT WEEK TIME BLOCKS
-  //   this.convertTimeBlocksToNextWeek(newTimeBlocks);
-  //   this.onSelectWorkWeek(this.selectedWorkWeek.addDays(7).toISOString());
-  //   this.scheduler.control.update();
-
-  //   setTimeout(() => {
-  //     this.saveItem()
-  //     this.toastSvc.showInfoMessage('Week Saved!', 'The calendar has advanced to the following week.')
-  //   }, 300);
-  // }
-
   // TODO: move to util lib
   public static isWithinRangeByDay(day, start, end) {
     let s = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0);
@@ -125,6 +107,21 @@ export class CalendarUtils {
     }
     console.log('Deleted items', deletedItems);
     return arr;
+  }
+
+  public static convertTimeBlocksToNextWeek(arr): any[] {
+    let nextWeeksItems = [];
+    arr.forEach(block => {
+      block.start = new DayPilot.Date(block.start).addDays(7);
+      block.end = new DayPilot.Date(block.end).addDays(7);
+      block.id = this.genLongId();
+      nextWeeksItems.push(block);
+    })
+    return nextWeeksItems;
+  }
+
+  public static genLongId() {
+    return Math.round((Math.random() * 10000000000000000))
   }
 
 }

@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
-import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
 import { BreadcrumbService } from '../../../breadcrumb.service';
@@ -8,6 +7,7 @@ import { CalResourceService } from "../../../common/services/http/calResource.se
 import { CalResource } from '../../../common/entities/CalResource';
 import { CalResourceTime } from '../../../common/entities/CalResourceTime';
 import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
+import { CalendarUtils } from './../../../common/utils/calendar-utils';
 
 @Component({
   selector: 'app-cal-resources',
@@ -18,10 +18,6 @@ export class CalResourcesComponent implements OnInit {
 
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
-
-  // @ViewChild(MatSelectionList)
-  // matSelectionList: MatSelectionList;
-
 
   resources: CalResource[] = [];
   selectedResource: CalResource;
@@ -52,7 +48,7 @@ export class CalResourcesComponent implements OnInit {
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
     days: 6,
     businessWeekends: true,
-    startDate: this.selectedWorkWeek || this.getMonday(),
+    startDate: this.selectedWorkWeek || CalendarUtils.getMonday(),
     heightSpec: "Max",
     height: 300,
 
@@ -64,7 +60,7 @@ export class CalResourcesComponent implements OnInit {
       dp.events.add(new DayPilot.Event({
         start: args.start,
         end: args.end,
-        id: this.genLongId(),
+        id: CalendarUtils.genLongId(),
         resource: args.resource,
         text: 'Available'
       }));
@@ -119,8 +115,6 @@ export class CalResourcesComponent implements OnInit {
     },
     onBeforeResHeaderRender: args => {
       let dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      // console.log("args.resource.html", args.resource);
-
       // To Show day of week only use
       // args.resource.html = dow[args.resource.index];
 
@@ -174,20 +168,12 @@ export class CalResourcesComponent implements OnInit {
       { label: 'Resource Hours', routerLink: ['/admin/calendar/resources'] }
     ]);
 
-    let now = moment();
-    console.log('hello date', now.format());
-    console.log(now.add(7, 'days').format());
-  }
-
-  // TODO: Move to util lib
-  private genLongId() {
-    return Math.round((Math.random() * 10000000000000000))
   }
 
   ngOnInit() {
 
     this.resources = [];
-    this.selectedWorkWeek = this.getMonday();
+    this.selectedWorkWeek = CalendarUtils.getMonday();
     this.selectedResource = new CalResource();
   }
 
@@ -206,11 +192,7 @@ export class CalResourcesComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    var from = this.scheduler.control.visibleStart();
-    var to = this.scheduler.control.visibleEnd();
-
     this.onSelectWorkWeek(this.selectedWorkWeek);
-
     this.calResourceSvc.get().subscribe(result => {
       console.log('resources', result);
       this.resources = result;
@@ -223,26 +205,14 @@ export class CalResourcesComponent implements OnInit {
     });
   }
 
-  // TODO: move to util lib
-  getMonday(date = new Date().toDateString()) {
-    console.log('date', date)
-    // '2018-11-10T08:30:00'
-    let d = new Date(date);
-    let diff = (d.getDate() - d.getDay()) + 1;
-
-    return new Date(d.setDate(diff));
-  }
-
-
   onSelectWorkWeek(e) {
     console.log('onSelectWorkWeek(e)', e)
-    this.selectedWorkWeek = this.getMonday(new Date(e).toDateString());
+    this.selectedWorkWeek = CalendarUtils.getMonday(new Date(e).toDateString());
     this.scheduler.control.startDate = this.selectedWorkWeek;
     this.scheduler.control.update();
   }
 
   createNewResource() {
-    // this.matSelectionList.deselectAll();
     this.selectedResource = new CalResource();
     this.copySelectedItem();
   }
@@ -315,7 +285,6 @@ export class CalResourcesComponent implements OnInit {
   }
 
   onTemplateSelectionChange(event, template) {
-
     // deselect all others & set selected
     if (event.selected) {
       event.source.selectionList.options.toArray().forEach(element => {
@@ -340,14 +309,13 @@ export class CalResourcesComponent implements OnInit {
       return;
     }
 
-    console.log('BEFORE selectedResource.days', this.selectedResource.days);
-
     let templateDays = this.selectedTemplate.days;
+    console.log('BEFORE selectedResource.days', this.selectedResource.days);
     console.log('TEMPLATE DAYS', this.selectedTemplate.days);
 
     // DELETE TIME BLOCKS IN THE CURRENT WEEK
-    let daysSansThisWeekDays = this.removeDatesWithinASpan(this.selectedResource.days, this.selectedWorkWeek, 6);
-    console.log('1. Time blocks sans THIS weeks time blocks', daysSansThisWeekDays);
+    this.selectedResource.days = CalendarUtils.removeDatesWithinASpan(this.selectedResource.days, this.selectedWorkWeek, 6);
+    console.log('1. Time blocks sans THIS weeks time blocks', this.selectedResource.days);
 
     // LOOP SELECTED TEMPLATE BLOCKS ASSIGN TO THIS WEEK
     templateDays.forEach(block => {
@@ -356,11 +324,11 @@ export class CalResourcesComponent implements OnInit {
       let bDay = bs.getDay();
 
       // find the Date of the Day in the current week
-      let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);  // -04:00
+      let matchingDate = CalendarUtils.getDateObjByDay(bDay, this.selectedWorkWeek);  // -04:00
 
       // Create new Time Block
       let newBlock = new CalResourceTime();
-      newBlock.id = this.genLongId();
+      newBlock.id = CalendarUtils.genLongId();
       newBlock.resourceId = this.selectedResource.id;
       newBlock.text = 'Available';
 
@@ -368,25 +336,20 @@ export class CalResourcesComponent implements OnInit {
       console.log('MATCHING DATE .getTimezoneOffset', matchingDate.getTimezoneOffset());
 
       // merge TIME portion of 'block' into DATE portion of 'matchingDate'
-      let dpDateStart = new DayPilot.Date(this.makeDPDateConstructorString(
+      newBlock.start = new DayPilot.Date(CalendarUtils.makeDPDateConstructorString(
         matchingDate.getFullYear(),
         matchingDate.getMonth(),
         matchingDate.getDate(),
         bs.getHours(),
         bs.getMinutes()
       ));
-      let dpDateEnd = new DayPilot.Date(this.makeDPDateConstructorString(
+      newBlock.end = new DayPilot.Date(CalendarUtils.makeDPDateConstructorString(
         matchingDate.getFullYear(),
         matchingDate.getMonth(),
         matchingDate.getDate(),
         be.getHours(), // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
         be.getMinutes()
       ));
-
-      console.log('dpDateStart', dpDateStart);
-      console.log('dpDateEnd', dpDateEnd);
-      newBlock.start = dpDateStart;
-      newBlock.end = dpDateEnd;
 
       // Add the newBlock to Facility.days
       this.selectedResource.days.push(newBlock);
@@ -401,52 +364,6 @@ export class CalResourcesComponent implements OnInit {
 
   }
 
-  private makeDPDateConstructorString(y, m, d, hr, mn): string {
-    let str = `${y}-${this.padZero(m + 1)}-${this.padZero(d)}T${this.padZero(hr)}:${this.padZero(mn)}:00`;
-    console.log('str', str);
-    return str;
-  }
-
-  private padZero(num): string {
-    let str: string;
-    if (num < 10)
-      str = String('0' + num);
-    else
-      str = String(num);
-    return str;
-  }
-
-  // TODO: move to Date Util Lib
-  private getDateObjByDay(day: number, start: any): Date {
-    let s = new Date(start);
-    let found = false;
-    while (!found) {
-      if (s.getDay() == day) {
-        found = true;
-        return s;
-      } else {
-        s = new Date(s.setDate(s.getDate() + 1))
-      }
-    }
-  }
-
-  // TODO: move to Date Util Lib
-  private getARangeOfDatesAndDays(start, span) {
-    let s = new Date(start);
-    let e = s.addDays(span);
-    let a = [];
-
-    while (s <= e) {
-      let o = {};
-
-      o['day'] = s.getDay();
-      o['date'] = s.getDate();
-      a.push(o);
-      s = new Date(s.setDate(s.getDate() + 1))
-    }
-    return a;
-  };
-
 
   // -------- APPLY TO NEXT WEEK SECTION ------------ //
 
@@ -455,15 +372,16 @@ export class CalResourcesComponent implements OnInit {
     let days = this.selectedResource.days;
 
     // REMOVE TIME BLOCKS IN UPCOMING WEEK
-    let daysSansNextWeekDays = this.removeDatesWithinASpan(days, this.selectedWorkWeek.addDays(7), 6);
-    console.log('1. days Sans Next Weeks time blocks', daysSansNextWeekDays);
+    this.selectedResource.days = CalendarUtils.removeDatesWithinASpan(days, this.selectedWorkWeek.addDays(7), 6);
+    console.log('1. days Sans Next Weeks time blocks', this.selectedResource.days);
 
     // FIND TIME BLOCKS IN THIS WEEK DATES TO APPLY TO NEXT WEEK
-    let newTimeBlocks = this.findDatesWithinASpan(days, this.selectedWorkWeek, 6);
+    let newTimeBlocks = CalendarUtils.findDatesWithinASpan(days, this.selectedWorkWeek, 6);
     console.log('2. matching Time Blocks', newTimeBlocks);
 
     // CONVERT THIS WEEK'S TIME BLOCKS TO NEXT WEEK TIME BLOCKS
-    this.convertTimeBlocksToNextWeek(newTimeBlocks);
+    let nextWeeksDays = CalendarUtils.convertTimeBlocksToNextWeek(newTimeBlocks);
+    this.selectedResource.days = [...days, ...nextWeeksDays];
     this.onSelectWorkWeek(this.selectedWorkWeek.addDays(7).toISOString());
     this.scheduler.control.update();
 
@@ -472,66 +390,6 @@ export class CalResourcesComponent implements OnInit {
       this.toastSvc.showInfoMessage('Week Saved!', 'The calendar has advanced to the following week.')
     }, 300);
   }
-
-  // TODO: move to util lib
-  private isWithinRangeByDay(day, start, end) {
-    let s = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0);
-    let e = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59);
-    let d = new Date(day);
-    return d >= s && d <= e;
-  }
-
-  // TODO: move to util lib
-  findDatesWithinASpan(arr, start, span) {
-    let rangeStart = new Date(start);
-    let rangeEnd = rangeStart.addDays(span);
-    let results = [];
-    arr.forEach(block => {
-      if (this.isWithinRangeByDay(block.start, rangeStart, rangeEnd)) {
-        results.push(Object.assign({}, block));
-      }
-    })
-    return results;
-  }
-
-  // TODO: move to util lib
-  /**
-   * @argument arr Array of time blocks
-   * @argument start:String a start date string
-   * @argument span number of days to span
-   * @description removes matching items from the array and calls delete EP
-   */
-  removeDatesWithinASpan(arr, start, span) {
-    let rangeStart = new Date(start);
-    let rangeEnd = rangeStart.addDays(span);
-
-    let deletedItems = []; // for debug only
-
-    for (var i = arr.length - 1; i >= 0; i--) {
-      if (this.isWithinRangeByDay(arr[i].start, rangeStart, rangeEnd)) {
-        deletedItems.push(Object.assign({}, arr[i]));
-        this.deleteTimeBlock(arr[i].id);
-        arr.splice(i, 1);
-      }
-    }
-    console.log('Deleted items', deletedItems);
-    return arr;
-  }
-
-  convertTimeBlocksToNextWeek(arr) {
-    let newItemsForComparison = [];
-    arr.forEach(block => {
-      block.start = new DayPilot.Date(block.start).addDays(7);
-      block.end = new DayPilot.Date(block.end).addDays(7);
-      block.id = this.genLongId();
-      this.selectedResource.days.push(block);
-      newItemsForComparison.push(block); // for debug only
-    })
-    console.log('3. Next Weeks Time Blocks For Comparison', newItemsForComparison)
-  }
-
-
-
 
   private setFirstListItem() {
     if (!this.resources || !this.resources.length)
@@ -566,4 +424,3 @@ export class CalResourcesComponent implements OnInit {
   }
 
 }
-

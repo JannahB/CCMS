@@ -21,6 +21,7 @@ import { UserService } from '../../../common/services/utility/user.service';
 
 // This is needed for pipe used in markup
 import { DropdownPipe } from '../../../common/pipes/dropdown.pipe';
+import { CalendarUtils } from "../../../common/utils/calendar-utils";
 
 
 @Component({
@@ -91,7 +92,7 @@ export class HearingsComponent implements OnInit {
       dp.events.add(new DayPilot.Event({
         start: args.start,
         end: args.end,
-        id: this.genLongId(),
+        id: CalendarUtils.genLongId(),
         resource: args.resource,
         text: this.getHearingName(),
       }));
@@ -532,7 +533,7 @@ export class HearingsComponent implements OnInit {
 
   setWorkWeek(e) {
     console.log('setWorkWeek(e)', e)
-    this.selectedWorkWeek = this.getMonday(new Date(e).toDateString());
+    this.selectedWorkWeek = CalendarUtils.getMonday(new Date(e).toDateString());
     this.scheduler.control.startDate = this.selectedWorkWeek;
     this.scheduler.control.update();
     this.getUnavailableBlocks();
@@ -621,54 +622,6 @@ export class HearingsComponent implements OnInit {
     return this.hearings
       .findIndex(itm => itm.id == item.id);
   }
-
-  // TODO: Move to util lib
-  private genLongId() {
-    return Math.round((Math.random() * 10000000000000000))
-  }
-
-  // TODO: move to util lib
-  private getMonday(date = new Date().toDateString()) {
-    console.log('date', date)
-    // '2018-11-10T08:30:00'
-    let d = new Date(date);
-    let diff = (d.getDate() - d.getDay()) + 1;
-
-    return new Date(d.setDate(diff));
-  }
-
-  // TODO: move to Date Util Lib
-  private getDateObjByDay(day: number, start: any): Date {
-    let s = new Date(start);
-    let found = false;
-    while (!found) {
-      if (s.getDay() == day) {
-        found = true;
-        return s;
-      } else {
-        s = new Date(s.setDate(s.getDate() + 1))
-      }
-    }
-  }
-
-  // TODO: move to Date Util Lib
-  private getARangeOfDatesAndDays(start, span) {
-    let s = new Date(start);
-    let e = s.addDays(span);
-    let a = [];
-
-    while (s <= e) {
-      let o = {};
-
-      o['day'] = s.getDay();
-      o['date'] = s.getDate();
-      a.push(o);
-      s = new Date(s.setDate(s.getDate() + 1))
-    }
-    return a;
-  };
-
-
 
 
 }
