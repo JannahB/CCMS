@@ -146,7 +146,9 @@ export class CalResourcesComponent implements OnInit {
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
-      this.deleteTimeBlock(args.e.data.id, true);
+      // NOTE: no need for explicit remove since binding removes the time block
+      // this.deleteTimeBlock(args.e.data.id, true);
+      this.selectedResource.days = this.selectedResource.days.slice();
       this.saveItem();
     }
   };
@@ -349,8 +351,8 @@ export class CalResourcesComponent implements OnInit {
 
     // LOOP SELECTED TEMPLATE BLOCKS ASSIGN TO THIS WEEK
     templateDays.forEach(block => {
-      let bs = new Date(block.start); // -05:00
-      let be = new Date(block.end);
+      let bs = new DayPilot.Date(block.start);
+      let be = new DayPilot.Date(block.end);
       let bDay = bs.getDay();
 
       // find the Date of the Day in the current week
@@ -362,35 +364,29 @@ export class CalResourcesComponent implements OnInit {
       newBlock.resourceId = this.selectedResource.id;
       newBlock.text = 'Available';
 
-      console.log('TEMPLATE BLOCK .getTimezoneOffset', bs.getTimezoneOffset());
+      console.log('TEMPLATE BLOCK date', bs);
       console.log('MATCHING DATE .getTimezoneOffset', matchingDate.getTimezoneOffset());
 
       // merge TIME portion of 'block' into DATE portion of 'matchingDate'
-      newBlock.start = new Date(
+      let dpDateStart = new DayPilot.Date(this.makeDPDateConstructorString(
         matchingDate.getFullYear(),
         matchingDate.getMonth(),
         matchingDate.getDate(),
-        bs.getHours() + 1,  // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
-        bs.getMinutes(), 0
-      );
-      newBlock.end = new Date(
+        bs.getHours(),
+        bs.getMinutes()
+      ));
+      let dpDateEnd = new DayPilot.Date(this.makeDPDateConstructorString(
         matchingDate.getFullYear(),
         matchingDate.getMonth(),
         matchingDate.getDate(),
-        be.getHours() + 1, // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
-        be.getMinutes(), 0
-      );
-      /*
-      NOTE ABOUT +1 getHours() ABOVE - JB:6/21/2018
-          When creating a new date in this client, the offset is -04:00.
-          When saving and retrieving, the offset becomes -05:00.
-          So as a temp measure, the +1 is used until we solve this issue.
-          The solution will need to consider:
-          -- Server hosted in other time zones
-          -- Server in a time zone that doesn't observe DST
-          -- User in other time zones
-          -- User in a time zone that doesn't observe DST
-      */
+        be.getHours(), // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
+        be.getMinutes()
+      ));
+
+      console.log('dpDateStart', dpDateStart);
+      console.log('dpDateEnd', dpDateEnd);
+      newBlock.start = dpDateStart;
+      newBlock.end = dpDateEnd;
 
       // Add the newBlock to Facility.days
       this.selectedResource.days.push(newBlock);
@@ -403,6 +399,21 @@ export class CalResourcesComponent implements OnInit {
     // SAVE NEW BLOCKS
     this.saveItem();
 
+  }
+
+  private makeDPDateConstructorString(y, m, d, hr, mn): string {
+    let str = `${y}-${this.padZero(m + 1)}-${this.padZero(d)}T${this.padZero(hr)}:${this.padZero(mn)}:00`;
+    console.log('str', str);
+    return str;
+  }
+
+  private padZero(num): string {
+    let str: string;
+    if (num < 10)
+      str = String('0' + num);
+    else
+      str = String(num);
+    return str;
   }
 
   // TODO: move to Date Util Lib
@@ -510,8 +521,8 @@ export class CalResourcesComponent implements OnInit {
   convertTimeBlocksToNextWeek(arr) {
     let newItemsForComparison = [];
     arr.forEach(block => {
-      block.start = new Date(block.start).addDays(7).toISOString();
-      block.end = new Date(block.end).addDays(7).toISOString();
+      block.start = new DayPilot.Date(block.start).addDays(7);
+      block.end = new DayPilot.Date(block.end).addDays(7);
       block.id = this.genLongId();
       this.selectedResource.days.push(block);
       newItemsForComparison.push(block); // for debug only
