@@ -522,10 +522,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   lastSelectedTypeLocalCharges: any[] = [];
 
   //RS Implementing Charge Factor Variables
-  chargeFactorVariables: ChargeFactorVariable[];        
+  chargeFactorVariables: ChargeFactorVariable[];
   selectedChargeFactorVariables: ChargeFactorVariable[];
   filteredChargeFactorVariables: ChargeFactorVariable[];
-  
+
 
   onAddCaseCharge(caseChargeForm) {
     if (!this.case.caseOID || this.case.caseOID == 0) {
@@ -550,10 +550,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.filteredChargeFactorTypes = chargeFactors;
       });
 
-      
-      //RS Implementing Charge Factor Variables in UI
 
-      this.caseSvc
+    //RS Implementing Charge Factor Variables in UI
+
+    this.caseSvc
       .fetchChargeFactorVariables()
       .subscribe(chargeFactorVariables => {
         this.chargeFactorVariables = chargeFactorVariables;
@@ -697,22 +697,29 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.filteredChargeFactorVariables = this.filterChargeFactorVariables(query, this.chargeFactorVariables);
   }
 
-  filterChargeFactorVariables(query, cfVariable: any[]): any[] {
-    
-    let filtered: any [] = cfVariable;
-    let desc: string = null;
+  filterChargeFactorVariables(query, cfVariables: any[]): any[] {
+    let filtered: any[] = [];
 
-    for (let i = 0; i < cfVariable.length; i++) {
-      
-        if(this.chargeFactorVariables[i].chargeFactorName = 'At')
-        console.log(this.chargeFactorVariables[i].chargeFactorVariableDescription);
-     
+    for (let i = 0; i < cfVariables.length; i++) {
+      let cfv = cfVariables[i];
+      // The line below is important. Since this is an auto-complete control,
+      // the 'query' arg is what is typed into the dropdown's text input. If you
+      // simply click the dropdown arrow, then query text will be
+      // an empty string "". Since all cfv's start with an empty string, each cfv will
+      // be pushed into 'filtered' to be displayed in the dropdown list.
+      if (cfv.chargeFactorName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(cfv);
+      }
+
+      // if (this.chargeFactorVariables[i].chargeFactorName = 'At')
+      //   console.log(this.chargeFactorVariables[i].chargeFactorVariableDescription);
+
     }
     return filtered;
   }
 
   /*filterChargeFactorsVariables(query, chargeFactorVariables: any[]): any[] {
-    
+
     let cfname: string = this.selectedChargeFactors.toString();
     let filtered: any[] = [];
 
@@ -727,11 +734,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
             filtered.push(cfv.chargeFactorVariableDescription);
           }
       }
- 
+
     return filtered;
   }
   //RS Implementing Charge Factor Variables*/
-  
+
 
 
 

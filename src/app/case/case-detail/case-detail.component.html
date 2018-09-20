@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    
+
 
     <div class="ui-g-12 ">
       <form #caseForm="ngForm" novalidate>
@@ -79,18 +79,18 @@
             <!-- Adding Previous Case Number -->
             <div class="ui-g-12 ui-md-3 mt-25" *ngIf="case.caseOID > 0">
                 <span class="md-inputfield">
-                  <input pInputText type="text" 
-                        #tiprevCaseNumber="ngModel" 
+                  <input pInputText type="text"
+                        #tiprevCaseNumber="ngModel"
                         required name="tiprevCaseNumber"
                         [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                         [(ngModel)]="case.prevCaseNumber"
                         class="width-full" >
                   <label>Previous Case Number</label>
                 </span>
-                
-              </div>            
 
-            <!-- Case Caption Field -->  
+              </div>
+
+            <!-- Case Caption Field -->
             <div class="ui-g-12 ui-md-3 mt-25" *ngIf="case.caseOID > 0">
               <span class="md-inputfield">
                   <input pInputText type="text" #tiCaseCaption="ngModel" required name="tiCaseCaption"
@@ -164,10 +164,10 @@
                     Please choose a Case Phase
               </div>
             </div>
-                      
-            
+
+
           </div>
-            
+
           <!-- Adding Case Notes Field  -->
             <div class="ui-g-12 mb-20" *ngIf="case.caseOID > 0">
                 <label class="minimal primary block">Case Notes</label>
@@ -184,7 +184,7 @@
 
 
 
-         
+
 
         <!-- CASE PARTIES TABLE -->
 
@@ -1309,10 +1309,11 @@
                   [multiple]="false">
               </p-autoComplete>
             </span>
-            <div class="ui-message ui-messages-error ui-corner-all"
+            <!-- NOTE: Not needed since not a required field
+              <div class="ui-message ui-messages-error ui-corner-all"
                   *ngIf="acChargeFactors.errors?.required && acChargeFactors.touched" >
                   One or more Charge Factor Variables are required.
-            </div>
+            </div> -->
           </div>
 
 
