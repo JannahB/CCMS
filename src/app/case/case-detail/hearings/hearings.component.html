@@ -80,7 +80,6 @@
             </div>
             <div class="ui-g-6 mb-10">
               <label class="minimal primary block">Judicial Officer</label>
-              <!-- [options]="judges | dropdownPipe: ['firstName', 'lastName'] : 'id' : 'choose Judge...'" -->
               <p-dropdown name="ddHearingJudge" id="ddHearingJudge" #ddHearingJudge="ngModel" placeholder="choose Judgicial Officer..."
                   [required]="true"
                   [options]="judges"
@@ -146,9 +145,13 @@
               <div class="ta-r">
 
                 <div class="ui-g-12 mt-10">
-                  <button label="Save Hearing" class="mr-20" type="submit" pButton icon="fa-check" [disabled]="!hearingForm.form.valid"></button>
+                  <button label="Delete Hearing" class="fl ui-button-secondary" type="button" pButton icon="ui-icon-delete"
+                          [disabled]="!selectedHearing.id"
+                          (click)="deleteDataItemRequest()"></button>
+                  <button label="Save Hearing" class="mr-20" type="submit" pButton icon="fa-check"
+                          [disabled]="!hearingForm.form.valid"></button>
                   <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
-                          (click)="onCancelEditHearing(hearingForm)" ></button>
+                          (click)="onCancelEditHearing(hearingForm)"></button>
                 </div>
               </div>
             </div>
