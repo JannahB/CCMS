@@ -1,4 +1,4 @@
-import { BaseTimeBlock } from "./BaseTimeBlock";
+import { BaseTimeBlock } from './BaseTimeBlock';
 
 export class CalFacilityTime extends BaseTimeBlock {
 

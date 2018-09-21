@@ -1,8 +1,6 @@
 import { Component, Input, OnInit, ViewChild, AfterViewInit } from "@angular/core";
-import { DatePipe } from '@angular/common';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
 import { Case } from '../../../common/entities/Case';
@@ -13,15 +11,12 @@ import { HearingType } from '../../../common/entities/HearingType';
 import { JudicialOfficer } from '../../../common/entities/JudicialOfficer';
 import { Permission } from '../../../common/entities/Permission';
 
+import { CalendarUtils } from "../../../common/utils/calendar-utils";
 import { CollectionUtil } from '../../../common/utils/collection-util';
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { HearingsService } from './../../../common/services/http/hearings.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
 import { UserService } from '../../../common/services/utility/user.service';
-
-// This is needed for pipe used in markup
-import { DropdownPipe } from '../../../common/pipes/dropdown.pipe';
-import { CalendarUtils } from "../../../common/utils/calendar-utils";
 
 
 @Component({
@@ -37,12 +32,6 @@ export class HearingsComponent implements OnInit {
   @Input() case: Case;
 
   public Permission: any = Permission;
-  datePipe: DatePipe = new DatePipe("en");
-
-  // -------------------------
-  //   HEARING
-  // ------------------------=
-
   hearings: CaseHearing[];
   selectedHearing: CaseHearing;
   selectedHearingBak: CaseHearing;
@@ -310,32 +299,36 @@ export class HearingsComponent implements OnInit {
       });
   }
 
+  initHearingData() {
+    // Loop thru caseHearings and append properties
+    this.hearings.map(h => h = this.enhanceAHearing(h));
+    console.log('hearings', this.hearings);
+    this.preSelectDropdowns();
+  }
+
+  private enhanceAHearing(h: CaseHearing): CaseHearing {
+    h.judicialOfficer = this.judges.find(j => j.id == h.judicialOfficerId);
+    h.hearingType = this.hearingTypes.find(ht => ht.id == h.hearingTypeId);
+    h.hearingLocation = this.hearingLocations.find(loc => loc.id == h.courtLocationId);
+    h.hearingStartDateTime = h.days && h.days.length ? new Date(h.days[0].start) : new Date();
+    h.hearingEndDateTime = h.days && h.days.length ? new Date(h.days[0].end) : new Date();
+    return h;
+  }
+
   private enhanceJudges() {
     this.judges.map(j => j.name = j.firstName + ' ' + j.lastName); // concat first and last name
   }
 
-  initHearingData() {
-    // Loop thru caseHearings and append properties
-    this.hearings.map(h => h.judicialOfficer = this.judges.find(j => j.id == h.judicialOfficerId));
-    this.hearings.map(h => h.hearingType = this.hearingTypes.find(ht => ht.id == h.hearingTypeId));
-    this.hearings.map(h => h.hearingLocation = this.hearingLocations.find(loc => loc.id == h.courtLocationId));
-    this.hearings.map(h => h.hearingStartDateTime = h.days && h.days.length ? new Date(h.days[0].start) : new Date());
-    this.hearings.map(h => h.hearingEndDateTime = h.days && h.days.length ? new Date(h.days[0].end) : new Date());
-
-    console.log('hearings', this.hearings);
-
+  private preSelectDropdowns() {
     // Pre-select Dropdowns
-    if (this.selectedHearing.judicialOfficerId) {
+    if (this.selectedHearing.judicialOfficerId)
       this.selectedHearing.judicialOfficer = this.judges.find(j => j.id == this.selectedHearing.judicialOfficerId);
-    }
 
-    if (this.selectedHearing.courtLocationId) {
+    if (this.selectedHearing.courtLocationId)
       this.selectedHearing.hearingLocation = this.hearingLocations.find(h => h.id == this.selectedHearing.courtLocationId);
-    }
 
-    if (this.selectedHearing.hearingTypeId) {
+    if (this.selectedHearing.hearingTypeId)
       this.selectedHearing.hearingType = this.hearingTypes.find(ht => ht.id == this.selectedHearing.hearingTypeId);
-    }
   }
 
 
@@ -369,9 +362,6 @@ export class HearingsComponent implements OnInit {
           this.loadingDataFlag = false;
         });
 
-    // FetchHearing POST {hearingQueryDate: "2018-01-09", courtLoc: "1"}
-    // let hearingDateString: string = this.datePipe.transform(this.selectedHearing.startDateTime, "yyyy-MM-dd");
-
   }
 
 
@@ -396,18 +386,18 @@ export class HearingsComponent implements OnInit {
     // return this.userSvc.hasPermission(pm, courtOID);
   }
 
-  createHearing(hearingForm) {
+  createHearing() {
     let newHearing = new CaseHearing();
     newHearing.description = 'New hearing description...';
     newHearing.caseId = this.case.caseOID;
     this.selectedHearing = newHearing;
     this.hearings.push(newHearing);
     this.hearings = this.hearings.slice();
-    this.initHearingData();
+    this.enhanceAHearing(newHearing);
+    this.preSelectDropdowns();
     this.selectedHearing.hearingStartDateTime = new Date();
     this.setWorkWeek(this.selectedHearing.hearingStartDateTime);
-    // hearingForm.reset();
-    // this.getLookups();
+    this.copySelectedItem();
     console.log('hearings', this.hearings);
   }
 
@@ -419,9 +409,14 @@ export class HearingsComponent implements OnInit {
     this.setSelectedHearing(event.data);
   }
 
-  setSelectedHearing(h: CaseHearing) {
+  setSelectedHearing(h?: CaseHearing) {
+    if (!h) {
+      this.createHearing();
+      return;
+    }
     this.selectedHearing = h;
     this.setWorkWeek(this.selectedHearing.hearingStartDateTime);
+    this.copySelectedItem();
   }
 
   hearingDateOnChange(event) {
@@ -470,7 +465,8 @@ export class HearingsComponent implements OnInit {
   }
 
   onCancelEditHearing(hearingForm) {
-    // hearingForm.reset();
+    this.selectedHearing = this.selectedHearingBak;
+    // hearingForm.reset(); // this does crazy things to the form
     this.hideModals();
   }
 
@@ -489,19 +485,16 @@ export class HearingsComponent implements OnInit {
     this.hearingSvc
       .save(h)
       .subscribe(result => {
-        // let resultHearing = result;
-        this.updateList(result);
 
-        // Get Index of Selected Hearing
-        // let index: number = this.hearings.findIndex(a => a == this.selectedHearing);
-
-        // if (index >= 0) {
-        //   this.hearings[index] = resultHearing;
-        // } else {
-        //   this.hearings.push(resultHearing);
-        // }
-        this.initHearingData();
+        this.selectedHearing = result;
+        this.hearings[this.selectedHearingIdx] = result;
+        this.enhanceAHearing(result);
+        this.preSelectDropdowns();
         this.hearings = this.hearings.slice();
+        this.copySelectedItem();
+
+        // This prevents event doubling phenom
+        this.selectedHearing.days = this.selectedHearing.days.slice();
 
         console.log('hearings after save', this.hearings);
         this.toastSvc.showSuccessMessage('Hearing Saved');
@@ -516,19 +509,10 @@ export class HearingsComponent implements OnInit {
 
   }
 
-
-  requestDeleteHearing(event, hearing: CaseHearing): void {
-    this.showDeleteHearingModal = true;
-    event.preventDefault();
-    this.selectedHearing = hearing;
-  }
-
   deleteHearing(): void {
     CollectionUtil.removeArrayItem(this.hearings, this.selectedHearing);
     this.hearings = this.hearings.slice();
     this.showDeleteHearingModal = false;
-    // TODO: Get deleteHearing EP from Aaron
-    // SETUP DELETE HEARING SERVICE
   }
 
   setWorkWeek(e) {
@@ -542,7 +526,6 @@ export class HearingsComponent implements OnInit {
 
   cancelDataItemEdit(event) {
     this.selectedHearing = Object.assign(new CaseHearing(), this.selectedHearingBak);
-    // this.resources[this.selectedResourceIdx] = this.selectedResource;
   }
 
   deleteDataItemRequest() {
@@ -550,20 +533,21 @@ export class HearingsComponent implements OnInit {
   }
 
   deleteDataItem() {
-    // this.calResourceSvc.delete(this.selectedResource.id)
-    //   .subscribe(result => {
-    //     this.toastSvc.showSuccessMessage('The item has been deleted.');
-    //     this.resources.splice(this.getIndexOfItem(), 1);
-    //     this.selectedResource = this.resources[0];
-    //     this.hideModals();
-    //   },
-    //     (error) => {
-    //       console.log(error);
-    //       this.toastSvc.showErrorMessage('There was an error deleting the item.');
-    //     },
-    //     () => {
-    //       // final
-    //     })
+    this.hearingSvc.delete(this.selectedHearing.id)
+      .subscribe(result => {
+        this.toastSvc.showSuccessMessage('The item has been deleted.');
+        this.hearings.splice(this.getIndexOfItem(this.selectedHearing), 1);
+        this.setSelectedHearing(this.hearings[0]);
+        this.hearings = this.hearings.slice();
+        this.hideModals();
+      },
+        (error) => {
+          console.log(error);
+          this.toastSvc.showErrorMessage('There was an error deleting the item.');
+        },
+        () => {
+          // final
+        })
   }
 
   deleteTimeBlock(id, userInitiated = false) {
@@ -572,13 +556,6 @@ export class HearingsComponent implements OnInit {
       this.selectedHearing.days.splice(idx, 1);
       this.saveHearing();
     }
-
-    // this.hearingSvc.deleteCaseHearingTimeBlock(id)
-    //   .subscribe(result => {
-    //     console.log('Deleted Block ID:', id);
-    //     if (userInitiated) // TODO: Turn this on after testing complete
-    //       this.toastSvc.showInfoMessage('Hearing time block deleted.');
-    //   });
   }
 
   refreshCalendar() {
@@ -589,29 +566,6 @@ export class HearingsComponent implements OnInit {
     this.showDeleteItemModal = false;
 
   }
-
-  private setFirstListItem() {
-    if (!this.hearings || !this.hearings.length)
-      return;
-
-    this.selectedHearing = this.hearings[0];
-    this.copySelectedItem();
-  }
-
-  private updateList(result) {
-    let index: number = this.getIndexOfItem(result);
-
-    if (index >= 0) {
-      this.hearings[index] = result;
-      this.selectedHearing = this.hearings[index];
-    } else {
-      this.hearings.push(result);
-      this.selectedHearing = this.hearings[this.hearings.length - 1];
-    }
-    // This prevents event doubling phenom
-    this.selectedHearing.days = this.selectedHearing.days.slice();
-  }
-
 
   private copySelectedItem() {
     this.selectedHearingBak = Object.assign({}, this.selectedHearing);
