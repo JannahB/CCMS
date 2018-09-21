@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.1"></a>
+## [1.9.1](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.0...v1.9.1) (2018-09-21)
+
+
+### Bug Fixes
+
+* **Calendar:** remove max-height on p-datatable ([74b3650](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/74b3650))
+* **Hearing:** new heaings showing 2x in list AC-338, AC-339 ([bc988dd](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/bc988dd))
+
+
+### Features
+
+* **Hearing:** delete hearing support ([ee3b7c9](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/ee3b7c9))
+
+
+
 <a name="1.9.0"></a>
 # [1.9.0](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.5.2...v1.9.0) (2018-09-18)
 
