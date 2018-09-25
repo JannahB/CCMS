@@ -11,6 +11,7 @@ import { CasePartyRole } from '../../entities/CasePartyRole';
 import { CaseStatus } from '../../entities/CaseStatus';
 import { CaseType } from '../../entities/CaseType';
 import { StaffRole } from './../../entities/StaffRole';
+import { Court } from './../../entities/Court';
 import { CasePhase } from '../../entities/CasePhase';
 import { IccsCode } from '../../entities/IccsCode';
 import { EventType } from '../../entities/EventType';
@@ -107,6 +108,31 @@ export class AdminDataService {
       { headers: { uiVersion: "2" } }
     )
   }
+
+  /**
+   *
+   * @name saveCourt
+   * @param data
+   * courtName: string; 
+   * courtOID: number; 
+   * locationCode: string; 
+   */
+  saveCourt(data:Court):Observable<Court> {
+    let url: string = this.getBaseUrl() +'/SaveCourt';
+
+    let obj = {
+      courtOID: data.courtOID ? data.courtOID.toString() : null,
+      courtName: data.courtName,
+      locationCode: data.locationCode,
+    };
+
+    return this.http.post<Court>(
+      url,
+      obj,
+      { headers: {uiVersion:"2"}}
+    )
+  }
+
 
     /**
    *
