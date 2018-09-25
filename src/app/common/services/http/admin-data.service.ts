@@ -18,6 +18,7 @@ import { EventType } from '../../entities/EventType';
 import { HearingType } from '../../entities/HearingType';
 import { EventWorkflow } from '../../entities/EventWorkflow';
 import { TaskType } from '../../entities/TaskType';
+import { StaffRolePermission } from '../../entities/StaffRolePermission';
 
 
 @Injectable()
@@ -110,6 +111,48 @@ export class AdminDataService {
   }
 
   /**
+ *
+ * @name saveRolePermission
+ * @param data
+ *     data:StaffRolePermission;
+ */
+  saveRolePermission(data: StaffRolePermission): Observable<StaffRolePermission> {
+    let url: string = this.getBaseUrl() + '/SaveRolePermission';
+
+    data.permissionsState.forEach(checkablePerm => {
+      let index:number=data.permissions.findIndex(dataPerm => dataPerm.permissionOID == checkablePerm.permission.permissionOID);
+      if (checkablePerm.checked == true) {
+        // add if not found        
+        if (index<0){
+          data.permissions.push(checkablePerm.permission);
+        }
+      } else {
+        // remove if found
+        if (index>=0){
+          data.permissions.splice(index, 1);
+        }
+      }
+    });
+
+    let obj = {
+      courtOID: data.courtOID ? data.courtOID.toString() : null,
+      staffRoleOID: data.staffRoleOID ? data.staffRoleOID.toString() : null,
+      staffRoleName: data.staffRoleName,
+      permissions: data.permissions,
+      ccmsAdmin: data.ccmsAdmin,
+      judicialOfficer: data.judicialOfficer,
+    };
+
+    console.log(obj);
+
+    return this.http.post<StaffRolePermission>(
+      url,
+      obj,
+      { headers: { uiVersion: "2" } }
+    )
+  }
+
+  /**
    *
    * @name saveCourt
    * @param data
@@ -117,8 +160,8 @@ export class AdminDataService {
    * courtOID: number; 
    * locationCode: string; 
    */
-  saveCourt(data:Court):Observable<Court> {
-    let url: string = this.getBaseUrl() +'/SaveCourt';
+  saveCourt(data: Court): Observable<Court> {
+    let url: string = this.getBaseUrl() + '/SaveCourt';
 
     let obj = {
       courtOID: data.courtOID ? data.courtOID.toString() : null,
@@ -129,23 +172,23 @@ export class AdminDataService {
     return this.http.post<Court>(
       url,
       obj,
-      { headers: {uiVersion:"2"}}
+      { headers: { uiVersion: "2" } }
     )
   }
 
 
-    /**
-   *
-   * @name saveStaffRole
-   * @param data
-   * courtOID: number = 0;
-   * ccmsAdmin: boolean = false;
-   * judicialOfficer: boolean = false;
-   * staffRoleName: string = "";
-   * staffRoleOID: number = 0;  
-   */
-  saveStaffRole(data:StaffRole):Observable<StaffRole> {
-    let url: string = this.getBaseUrl() +'/SaveStaffRole';
+  /**
+ *
+ * @name saveStaffRole
+ * @param data
+ * courtOID: number = 0;
+ * ccmsAdmin: boolean = false;
+ * judicialOfficer: boolean = false;
+ * staffRoleName: string = "";
+ * staffRoleOID: number = 0;  
+ */
+  saveStaffRole(data: StaffRole): Observable<StaffRole> {
+    let url: string = this.getBaseUrl() + '/SaveStaffRole';
 
     let obj = {
       staffRoleOID: data.staffRoleOID ? data.staffRoleOID.toString() : null,
@@ -158,7 +201,7 @@ export class AdminDataService {
     return this.http.post<StaffRole>(
       url,
       obj,
-      { headers: {uiVersion:"2"}}
+      { headers: { uiVersion: "2" } }
     )
   }
 

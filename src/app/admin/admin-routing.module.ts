@@ -23,6 +23,7 @@ import { StaffRoleComponent } from './data/staff-role/staff-role.component';
 import { CourtComponent } from './data/court/court.component';
 import { CanActivateIsCourtMgrGuard } from '../common/guards/can-activate-is-court-mgr.guard';
 import { AssignmentManagerComponent } from './assignment-manager/assignment-manager.component';
+import { RolePermissions } from './data/role-permissions/role-permissions.component';
 
 const routes: Routes = [
   {
@@ -45,6 +46,7 @@ const routes: Routes = [
           { path: 'hearingtypes', component: HearingTypeComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
           { path: 'staffroles', component: StaffRoleComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
           { path: 'courts', component: CourtComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+          { path: 'rolepermissions', component: RolePermissions, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
           { path: 'iccscodes', component: IccsCodesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
         ]
       },

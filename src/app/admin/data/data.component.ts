@@ -73,6 +73,8 @@ export class DataComponent implements OnInit {
       { value: 8, route: 'courtlocations', label: "Court Location" },
       { value: 9, route: 'staffroles', label: "Staff Roles" },
       { value: 10, route: 'courts', label: "Courts" },
+      { value: 11, route: 'rolepermissions', label: "Role Permissions" },
+
     ];
   }
 
