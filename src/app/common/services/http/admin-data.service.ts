@@ -10,6 +10,7 @@ import { Identifier } from '../../entities/Identifier';
 import { CasePartyRole } from '../../entities/CasePartyRole';
 import { CaseStatus } from '../../entities/CaseStatus';
 import { CaseType } from '../../entities/CaseType';
+import { StaffRole } from './../../entities/StaffRole';
 import { CasePhase } from '../../entities/CasePhase';
 import { IccsCode } from '../../entities/IccsCode';
 import { EventType } from '../../entities/EventType';
@@ -104,6 +105,34 @@ export class AdminDataService {
       url,
       obj,
       { headers: { uiVersion: "2" } }
+    )
+  }
+
+    /**
+   *
+   * @name saveStaffRole
+   * @param data
+   * courtOID: number = 0;
+   * ccmsAdmin: boolean = false;
+   * judicialOfficer: boolean = false;
+   * staffRoleName: string = "";
+   * staffRoleOID: number = 0;  
+   */
+  saveStaffRole(data:StaffRole):Observable<StaffRole> {
+    let url: string = this.getBaseUrl() +'/SaveStaffRole';
+
+    let obj = {
+      staffRoleOID: data.staffRoleOID ? data.staffRoleOID.toString() : null,
+      staffRoleName: data.staffRoleName,
+      ccmsAdmin: data.ccmsAdmin,
+      judicialOfficer: data.judicialOfficer,
+      courtOID: data.courtOID ? data.courtOID.toString() : null,
+    };
+
+    return this.http.post<StaffRole>(
+      url,
+      obj,
+      { headers: {uiVersion:"2"}}
     )
   }
 

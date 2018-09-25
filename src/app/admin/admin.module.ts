@@ -28,6 +28,7 @@ import { CourtLocationsComponent } from "./data/court-locations/court-locations.
 import { DataComponent } from "./data/data.component";
 import { EventTypesComponent } from "./data/event-types/event-types.component";
 import { HearingTypeComponent } from "./data/hearing-type/hearing-type.component";
+import { StaffRoleComponent } from "./data/staff-role/staff-role.component";
 import { IccsCodesComponent } from "./data/iccs-codes/iccs-codes.component";
 import { AssignmentManagerComponent } from './assignment-manager/assignment-manager.component';
 import { PdfViewerComponent } from './pdf-viewer/pdf-viewer.component';
@@ -57,6 +58,7 @@ import { PdfViewerComponent } from './pdf-viewer/pdf-viewer.component';
     CasePartyRolesComponent,
     EventTypesComponent,
     HearingTypeComponent,
+    StaffRoleComponent,
     IccsCodesComponent,
     HolidaysComponent,
     CalTemplatesComponent,
