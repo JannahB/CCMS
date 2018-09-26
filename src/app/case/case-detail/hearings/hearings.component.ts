@@ -47,8 +47,10 @@ export class HearingsComponent implements OnInit {
   showDeleteItemModal: boolean = false;
   selectedWorkWeek: any;
   blockedHours = [];
+  blockedHearings = [];
   blockedFacilityColor = '#e9e8e8';
   blockedJudgeColor = '#eaedf0';
+  blockedHearingColor = '#71d3ff'
 
   // CALENDAR CONFIG OBJECT -----------
   // ----------------------------------
@@ -77,13 +79,13 @@ export class HearingsComponent implements OnInit {
 
     timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
     onTimeRangeSelected: args => {
-      let dp = args.control;
-      dp.events.add(new DayPilot.Event({
+      args.control.events.add(new DayPilot.Event({
         start: args.start,
         end: args.end,
         id: CalendarUtils.genLongId(),
         resource: args.resource,
         text: this.getHearingName(),
+        tags: { hearingId: this.selectedHearing.id } // custom transient data for comparison
       }));
       this.saveHearing();
 
@@ -103,7 +105,13 @@ export class HearingsComponent implements OnInit {
       // });
     },
 
-    // PREVENT UNAVAILABLE TIME BLOCKS FROM BEING SELECTED
+    // PREVENT OTHER TIME BLOCKS FROM BEING SELECTED
+    eventClickHandling: 'Enabled',
+    onEventClick: args => {
+      if (args.e.id() != this.selectedHearing.id)
+        args.preventDefault();
+    },
+
     onEventSelect: args => {
       if (args.selected && args.e.text().indexOf("Unavailable") !== -1) {  // prevent selecting events that contain the text "Unavailable"
         args.preventDefault();
@@ -179,6 +187,17 @@ export class HearingsComponent implements OnInit {
             args.cell.backColor = this.blockedJudgeColor;
         }
       });
+
+      this.blockedHearings.forEach(h => {
+        let hearingStart = new DayPilot.Date(h.start).getTotalTicks();
+        let hearingEnd = new DayPilot.Date(h.end).getTotalTicks();
+
+        if (cellStart >= hearingStart && cellEnd <= hearingEnd) {
+          args.cell.backColor = this.blockedHearingColor;
+          args.cell.borderColor = this.blockedHearingColor;
+          args.cell.html = ''; // h.text;
+        }
+      })
     },
     eventMoveHandling: "Update",
     onEventMoved: args => {
@@ -202,7 +221,9 @@ export class HearingsComponent implements OnInit {
       this.selectedHearing.days = this.selectedHearing.days.slice();
       this.saveHearing();
       console.log('--- selectedHearing 2', this.selectedHearing);
-    }
+    },
+
+    eventHoverHandling: "Bubble"
   };
 
 
@@ -243,7 +264,7 @@ export class HearingsComponent implements OnInit {
   }
 
   getHearingName() {
-    return this.selectedHearing.hearingType.hearingName || "New Hearing";
+    return this.selectedHearing.hearingType.name || "New Hearing";
   }
 
   getLookups() {
@@ -312,6 +333,7 @@ export class HearingsComponent implements OnInit {
     h.hearingLocation = this.hearingLocations.find(loc => loc.id == h.courtLocationId);
     h.hearingStartDateTime = h.days && h.days.length ? new Date(h.days[0].start) : new Date();
     h.hearingEndDateTime = h.days && h.days.length ? new Date(h.days[0].end) : new Date();
+    h.days.map(d => d.tags = { ...d.tags, ...{ hearingId: h.id } });
     return h;
   }
 
@@ -367,13 +389,18 @@ export class HearingsComponent implements OnInit {
 
   createBlockedArrays() {
     let days = [];
+    let hearings = [];
 
     this.conflicts.forEach(element => {
       if (element.type == 'Facility' || element.type == 'Resource')
         days = [...days, ...element.days];
+      if (element.type == 'Hearing')
+        hearings = [...hearings, ...element.days]
     });
     this.blockedHours = days;
+    this.blockedHearings = hearings;
     console.log('blockedHours', days);
+    console.log('blockedHearings', hearings);
     this.refreshCalendar();
 
   }
@@ -481,6 +508,7 @@ export class HearingsComponent implements OnInit {
       this.toastSvc.showInfoMessage('Please add a hearing time block by click & drag on the calendar.');
       return;
     }
+    h.days.map(d => d.text = h.hearingType.name);
 
     this.hearingSvc
       .save(h)
