@@ -10,3 +10,6 @@ coverage
 dist/
 test/
 doc/*
+.vscode/launch.json
+src/app/admin/data/iccs-codes/iccs-codes.component.ts.old
+src/app/admin/data/iccs-codes/iccs.codes.component.ts.old

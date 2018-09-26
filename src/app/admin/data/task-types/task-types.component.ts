@@ -2,16 +2,16 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
 
-import { LookupService } from '../../../common/services/http/lookup.service';
+import { LookupService } from './../../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { AdminDataService } from '../../../common/services/http/admin-data.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
-import { CaseStatus } from '../../../common/entities/CaseStatus';
-import { environment } from '../../../../environments/environment';
+import { TaskType } from './../../../common/entities/TaskType';
+import { environment } from './../../../../environments/environment';
 
 @Component({
-  selector: 'app-case-statuses',
-  templateUrl: './case-statuses.component.html',
+  selector: 'app-task-types',
+  templateUrl: './task-types.component.html',
   styles: [
     `
     h2 {
@@ -22,17 +22,18 @@ import { environment } from '../../../../environments/environment';
     `
   ]
 })
-export class CaseStatusesComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  typeItems: CaseStatus[];
-  selectedItem: CaseStatus;
+export class TaskTypesComponent implements OnInit, OnDestroy, AfterViewInit {
+
+  typeItems: TaskType[];
+  selectedItem: TaskType;
 
   allowDeleteLookupItems: boolean;
   selectedItemIdx: number;
-  selectedItemBak: CaseStatus;
+  selectedItemBak: TaskType;
   showDeleteItemModal = false;
 
-  tableLabel = 'Case Status';
+  tableLabel = 'Task Type';
   refDataSubscription: Subscription;
 
   constructor(
@@ -43,7 +44,7 @@ export class CaseStatusesComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Data Table Maintenance', routerLink: ['/admin/data'] },
-      { label: 'Case Statuses', routerLink: ['/admin/data/casestatuses'] }
+      { label: 'Task Types', routerLink: ['/admin/data/tasktypes'] }
     ]);
   }
 
@@ -74,15 +75,15 @@ export class CaseStatusesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getRefData() {
-    this.refDataSubscription = this.lookupSvc.fetchLookup<CaseStatus>('FetchCaseStatus').subscribe(result => {
+    this.refDataSubscription = this.lookupSvc.fetchLookup<TaskType>('FetchTaskType').subscribe(result => {
       this.typeItems = result;
       this.selectedItem = this.typeItems[0];
       this.copySelectedItem();
       // If items in list, default to first item
       setTimeout(() => {
         if (this.itemsList.options.first) {
-            this.itemsList.options.first.selected = true;
-          }
+          this.itemsList.options.first.selected = true;
+        }
       }, 100);
 
     });
@@ -95,40 +96,40 @@ export class CaseStatusesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   createNewItem() {
     this.itemsList.deselectAll();
-    this.selectedItem = new CaseStatus();
+    this.selectedItem = new TaskType();
     this.copySelectedItem();
   }
 
   saveDataItem() {
-    this.adminSvc.saveCaseStatus(this.selectedItem).subscribe( result => {
+    this.adminSvc.saveTaskType(this.selectedItem).subscribe(result => {
       console.log('result', result);
 
       const index: number = this.getIndexOfItem(result);
 
       if (index >= 0) {
         this.typeItems[index] = result;
-      }else {
+      } else {
         this.typeItems.push(result);
       }
       this.toastSvc.showSuccessMessage('Item Saved');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error saving the item.');
-    },
-    () => {
-      // final
-    });
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error saving the item.');
+      },
+      () => {
+        // final
+      });
 
   }
 
   copySelectedItem() {
-    this.selectedItemBak = Object.assign(new CaseStatus(), this.selectedItem);
+    this.selectedItemBak = Object.assign(new TaskType(), this.selectedItem);
     this.selectedItemIdx = this.getIndexOfItem(this.selectedItem);
   }
 
   cancelDataItemEdit(event) {
-    this.selectedItem = Object.assign(new CaseStatus(), this.selectedItemBak);
+    this.selectedItem = Object.assign(new TaskType(), this.selectedItemBak);
     this.typeItems[this.selectedItemIdx] = this.selectedItem;
   }
 
@@ -141,18 +142,18 @@ export class CaseStatusesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   deleteDataItem() {
-    this.adminSvc.deleteLookupItem('CaseType', this.selectedItem.statusOID).subscribe(result => {
+    this.adminSvc.deleteLookupItem('TaskType', this.selectedItem.taskTypeOID).subscribe(result => {
       this.typeItems.splice(this.getIndexOfItem(), 1);
       this.selectedItem = this.typeItems[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error deleting the item.');
-    },
-    () => {
-      // final
-    });
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error deleting the item.');
+      },
+      () => {
+        // final
+      });
   }
 
   hideModals() {
@@ -161,7 +162,7 @@ export class CaseStatusesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.typeItems
-        .findIndex(itm => itm.statusOID === item.statusOID);
+      .findIndex(itm => itm.taskTypeOID === item.taskTypeOID);
   }
 
 
