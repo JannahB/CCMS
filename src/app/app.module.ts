@@ -102,6 +102,7 @@ import { AdminDataService } from "./common/services/http/admin-data.service";
 import { AdminUserService } from "./common/services/http/admin-user.service";
 import { AuthenticationService } from "./common/services/http/authentication.service";
 import { CalCourtLocationService } from "./common/services/http/calCourtLocation.service";
+import { AssignmentManagerService } from "./common/services/http/assignment-manager.service";
 import { CalResourceService } from "./common/services/http/calResource.service";
 import { CalTemplateService } from "./common/services/http/calTemplate.service";
 import { CaseService } from "./common/services/http/case.service";
@@ -263,6 +264,7 @@ import { HearingsService } from './common/services/http/hearings.service';
     HolidayService,
     AppStateService,
     CaseCountsService,
+    AssignmentManagerService,
     ConfigService,
     HearingsService,
     {

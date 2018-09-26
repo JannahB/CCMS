@@ -1,3 +1,99 @@
-<p>
-  assignment-manager works!
-</p>
+<div class="ui-g">
+    <div class="ui-g-2 ui-sm-12 ">
+      <h2 class="page-header mt-0">Periods</h2>
+      <mat-selection-list #matSelectionList  class="items-list card">
+          <h3 mat-subheader>PERIOD START DATES</h3>
+          <mat-list-option *ngFor="let item of allocationPeriods; let i=index; let itm"
+          [class.hi]="selected"
+          [value]="item" (selectionChange)="onTemplateSelectionChange($event, item)">
+           {{item?.beginAllocationPeriod | date: 'shortDate'}}
+          </mat-list-option>
+        </mat-selection-list>
+    </div>
+
+    <div class="ui-g-10 ui-sm-12">
+        <h2 class="page-header mt-0">Assignment Period</h2>
+        
+        <div class="ui-g-12 card">
+
+        <div class="ui-g-3">
+            <label class="minimal primary block">Begin Date</label>
+            <p-calendar id="dtWorkWeek" name="dtWorkWeek" #dtWorkWeek
+                  styleClass="larger"
+                  [required]="true"
+                  [disabled]="false"
+                  dateFormat="mm/dd/yy"
+                  [(ngModel)]="beginAllocationPeriod"
+                  placeholder="MM/DD/YYYY"
+                  [showIcon]="true"
+                  yearRange="2018:2038"
+                  [yearNavigator]="false"
+                  appendTo="body" >
+              <ng-template pTemplate="date" let-date>
+                <span [ngStyle]="{backgroundColor: (date.day >= selectedWorkWeek && date.day < selectedWorkWeek.addDays(7)) ? '#7cc67c' : 'inherit'}" style="border-radius:50%">{{date.day}}</span>
+              </ng-template>
+            </p-calendar>
+        </div>
+        <div class="ui-g-1"></div>
+        <div class="ui-g-3">
+            <label class="minimal primary block">End Date</label>
+            <span>{{allocationPeriod?.endAllocationPeriod | date: 'shortDate'}}  </span>
+        </div>
+
+        <div class="ui-g-2 mt-5">
+            <mat-form-field class="width-full">
+              <input matInput name="tiThreshold" #tiThreshold="ngModel" placeholder="Threshold"
+              (ngModelChange)="allocationPeriod.maximumAssignableUnits = $event"
+                     [ngModel]="allocationPeriod?.maximumAssignableUnits">
+                <div class="ui-message ui-messages-error ui-corner-all"
+                     *ngIf="tiThreshold.errors?.required && tiThreshold.touched" >
+                     Please enter a Short Name
+               </div>
+            </mat-form-field>
+            <!-- <span>{{allocationPeriod?.maximumAssignableUnits}}</span> -->
+        </div>
+
+        <div class="ui-g-3 ta-r">
+            <!-- <button mat-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
+              <mat-icon aria-label="Add facility button">delete</mat-icon>
+              Delete Facility
+            </button> -->
+            <button mat-raised-button color="primary" (click)="saveItem()" class="mt-5">
+              <mat-icon aria-label="Save location button">check</mat-icon>
+              Reset Pool
+            </button>
+        </div>
+        
+        
+        </div>
+
+        <div class="ui-g-12">
+            <h2 class="page-header">Judicial Pool</h2>
+            <p-dataTable [value]="judicialPool" selectionMode="single" [(selection)]="selectedStep" (onRowSelect)="stepOnRowSelect($event)"
+              scrollable="true" scrollHeight="200px" #dtWorkflowSteps>
+              <p-column header="Judges" field="delayDays" [style]="{'width':'60%'}">
+                <ng-template let-item="rowData" pTemplate="body">
+                    {{ item.courtroomStaff }}
+                  </ng-template>
+              </p-column>
+              <p-column header="Active" field="" [style]="{'width':'10%'}">
+                <ng-template let-item="rowData" pTemplate="body">
+                  {{ item.active }}
+                </ng-template>
+              </p-column>
+              <p-column header="Case Count" field="" [style]="{'width':'15%'}">
+                <ng-template let-item="rowData" pTemplate="body">
+                  {{ item.caseCount  }}
+                </ng-template>
+              </p-column>
+              <p-column header="Case Weight" field="" [style]="{'width':'15%'}">
+                <ng-template let-item="rowData" pTemplate="body">
+                  {{item.weightUnitsAllocation}}
+    
+                </ng-template>
+              </p-column>
+            </p-dataTable>
+          </div>
+    
+    </div>
+</div>
