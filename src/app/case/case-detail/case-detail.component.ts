@@ -943,7 +943,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.loadingJudgeLookups = true;
 
     this.caseSvc
-      .fetchJudicialOfficer()
+      .getJudicialOfficers()
       .subscribe(judges => {
         this.loadingJudgeLookups = false;
         this.judges = judges;

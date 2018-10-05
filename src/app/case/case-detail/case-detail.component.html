@@ -1343,7 +1343,7 @@
 
         <div class="ui-g-12 mb-15">
           <label class="minimal primary block">Judge</label>
-          <div *ngIf="judge.judicialAssignmentOID > 0">{{judge.judicialOfficial.name}}</div>
+          <div *ngIf="judge.judicialAssignmentOID > 0">{{judge.judicialOfficial.firstName}} {{judge.judicialOfficial.lastName}}</div>
           <div *ngIf="!judge.judicialAssignmentOID || judge.judicialAssignmentOID == 0">
             <p-dropdown name="ddJudge" id="ddJudge" placeholder="choose Judge..." #ddJudge="ngModel"
                 [required]="true"
