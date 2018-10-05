@@ -419,6 +419,10 @@ export class CaseService extends HttpBaseService<Case> {
 
   }
 
+  /* Deprecated
+      on 10/5/2018 by Jeff
+      use the more efficient getJudicialOfficers()
+
   public fetchJudicialOfficer(): Observable<JudicialOfficer[]> {
     let url: string = `${super.getBaseUrl()}/FetchJudicialOfficer`;
 
@@ -426,8 +430,18 @@ export class CaseService extends HttpBaseService<Case> {
       .get<JudicialOfficer[]>(url)
       .map(judges => judges.map(this.mapToRealJudicialOfficer));
   }
+  */
+
+  public getJudicialOfficers(): Observable<JudicialOfficer[]> {
+    let url: string = `${super.getBaseUrl()}/api/judicial-officers`;
+    return this.http
+      .get<JudicialOfficer[]>(url)
+      .map(judges => judges.map(this.mapToRealJudicialOfficer));
+  }
 
   private mapToRealJudicialOfficer(judge: JudicialOfficer): JudicialOfficer {
+    judge.name = `${judge.firstName} ${judge.lastName}`;
+    judge.partyOID = judge.id;
     return Object.assign(new JudicialOfficer(), judge);
   }
 
