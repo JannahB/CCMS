@@ -30,8 +30,9 @@
       <p-column field="" header="Hearings" >
         <ng-template pTemplate="body" let-item="rowData">
           <h4 class="mb-10 mt-0">{{ item.hearingType?.name }}</h4>
-          <p class=" mv-0" >{{ item.judicialOfficer?.firstName }} {{ item.judicialOfficer?.lastName }}</p>
-          <p class=" mv-0" >{{ item.hearingStartDateTime | date:'MMM d, yyyy h:mm a' }} </p>
+          <p class=" mv-0 smaller" >{{ item.judicialOfficer?.firstName }} {{ item.judicialOfficer?.lastName }}</p>
+          <p class=" mv-0 smaller" >{{ item.hearingStartDateTime | date:'MMM d, yyyy h:mm a' }} </p>
+          <p class=" mv-0 smaller" >{{ item.hearingLocation?.courtroom }}</p>
         </ng-template>
       </p-column>
     </p-dataTable>
@@ -62,7 +63,7 @@
             </div>
           </div>
 
-          <div class="ui-g-9 ui-sm-12 ph-0 pt-0">
+          <div class="ui-g-9 ui-sm-12 pad-0">
             <div class="ui-g-6 mb-10">
               <label class="minimal primary block">Hearing Type</label>
               <p-dropdown name="ddHearingType" id="ddHearingType" #ddHearingType="ngModel" placeholder="choose Hearing Type..."
@@ -93,7 +94,7 @@
                     Please select a Judicial Officer
               </div>
             </div>
-            <div class="ui-g-6 mb-10">
+            <div class="ui-g-6 mb-10 pt-0">
               <label class="minimal primary block">Hearing Location</label>
               <p-dropdown name="ddHearingLocation" id="ddHearingLocation" #ddHearingLocation="ngModel" placeholder="choose Hearing Location..."
                   [required]="true"
@@ -109,7 +110,7 @@
               </div>
             </div>
 
-            <div class="ui-g-6 mb-10">
+            <div class="ui-g-6 mb-10 pt-0">
                 <label class="minimal primary block">Description</label>
                 <textarea name="tiHearingDescription"
                           [ngModel]="selectedHearing?.description"
@@ -122,11 +123,11 @@
             </div>
 
 
-            <div class="ui-g-12">
+            <div class="ui-g-12 pad-0">
               <div class="" *ngIf="selectedHearing">
                 <!-- CALENDAR -->
                 <p class="mv-0 muted-label">Click and drag to mark hours. </p>
-                <daypilot-scheduler [config]="config" [events]="selectedHearing.days" #scheduler></daypilot-scheduler>
+                <daypilot-calendar [config]="config" [events]="selectedHearing.days" #scheduler></daypilot-calendar>
                 <div class="legend mt-10">
                   <div class="item">
                     <div class="box bg-available" ></div>
