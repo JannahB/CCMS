@@ -1,5 +1,6 @@
 $blockedFacilityColor: #f1eeee;
 $blockedJudgeColor:#d9e8f5;
+$blockedHolidayColor: #71d3ff;
 $bgAvailable: #ffffff;
 
 
@@ -28,6 +29,9 @@ h2 {
 }
 .bg-res {
   background-color: $blockedJudgeColor;
+}
+.bg-hol {
+  background-color: $blockedHolidayColor;
 }
 .bg-available {
   background-color: #ffffff;

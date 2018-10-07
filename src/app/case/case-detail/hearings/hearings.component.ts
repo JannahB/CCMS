@@ -50,7 +50,7 @@ export class HearingsComponent implements OnInit {
   blockedHearings = [];
   blockedFacilityColor = '#f1eeee';
   blockedJudgeColor = '#d9e8f5';
-  blockedHearingColor = '#71d3ff'
+  blockedHolidayColor = '#71d3ff';
 
   // CALENDAR CONFIG OBJECT -----------
   // ----------------------------------
@@ -195,6 +195,8 @@ export class HearingsComponent implements OnInit {
             args.cell.backColor = this.blockedFacilityColor;
           else if (item.tag == 'Resource')
             args.cell.backColor = this.blockedJudgeColor;
+          else if (item.tag == 'Holiday')
+            args.cell.backColor = this.blockedHolidayColor;
         }
       });
 
@@ -403,7 +405,7 @@ export class HearingsComponent implements OnInit {
     let blockedHearingsDays = [];
 
     this.conflicts.forEach(element => {
-      if (element.type == 'Facility' || element.type == 'Resource')
+      if (element.type == 'Facility' || element.type == 'Resource' || element.type == 'Holiday')
         blockedDays = [...blockedDays, ...element.days];
 
       if (element.type == 'Hearing') {
