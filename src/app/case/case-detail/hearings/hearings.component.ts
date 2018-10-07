@@ -48,18 +48,19 @@ export class HearingsComponent implements OnInit {
   selectedWorkWeek: any;
   blockedHours = [];
   blockedHearings = [];
-  blockedFacilityColor = '#e9e8e8';
-  blockedJudgeColor = '#eaedf0';
+  blockedFacilityColor = '#f1eeee';
+  blockedJudgeColor = '#d9e8f5';
   blockedHearingColor = '#71d3ff'
 
   // CALENDAR CONFIG OBJECT -----------
   // ----------------------------------
   config: any = {
-    theme: "minimal_blue",
+    // theme: "minimal_blue", // add to Scheduler
     viewType: "Days",
     showNonBusiness: false,
-    businessBeginsHour: 8,
-    businessEndsHour: 19,
+    businessBeginsHour: 9,
+    businessEndsHour: 17,
+    headerDateFormat: "ddd M/d/yyyy",
     rowHeaderColumns: [
       { title: "Date" }
       // {title: "Total"}
@@ -73,12 +74,13 @@ export class HearingsComponent implements OnInit {
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
     days: 6,
     businessWeekends: true,
-    heightSpec: "Max",
+    heightSpec: "BusinessHours", // "Fixed" "Full" "BusinessHours" "BusinessHoursNoScroll" "Parent100Pct"
     height: 300,
     allowEventOverlap: true,
 
     timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
     onTimeRangeSelected: args => {
+      if (!this.hasValidHearingProperties()) return;
       args.control.events.add(new DayPilot.Event({
         start: args.start,
         end: args.end,
@@ -150,6 +152,14 @@ export class HearingsComponent implements OnInit {
       // args.data.areas = [
       //   { right: 2, top: 6, height: 20, width: 30, html: duration.toString("h:mm") }
       // ];
+      let showbar = args.data.tags && args.data.tags.hearingId && args.data.tags.hearingId == this.selectedHearing.id;
+      // if hearing id is null == new hearing so show bar
+      if (!this.selectedHearing.id) showbar = true;
+      args.data.barHidden = !showbar;
+      // args.data.barColor = "red";
+      // args.data.cssClass = "myclass";
+      // args.data.backColor = "#ffc0c0";
+
     },
     onBeforeResHeaderRender: args => {
       let dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -188,16 +198,16 @@ export class HearingsComponent implements OnInit {
         }
       });
 
-      this.blockedHearings.forEach(h => {
-        let hearingStart = new DayPilot.Date(h.start).getTotalTicks();
-        let hearingEnd = new DayPilot.Date(h.end).getTotalTicks();
+      // this.blockedHearings.forEach(h => {
+      //   let hearingStart = new DayPilot.Date(h.start).getTotalTicks();
+      //   let hearingEnd = new DayPilot.Date(h.end).getTotalTicks();
 
-        if (cellStart >= hearingStart && cellEnd <= hearingEnd) {
-          args.cell.backColor = this.blockedHearingColor;
-          args.cell.borderColor = this.blockedHearingColor;
-          args.cell.html = ''; // h.text;
-        }
-      })
+      //   if (cellStart >= hearingStart && cellEnd <= hearingEnd) {
+      //     args.cell.backColor = this.blockedHearingColor;
+      //     args.cell.borderColor = this.blockedHearingColor;
+      //     args.cell.html = ''; // h.text;
+      //   }
+      // })
     },
     eventMoveHandling: "Update",
     onEventMoved: args => {
@@ -297,14 +307,17 @@ export class HearingsComponent implements OnInit {
       });
   }
 
-  getHearings() {
+  getHearings(resultHearing?) {
     this.loadingDataFlag = true;
     this.hearingSvc.getByCaseId(this.case.caseOID).subscribe(data => {
       this.hearings = data;
       this.loadingDataFlag = false;
       if (this.hearings.length) {
         this.initHearingData();
-        this.setSelectedHearing(this.hearings[0]);
+        // this.setSelectedHearing(resultHearing || this.hearings[0]);
+        let selectedIndex = 0;
+        if (resultHearing) selectedIndex = this.getIndexOfItem(resultHearing);
+        this.setSelectedHearing(this.hearings[selectedIndex]);
         this.getUnavailableBlocks();
       } else {
         this.setWorkWeek(new Date());
@@ -355,11 +368,9 @@ export class HearingsComponent implements OnInit {
 
 
   getUnavailableBlocks() {
-
     if (!this.selectedHearing.hearingStartDateTime
       || !this.selectedHearing.judicialOfficerId
       || !this.selectedHearing.courtLocationId) {
-
       return;
     }
 
@@ -388,21 +399,45 @@ export class HearingsComponent implements OnInit {
 
 
   createBlockedArrays() {
-    let days = [];
-    let hearings = [];
+    let blockedDays = [];
+    let blockedHearingsDays = [];
 
     this.conflicts.forEach(element => {
       if (element.type == 'Facility' || element.type == 'Resource')
-        days = [...days, ...element.days];
-      if (element.type == 'Hearing')
-        hearings = [...hearings, ...element.days]
-    });
-    this.blockedHours = days;
-    this.blockedHearings = hearings;
-    console.log('blockedHours', days);
-    console.log('blockedHearings', hearings);
-    this.refreshCalendar();
+        blockedDays = [...blockedDays, ...element.days];
 
+      if (element.type == 'Hearing') {
+        element.days.map(d => d['hearingId'] = element.id);
+        blockedHearingsDays = [...blockedHearingsDays, ...element.days];
+        // blockedHearingsDays.map(d => d['tags']['hearingId'] = element.id);
+        // blockedHearingsDays.map(d => d['hearingId'] = element.id);
+      }
+    });
+    // console.log('blockedDays', blockedDays);
+    console.log('blockedHearingsDays', blockedHearingsDays);
+
+    // Add other hearings to selectedHearings so they can be displayed
+    // along side of selectedHearing.days. They are stripped during saveHearing()
+    let sansThisHearingsDays = blockedHearingsDays.slice();
+    sansThisHearingsDays = sansThisHearingsDays.filter(d => d.hearingId != this.selectedHearing.id);
+
+    this.filterOutOtherHearingDays();
+    let h = this.selectedHearing;
+    h.days = [...this.selectedHearing.days, ...sansThisHearingsDays];
+
+    this.blockedHours = blockedDays;
+    this.blockedHearings = blockedHearingsDays;
+    console.log('sansThisHearingsDays', sansThisHearingsDays);
+    this.refreshCalendar();
+  }
+
+  private filterOutOtherHearingDays() {
+    // ignore if hearing id is null indicating new hearing
+    // if (!this.selectedHearing.id) return;
+    // reset days back to original before adding other hearing days back in
+    let h = this.selectedHearing;
+    // h.days = h.days.filter(day => day.tags && day.tags.hearingId && day.tags.hearingId === h.id);
+    h.days = h.days.filter(day => day.id != null);
   }
 
   hasPermission(pm) {
@@ -500,29 +535,33 @@ export class HearingsComponent implements OnInit {
   saveHearing() {
     this.scheduler.control.clearSelection();
     let h = this.selectedHearing
-    if (!h.courtLocationId || !h.hearingTypeId || !h.judicialOfficerId) {
-      this.toastSvc.showInfoMessage('Please complete all fields and try again.');
-      return;
-    }
+    if (!this.hasValidHearingProperties()) return;
+
     if (!h.days || !h.days.length) {
       this.toastSvc.showInfoMessage('Please add a hearing time block by click & drag on the calendar.');
       return;
     }
+
+    // remove other hearings days
+    this.filterOutOtherHearingDays();
+
     h.days.map(d => d.text = h.hearingType.name);
 
     this.hearingSvc
       .save(h)
       .subscribe(result => {
 
-        this.selectedHearing = result;
-        this.hearings[this.selectedHearingIdx] = result;
-        this.enhanceAHearing(result);
-        this.preSelectDropdowns();
-        this.hearings = this.hearings.slice();
-        this.copySelectedItem();
+        this.getHearings(result);
+
+        // this.selectedHearing = result;
+        // this.hearings[this.selectedHearingIdx] = result;
+        // this.enhanceAHearing(result);
+        // this.preSelectDropdowns();
+        // this.hearings = this.hearings.slice();
+        // this.copySelectedItem();
 
         // This prevents event doubling phenom
-        this.selectedHearing.days = this.selectedHearing.days.slice();
+        // this.selectedHearing.days = this.selectedHearing.days.slice();
 
         console.log('hearings after save', this.hearings);
         this.toastSvc.showSuccessMessage('Hearing Saved');
@@ -593,6 +632,15 @@ export class HearingsComponent implements OnInit {
   hideModals() {
     this.showDeleteItemModal = false;
 
+  }
+
+  private hasValidHearingProperties(): boolean {
+    let h = this.selectedHearing;
+    if (!h.courtLocationId || !h.hearingTypeId || !h.judicialOfficerId) {
+      this.toastSvc.showInfoMessage('Please complete all fields and try again.');
+      return false;
+    }
+    return true;
   }
 
   private copySelectedItem() {

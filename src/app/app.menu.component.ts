@@ -182,7 +182,7 @@ export class AppMenuComponent implements OnInit {
     }
 
     this.model = this.model.slice();
-    console.log("*** BUILD MENU CALLED ***", this.model);
+    //console.log("*** BUILD MENU CALLED ***", this.model);
   }
 
   changeTheme(theme) {
