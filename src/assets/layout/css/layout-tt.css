@@ -214,6 +214,9 @@
   100% {
     opacity: 0;
     transform: scale(2.5); } }
+.opacity50 {
+  opacity: 0.5; }
+
 .splash-screen {
   width: 100%;
   min-height: 100%;
@@ -996,9 +999,9 @@ body {
     display: inline-block;
     vertical-align: middle;
     width: 175px;
-    height: 28px;
+    height: 34px;
     background: url("../images/logo2x-red.png") top left no-repeat;
-    background-size: 175px 28px; }
+    background-size: 175px 34px; }
   .layout-container .topbar .topbar-left {
     box-sizing: border-box;
     padding: 16px 20px;
