@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.2"></a>
+## [1.9.2](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.1...v1.9.2) (2018-10-07)
+
+
+### Bug Fixes
+
+* **Judicial Assignment:** add name prop and use new EP ([4cb3553](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/4cb3553))
+
+
+### Features
+
+* **app:** add childrens logo ([7f62430](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/7f62430))
+* **Hearing:** display other hearings time blocks ([5d4a9db](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/5d4a9db))
+* **Hearings:** add hearing location to list items ([292cbe5](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/292cbe5))
+* **Hearings:** show all case hearings in cal, use calendar format ([6619b04](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/6619b04))
+* **Hearings:** show holiday blocks in hearings schedule ([e355ca5](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/e355ca5))
+
+
+
 <a name="1.9.1"></a>
 ## [1.9.1](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.0...v1.9.1) (2018-09-21)
 
