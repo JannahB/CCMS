@@ -51,9 +51,10 @@ export class HearingsService extends HttpBaseService<any> {
 
   public save(hearing: CaseHearing): Observable<CaseHearing> {
     hearing.days = this.serializeDPDateWithZone(hearing.days);
-    if (hearing.id) {
+    if (hearing.id > 0) {
       return this.put<CaseHearing>(hearing.id, hearing);
     } else {
+      hearing.id = null;
       return this.post<CaseHearing>(hearing);
     }
   }
