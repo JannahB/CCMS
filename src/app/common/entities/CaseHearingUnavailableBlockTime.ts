@@ -2,7 +2,7 @@ import { BaseTimeBlock } from "./BaseTimeBlock";
 
 export class CaseHearingUnavailableBlockTime extends BaseTimeBlock {
 
-  assignedFacility: number = 0;
+  hearingId: number = 0;
   resourceId: number = 0;
-
+  caseId: number = 0;
 }
