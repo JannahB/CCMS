@@ -17,6 +17,7 @@ import { BreadcrumbService } from '../../../breadcrumb.service';
 import { HearingsService } from './../../../common/services/http/hearings.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
 import { UserService } from '../../../common/services/utility/user.service';
+import { CaseHearingTimesDTO } from "../../../common/entities/CaseHearingTimesDTO";
 
 
 @Component({
@@ -63,14 +64,12 @@ export class HearingsComponent implements OnInit {
     headerDateFormat: "ddd M/d/yyyy",
     rowHeaderColumns: [
       { title: "Date" }
-      // {title: "Total"}
     ],
     eventHeight: 30,
     cellWidthSpec: "Auto",
     timeHeaders: [{ "groupBy": "Hour" }, { "groupBy": "Cell", "format": "mm" }],
     scale: "CellDuration",
     cellDuration: 30,
-    // startDate: this.selectedWorkWeek,
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
     days: 6,
     businessWeekends: true,
@@ -80,7 +79,11 @@ export class HearingsComponent implements OnInit {
 
     timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
     onTimeRangeSelected: args => {
-      if (!this.hasValidHearingProperties()) return;
+      // if (!this.hasValidHearingProperties()) {
+      //   args.preventDefault();
+      //   return;
+      // }
+
       args.control.events.add(new DayPilot.Event({
         start: args.start,
         end: args.end,
@@ -89,6 +92,7 @@ export class HearingsComponent implements OnInit {
         text: this.getHearingName(),
         tags: { hearingId: this.selectedHearing.id } // custom transient data for comparison
       }));
+
       this.saveHearing();
 
       // -------- MODAL EVENT NAMING - Use this block to present a naming modal to user ------
@@ -153,8 +157,6 @@ export class HearingsComponent implements OnInit {
       //   { right: 2, top: 6, height: 20, width: 30, html: duration.toString("h:mm") }
       // ];
       let showbar = args.data.tags && args.data.tags.hearingId && args.data.tags.hearingId == this.selectedHearing.id;
-      // if hearing id is null == new hearing so show bar
-      if (!this.selectedHearing.id) showbar = true;
       args.data.barHidden = !showbar;
       // args.data.barColor = "red";
       // args.data.cssClass = "myclass";
@@ -163,8 +165,6 @@ export class HearingsComponent implements OnInit {
     },
     onBeforeResHeaderRender: args => {
       let dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      // console.log("args.resource.html", args.resource);
-
       // To Show day of week only use
       // args.resource.html = dow[args.resource.index];
 
@@ -177,12 +177,6 @@ export class HearingsComponent implements OnInit {
       }
     },
     onBeforeCellRender: args => {
-      // let saturday = 6;
-      // let sunday = 0;
-      // let dayOfWeek = args.cell.start.dayOfWeek();
-      // if (dayOfWeek === sunday || dayOfWeek === saturday) {
-      //   args.cell.backColor = "#f7f7f7"; // apply highlighting
-      // }
       let cellStart = args.cell.start.getTotalTicks();
       let cellEnd = args.cell.end.getTotalTicks();
 
@@ -199,17 +193,6 @@ export class HearingsComponent implements OnInit {
             args.cell.backColor = this.blockedHolidayColor;
         }
       });
-
-      // this.blockedHearings.forEach(h => {
-      //   let hearingStart = new DayPilot.Date(h.start).getTotalTicks();
-      //   let hearingEnd = new DayPilot.Date(h.end).getTotalTicks();
-
-      //   if (cellStart >= hearingStart && cellEnd <= hearingEnd) {
-      //     args.cell.backColor = this.blockedHearingColor;
-      //     args.cell.borderColor = this.blockedHearingColor;
-      //     args.cell.html = ''; // h.text;
-      //   }
-      // })
     },
     eventMoveHandling: "Update",
     onEventMoved: args => {
@@ -225,14 +208,12 @@ export class HearingsComponent implements OnInit {
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
-      console.log('--- selectedHearing 1', this.selectedHearing);
       // var e = this.scheduler.events.find('123');
       // this.scheduler.events.remove(e).notify();
       // NOTE: no need for explicit remove since binding removes the time block
       // this.deleteTimeBlock(args.e.data.id, true);
       this.selectedHearing.days = this.selectedHearing.days.slice();
       this.saveHearing();
-      console.log('--- selectedHearing 2', this.selectedHearing);
     },
 
     eventHoverHandling: "Bubble"
@@ -240,7 +221,6 @@ export class HearingsComponent implements OnInit {
 
 
   constructor(
-    private breadCrumbSvc: BreadcrumbService,
     private toastSvc: ToastService,
     private userSvc: UserService,
     private hearingSvc: HearingsService
@@ -253,12 +233,6 @@ export class HearingsComponent implements OnInit {
       dat.setDate(dat.getDate() + numberOfDays);
       return dat;
     }
-
-    // this.breadCrumbSvc.setItems([
-    //   { label: 'Admin Calendars', routerLink: ['/admin/calendar'] },
-    //   { label: 'Resource Hours', routerLink: ['/admin/calendar/resources'] }
-    // ]);
-
   }
 
   ngOnInit() {
@@ -276,7 +250,8 @@ export class HearingsComponent implements OnInit {
   }
 
   getHearingName() {
-    return this.selectedHearing.hearingType.name || "New Hearing";
+    return "Whatevs";
+    // return this.selectedHearing.hearingType.name || "New Hearing";
   }
 
   getLookups() {
@@ -313,12 +288,11 @@ export class HearingsComponent implements OnInit {
     this.loadingDataFlag = true;
     this.hearingSvc.getByCaseId(this.case.caseOID).subscribe(data => {
       this.hearings = data;
+      this.hearings = this.hearings.slice();
       this.loadingDataFlag = false;
       if (this.hearings.length) {
         this.initHearingData();
-        // this.setSelectedHearing(resultHearing || this.hearings[0]);
-        let selectedIndex = 0;
-        if (resultHearing) selectedIndex = this.getIndexOfItem(resultHearing);
+        let selectedIndex = (resultHearing) ? this.getIndexOfItem(resultHearing) : 0;
         this.setSelectedHearing(this.hearings[selectedIndex]);
         this.getUnavailableBlocks();
       } else {
@@ -348,7 +322,7 @@ export class HearingsComponent implements OnInit {
     h.hearingLocation = this.hearingLocations.find(loc => loc.id == h.courtLocationId);
     h.hearingStartDateTime = h.days && h.days.length ? new Date(h.days[0].start) : new Date();
     h.hearingEndDateTime = h.days && h.days.length ? new Date(h.days[0].end) : new Date();
-    h.days.map(d => d.tags = { ...d.tags, ...{ hearingId: h.id } });
+    h.days.map(d => d.tags = { ...d.tags, ...{ hearingId: d.hearingId } });
     return h;
   }
 
@@ -357,7 +331,6 @@ export class HearingsComponent implements OnInit {
   }
 
   private preSelectDropdowns() {
-    // Pre-select Dropdowns
     if (this.selectedHearing.judicialOfficerId)
       this.selectedHearing.judicialOfficer = this.judges.find(j => j.id == this.selectedHearing.judicialOfficerId);
 
@@ -396,50 +369,52 @@ export class HearingsComponent implements OnInit {
         () => {
           this.loadingDataFlag = false;
         });
-
   }
 
 
   createBlockedArrays() {
-    let blockedDays = [];
+    let h = this.selectedHearing;
+    let blockedHoursOfOperation = [];
     let blockedHearingsDays = [];
 
     this.conflicts.forEach(element => {
       if (element.type == 'Facility' || element.type == 'Resource' || element.type == 'Holiday')
-        blockedDays = [...blockedDays, ...element.days];
+        blockedHoursOfOperation = [...blockedHoursOfOperation, ...element.days];
 
       if (element.type == 'Hearing') {
-        element.days.map(d => d['hearingId'] = element.id);
+        // Add tags.hearingId to days for convenience
+        // since DayPilot.Event only supports custom data on 'tags' property
+        // unavailableHearing.days object has -> day.hearingId, day.resourceId, day.caseId
+        element.days.map(d => d.tags = { ...d.tags, ...{ hearingId: d.hearingId } });
         blockedHearingsDays = [...blockedHearingsDays, ...element.days];
-        // blockedHearingsDays.map(d => d['tags']['hearingId'] = element.id);
-        // blockedHearingsDays.map(d => d['hearingId'] = element.id);
       }
     });
     // console.log('blockedDays', blockedDays);
     console.log('blockedHearingsDays', blockedHearingsDays);
 
-    // Add other hearings to selectedHearings so they can be displayed
-    // along side of selectedHearing.days. They are stripped during saveHearing()
+
+    // REMOVE DUPLICATE hearing days from blockedHearingsDays that matches selectedHearing.days
     let sansThisHearingsDays = blockedHearingsDays.slice();
-    sansThisHearingsDays = sansThisHearingsDays.filter(d => d.hearingId != this.selectedHearing.id);
+    sansThisHearingsDays = sansThisHearingsDays.filter(d => d.hearingId != h.id);
 
-    this.filterOutOtherHearingDays();
-    let h = this.selectedHearing;
-    h.days = [...this.selectedHearing.days, ...sansThisHearingsDays];
+    // CLEAN OUT selectedHearing.days of non-selectedHearing days before
+    // adding new sansThisHearingsDays back into days array
+    h.days = this.filterOutOtherHearingDays(h.days);
 
-    this.blockedHours = blockedDays;
+    // ADD sansThisHearingsDays to selectedHearing.days so they can be displayed
+    // along side of selectedHearing.days.
+    // Note: blockedHearingsDays are stripped during saveHearing()
+    h.days = [...h.days, ...sansThisHearingsDays];
+
+    this.blockedHours = blockedHoursOfOperation;
     this.blockedHearings = blockedHearingsDays;
     console.log('sansThisHearingsDays', sansThisHearingsDays);
     this.refreshCalendar();
   }
 
-  private filterOutOtherHearingDays() {
-    // ignore if hearing id is null indicating new hearing
-    // if (!this.selectedHearing.id) return;
-    // reset days back to original before adding other hearing days back in
-    let h = this.selectedHearing;
-    // h.days = h.days.filter(day => day.tags && day.tags.hearingId && day.tags.hearingId === h.id);
-    h.days = h.days.filter(day => day.id != null);
+  private filterOutOtherHearingDays(days: any[]): any[] {
+    days = days.filter(day => day.tags.hearingId == this.selectedHearing.id);
+    return days;
   }
 
   hasPermission(pm) {
@@ -450,12 +425,15 @@ export class HearingsComponent implements OnInit {
     // return this.userSvc.hasPermission(pm, courtOID);
   }
 
+
   createHearing() {
     let newHearing = new CaseHearing();
+    newHearing.id = 0;
     newHearing.description = 'New hearing description...';
     newHearing.caseId = this.case.caseOID;
     this.selectedHearing = newHearing;
-    this.hearings.push(newHearing);
+    //
+    this.hearings.push(this.selectedHearing);
     this.hearings = this.hearings.slice();
     this.enhanceAHearing(newHearing);
     this.preSelectDropdowns();
@@ -486,7 +464,8 @@ export class HearingsComponent implements OnInit {
   hearingDateOnChange(event) {
     this.selectedHearing.hearingStartDateTime = event;
     this.setWorkWeek(event);
-    this.getUnavailableBlocks();
+    // TODO: If days exist on selectedHearing, change their dates to match new date
+    this.changeHearingDaysDates(event);
   }
 
   hearingJudgeOnChange(event) {
@@ -506,15 +485,6 @@ export class HearingsComponent implements OnInit {
     this.getUnavailableBlocks();
   }
 
-  hearingStartTimeOnChange(event) {
-    // IF END DATE !touched, then set it to the same value as the StartTime
-    // this.selectedHearing.startDateTime = event;
-  }
-
-  hearingEndTimeOnChange(event) {
-    // this.selectedHearing.endDateTime = event;
-  }
-
   hearingTypeOnChange(event) {
     console.log('hearingTypeOnChange event', event);
     // TODO: Make sure the hearingTypeId is changed with ngModel binding
@@ -529,12 +499,19 @@ export class HearingsComponent implements OnInit {
   }
 
   onCancelEditHearing(hearingForm) {
-    this.selectedHearing = this.selectedHearingBak;
+    if (this.selectedHearing.id == 0) {
+      CollectionUtil.removeArrayItem(this.hearings, this.selectedHearing);
+      this.hearings = this.hearings.slice();
+      this.selectedHearing = null;
+    } else {
+      this.selectedHearing = this.selectedHearingBak;
+    }
     // hearingForm.reset(); // this does crazy things to the form
     this.hideModals();
   }
 
   saveHearing() {
+    console.info('selectedHearing.days', this.selectedHearing.days);
     this.scheduler.control.clearSelection();
     let h = this.selectedHearing
     if (!this.hasValidHearingProperties()) return;
@@ -545,7 +522,7 @@ export class HearingsComponent implements OnInit {
     }
 
     // remove other hearings days
-    this.filterOutOtherHearingDays();
+    h.days = this.filterOutOtherHearingDays(h.days);
 
     h.days.map(d => d.text = h.hearingType.name);
 
@@ -578,12 +555,6 @@ export class HearingsComponent implements OnInit {
 
   }
 
-  deleteHearing(): void {
-    CollectionUtil.removeArrayItem(this.hearings, this.selectedHearing);
-    this.hearings = this.hearings.slice();
-    this.showDeleteHearingModal = false;
-  }
-
   setWorkWeek(e) {
     console.log('setWorkWeek(e)', e)
     this.selectedWorkWeek = CalendarUtils.getMonday(new Date(e).toDateString());
@@ -591,10 +562,6 @@ export class HearingsComponent implements OnInit {
     this.scheduler.control.update();
     this.getUnavailableBlocks();
     console.log('selectedWorkWeek', this.selectedWorkWeek);
-  }
-
-  cancelDataItemEdit(event) {
-    this.selectedHearing = Object.assign(new CaseHearing(), this.selectedHearingBak);
   }
 
   deleteDataItemRequest() {
@@ -617,14 +584,6 @@ export class HearingsComponent implements OnInit {
         () => {
           // final
         })
-  }
-
-  deleteTimeBlock(id, userInitiated = false) {
-    let idx = this.selectedHearing.days.findIndex(item => item.id == id);
-    if (idx > -1) {
-      this.selectedHearing.days.splice(idx, 1);
-      this.saveHearing();
-    }
   }
 
   refreshCalendar() {
@@ -655,5 +614,17 @@ export class HearingsComponent implements OnInit {
       .findIndex(itm => itm.id == item.id);
   }
 
+  private changeHearingDaysDates(dt) {
+    if (this.selectedHearing.days.length) {
+      this.selectedHearing.days.map(d => {
+        if (d.hearingId == this.selectedHearing.id) {
+          const newStart = CalendarUtils.makeDPDateConstructorString(dt.getFullYear(), dt.getMonth(), dt.getDate(), d.start.getHours(), d.start.getMinutes());
+          const newEnd = CalendarUtils.makeDPDateConstructorString(dt.getFullYear(), dt.getMonth(), dt.getDate(), d.end.getHours(), d.end.getMinutes());
+          d.start = new DayPilot.Date(newStart);
+          d.end = new DayPilot.Date(newEnd);
+        }
+      })
+    }
+  }
 
 }
