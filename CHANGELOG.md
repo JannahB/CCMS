@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.3"></a>
+## [1.9.3](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.2...v1.9.3) (2018-10-09)
+
+
+### Bug Fixes
+
+* **Hearings:** fix hearing time blocks ([b784170](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/b784170))
+
+
+### Features
+
+* **Hearings:** 0 id == post ([867f13e](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/867f13e))
+* **Hearings:** new time block  properties ([f39e0a9](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/f39e0a9))
+
+
+
 <a name="1.9.2"></a>
 ## [1.9.2](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.1...v1.9.2) (2018-10-07)
 
