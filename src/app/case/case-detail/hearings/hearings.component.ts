@@ -52,6 +52,7 @@ export class HearingsComponent implements OnInit {
   blockedFacilityColor = '#f1eeee';
   blockedJudgeColor = '#d9e8f5';
   blockedHolidayColor = '#71d3ff';
+  tempDays: CaseHearingTimesDTO;
 
   // CALENDAR CONFIG OBJECT -----------
   // ----------------------------------
@@ -93,7 +94,9 @@ export class HearingsComponent implements OnInit {
         tags: { hearingId: this.selectedHearing.id } // custom transient data for comparison
       }));
 
-      this.saveHearing();
+      setTimeout(() => {
+        this.saveHearing();
+      }, 500);
 
       // -------- MODAL EVENT NAMING - Use this block to present a naming modal to user ------
       // DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
@@ -401,6 +404,12 @@ export class HearingsComponent implements OnInit {
     // adding new sansThisHearingsDays back into days array
     h.days = this.filterOutOtherHearingDays(h.days);
 
+    this.tempDays = {'id': 0,
+    'start': '1999-05-24T09:00:00',
+    'end': '1999-05-24T13:00:00',
+    'hearingId': 6350310920061, 'text': 'dummy', 'tags' : {'hearingId': 0}}
+    h.days.push(this.tempDays);
+
     // ADD sansThisHearingsDays to selectedHearing.days so they can be displayed
     // along side of selectedHearing.days.
     // Note: blockedHearingsDays are stripped during saveHearing()
@@ -413,7 +422,9 @@ export class HearingsComponent implements OnInit {
   }
 
   private filterOutOtherHearingDays(days: any[]): any[] {
+    // TODO: remove dummy
     days = days.filter(day => day.tags.hearingId == this.selectedHearing.id);
+    days = days.filter(day => day.id != 0);
     return days;
   }
 
