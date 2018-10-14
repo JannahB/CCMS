@@ -52,7 +52,10 @@ export class HearingsComponent implements OnInit {
   blockedFacilityColor = '#f1eeee';
   blockedJudgeColor = '#d9e8f5';
   blockedHolidayColor = '#71d3ff';
-  tempDays: CaseHearingTimesDTO;
+  tempDays: CaseHearingTimesDTO = {'id': 0,
+  'start': '1999-05-24T09:00:00',
+  'end': '1999-05-24T13:00:00',
+  'hearingId': 6350310920061, 'text': 'dummy', 'tags' : {'hearingId': 0}};
 
   // CALENDAR CONFIG OBJECT -----------
   // ----------------------------------
@@ -242,6 +245,7 @@ export class HearingsComponent implements OnInit {
     this.getLookups();
     this.hearings = [];
     this.selectedHearing = new CaseHearing();
+    this.selectedHearing.days.push(this.tempDays);
   }
 
   ngAfterViewInit(): void {
@@ -404,10 +408,6 @@ export class HearingsComponent implements OnInit {
     // adding new sansThisHearingsDays back into days array
     h.days = this.filterOutOtherHearingDays(h.days);
 
-    this.tempDays = {'id': 0,
-    'start': '1999-05-24T09:00:00',
-    'end': '1999-05-24T13:00:00',
-    'hearingId': 6350310920061, 'text': 'dummy', 'tags' : {'hearingId': 0}}
     h.days.push(this.tempDays);
 
     // ADD sansThisHearingsDays to selectedHearing.days so they can be displayed
@@ -443,6 +443,7 @@ export class HearingsComponent implements OnInit {
     newHearing.description = 'New hearing description...';
     newHearing.caseId = this.case.caseOID;
     this.selectedHearing = newHearing;
+    this.selectedHearing.days.push(this.tempDays);
     //
     this.hearings.push(this.selectedHearing);
     this.hearings = this.hearings.slice();
@@ -468,6 +469,7 @@ export class HearingsComponent implements OnInit {
       return;
     }
     this.selectedHearing = h;
+    this.selectedHearing.days.push(this.tempDays);
     this.setWorkWeek(this.selectedHearing.hearingStartDateTime);
     this.copySelectedItem();
   }
