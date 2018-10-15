@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.4"></a>
+## [1.9.4](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.3...v1.9.4) (2018-10-15)
+
+
+### Bug Fixes
+
+* **scheduling:** fix for save hearing failing validation ([e1c82d8](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/e1c82d8))
+* **scheduling:** one more fix for save hearing ([e42e9f0](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/e42e9f0))
+
+
+
 <a name="1.9.3"></a>
 ## [1.9.3](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.2...v1.9.3) (2018-10-09)
 
