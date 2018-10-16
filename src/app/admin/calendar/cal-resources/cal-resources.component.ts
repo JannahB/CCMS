@@ -234,13 +234,11 @@ export class CalResourcesComponent implements OnInit {
     this.calResourceSvc.save(this.selectedResource)
       .subscribe(result => {
         // console.log('AFTER Save RESOURCE:', this.selectedResource);
-        this.loadingDataFlag = false;
         this.updateList(result);
         this.hideModals();
         this.toastSvc.showSuccessMessage('Item Saved');
       },
         (error) => {
-          this.loadingDataFlag = false;
           console.log(error);
           this.toastSvc.showErrorMessage('There was an error saving the item.');
         },
@@ -263,7 +261,6 @@ export class CalResourcesComponent implements OnInit {
     this.loadingDataFlag = true;
     this.calResourceSvc.delete(this.selectedResource.id)
       .subscribe(result => {
-        this.loadingDataFlag = false;
         this.toastSvc.showSuccessMessage('The item has been deleted.');
         this.resources.splice(this.getIndexOfItem(), 1);
         this.selectedResource = this.resources[0];
@@ -271,7 +268,6 @@ export class CalResourcesComponent implements OnInit {
       },
         (error) => {
           console.log(error);
-          this.loadingDataFlag = false;
           this.toastSvc.showErrorMessage('There was an error deleting the item.');
         },
         () => {

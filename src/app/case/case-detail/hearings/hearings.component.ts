@@ -52,10 +52,12 @@ export class HearingsComponent implements OnInit {
   blockedFacilityColor = '#f1eeee';
   blockedJudgeColor = '#d9e8f5';
   blockedHolidayColor = '#71d3ff';
-  tempDays: CaseHearingTimesDTO = {'id': 0,
-  'start': '1999-05-24T09:00:00',
-  'end': '1999-05-24T13:00:00',
-  'hearingId': 6350310920061, 'text': 'dummy', 'tags' : {'hearingId': 0}};
+  tempDays: CaseHearingTimesDTO = {
+    'id': 0,
+    'start': '1999-05-24T09:00:00',
+    'end': '1999-05-24T13:00:00',
+    'hearingId': 6350310920061, 'text': 'dummy', 'tags': { 'hearingId': 0 }
+  };
 
   // CALENDAR CONFIG OBJECT -----------
   // ----------------------------------
@@ -283,7 +285,6 @@ export class HearingsComponent implements OnInit {
       },
       (error) => {
         console.log('getLookups error', error);
-        this.loadingDataFlag = false;
         this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
       },
       () => {
@@ -296,7 +297,6 @@ export class HearingsComponent implements OnInit {
     this.hearingSvc.getByCaseId(this.case.caseOID).subscribe(data => {
       this.hearings = data;
       this.hearings = this.hearings.slice();
-      this.loadingDataFlag = false;
       if (this.hearings.length) {
         this.initHearingData();
         let selectedIndex = (resultHearing) ? this.getIndexOfItem(resultHearing) : 0;
@@ -308,7 +308,6 @@ export class HearingsComponent implements OnInit {
     },
       (error) => {
         console.log('getHearings error', error);
-        this.loadingDataFlag = false;
         this.toastSvc.showErrorMessage('There was an error fetching hearings.')
       },
       () => {
@@ -366,11 +365,9 @@ export class HearingsComponent implements OnInit {
         this.conflicts = data;
         console.log('conflicts', this.conflicts);
         this.createBlockedArrays();
-        this.loadingDataFlag = false;
       },
         (error) => {
           console.log(error);
-          this.loadingDataFlag = false;
           this.toastSvc.showErrorMessage('There was an error fetching hearing conflicts data.');
         },
         () => {
