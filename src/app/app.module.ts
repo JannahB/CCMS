@@ -131,6 +131,8 @@ import { PartySearchComponent } from "./party/party-search/party-search.componen
 import { CaseCountsComponent } from './reports/case-counts/case-counts.component';
 import { ConfigService } from "./common/services/config/config.service";
 import { HearingsService } from './common/services/http/hearings.service';
+import { CalResourcesComponent } from './admin/calendar/cal-resources/cal-resources.component';
+import { CalFacilitiesComponent } from './admin/calendar/cal-facilities/cal-facilities.component';
 
 @NgModule({
   imports: [
@@ -227,7 +229,9 @@ import { HearingsService } from './common/services/http/hearings.service';
     ResetPasswordComponent,
     NewPasswordComponent,
     CaseCountsComponent,
-    HearingsComponent
+    HearingsComponent,
+    CalResourcesComponent,
+    CalFacilitiesComponent
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

@@ -22,6 +22,7 @@ export class CalFacilitiesComponent implements OnInit {
   scheduler: DayPilotSchedulerComponent;
 
   facilities: any[] = [];
+  loadingDataFlag: boolean;
   selectedFacility: any;
   selectedFacilityBak: any;
   selectedFacilityIdx: number;
@@ -188,6 +189,7 @@ export class CalFacilitiesComponent implements OnInit {
     ];
     this.filteredTags = this.facilityTags;
     this.selectedFacility = new CalFacility();
+    this.loadingDataFlag = true;
   }
 
   locationOnRowSelect(event) {
@@ -210,7 +212,15 @@ export class CalFacilitiesComponent implements OnInit {
       console.log('court locations', result);
       this.facilities = result;
       this.setFirstListItem();
-    });
+    },
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error loading locations.');
+      },
+      () => {
+        // final
+        this.loadingDataFlag = false;
+      });
 
     this.calTemplateSvc.get().subscribe(result => {
       this.templates = result;
@@ -229,6 +239,7 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   saveItem() {
+    this.loadingDataFlag = true;
     this.scheduler.control.clearSelection();
     this.calCourtLocationSvc.save(this.selectedFacility)
       .subscribe(result => {
@@ -243,6 +254,7 @@ export class CalFacilitiesComponent implements OnInit {
         },
         () => {
           // final
+          this.loadingDataFlag = false;
         })
   }
 
@@ -256,6 +268,7 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   deleteDataItem() {
+    this.loadingDataFlag = true;
     this.calCourtLocationSvc.delete(this.selectedFacility.id)
       .subscribe(result => {
         this.toastSvc.showSuccessMessage('The item has been deleted.');
@@ -269,6 +282,7 @@ export class CalFacilitiesComponent implements OnInit {
         },
         () => {
           // final
+          this.loadingDataFlag = false;
         })
   }
 

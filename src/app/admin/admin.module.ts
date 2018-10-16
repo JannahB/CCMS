@@ -16,8 +16,8 @@ import { NameFilterPipe } from "../common/pipes/name-filter.pipe";
 import { YearFilterPipe } from "../common/pipes/year-filter.pipe";
 import { AdminRoutingModule } from "./admin-routing.module";
 import { AdminComponent } from "./admin.component";
-import { CalFacilitiesComponent } from "./calendar/cal-facilities/cal-facilities.component";
-import { CalResourcesComponent } from "./calendar/cal-resources/cal-resources.component";
+// import { CalFacilitiesComponent } from "./calendar/cal-facilities/cal-facilities.component";
+// import { CalResourcesComponent } from "./calendar/cal-resources/cal-resources.component";
 import { CalTemplatesComponent } from "./calendar/cal-templates/cal-templates.component";
 import { HolidaysComponent } from "./calendar/holidays/holidays.component";
 import { CasePartyRolesComponent } from "./data/case-party-roles/case-party-roles.component";
@@ -60,8 +60,8 @@ import { PdfViewerComponent } from './pdf-viewer/pdf-viewer.component';
     IccsCodesComponent,
     HolidaysComponent,
     CalTemplatesComponent,
-    CalResourcesComponent,
-    CalFacilitiesComponent,
+    // CalResourcesComponent,
+    // CalFacilitiesComponent,
     NameFilterPipe,
     YearFilterPipe,
     AssignmentManagerComponent,

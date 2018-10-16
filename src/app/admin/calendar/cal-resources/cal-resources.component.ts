@@ -19,6 +19,7 @@ export class CalResourcesComponent implements OnInit {
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
 
+  loadingDataFlag: boolean = false;
   resources: CalResource[] = [];
   selectedResource: CalResource;
   selectedResourceBak: CalResource;
@@ -172,6 +173,7 @@ export class CalResourcesComponent implements OnInit {
 
   ngOnInit() {
 
+    this.loadingDataFlag = true;
     this.resources = [];
     this.selectedWorkWeek = CalendarUtils.getMonday();
     this.selectedResource = new CalResource();
@@ -198,7 +200,15 @@ export class CalResourcesComponent implements OnInit {
       this.resources = result;
 
       this.setFirstListItem();
-    });
+    },
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error loading resources.');
+      },
+      () => {
+        // final
+        this.loadingDataFlag = false;
+      });
 
     this.calTemplateSvc.get().subscribe(result => {
       this.templates = result;
@@ -219,20 +229,24 @@ export class CalResourcesComponent implements OnInit {
 
   saveItem() {
     // console.log('BEFORE Save RESOURCE:', this.selectedResource);
+    this.loadingDataFlag = true;
     this.scheduler.control.clearSelection();
     this.calResourceSvc.save(this.selectedResource)
       .subscribe(result => {
         // console.log('AFTER Save RESOURCE:', this.selectedResource);
+        this.loadingDataFlag = false;
         this.updateList(result);
         this.hideModals();
         this.toastSvc.showSuccessMessage('Item Saved');
       },
         (error) => {
+          this.loadingDataFlag = false;
           console.log(error);
           this.toastSvc.showErrorMessage('There was an error saving the item.');
         },
         () => {
           // final
+          this.loadingDataFlag = false;
         });
   }
 
@@ -246,8 +260,10 @@ export class CalResourcesComponent implements OnInit {
   }
 
   deleteDataItem() {
+    this.loadingDataFlag = true;
     this.calResourceSvc.delete(this.selectedResource.id)
       .subscribe(result => {
+        this.loadingDataFlag = false;
         this.toastSvc.showSuccessMessage('The item has been deleted.');
         this.resources.splice(this.getIndexOfItem(), 1);
         this.selectedResource = this.resources[0];
@@ -255,10 +271,12 @@ export class CalResourcesComponent implements OnInit {
       },
         (error) => {
           console.log(error);
+          this.loadingDataFlag = false;
           this.toastSvc.showErrorMessage('There was an error deleting the item.');
         },
         () => {
           // final
+          this.loadingDataFlag = false;
         })
   }
 
