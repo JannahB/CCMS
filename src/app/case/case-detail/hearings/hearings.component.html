@@ -1,5 +1,6 @@
-<div class="ui-g-12">
-
+<div class="ui-g-12 pos-relative">
+  <loading-bar [visible]="loadingDataFlag" [message]="'loading hearing data...'"></loading-bar>
+<!--  -->
   <div class="ui-g-12 pad-0">
     <div class="ui-g-6 pad-0">
       <h2>Hearings</h2>
@@ -39,7 +40,6 @@
   <!-- Column 2 -->
   <div class="ui-g-9 ui-sm-12 pt-0">
 
-    <loading-bar [visible]="loadingDataFlag" [message]="'loading hearing data...'"></loading-bar>
     <!-- BEGIN FORM GROUP ----------------- -->
 
     <form (ngSubmit)="saveHearing()" #hearingForm="ngForm" novalidate>
@@ -190,9 +190,9 @@
     </div> -->
 
 
-    <div class="ui-g-12">
+    <!-- <div class="ui-g-12">
         <pre>{{selectedHearing | json}}</pre>
-    </div>
+    </div> -->
   </div>
 
     <!-- ---------------- MODALS ---------------- -->
