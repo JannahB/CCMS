@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.5"></a>
+## [1.9.5](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.4...v1.9.5) (2018-10-16)
+
+
+### Features
+
+* **Calendar:** add loading bar to resources and locations ([a2ac84f](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/a2ac84f))
+
+
+
 <a name="1.9.4"></a>
 ## [1.9.4](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.3...v1.9.4) (2018-10-15)
 
