@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.6"></a>
+## [1.9.6](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.5...v1.9.6) (2018-10-17)
+
+
+### Features
+
+* **data-tables:** added court table editor ([c46972b](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/c46972b))
+* **data-tables:** added staff role editor ([a546d7c](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/a546d7c))
+* **data-tables:** added staff role permissions editor ([abdcf6c](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/abdcf6c))
+* **material-ui:** import material checkbox ([51c0205](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/51c0205))
+
+
+
 <a name="1.9.5"></a>
 ## [1.9.5](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.4...v1.9.5) (2018-10-16)
 
