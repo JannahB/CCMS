@@ -76,7 +76,6 @@ export class DataComponent implements OnInit, OnDestroy {
       { value: 12, route: 'staffpools', label: 'Staff Pool'},
       { value: 13, route: 'tasktypes', label: 'Task Types'},
       { value: 14, route: 'personalidtypes', label: 'Personal ID Types'},
-      { value: 15, route: 'iccscodeslocalcharges', label: 'Local Charges' }
     ];
   }
 
