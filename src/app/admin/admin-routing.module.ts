@@ -19,8 +19,11 @@ import { CourtLocationsComponent } from './data/court-locations/court-locations.
 import { CasePartyRolesComponent } from './data/case-party-roles/case-party-roles.component';
 import { EventTypesComponent } from './data/event-types/event-types.component';
 import { HearingTypeComponent } from './data/hearing-type/hearing-type.component';
+import { StaffRoleComponent } from './data/staff-role/staff-role.component';
+import { CourtComponent } from './data/court/court.component';
 import { CanActivateIsCourtMgrGuard } from '../common/guards/can-activate-is-court-mgr.guard';
 import { AssignmentManagerComponent } from './assignment-manager/assignment-manager.component';
+import { RolePermissions } from './data/role-permissions/role-permissions.component';
 
 const routes: Routes = [
   {
@@ -41,6 +44,9 @@ const routes: Routes = [
           { path: 'casepartyroles', component: CasePartyRolesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
           { path: 'eventtypes', component: EventTypesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
           { path: 'hearingtypes', component: HearingTypeComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+          { path: 'staffroles', component: StaffRoleComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+          { path: 'courts', component: CourtComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+          { path: 'rolepermissions', component: RolePermissions, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
           { path: 'iccscodes', component: IccsCodesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
         ]
       },
