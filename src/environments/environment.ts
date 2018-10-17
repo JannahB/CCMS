@@ -9,10 +9,10 @@ export const environment = {
   mockUrl: '../assets/mockData',
 
   allowDeleteLookupItems: false,
-  allowResetPasswordFeature: false,
-  allowAdminWorkflowFeature: false,
-  allowAdminCalendarFeature: false,
-  allowJudgeAssignMgmtFeature: false,
+  allowResetPasswordFeature: true,
+  allowAdminWorkflowFeature: true,
+  allowAdminCalendarFeature: true,
+  allowJudgeAssignMgmtFeature: true,
 
   VERSION: require('../../package.json').version
 };
