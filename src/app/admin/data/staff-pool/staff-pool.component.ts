@@ -103,13 +103,18 @@ export class StaffPoolComponent implements OnInit, OnDestroy, AfterViewInit {
 
   saveDataItem() {
     this.adminSvc.saveStaffPool(this.selectedItem).subscribe(result => {
-      console.log('result', result);
-
-      const index: number = this.getIndexOfItem(result);
-      if (index >= 0) {
-        this.typeItems[index] = result;
+      if (result instanceof Array) {
+        result.forEach(staffPool => {
+          const index: number = this.getIndexOfItem(staffPool);
+          if (index >= 0) {
+            this.typeItems[index] = staffPool;
+          } else {
+            this.selectedItem = staffPool;
+            this.copySelectedItem();
+            this.typeItems.push(this.selectedItem);
+          }
+        });
       } else {
-        this.typeItems.push(result);
       }
       this.toastSvc.showSuccessMessage('Item Saved');
     },

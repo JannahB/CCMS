@@ -24,6 +24,7 @@ import { AssignmentManagerComponent } from './assignment-manager/assignment-mana
 import { StaffPoolComponent } from './data/staff-pool/staff-pool.component';
 import { TaskTypesComponent } from './data/task-types/task-types.component';
 import { PersonIdTypesComponent } from './data/person-id-types/person-id-types.component';
+import { IccsCodesLocalChargesComponent } from './data/iccs-codes-local-charges/iccs-codes-local-charges.component';
 
 const routes: Routes = [
   {
@@ -52,6 +53,8 @@ const routes: Routes = [
           { path: 'hearingtypes', component: HearingTypeComponent,
                   canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
           { path: 'iccscodes', component: ICCSCodesComponent,
+                  canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+          { path: 'iccscodeslocalcharges', component: IccsCodesLocalChargesComponent,
                   canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
           { path: 'staffpools', component: StaffPoolComponent,
                   canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },

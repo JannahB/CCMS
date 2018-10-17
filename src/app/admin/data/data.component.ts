@@ -73,9 +73,10 @@ export class DataComponent implements OnInit, OnDestroy {
       { value: 6, route: 'iccscodes', label: 'ICCS Code' },
       { value: 7, route: 'hearingtypes', label: 'Hearing Type' },
       { value: 8, route: 'courtlocations', label: 'Court Location' },
-      { value: 9, route: 'staffpools', label: 'Staff Pool'},
-      { value: 10, route: 'tasktypes', label: 'Task Types'},
-      { value: 11, route: 'personalidtypes', label: 'Personal ID Types'}
+      { value: 12, route: 'staffpools', label: 'Staff Pool'},
+      { value: 13, route: 'tasktypes', label: 'Task Types'},
+      { value: 14, route: 'personalidtypes', label: 'Personal ID Types'},
+      { value: 15, route: 'iccscodeslocalcharges', label: 'Local Charges' }
     ];
   }
 

@@ -13,3 +13,7 @@ doc/*
 .vscode/launch.json
 src/app/admin/data/iccs-codes/iccs-codes.component.ts.old
 src/app/admin/data/iccs-codes/iccs.codes.component.ts.old
+package-lock.json
+package.json
+src/app/admin/data/iccs-codes-local-charges/iccs-codes-local-charges.component.html
+src/app/admin/data/iccs-codes-local-charges/iccs-codes-local-charges.component.ts

@@ -48,8 +48,6 @@ export class AdminDataService {
     return this.http.post(
       url,
       {
-        headers:
-          { uiVersion: '2' }
       }
     );
   }
@@ -106,7 +104,6 @@ export class AdminDataService {
     return this.http.post<CaseType>(
       url,
       obj,
-      { headers: { uiVersion: '2' } }
     );
   }
 
@@ -132,7 +129,6 @@ export class AdminDataService {
     return this.http.post<CasePhase>(
       url,
       obj,
-      { headers: { uiVersion: '2' } }
     );
   }
 
@@ -154,7 +150,6 @@ export class AdminDataService {
     return this.http.post<CaseStatus>(
       url,
       obj,
-      { headers: { uiVersion: '2' } }
     );
   }
 
@@ -179,7 +174,6 @@ export class AdminDataService {
     return this.http.post<CasePartyRole>(
       url,
       obj,
-      { headers: { uiVersion: '2' } }
     );
   }
 
@@ -194,7 +188,7 @@ export class AdminDataService {
   // description: string;
 
   savePersonalIdentifier(data: Identifier): Observable<Identifier> {
-    const url: string = this.getBaseUrl() + '/SavePersonalID-----Type';
+    const url: string = this.getBaseUrl() + '/SavePersonalIDType';
     const obj = {
       partyIdentifierOID: data.partyIdentifierOID ? data.partyIdentifierOID.toString() : null,
       description: data.description ? data.description.toString() : null,
@@ -203,7 +197,6 @@ export class AdminDataService {
     return this.http.post<Identifier>(
       url,
       obj,
-      { headers: { uiVersion: '2' } }
     );
   }
 
@@ -228,7 +221,6 @@ export class AdminDataService {
     return this.http.post<IccsCode>(
       url,
       obj,
-      { headers: { uiVersion: '2' } }
     );
   }
 
@@ -388,12 +380,18 @@ export class AdminDataService {
       });
   }
 
-  saveTaskType(taskType: TaskType): Observable<TaskType> {
-    const url = `${this.getBaseUrl()}/SaveTaskType`;
+  saveTaskType(data: TaskType): Observable<TaskType> {
+    const url = this.getBaseUrl() + '/SaveTaskType';
+    const obj = {
+      taskTypeOID: data.taskTypeOID ? data.taskTypeOID.toString() : null,
+      name: data.name,
+      description: data.description,
+    };
 
-    return this.http
-      .post<TaskType[]>(url, taskType)
-      .map(results => results[0]);
+    return this.http.post<TaskType>(
+        url,
+        obj
+    );
   }
 
 
@@ -424,9 +422,9 @@ export class AdminDataService {
      description: "Trinidad and Tobago National ID Card"
    */
   savePersonIdType(data: PersonIdType): Observable<PersonIdType> {
-    const url: string = this.getBaseUrl() + '/SavePersonIdType';
+    const url: string = this.getBaseUrl() + '/SavePersonIdentificationType';
     const obj = {
-      poolOID: data.personIdentificationTypeOID ? data.personIdentificationTypeOID.toString() : null,
+      personIdentificationTypeOID: data.personIdentificationTypeOID ? data.personIdentificationTypeOID.toString() : null,
       name: data.name,
       description: data.description
     };

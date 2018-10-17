@@ -110,7 +110,7 @@ export class AppMenuComponent implements OnInit {
 
     this.courtManagerMenuItems = [
       {
-        label: 'Lookup Tables', icon: 'chrome_reader_mode', routerLink: ['/admin/data/casetypes'],
+        label: 'Lookup Tables', icon: 'chrome_reader_mode',  routerLink: ['/admin/data/casetypes'],
         items:
           [
             { label: 'Case Types', icon: 'chevron_right', routerLink: ['/admin/data/casetypes'] },
@@ -121,6 +121,7 @@ export class AppMenuComponent implements OnInit {
             { label: 'Event Types', icon: 'chevron_right', routerLink: ['/admin/data/eventtypes'] },
             { label: 'Hearing Types', icon: 'chevron_right', routerLink: ['/admin/data/hearingtypes'] },
             { label: 'ICCS Codes', icon: 'chevron_right', routerLink: ['/admin/data/iccscodes']},
+            // { label: 'Local Charges', icon: 'chevron_right', routerLink: ['/admin/data/iccscodeslocalcharges']},
             { label: 'Staff Pools', icon: 'chevron_right', routerLink: ['/admin/data/staffpools'] },
             { label: 'Task Types', icon: 'chevron_right', routerLink: ['/admin/data/tasktypes']},
             { label: 'Personal ID Types', icon: 'chevron_right', routerLink: ['/admin/data/personalidtypes']}

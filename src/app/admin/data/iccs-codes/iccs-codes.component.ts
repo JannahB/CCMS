@@ -101,15 +101,19 @@ export class ICCSCodesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   saveDataItem() {
-    this.adminSvc.saveICCSCode(this.selectedItem).subscribe( result => {
-      console.log('result', result);
-
-      const index: number = this.getIndexOfItem(result);
-
-      if (index >= 0) {
-        this.typeItems[index] = result;
-      }else {
-        this.typeItems.push(result);
+    this.adminSvc.saveICCSCode(this.selectedItem).subscribe(result => {
+      if (result instanceof Array) {
+        result.forEach(iccsCode => {
+          const index: number = this.getIndexOfItem(iccsCode);
+          if (index >= 0) {
+            this.typeItems[index] = iccsCode;
+          } else {
+            this.selectedItem = iccsCode;
+            this.copySelectedItem();
+            this.typeItems.push(this.selectedItem);
+          }
+        });
+      } else {
       }
       this.toastSvc.showSuccessMessage('Item Saved');
     },

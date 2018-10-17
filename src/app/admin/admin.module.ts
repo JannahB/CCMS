@@ -35,6 +35,7 @@ import { PdfViewerComponent } from './pdf-viewer/pdf-viewer.component';
 import { TaskTypesComponent } from './data/task-types/task-types.component';
 import { PersonIdTypesComponent } from './data/person-id-types/person-id-types.component';
 import { DocumentTemplateComponent } from './data/document-template/document-template.component';
+import { IccsCodesLocalChargesComponent } from './data/iccs-codes-local-charges/iccs-codes-local-charges.component';
 
 @NgModule({
   imports: [
@@ -73,7 +74,8 @@ import { DocumentTemplateComponent } from './data/document-template/document-tem
     PdfViewerComponent,
     TaskTypesComponent,
     PersonIdTypesComponent,
-    DocumentTemplateComponent
+    DocumentTemplateComponent,
+    IccsCodesLocalChargesComponent
   ]
 })
 export class AdminModule { }

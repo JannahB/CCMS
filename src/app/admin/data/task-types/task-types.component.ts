@@ -102,14 +102,18 @@ export class TaskTypesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   saveDataItem() {
     this.adminSvc.saveTaskType(this.selectedItem).subscribe(result => {
-      console.log('result', result);
-
-      const index: number = this.getIndexOfItem(result);
-
-      if (index >= 0) {
-        this.typeItems[index] = result;
+      if (result instanceof Array) {
+        result.forEach(taskType => {
+          const index: number = this.getIndexOfItem(taskType);
+          if (index >= 0) {
+            this.typeItems[index] = taskType;
+          } else {
+            this.selectedItem = taskType;
+            this.copySelectedItem();
+            this.typeItems.push(this.selectedItem);
+          }
+        });
       } else {
-        this.typeItems.push(result);
       }
       this.toastSvc.showSuccessMessage('Item Saved');
     },
