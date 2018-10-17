@@ -1,11 +1,11 @@
 export class UserDTO {
 
-  partyOID: string = "";
-  firstName:string = "";
-  lastName: string = "";
-  password: string = "";
-  userName: string = "";
+  partyOID = '';
+  firstName = '';
+  lastName = '';
+  password = '';
+  userName = '';
   emails: any[] = [];          // [{emailAddress:"foo@bar.com"}]
-  authorizedCourts:any[] // [{ "courtOID":"5", "roles":[ {"staffRoleOID":"1"} ]} ]}
+  authorizedCourts: any[]; // [{ "courtOID":"5", "roles":[ {"staffRoleOID":"1"} ]} ]}
 
 }

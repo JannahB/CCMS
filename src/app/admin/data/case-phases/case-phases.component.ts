@@ -23,7 +23,7 @@ import { CasePhase } from '../../../common/entities/CasePhase';
     `
   ]
 })
-export class CasePhasesComponent implements OnInit {
+export class CasePhasesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   parentItems: CaseType[];
   selectedParentItem: CaseType;
@@ -34,10 +34,10 @@ export class CasePhasesComponent implements OnInit {
   allowDeleteLookupItems: boolean;
   selectedItemIdx: number;
   selectedItemBak: CasePhase;
-  showDeleteItemModal: boolean = false;
-  editing: boolean = false;
+  showDeleteItemModal = false;
+  editing = false;
 
-  tableLabel: string = "Case Phase"
+  tableLabel = 'Case Phase';
   refDataSubscription: Subscription;
   parentRefDataSubscription: Subscription;
 
@@ -75,8 +75,8 @@ export class CasePhasesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
-    if (this.parentRefDataSubscription) this.parentRefDataSubscription.unsubscribe();
+    if (this.refDataSubscription) { this.refDataSubscription.unsubscribe(); }
+    if (this.parentRefDataSubscription) { this.parentRefDataSubscription.unsubscribe(); }
   }
 
 
@@ -85,11 +85,11 @@ export class CasePhasesComponent implements OnInit {
       this.parentItems = result;
       this.selectedParentItem = this.parentItems[0];
       this.getRefDataItems();
-    })
+    });
   }
 
   getRefDataItems() {
-    let id = this.selectedParentItem.caseTypeOID;
+    const id = this.selectedParentItem.caseTypeOID;
     this.refDataSubscription = this.lookupSvc.fetchPhaseByTypeLookup<CasePhase>(this.selectedParentItem.caseTypeOID)
       .subscribe(result => {
         this.typeItems = result;
@@ -97,17 +97,16 @@ export class CasePhasesComponent implements OnInit {
         this.copySelectedItem();
         // If items in list, default to first item
         setTimeout(() => {
-          if (this.itemsList.options.first)
+          if ( this.itemsList.options.first ) {
             this.itemsList.options.first.selected = true;
+        }
         }, 100);
-
-
-      })
+    });
   }
 
   parentItemOnChange(event) {
-    let parentTypeId = event.value;
-    this.selectedParentItem = this.parentItems.find(itm => itm.caseTypeOID == parentTypeId);
+    const parentTypeId = event.value;
+    this.selectedParentItem = this.parentItems.find( itm => itm.caseTypeOID === parentTypeId);
     this.getRefDataItems();
   }
 
@@ -122,9 +121,9 @@ export class CasePhasesComponent implements OnInit {
   saveDataItem() {
     this.adminSvc.saveCasePhase(this.selectedItem).subscribe(result => {
       console.log('result', result);
-      let savedItem: CasePhase = result[0]
+      const savedItem: CasePhase = result[0];
 
-      let index: number = this.getIndexOfItem(savedItem);
+      const index: number = this.getIndexOfItem(savedItem);
 
       if (index >= 0) {
         this.typeItems[index] = savedItem;
@@ -134,13 +133,13 @@ export class CasePhasesComponent implements OnInit {
       this.typeItems = this.typeItems.slice();
       this.toastSvc.showSuccessMessage('Item Saved');
     },
-      (error) => {
-        console.log(error);
-        this.toastSvc.showErrorMessage('There was an error saving the item.');
-      },
-      () => {
-        this.editing = false;
-      })
+    (error) => {
+      console.log(error);
+      this.toastSvc.showErrorMessage('There was an error saving the item.');
+    },
+    () => {
+      this.editing = false;
+    });
   }
 
   copySelectedItem() {
@@ -168,13 +167,13 @@ export class CasePhasesComponent implements OnInit {
       this.selectedItem = this.typeItems[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
     },
-      (error) => {
-        console.log(error);
-        this.toastSvc.showErrorMessage('There was an error deleting the item.');
-      },
-      () => {
-        // final
-      })
+    (error) => {
+      console.log(error);
+      this.toastSvc.showErrorMessage('There was an error deleting the item.');
+    },
+    () => {
+      // final
+    });
   }
 
   hideModals() {
@@ -183,7 +182,7 @@ export class CasePhasesComponent implements OnInit {
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.typeItems
-      .findIndex(itm => itm.casePhaseOID == item.casePhaseOID);
+        .findIndex(itm => itm.casePhaseOID === item.casePhaseOID);
   }
 
 }

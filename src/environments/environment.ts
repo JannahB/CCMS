@@ -5,8 +5,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: "",
-  mockUrl: "",
+  apiUrl: 'http://127.0.0.1:8080',
+  mockUrl: '../assets/mockData',
 
   allowDeleteLookupItems: false,
   allowResetPasswordFeature: false,
@@ -14,5 +14,5 @@ export const environment = {
   allowAdminCalendarFeature: false,
   allowJudgeAssignMgmtFeature: false,
 
-  VERSION: require("../../package.json").version
+  VERSION: require('../../package.json').version
 };

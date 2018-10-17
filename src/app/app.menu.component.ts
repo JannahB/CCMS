@@ -20,16 +20,16 @@ export class AppMenuComponent implements OnInit {
 
   @Input() reset: boolean;
 
-  allowAdminWorkflowFeature: boolean = false;
-  allowAdminCalendarFeature: boolean = false;
-  allowJudgeAssignMgmtFeature: boolean = false;
+  allowAdminWorkflowFeature = false;
+  allowAdminCalendarFeature = false;
+  allowJudgeAssignMgmtFeature = false;
   model: any[];
 
   baseMenuItems: any[];
   adminMenuItems: any[];
   courtManagerMenuItems: any[];
-  isAdmin: boolean = false;
-  isCourtManager: boolean = false;
+  isAdmin = false;
+  isCourtManager = false;
 
   constructor(
     public app: AppComponent,
@@ -120,7 +120,11 @@ export class AppMenuComponent implements OnInit {
         //     { label: 'Case Party Roles', icon: 'chevron_right', routerLink: ['/admin/data/casepartyroles'] },
         //     { label: 'Event Types', icon: 'chevron_right', routerLink: ['/admin/data/eventtypes'] },
         //     { label: 'Hearing Types', icon: 'chevron_right', routerLink: ['/admin/data/hearingtypes'] },
-        //     // {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
+        //     { label: 'ICCS Codes', icon: 'chevron_right', routerLink: ['/admin/data/iccscodes'] },
+        //     // { label: 'Local Charges', icon: 'chevron_right', routerLink: ['/admin/data/iccscodeslocalcharges']},
+        //     { label: 'Staff Pools', icon: 'chevron_right', routerLink: ['/admin/data/staffpools'] },
+        //     { label: 'Task Types', icon: 'chevron_right', routerLink: ['/admin/data/tasktypes'] },
+        //     { label: 'Personal ID Types', icon: 'chevron_right', routerLink: ['/admin/data/personalidtypes'] }
         //   ]
       }
     ];
@@ -128,7 +132,7 @@ export class AppMenuComponent implements OnInit {
     if (this.allowAdminWorkflowFeature) {
       this.courtManagerMenuItems.push(
         { label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
-      )
+      );
     }
 
     // console.log('allowAdminCalendarFeature', this.allowAdminCalendarFeature)
@@ -142,12 +146,12 @@ export class AppMenuComponent implements OnInit {
             { label: 'Facility Schedules', icon: 'event_note', routerLink: ['/admin/calendar/facilities'] },
           ]
         }
-      )
+      );
     }
     if (this.allowJudgeAssignMgmtFeature) {
       this.courtManagerMenuItems.push(
         { label: 'Assignment Manager', icon: 'perm_contact_calendar', routerLink: ['/admin/assignment-mgr'] },
-      )
+      );
     }
   }
 
@@ -157,7 +161,7 @@ export class AppMenuComponent implements OnInit {
 
     this.isAdmin = (this.userSvc.loggedInUser && this.userSvc.isAdminUser());
     this.isCourtManager = (this.userSvc.loggedInUser && (this.userSvc.isCourtManager() || this.userSvc.isAdminUser()));
-    console.log("isCourtManager", this.isCourtManager);
+    console.log('isCourtManager', this.isCourtManager);
 
     if (this.userSvc.loggedInUser) {
       this.model = this.baseMenuItems;
@@ -171,14 +175,14 @@ export class AppMenuComponent implements OnInit {
           label: 'Admin', icon: 'security',
           items: [...this.adminMenuItems, ...this.courtManagerMenuItems]
         }
-      )
+      );
     } else if (this.isCourtManager) {
       this.model.push(
         {
           label: 'Manage', icon: 'security',
           items: this.courtManagerMenuItems
         }
-      )
+      );
     }
 
     this.model = this.model.slice();

@@ -22,15 +22,17 @@ import { environment } from '../../../../environments/environment';
     `
   ]
 })
-export class CaseStatusesComponent implements OnInit {
+export class CaseStatusesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   typeItems: CaseStatus[];
   selectedItem: CaseStatus;
+
   allowDeleteLookupItems: boolean;
   selectedItemIdx: number;
   selectedItemBak: CaseStatus;
-  showDeleteItemModal: boolean = false;
-  tableLabel: string = "Case Status"
+  showDeleteItemModal = false;
+
+  tableLabel = 'Case Status';
   refDataSubscription: Subscription;
 
   constructor(
@@ -66,7 +68,9 @@ export class CaseStatusesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
+    if (this.refDataSubscription) {
+      this.refDataSubscription.unsubscribe();
+    }
   }
 
   getRefData() {
@@ -76,11 +80,12 @@ export class CaseStatusesComponent implements OnInit {
       this.copySelectedItem();
       // If items in list, default to first item
       setTimeout(() => {
-        if (this.itemsList.options.first)
-          this.itemsList.options.first.selected = true;
+        if (this.itemsList.options.first) {
+            this.itemsList.options.first.selected = true;
+          }
       }, 100);
 
-    })
+    });
   }
 
   onSelectionChange(event) {
@@ -95,25 +100,25 @@ export class CaseStatusesComponent implements OnInit {
   }
 
   saveDataItem() {
-    this.adminSvc.saveCaseStatus(this.selectedItem).subscribe(result => {
+    this.adminSvc.saveCaseStatus(this.selectedItem).subscribe( result => {
       console.log('result', result);
 
-      let index: number = this.getIndexOfItem(result);
+      const index: number = this.getIndexOfItem(result);
 
       if (index >= 0) {
         this.typeItems[index] = result;
-      } else {
+      }else {
         this.typeItems.push(result);
       }
       this.toastSvc.showSuccessMessage('Item Saved');
     },
-      (error) => {
-        console.log(error);
-        this.toastSvc.showErrorMessage('There was an error saving the item.');
-      },
-      () => {
-        // final
-      })
+    (error) => {
+      console.log(error);
+      this.toastSvc.showErrorMessage('There was an error saving the item.');
+    },
+    () => {
+      // final
+    });
 
   }
 
@@ -141,13 +146,13 @@ export class CaseStatusesComponent implements OnInit {
       this.selectedItem = this.typeItems[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
     },
-      (error) => {
-        console.log(error);
-        this.toastSvc.showErrorMessage('There was an error deleting the item.');
-      },
-      () => {
-        // final
-      })
+    (error) => {
+      console.log(error);
+      this.toastSvc.showErrorMessage('There was an error deleting the item.');
+    },
+    () => {
+      // final
+    });
   }
 
   hideModals() {
@@ -156,7 +161,7 @@ export class CaseStatusesComponent implements OnInit {
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.typeItems
-      .findIndex(itm => itm.statusOID == item.statusOID);
+        .findIndex(itm => itm.statusOID === item.statusOID);
   }
 
 

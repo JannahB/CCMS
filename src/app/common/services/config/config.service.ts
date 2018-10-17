@@ -8,11 +8,11 @@ export class ConfigService {
   public constructor() { }
 
   public loadConfiguration(): void {
-    console.log("**** loadingConfiguration()");
+    console.log('**** loadingConfiguration()');
 
     // `config` is implied  `window.config` loaded in index.html /config/config.js
-    if (typeof config === "undefined" || Object.keys(config).length === 0) {
-      console.log("config object is null or keys.length === 0")
+    if (typeof config === 'undefined' || Object.keys(config).length === 0) {
+      console.log('config object is null or keys.length === 0');
       return;
     }
 
@@ -20,18 +20,17 @@ export class ConfigService {
   }
 
   private mapProperties(target: any, source: any) {
-    for (let property in source) {
+    for (const property in source) {
       if (
-        typeof target[property] === "undefined" ||
+        typeof target[property] === 'undefined' ||
         target[property] === null ||
-        typeof source[property] !== "object" ||
+        typeof source[property] !== 'object' ||
         source[property] instanceof Date
       ) {
-        console.log("Config replacing property " + target[property] + " = " + source[property]);
+        console.log('Config replacing property ' + target[property] + ' = ' + source[property]);
         target[property] = source[property];
         continue;
       }
-
       this.mapProperties(target[property], source[property]);
     }
   }

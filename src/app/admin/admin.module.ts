@@ -1,7 +1,7 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { DayPilotModule } from "daypilot-pro-angular";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { DayPilotModule } from 'daypilot-pro-angular';
 import {
   AutoCompleteModule,
   ButtonModule,
@@ -32,9 +32,13 @@ import { StaffRoleComponent } from "./data/staff-role/staff-role.component";
 import { RolePermissions } from "./data/role-permissions/role-permissions.component";
 //import { Permission } from "./data/permission/permission.component";
 import { CourtComponent } from "./data/court/court.component";
-import { IccsCodesComponent } from "./data/iccs-codes/iccs-codes.component";
+import { ICCSCodesComponent } from './data/iccs-codes/iccs-codes.component';
+import { StaffPoolComponent } from './data/staff-pool/staff-pool.component';
 import { AssignmentManagerComponent } from './assignment-manager/assignment-manager.component';
 import { PdfViewerComponent } from './pdf-viewer/pdf-viewer.component';
+import { TaskTypesComponent } from './data/task-types/task-types.component';
+import { PersonIdTypesComponent } from './data/person-id-types/person-id-types.component';
+import { DocumentTemplateComponent } from './data/document-template/document-template.component';
 
 @NgModule({
   imports: [
@@ -63,9 +67,10 @@ import { PdfViewerComponent } from './pdf-viewer/pdf-viewer.component';
     HearingTypeComponent,
     StaffRoleComponent,
     RolePermissions,
-//    Permission,
+    //    Permission,
     CourtComponent,
-    IccsCodesComponent,
+    ICCSCodesComponent,
+    StaffPoolComponent,
     HolidaysComponent,
     CalTemplatesComponent,
     // CalResourcesComponent,
@@ -73,7 +78,10 @@ import { PdfViewerComponent } from './pdf-viewer/pdf-viewer.component';
     NameFilterPipe,
     YearFilterPipe,
     AssignmentManagerComponent,
-    PdfViewerComponent
+    PdfViewerComponent,
+    TaskTypesComponent,
+    PersonIdTypesComponent,
+    DocumentTemplateComponent,
   ]
 })
 export class AdminModule { }

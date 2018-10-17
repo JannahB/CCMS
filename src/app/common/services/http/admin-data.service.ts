@@ -19,6 +19,8 @@ import { HearingType } from '../../entities/HearingType';
 import { EventWorkflow } from '../../entities/EventWorkflow';
 import { TaskType } from '../../entities/TaskType';
 import { StaffRolePermission } from '../../entities/StaffRolePermission';
+import { StaffPool } from '../../entities/StaffPool';
+import { PersonIdType } from '../../entities/PersonIdType';
 
 
 @Injectable()
@@ -38,26 +40,24 @@ export class AdminDataService {
 
 
   fetchLookup<T>(endpoint: string): Observable<T[]> {
-    let url: string = this.getBaseUrl() + '/' + endpoint;
-
+    const url: string = this.getBaseUrl() + '/' + endpoint;
+    console.log(url);
     return this.http.get<T[]>(url);
   }
 
   refreshLookupTables() {
-    let url: string = this.getBaseUrl() + '/RefreshLookupTables';
+    const url: string = this.getBaseUrl() + '/RefreshLookupTables';
 
     return this.http.post(
       url,
       {
-        headers:
-          { uiVersion: "2" }
       }
     );
   }
 
 
   public fetchPhaseByTypeLookup<T>(caseTypeOID: string | number): Observable<T[]> {
-    let url: string = this.getBaseUrl() + '/FetchPhaseByType';
+    const url: string = this.getBaseUrl() + '/FetchPhaseByType';
 
     return this.http.post<T[]>(
       url,
@@ -73,8 +73,10 @@ export class AdminDataService {
    * @param categoryTypeOID
    */
   fetchICCSCodeParent<T>(categoryTypeOID): Observable<T[]> {
-    if (!categoryTypeOID) return;
-    let url: string = this.getBaseUrl() + '/FetchICCSCodeParent';
+    if (!categoryTypeOID) {
+      return;
+    }
+    const url: string = this.getBaseUrl() + '/FetchICCSCodeParent';
     categoryTypeOID = categoryTypeOID.toString();
 
     return this.http.post<T[]>(
@@ -96,8 +98,8 @@ export class AdminDataService {
     // name:"Hearing & Management Type"
    */
   saveCaseType(data: CaseType): Observable<CaseType> {
-    let url: string = this.getBaseUrl() + '/SaveCaseType';
-    let obj = {
+    const url: string = this.getBaseUrl() + '/SaveCaseType';
+    const obj = {
       caseTypeOID: data.caseTypeOID ? data.caseTypeOID.toString() : null,
       name: data.name,
       description: data.description ? data.description.toString() : null,
@@ -106,8 +108,7 @@ export class AdminDataService {
     return this.http.post<CaseType>(
       url,
       obj,
-      { headers: { uiVersion: "2" } }
-    )
+    );
   }
 
   /**
@@ -120,15 +121,15 @@ export class AdminDataService {
     let url: string = this.getBaseUrl() + '/SaveRolePermission';
 
     data.permissionsState.forEach(checkablePerm => {
-      let index:number=data.permissions.findIndex(dataPerm => dataPerm.permissionOID == checkablePerm.permission.permissionOID);
+      let index: number = data.permissions.findIndex(dataPerm => dataPerm.permissionOID == checkablePerm.permission.permissionOID);
       if (checkablePerm.checked == true) {
-        // add if not found        
-        if (index<0){
+        // add if not found
+        if (index < 0) {
           data.permissions.push(checkablePerm.permission);
         }
       } else {
         // remove if found
-        if (index>=0){
+        if (index >= 0) {
           data.permissions.splice(index, 1);
         }
       }
@@ -156,9 +157,9 @@ export class AdminDataService {
    *
    * @name saveCourt
    * @param data
-   * courtName: string; 
-   * courtOID: number; 
-   * locationCode: string; 
+   * courtName: string;
+   * courtOID: number;
+   * locationCode: string;
    */
   saveCourt(data: Court): Observable<Court> {
     let url: string = this.getBaseUrl() + '/SaveCourt';
@@ -185,7 +186,7 @@ export class AdminDataService {
  * ccmsAdmin: boolean = false;
  * judicialOfficer: boolean = false;
  * staffRoleName: string = "";
- * staffRoleOID: number = 0;  
+ * staffRoleOID: number = 0;
  */
   saveStaffRole(data: StaffRole): Observable<StaffRole> {
     let url: string = this.getBaseUrl() + '/SaveStaffRole';
@@ -216,8 +217,8 @@ export class AdminDataService {
     // name:"Hearing & Management Type"
    */
   saveCasePhase(data: CasePhase): Observable<CasePhase> {
-    let url: string = this.getBaseUrl() + '/SaveCasePhase';
-    let obj = {
+    const url: string = this.getBaseUrl() + '/SaveCasePhase';
+    const obj = {
       casePhaseOID: data.casePhaseOID ? data.casePhaseOID.toString() : null,
       caseTypeOID: data.caseTypeOID ? data.caseTypeOID.toString() : null,
       name: data.name,
@@ -227,8 +228,7 @@ export class AdminDataService {
     return this.http.post<CasePhase>(
       url,
       obj,
-      { headers: { uiVersion: "2" } }
-    )
+    );
   }
 
   /**
@@ -239,8 +239,8 @@ export class AdminDataService {
      name:"Bail Granted Type"
    */
   saveCaseStatus(data: CaseStatus): Observable<CaseStatus> {
-    let url: string = this.getBaseUrl() + '/SaveCaseStatus';
-    let obj = {
+    const url: string = this.getBaseUrl() + '/SaveCaseStatus';
+    const obj = {
       statusOID: data.statusOID ? data.statusOID.toString() : null,
       name: data.name,
       description: data.description ? data.description.toString() : null,
@@ -249,8 +249,7 @@ export class AdminDataService {
     return this.http.post<CaseStatus>(
       url,
       obj,
-      { headers: { uiVersion: "2" } }
-    )
+    );
   }
 
   /**
@@ -262,9 +261,9 @@ export class AdminDataService {
     // name:"Parent"
    */
   saveCasePartyRole(data: CasePartyRole): Observable<CasePartyRole> {
-    let url: string = this.getBaseUrl() + '/SaveCasePartyRole';
+    const url: string = this.getBaseUrl() + '/SaveCasePartyRole';
 
-    let obj = {
+    const obj = {
       casePartyRoleOID: data.casePartyRoleOID ? data.casePartyRoleOID.toString() : null,
       name: data.name,
       description: data.description ? data.description.toString() : null,
@@ -274,8 +273,7 @@ export class AdminDataService {
     return this.http.post<CasePartyRole>(
       url,
       obj,
-      { headers: { uiVersion: "2" } }
-    )
+    );
   }
 
 
@@ -289,8 +287,8 @@ export class AdminDataService {
   // description: string;
 
   savePersonalIdentifier(data: Identifier): Observable<Identifier> {
-    let url: string = this.getBaseUrl() + '/SavePersonalID-----Type';
-    let obj = {
+    const url: string = this.getBaseUrl() + '/SavePersonalIDType';
+    const obj = {
       partyIdentifierOID: data.partyIdentifierOID ? data.partyIdentifierOID.toString() : null,
       description: data.description ? data.description.toString() : null,
     };
@@ -298,8 +296,7 @@ export class AdminDataService {
     return this.http.post<Identifier>(
       url,
       obj,
-      { headers: { uiVersion: "2" } }
-    )
+    );
   }
 
   /**
@@ -311,8 +308,8 @@ export class AdminDataService {
     // parentOID:null
    */
   saveICCSCode(data: IccsCode): Observable<IccsCode> {
-    let url: string = this.getBaseUrl() + '/SaveICCSCode';
-    let obj = {
+    const url: string = this.getBaseUrl() + '/SaveICCSCode';
+    const obj = {
       iccsCodeOID: data.iccsCodeOID ? data.iccsCodeOID.toString() : null,
       categoryName: data.categoryName,
       categoryType: data.categoryType,
@@ -323,8 +320,7 @@ export class AdminDataService {
     return this.http.post<IccsCode>(
       url,
       obj,
-      { headers: { uiVersion: "2" } }
-    )
+    );
   }
 
   /**
@@ -336,8 +332,8 @@ export class AdminDataService {
     // eventTypeOID:null
    */
   saveEventType(data: EventType): Observable<EventType> {
-    let url: string = this.getBaseUrl() + '/SaveEventType';
-    let obj = {
+    const url: string = this.getBaseUrl() + '/SaveEventType';
+    const obj = {
       eventTypeOID: data.eventTypeOID ? data.eventTypeOID.toString() : null,
       eventTypeName: data.eventTypeName,
       eventCategoryText: data.eventCategoryText,
@@ -347,7 +343,7 @@ export class AdminDataService {
     return this.http.post<EventType>(
       url,
       obj
-    )
+    );
   }
 
 
@@ -360,35 +356,35 @@ export class AdminDataService {
     // hearingTypeOID:"3"
    */
   saveHearingType(data: HearingType): Observable<HearingType> {
-    let url: string = this.getBaseUrl() + '/SaveHearingType';
-    let obj = {
+    const url: string = this.getBaseUrl() + '/SaveHearingType';
+    const obj = {
       hearingTypeOID: data.hearingTypeOID ? data.hearingTypeOID.toString() : null,
       hearingName: data.hearingName,
-      durationInMinutes: data.durationInMinutes ? data.durationInMinutes.toString() : "0",
+      durationInMinutes: data.durationInMinutes ? data.durationInMinutes.toString() : '0',
       description: data.description ? data.description.toString() : null,
     };
 
     return this.http.post<HearingType>(
       url,
       obj
-    )
+    );
   }
 
   // This is for testing new EP - not used yet-------------
   saveHearingTypeNew(data: HearingType): Observable<HearingType> {
-    let url: string = this.getBaseUrl() + '/api/hearing-types';
-    let obj = {
+    const url: string = this.getBaseUrl() + '/api/hearing-types';
+    const obj = {
       id: data.hearingTypeOID ? data.hearingTypeOID.toString() : null,
       name: data.hearingName,
-      durationMin: data.durationInMinutes ? data.durationInMinutes.toString() : "0",
+      durationMin: data.durationInMinutes ? data.durationInMinutes.toString() : '0',
       description: data.description ? data.description.toString() : null,
       courtId: data.courtOID
     };
 
     if (obj.id) {
-      return this.http.put<HearingType>(url, obj)
+      return this.http.put<HearingType>(url, obj);
     } else {
-      return this.http.post<HearingType>(url, obj)
+      return this.http.post<HearingType>(url, obj);
     }
   }
 
@@ -399,12 +395,9 @@ export class AdminDataService {
      locationName:"Courtroom #1"
      locationOID:"1"
    */
-
-  // TODO: change CourtLocation EPs to use new /court-location EPs
-
   saveCourtLocationType(data: CourtLocation): Observable<CourtLocation> {
-    let url: string = this.getBaseUrl() + '/SaveCourtLocation';
-    let obj = {
+    const url: string = this.getBaseUrl() + '/SaveCourtLocation';
+    const obj = {
       locationOID: data.locationOID ? data.locationOID.toString() : null,
       locationName: data.locationName,
       locationID: data.locationID
@@ -413,14 +406,14 @@ export class AdminDataService {
     return this.http.post<CourtLocation>(
       url,
       obj
-    )
+    );
   }
 
   fetchEventWorkflow(eventTypeOID: number): Observable<EventWorkflow> {
-    var url: string = `${this.getBaseUrl()}/FetchEventWorkflow`;
+    const url = `${this.getBaseUrl()}/FetchEventWorkflow`;
 
     return this.http
-      .post<EventWorkflow>(url, { "eventTypeOID": eventTypeOID.toString() });
+      .post<EventWorkflow>(url, { 'eventTypeOID': eventTypeOID.toString() });
   }
 
   saveEventWorkflow(data: EventWorkflow): Observable<EventWorkflow> {
@@ -439,71 +432,124 @@ export class AdminDataService {
     //       }
     //     }) : []
     // }
-    let workflow = {
+    const workflow = {
       workflowSteps: []
     };
-    if (data.eventWorkflowOID)
-      workflow["workflowOID"] = data.eventWorkflowOID.toString();
-    workflow["triggeringEventOID"] = data.triggeringEvent.eventTypeOID.toString();
-    if (data.description)
-      workflow["description"] = data.description;
+    if (data.eventWorkflowOID) {
+      workflow['workflowOID'] = data.eventWorkflowOID.toString();
+    }
+    workflow['triggeringEventOID'] = data.triggeringEvent.eventTypeOID.toString();
+    if (data.description) {
+      workflow['description'] = data.description;
+    }
     if (data.workflowSteps.length > 0) {
       data.workflowSteps.forEach(item => {
-        let step = {};
-        if (item.workflowStepOID)
-          step["workflowStepOID"] = item.workflowStepOID.toString();
-        step["delayDays"] = item.delayDays.toString();
-        step["taskTypeOID"] = item.taskType.taskTypeOID.toString();
+        const step = {};
+        if (item.workflowStepOID) {
+          step['workflowStepOID'] = item.workflowStepOID.toString();
+          step['delayDays'] = item.delayDays.toString();
+          step['taskTypeOID'] = item.taskType.taskTypeOID.toString();
+        }
         // if (party.ref.poolOID)
         //     step.assignedPoolOID = party.ref.poolOID;
         // if (party.ref.partyOID)
         //     step.assignedPartyOID = party.ref.partyOID;
-        if (item.assignedParty)
-          step["assignedPartyOID"] = item.assignedParty.partyOID.toString();
-        if (item.assignedPool)
-          step["assignedPoolOID"] = item.assignedPool.poolOID.toString();
-        if (item.documentTemplateOID)
-          step["documentTemplateOID"] = item.documentTemplateOID.toString();
+        if (item.assignedParty) {
+          step['assignedPartyOID'] = item.assignedParty.partyOID.toString();
+        }
+        if (item.assignedPool) {
+          step['assignedPoolOID'] = item.assignedPool.poolOID.toString();
+        }
+        if (item.documentTemplateOID) {
+          step['documentTemplateOID'] = item.documentTemplateOID.toString();
+        }
         workflow.workflowSteps.push(step);
       });
     }
-    var url: string = `${this.getBaseUrl()}/SaveEventWorkflow`;
+    const url = `${this.getBaseUrl()}/SaveEventWorkflow`;
 
     return this.http
       .post(url, workflow, { responseType: 'text' })
       .map(result => {
         if (result) {
-          let eventWorkflows: EventWorkflow[] = JSON.parse(result);
+          const eventWorkflows: EventWorkflow[] = JSON.parse(result);
           return eventWorkflows[0];
         }
         return data;
       });
   }
 
-  saveTaskType(taskType: TaskType): Observable<TaskType> {
-    var url: string = `${this.getBaseUrl()}/SaveTaskType`;
+  saveTaskType(data: TaskType): Observable<TaskType> {
+    const url = this.getBaseUrl() + '/SaveTaskType';
+    const obj = {
+      taskTypeOID: data.taskTypeOID ? data.taskTypeOID.toString() : null,
+      name: data.name,
+      description: data.description,
+    };
 
-    return this.http
-      .post<TaskType[]>(url, taskType)
-      .map(results => results[0]);
+    return this.http.post<TaskType>(
+      url,
+      obj
+    );
+  }
+
+
+  /**
+   * @name SaveStaffPool
+   * @param data
+     statusOID:"2"
+     name:"JSO-Unit9"
+   */
+  saveStaffPool(data: StaffPool): Observable<StaffPool> {
+    const url: string = this.getBaseUrl() + '/SaveStaffPool';
+    const obj = {
+      poolOID: data.poolOID ? data.poolOID.toString() : null,
+      name: data.poolName,
+    };
+
+    return this.http.post<StaffPool>(
+      url,
+      obj
+    );
+  }
+
+  /**
+   * @name SavePersonIdType
+   * @param data
+     personTypeOID:"2"
+     name:"National ID"
+     description: "Trinidad and Tobago National ID Card"
+   */
+  savePersonIdType(data: PersonIdType): Observable<PersonIdType> {
+    const url: string = this.getBaseUrl() + '/SavePersonIdentificationType';
+    const obj = {
+      personIdentificationTypeOID: data.personIdentificationTypeOID ? data.personIdentificationTypeOID.toString() : null,
+      name: data.name,
+      description: data.description
+    };
+
+    return this.http.post<PersonIdType>(
+      url,
+      obj
+    );
   }
 
   // TODO: Get API signature from Aaron
   deleteLookupItem(type: string, id: string | number) {
-    let url: string = this.getBaseUrl() + '/Delete/' + type;
+    const url: string = this.getBaseUrl() + '/Delete/' + type;
 
     return this.http.post(
       url,
       id.toString()
-    )
+    );
   }
 
 
 
   public getMock(fileName) {
-    let url: string = this.getBaseMockUrl() + fileName;
+    const url: string = this.getBaseMockUrl() + fileName;
 
-    return this.http.get(url)
+    return this.http.get(url);
   }
 
 
