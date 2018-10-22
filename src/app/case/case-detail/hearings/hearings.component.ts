@@ -85,10 +85,15 @@ export class HearingsComponent implements OnInit {
 
     timeRangeSelectedHandling: "Enabled", // "Enabled (default), Disabled "
     onTimeRangeSelected: args => {
-      // if (!this.hasValidHearingProperties()) {
-      //   args.preventDefault();
-      //   return;
-      // }
+      if (!this.hasValidHearingProperties()) {
+        args.preventDefault();
+        return;
+      }
+      if (!this.selectedHearing) {
+        args.preventDefault();
+        this.toastSvc.showInfoMessage('Please select or create a new hearing before creating a time block.')
+        return;
+      }
 
       args.control.events.add(new DayPilot.Event({
         start: args.start,
@@ -246,8 +251,8 @@ export class HearingsComponent implements OnInit {
   ngOnInit() {
     this.getLookups();
     this.hearings = [];
-    this.selectedHearing = new CaseHearing();
-    this.selectedHearing.days.push(this.tempDays);
+    // this.selectedHearing = new CaseHearing();
+    // this.selectedHearing.days.push(this.tempDays);
   }
 
   ngAfterViewInit(): void {
@@ -349,7 +354,8 @@ export class HearingsComponent implements OnInit {
 
 
   getUnavailableBlocks() {
-    if (!this.selectedHearing.hearingStartDateTime
+    if (!this.selectedHearing
+      || !this.selectedHearing.hearingStartDateTime
       || !this.selectedHearing.judicialOfficerId
       || !this.selectedHearing.courtLocationId) {
       return;

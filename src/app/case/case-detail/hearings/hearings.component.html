@@ -38,7 +38,7 @@
   </div>
 
   <!-- Column 2 -->
-  <div class="ui-g-9 ui-sm-12 pt-0">
+  <div class="ui-g-9 ui-sm-12 pt-0" [ngClass]="{invisible: !selectedHearing}" >
 
     <!-- BEGIN FORM GROUP ----------------- -->
 
@@ -121,11 +121,12 @@
             </div>
 
 
+            <!-- *ngIf="selectedHearing" -->
             <div class="ui-g-12 pad-0">
-              <div class="" *ngIf="selectedHearing">
+              <div class="" >
                 <!-- CALENDAR -->
                 <p class="mv-0 muted-label">Click and drag to mark hours. </p>
-                <daypilot-calendar [config]="config" [events]="selectedHearing.days" #scheduler></daypilot-calendar>
+                <daypilot-calendar [config]="config" [events]="selectedHearing?.days" #scheduler [ngClass]="{invisible: !selectedHearing}"></daypilot-calendar>
                 <div class="legend mt-10">
                   <div class="item">
                     <div class="box bg-available" ></div>
@@ -149,7 +150,7 @@
 
                 <div class="ui-g-12 mt-10">
                   <button label="Delete Hearing" class="fl ui-button-secondary" type="button" pButton icon="ui-icon-delete"
-                          [disabled]="!selectedHearing.id"
+                          [disabled]="!selectedHearing?.id"
                           (click)="deleteDataItemRequest()"></button>
                   <button label="Save Hearing" class="mr-20" type="submit" pButton icon="fa-check"
                           [disabled]="!hearingForm.form.valid"></button>
