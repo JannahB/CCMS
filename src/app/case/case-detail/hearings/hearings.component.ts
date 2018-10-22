@@ -436,6 +436,11 @@ export class HearingsComponent implements OnInit {
 
 
   createHearing() {
+    // if new hearing
+    if (this.hearings.findIndex(h => h.id == 0) > -1) {
+      this.toastSvc.showWarnMessage('Only one new hearing can be created at a time.');
+      return;
+    }
     let newHearing = new CaseHearing();
     newHearing.id = 0;
     newHearing.description = 'New hearing description...';
@@ -584,7 +589,11 @@ export class HearingsComponent implements OnInit {
       .subscribe(result => {
         this.toastSvc.showSuccessMessage('The item has been deleted.');
         this.hearings.splice(this.getIndexOfItem(this.selectedHearing), 1);
-        this.setSelectedHearing(this.hearings[0]);
+        if (this.hearings.length) {
+          this.setSelectedHearing(this.hearings[0]);
+        } else {
+          this.selectedHearing = null;
+        }
         this.hearings = this.hearings.slice();
         this.hideModals();
       },
