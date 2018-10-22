@@ -89,11 +89,7 @@ export class HearingsComponent implements OnInit {
         args.preventDefault();
         return;
       }
-      if (!this.selectedHearing) {
-        args.preventDefault();
-        this.toastSvc.showInfoMessage('Please select or create a new hearing before creating a time block.')
-        return;
-      }
+
 
       args.control.events.add(new DayPilot.Event({
         start: args.start,
@@ -264,8 +260,7 @@ export class HearingsComponent implements OnInit {
   }
 
   getHearingName() {
-    return "Whatevs";
-    // return this.selectedHearing.hearingType.name || "New Hearing";
+    return this.selectedHearing.hearingType.name || "New Hearing";
   }
 
   getLookups() {
@@ -612,9 +607,15 @@ export class HearingsComponent implements OnInit {
   }
 
   private hasValidHearingProperties(): boolean {
+
+    if (!this.selectedHearing) {
+      this.toastSvc.showInfoMessage('Please select or create a new hearing before creating a time block.')
+      return false;
+    }
+
     let h = this.selectedHearing;
     if (!h.courtLocationId || !h.hearingTypeId || !h.judicialOfficerId) {
-      this.toastSvc.showInfoMessage('Please complete all fields and try again.');
+      this.toastSvc.showInfoMessage('Please complete all required fields before creating a time block.');
       return false;
     }
     return true;
