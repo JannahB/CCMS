@@ -195,7 +195,7 @@ export class CalResourcesComponent implements OnInit {
 
   ngAfterViewInit(): void {
     this.onSelectWorkWeek(this.selectedWorkWeek);
-    this.calResourceSvc.get().subscribe(result => {
+    this.calResourceSvc.getJudicialOfficers().subscribe(result => {
       console.log('resources', result);
       this.resources = result;
 

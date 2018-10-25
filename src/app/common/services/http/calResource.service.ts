@@ -1,6 +1,6 @@
 import { CalResourceTime } from '../../entities/CalResourceTime';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import 'rxjs';
 import { DayPilot } from 'daypilot-pro-angular';
@@ -38,6 +38,13 @@ export class CalResourceService extends HttpBaseService<any> {
       return super.put(item.id, item);
     else
       return super.post(item);
+  }
+
+  getJudicialOfficers(): Observable<CalResource[]> {
+
+    let params = new HttpParams();
+    params = params.append('joOnly', '1');
+    return this.http.get<CalResource[]>(this.getBaseUrl(), { params: params });
   }
 
   private serializeDPDateWithZone(days: any[]): any[] {
