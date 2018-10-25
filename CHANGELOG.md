@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.8"></a>
+## [1.9.8](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.7...v1.9.8) (2018-10-25)
+
+
+### Features
+
+* **AC-348:** adding new EP service call for judicial officer params ([51feaea](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/51feaea))
+* **Hearings:** AC-347 hide form fields when no selected or new hearing ([2735787](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/2735787))
+* **Hearings:** prevent adding time block when invalid properties AC-346 ([1349521](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/1349521))
+* **Hearings:** prevent more than one new hearing at a time ([76ee1a9](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/76ee1a9))
+
+
+
 <a name="1.9.7"></a>
 ## [1.9.7](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.6...v1.9.7) (2018-10-17)
 
