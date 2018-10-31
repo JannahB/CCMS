@@ -66,6 +66,7 @@
                 <p-slider name="slCaseWeight" #slCaseWeight="ngModel"
                       [disabled]="!hasPermission(Permission.CREATE_CASE)"
                       [required]="true" min="1"
+                      color = "#FF0000"
                       [(ngModel)]="case.caseWeight"
                       [style]="{'width':'100%'}"
                       [min]="0" [max]="10"
@@ -323,6 +324,12 @@
                 </p-column>
               </p-dataTable> -->
 
+              <!--ng-template pTemplate="body" let-item="rowData">
+                <div *ngFor="let factor of item.chargeFactors; let i = index">
+                "Testing"
+                </div>
+              </ng-template-->
+
 
               <p-dataTable [value]="case.caseCharges"
                           selectionMode="single"
@@ -333,13 +340,7 @@
                 <p-column field="iccsCode.categoryIdentifier" header="UN Code" [style]="{'width':'7%'}"></p-column>
                 <p-column field="iccsCode.categoryName" header="UNODC Charge Description" [style]="{'width':'15%'}"></p-column>
                 <p-column field="leaChargingDetails" header="Police Description" [style]="{'width':'15%'}"></p-column>
-                <p-column field="" header="Charge Factors" [style]="{'width':'25%'}">
-                    <ng-template pTemplate="body" let-item="rowData">
-                      <div *ngFor="let factor of item.chargeFactors; let i = index">
-                        {{i+1}}) {{factor.description}}
-                      </div>
-                    </ng-template>
-                </p-column>
+                <p-column field="iccsCode.categoryName" header="Charge Factors" [style]="{'width':'25%'}"></p-column>
                 <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
                 <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                     <ng-template let-item="rowData" pTemplate="body">
@@ -381,9 +382,10 @@
 
         <p-tabPanel header="Register" leftIcon="ui-icon-list">
           <div class="ui-g">
-            <div class="ui-g-12 ui-md-6">
+            <div class="ui-g-12 ui-md-4">
               <h2>Case Events</h2>
             </div>
+            
             <!-- <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Event Category Filter</label>
               <p-dropdown
@@ -396,15 +398,16 @@
               </p-dropdown>
               <button label="" type="button" class="ml-10 ui-button-secondary ui-button-icon-only clear-btn inline" pButton icon="fa-close" (click)="clearEventFilter()"></button>
             </div> -->
-            <div class="ui-g-12 ui-md-3">
-                <label class="minimal primary block">Event ID Filter</label>
+
+            <div class="ui-g-12 ui-md-8">
+                <label class="minimal primary block">Event Description Filter</label>
                 <p-dropdown
+                    styleClass="strokeWidth"
                     placeholder="Event ID filter..."
                     [options]="eventTypes"
                     [(ngModel)]="eventTypeFilter"
-                    optionLabel="eventTypeName"
-                    (onChange)="eventTypeFilterChange($event)"
-                    styleClass="width-auto">
+                    optionLabel="description"
+                    (onChange)="eventTypeFilterChange($event)">
                 </p-dropdown>
                 <button label="" type="button" class="ml-10 ui-button-secondary ui-button-icon-only clear-btn inline" pButton icon="fa-close" (click)="clearEventFilter()"></button>
               </div>
@@ -414,7 +417,7 @@
                           selectionMode="single"
                           [(selection)]="caseEvent"
                           (onRowSelect)="caseEventOnRowSelect($event)"
-                          scrollable="true" scrollHeight="280px"
+                          scrollable="true" 
                           dataKey="caseEventOID" #dtCaseEvents>
                 <!-- <p-column styleClass="col-button" header="Done" [style]="{'width':'6%'}">
                   <ng-template let-item="rowData" pTemplate="body">
@@ -467,7 +470,7 @@
                           selectionMode="single"
                           [(selection)]="selectedCaseTask"
                           (onRowSelect)="taskOnRowSelect($event)"
-                          scrollable="true" scrollHeight="280px"
+                          scrollable="true" 
                           dataKey="taskOID" #dtTasks>
                 <p-column field="dueDate" header="Due Date" [style]="{'width':'13%'}">
                     <ng-template pTemplate="body" let-item="rowData">
@@ -557,7 +560,7 @@
                             selectionMode="single"
                             [(selection)]="selectedDoc"
                             (onRowSelect)="docOnRowSelect($event)"
-                            scrollable="true" scrollHeight="280px"
+                            scrollable="true"
                             dataKey="documentOID" #dtDocs>
                     <p-column field="lastUpdateDate" header="Document Date" [style]="{'width':'25%'}">
                         <ng-template pTemplate="body" let-item="rowData">
@@ -590,7 +593,7 @@
                           selectionMode="single"
                           [(selection)]="selectedHearing"
                           (onRowSelect)="hearingOnRowSelect($event)"
-                          scrollable="true" scrollHeight="280px"
+                          scrollable="true"
                           dataKey="caseHearingOID" #dtHearings>
                   <p-column field="startDateTime" header="Start Date/Time" [style]="{'width':'17%'}">
                       <ng-template pTemplate="body" let-item="rowData">
@@ -643,7 +646,7 @@
                           selectionMode="single"
                           [(selection)]="selectedJudicialAssignment"
                           (onRowSelect)="judicialAssignmentOnRowSelect($event)"
-                          scrollable="true" scrollHeight="280px"
+                          scrollable="true"
                           dataKey="judicialAssignmentOID" #dtJudicialAssignment>
                 <p-column field="" header="Start Date/Time" [style]="{'width':'20%'}">
                     <ng-template pTemplate="body" let-item="rowData">
@@ -1184,10 +1187,10 @@
 
 <!-- ADD CASE CHARGE MODAL -->
 
-<p-dialog header="Add Case Charge" width="580" [(visible)]="showModalAddCaseCharge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+<p-dialog header="Add Case Charge" width="80%" [(visible)]="showModalAddCaseCharge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
   <form  #caseChargeForm="ngForm" novalidate><!-- (ngSubmit)="saveCaseCharge()" -->
     <div class="ui-g">
-      <div class="form-group" >
+      <div class="form-group">
 
         <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Section</label>
@@ -1266,20 +1269,44 @@
           </div>
         </div>
 
-        <div class="ui-g-12 ">
+        <!--Rhea Seegobin Implemented 3 tier filtering without constant server calls-->
 
-          <div class="ui-g-12 ui-md-6">
-          <label class="minimal primary block">Charge Factors</label>
+        <!--div class="ui-g-12 ">
+            <div class="ui-g-3 ph-20 pv-5">
+            <label class="minimal primary block">Charge Factor Category</label>
+            <span class="ui-fluid">
+              <p-autoComplete name="acChargeFactorCategory" #acChargeFactorCategory="ngModel"
+                  [required]="true"
+                  field="chargeFactorCategoryDesc"
+                  [(ngModel)]="selectedChargeFactorCategory"
+                  [suggestions]="filteredChargeFactorCategory"
+                  (completeMethod)="getChargeFactorCategoryToFilter($event)"
+                  styleClass="width-full"
+                  [minLength]="1"
+                  placeholder="Please Select a Charge Factor Category"
+                  [dropdown]="true"
+                  appendTo="body"
+                  [multiple]="false">
+              </p-autoComplete>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="acChargeFactorCategory.errors?.required && acChargeFactorCategory.touched" >
+                  One or more Charge Factor Category is required.
+            </div>
+          </div>
+
+          <div class="ui-g-4 ph-20 pv-5">
+          <label class="minimal primary block">Charge Factor</label>
           <span class="ui-fluid">
             <p-autoComplete name="acChargeFactors" #acChargeFactors="ngModel"
                 [required]="true"
                 field="description"
                 [(ngModel)]="selectedChargeFactors"
                 [suggestions]="filteredChargeFactorTypes"
-                (completeMethod)="getChargeFactorsToFilter($event)"
+                (completeMethod)="getChargeFactorsToFilter($event,selectedChargeFactorCategory)"
                 styleClass="width-full"
                 [minLength]="1"
-                placeholder="select Charge Factors"
+                placeholder="Please select a Charge Factor"
                 [dropdown]="true"
                 appendTo="body"
                 [multiple]="false">
@@ -1291,43 +1318,54 @@
           </div>
         </div>
 
-        <!--(completeMethod)="getChargeFactorsVariablesToFilter($event)" Taken out by RS-->
-        <div class="ui-g-12 ui-md-6">
+        <!(completeMethod)="getChargeFactorsVariablesToFilter($event)" Taken out by RS>
+        <div class="ui-g-4 ph-20 pv-5">
             <label class="minimal primary block">Charge Factor Variable</label>
             <span class="ui-fluid">
               <p-autoComplete name="acChargeFactorVariable" #acChargeFactorVariable="ngModel"
-                  [required]="false"
+                  [required]="true"
                   field="chargeFactorVariableDesc"
-                  (completeMethod)= "getChargeFactorsVariablesToFilter($event)"
+                  (completeMethod)= "getChargeFactorsVariablesToFilter($event,selectedChargeFactors)"
                   [(ngModel)]="selectedChargeFactorVariables"
                   [suggestions]="filteredChargeFactorVariables"
                   styleClass="width-full"
                   [minLength]="1"
-                  placeholder="select Charge Factor Variables"
+                  placeholder="Please Select a Charge Factor Variable"
                   [dropdown]="true"
                   appendTo="body"
                   [multiple]="false">
               </p-autoComplete>
             </span>
-            <!-- NOTE: Not needed since not a required field
-              <div class="ui-message ui-messages-error ui-corner-all"
-                  *ngIf="acChargeFactors.errors?.required && acChargeFactors.touched" >
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="acChargeFactorVariable.errors?.required && acChargeFactorVariable.touched" >
                   One or more Charge Factor Variables are required.
-            </div> -->
+            </div>
           </div>
 
+          <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
+              <i class="material-icons delete-icon" (click)="requestDeleteAuthCourt(acIdx)">delete</i>
+            </div>
+            
+          
 
+        </div-->
 
-        </div>
 
       </div>
     </div>
 
     <p-footer>
+
         <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+            
+          <!--button type="button" (click)="addChargeFactorDetails();" label="Add Additional Charge Factor Variables"
+            icon="ui-icon-add" class="ui-button-secondary mr-15"
+            pButton></button-->
+
           <button label="Save" type="submit" pButton icon="fa-check"
                   (click)="saveCaseCharge()"
                   [disabled]="!caseChargeForm.form.valid"></button>
+
           <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
 
           <!--Add button to add multiple charge factors-->
@@ -1535,11 +1573,11 @@
 
         <!-- EVENT ID -->
         <div class="ui-g-12 mb-15">
-          <label class="minimal primary block">Event ID</label>
-          <p-dropdown name="ddEventId" id="ddEventId" placeholder="choose Event ID..." #ddEventId="ngModel"
+          <label class="minimal primary block">Event Description</label>
+          <p-dropdown name="ddEventId" id="ddEventId" placeholder="choose Event Description..." #ddEventId="ngModel"
               [required]="true"
               [options]="eventTypes"
-              optionLabel="eventTypeName"
+              optionLabel="description"
               [(ngModel)]="caseEvent.eventType"
               [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
               styleClass="width-full">

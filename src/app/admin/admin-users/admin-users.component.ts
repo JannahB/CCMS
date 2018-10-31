@@ -99,6 +99,8 @@ export class AdminUsersComponent implements OnInit {
     // console.log('this.user.authorizedCourts', this.user.authorizedCourts);
   }
 
+  
+
   courtOnChange(event, authCourtIdx) {
     // console.log('onChange', event, authCourtIdx);
     // Set the OUTER selected AuthorizedCourt
@@ -155,6 +157,9 @@ export class AdminUsersComponent implements OnInit {
   }
 
   saveUser(addUserForm) {
+
+    
+
     if (this.validateAuthCourts() && this.passwordsSame()) {
       this.loadingMessage = 'Saving User';
       this.loadingUser = true;
