@@ -36,7 +36,7 @@
 
 
 
-    <div class="ui-g-12 read-only" >
+    <div class="ui-g-12" >
       <form #caseForm="ngForm" novalidate>
         <div *ngIf="case">
 
@@ -78,11 +78,12 @@
 
             <!-- Adding Previous Case Number -->
             <div class="ui-g-12 ui-md-3 mt-25" *ngIf="case.caseOID > 0">
-                <span class="md-inputfield read-only">
+                <span class="md-inputfield">
                   <input pInputText type="text"
                         #tiprevCaseNumber="ngModel"
                         required name="tiprevCaseNumber"
                         [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                        [required]="false"
                         [(ngModel)]="case.prevCaseNumber"
                         class="width-full" >
                   <label>Previous Case Number</label>
@@ -91,7 +92,7 @@
             </div>
 
             <!-- Case Caption Field -->
-            <div class="ui-g-12 ui-md-3 mt-25 read-only" *ngIf="case.caseOID > 0">
+            <div class="ui-g-12 ui-md-3 mt-25" *ngIf="case.caseOID > 0">
               <span class="md-inputfield">
                   <input pInputText type="text" #tiCaseCaption="ngModel" required name="tiCaseCaption"
                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
@@ -169,7 +170,7 @@
           </div>
 
           <!-- Adding Case Notes Field  -->
-            <div class="ui-g-12 mb-20 read-only" *ngIf="case.caseOID > 0">
+            <div class="ui-g-12 mb-20" *ngIf="case.caseOID > 0">
                 <label class="minimal primary block">Case Notes</label>
                   <textarea name="tiCaseNotes"
                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
