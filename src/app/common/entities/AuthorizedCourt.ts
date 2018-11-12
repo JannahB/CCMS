@@ -1,6 +1,8 @@
 import { LookupEntity } from './base/lookup-entity';
 import { Identifier } from './Identifier';
 import { ChargeFactor } from './ChargeFactor';
+import { ChargeFactorVariable } from './ChargeFactorVariable';
+import { ChargeFactorCategory } from './ChargeFactorCategory';
 import { CaseEvent } from './CaseEvent';
 import { CasePartyRole } from './CasePartyRole';
 import { CaseType } from './CaseType';
@@ -27,6 +29,8 @@ export class AuthorizedCourt extends LookupEntity {
   iccsCodes: IccsCode[];
   eventTypes: CaseEvent[];
   chargeFactors: ChargeFactor[];
+  chargeFactorVariables: ChargeFactorVariable[];
+  chargeFactorCategory: ChargeFactorCategory[];
   courtLocations: CourtLocation[] = [];
   staffRoles: StaffRole[] = [];
   personIDTypes: Identifier[];
