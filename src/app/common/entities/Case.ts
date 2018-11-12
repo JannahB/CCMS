@@ -4,13 +4,11 @@ import { CaseEvent } from './CaseEvent';
 import { CaseType } from './CaseType';
 import { CasePhase } from './CasePhase';
 import { Court } from './Court';
-import { Party } from './Party';
 import { CaseStatus } from './CaseStatus';
 import { CaseTask } from './CaseTask';
-import { CaseHearings } from './CaseHearings';
 import { CaseCharge } from './CaseCharge';
 import { CaseParty } from './CaseParty';
-import { CaseHearing } from './CaseHearing';
+import { CaseHearingDeprecated } from './CaseHearingDeprecated';
 
 export class Case extends LookupEntity {
 
@@ -25,7 +23,7 @@ export class Case extends LookupEntity {
   caseDocs: CaseDocument[] = [];
   caseEvents: CaseEvent[] = [];
 
-  caseHearings: CaseHearing[] = [];      // Needs modifications on server side to work properly //
+  caseHearings: CaseHearingDeprecated[] = [];      // Needs modifications on server side to work properly //
 
   caseNumber: string = "";
   caseOID: number = 0;

@@ -1,11 +1,11 @@
-import { DropdownDataTransformService } from './../../common/services/utility/dropdown-data-transform.service';
+import { DropdownDataTransformService } from '../../common/services/utility/dropdown-data-transform.service';
 import { SelectItem } from 'primeng/primeng';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Case } from './../../common/entities/Case';
-import { CaseService } from './../../common/services/http/case.service';
-import { CaseType } from './../../common/entities/CaseType';
+import { Case } from '../../common/entities/Case';
+import { CaseService } from '../../common/services/http/case.service';
+import { CaseType } from '../../common/entities/CaseType';
 import { CasePhase } from '../../common/entities/CasePhase';
 import { CaseStatus } from '../../common/entities/CaseStatus';
 import { CasePartyRole } from '../../common/entities/CasePartyRole';

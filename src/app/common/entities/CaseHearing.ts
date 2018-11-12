@@ -1,19 +1,25 @@
-import { AssociatedCase } from './AssociatedCase';
-import { Party } from './Party';
+import { CaseHearingTimesDTO } from "./CaseHearingTimesDTO";
 import { CourtLocation } from './CourtLocation';
+import { JudicialOfficer } from './JudicialOfficer';
 import { HearingType } from './HearingType';
 
+// This is the new CaseHearing Entity using SpringBoot Framework
 export class CaseHearing {
+  id: number = null;
+  courtId: number = 0;
+  caseId: number = 0;
+  courtLocationId: number = 0;
+  hearingTypeId: number = 0;
+  judicialOfficerId: number;
+  days: CaseHearingTimesDTO[] = [];
+  description: string = '';
+  location: string = '';
 
-  associatedCase: AssociatedCase;
-  caseHearingOID: number;
-  caseOID: number;
-  courtLoc: CourtLocation;
-  courtOID: number;
-  description: string;
-  endDateTime: Date;
+  // Transient Properties
   hearingType: HearingType;
-  judicialOfficer: Party;
-  startDateTime: Date;
+  judicialOfficer: JudicialOfficer;
+  hearingLocation: CourtLocation;
+  hearingStartDateTime: Date = new Date();
+  hearingEndDateTime: Date = new Date();
 
 }

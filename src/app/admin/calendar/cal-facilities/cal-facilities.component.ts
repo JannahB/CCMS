@@ -1,16 +1,15 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
-import { MatSelectionList, MatSelectionListChange, MatListOption } from '@angular/material';
-import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
-import { BreadcrumbService } from './../../../breadcrumb.service';
-import { ToastService } from './../../../common/services/utility/toast.service';
-import { CalTemplate } from '../../../common/entities/CalTemplate';
+import { BreadcrumbService } from '../../../breadcrumb.service';
+import { ToastService } from '../../../common/services/utility/toast.service';
 import { CalFacility } from '../../../common/entities/CalFacility';
-import { CalFacilityTag } from './../../../common/entities/CalFacilityTag';
-import { CalFacilityService } from './../../../common/services/http/calFacility.service';
-import { CalFacilityTime } from './../../../common/entities/CalFacilityTime';
-import { CalTemplateService } from './../../../common/services/http/calTemplate.service';
+import { CalFacilityTag } from '../../../common/entities/CalFacilityTag';
+import { CalFacilityTime } from '../../../common/entities/CalFacilityTime';
+import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
+import { CalCourtLocationService } from "../../../common/services/http/calCourtLocation.service";
+import { CourtLocation } from './../../../common/entities/CourtLocation';
+import { CalendarUtils } from './../../../common/utils/calendar-utils';
 
 @Component({
   selector: 'app-cal-facilities',
@@ -22,10 +21,8 @@ export class CalFacilitiesComponent implements OnInit {
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
 
-  @ViewChild(MatSelectionList)
-  matSelectionList: MatSelectionList;
-
   facilities: any[] = [];
+  loadingDataFlag: boolean;
   selectedFacility: any;
   selectedFacilityBak: any;
   selectedFacilityIdx: number;
@@ -57,8 +54,9 @@ export class CalFacilitiesComponent implements OnInit {
     scale: "CellDuration",
     cellDuration: 30,
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
-    days: 7,
-    startDate: this.selectedWorkWeek || this.getMonday(),
+    days: 6,
+    businessWeekends: true,
+    startDate: this.selectedWorkWeek || CalendarUtils.getMonday(),
     heightSpec: "Max",
     height: 300,
     allowEventOverlap: false,
@@ -69,7 +67,7 @@ export class CalFacilitiesComponent implements OnInit {
       dp.events.add(new DayPilot.Event({
         start: args.start,
         end: args.end,
-        id: this.genLongId(),
+        id: CalendarUtils.genLongId(),
         resource: args.resource,
         text: 'Available'
       }));
@@ -124,8 +122,6 @@ export class CalFacilitiesComponent implements OnInit {
     },
     onBeforeResHeaderRender: args => {
       let dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      // console.log("args.resource.html", args.resource);
-
       // To Show day of week only use
       // args.resource.html = dow[args.resource.index];
 
@@ -151,15 +147,16 @@ export class CalFacilitiesComponent implements OnInit {
     },
     eventDeleteHandling: "Update",
     onEventDeleted: args => {
-      // delete TemplateTime data.id
+
+      // NOTE: no need for explicit remove since binding removes the time block
+      // this.deleteTimeBlock(args.e.data.id, true);
       this.selectedFacility.days = this.selectedFacility.days.slice();
-      this.deleteTimeBlock(args.e.data.id, true);
-      // console.log('delete', args);
+      this.saveItem();
     }
   };
 
   constructor(
-    private calFacilitySvc: CalFacilityService,
+    private calCourtLocationSvc: CalCourtLocationService,
     private calTemplateSvc: CalTemplateService,
     private breadCrumbSvc: BreadcrumbService,
     private toastSvc: ToastService
@@ -177,22 +174,12 @@ export class CalFacilitiesComponent implements OnInit {
       { label: 'Admin Calendars', routerLink: ['/admin/calendar'] },
       { label: 'Facility Hours', routerLink: ['/admin/calendar/facilities'] }
     ]);
-
-    let now = moment();
-    console.log('hello date', now.format());
-    console.log(now.add(7, 'days').format());
-    console.log('now after add 7', now.format())
-  }
-
-  // TODO: Move to util lib
-  private genLongId() {
-    return Math.round((Math.random() * 10000000000000000))
   }
 
   ngOnInit() {
 
     // this.selectedWorkWeek = this.getMonday('2018-11-10T08:30:00');
-    this.selectedWorkWeek = this.getMonday();
+    this.selectedWorkWeek = CalendarUtils.getMonday();
 
     this.facilities = [];
     this.facilityTags = [
@@ -201,16 +188,18 @@ export class CalFacilitiesComponent implements OnInit {
       { id: 3, name: 'Video Conferencing' },
     ];
     this.filteredTags = this.facilityTags;
-
-    // Handle mat-selection-list selection change via dom element so we can DeselectAll
-    this.matSelectionList.selectionChange.subscribe((event: MatSelectionListChange) => {
-      this.matSelectionList.deselectAll();
-      event.option.selected = true;
-      this.selectedFacility = event.option.value;
-      this.copySelectedItem();
-    });
-
     this.selectedFacility = new CalFacility();
+    this.loadingDataFlag = true;
+  }
+
+  locationOnRowSelect(event) {
+    this.scheduler.control.clearSelection();
+    this.setSelectedLocation(event.data);
+  }
+
+  setSelectedLocation(facility) {
+    this.selectedFacility = facility;
+    this.copySelectedItem();
   }
 
   ngOnDestroy() {
@@ -218,51 +207,41 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    var from = this.scheduler.control.visibleStart();
-    var to = this.scheduler.control.visibleEnd();
-
     this.onSelectWorkWeek(this.selectedWorkWeek);
-
-    this.calFacilitySvc.get().subscribe(result => {
-      console.log('facilities', result);
+    this.calCourtLocationSvc.get().subscribe(result => {
+      console.log('court locations', result);
       this.facilities = result;
-
       this.setFirstListItem();
-    });
+    },
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error loading locations.');
+      },
+      () => {
+        // final
+        this.loadingDataFlag = false;
+      });
 
     this.calTemplateSvc.get().subscribe(result => {
       this.templates = result;
     });
   }
 
-  // TODO: move to util lib
-  getMonday(date = new Date().toDateString()) {
-    console.log('date', date)
-    // '2018-11-10T08:30:00'
-    let d = new Date(date);
-    let diff = (d.getDate() - d.getDay()) + 1;
-
-    return new Date(d.setDate(diff));
-  }
-
-
   onSelectWorkWeek(e) {
-    console.log('onSelectWorkWeek(e)', e)
-    this.selectedWorkWeek = this.getMonday(new Date(e).toDateString());
+    this.selectedWorkWeek = CalendarUtils.getMonday(new Date(e).toDateString());
     this.scheduler.control.startDate = this.selectedWorkWeek;
     this.scheduler.control.update();
   }
 
   createNewFacility() {
-    this.matSelectionList.deselectAll();
     this.selectedFacility = new CalFacility();
     this.copySelectedItem();
   }
 
   saveItem() {
-    //console.log('BEFORE Save Facility:', this.selectedFacility);
-
-    this.calFacilitySvc.save(this.selectedFacility)
+    this.loadingDataFlag = true;
+    this.scheduler.control.clearSelection();
+    this.calCourtLocationSvc.save(this.selectedFacility)
       .subscribe(result => {
         // console.log('AFTER Save Facility:', this.selectedFacility);
         this.updateList(result);
@@ -275,6 +254,7 @@ export class CalFacilitiesComponent implements OnInit {
         },
         () => {
           // final
+          this.loadingDataFlag = false;
         })
   }
 
@@ -288,7 +268,8 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.calFacilitySvc.delete(this.selectedFacility.id)
+    this.loadingDataFlag = true;
+    this.calCourtLocationSvc.delete(this.selectedFacility.id)
       .subscribe(result => {
         this.toastSvc.showSuccessMessage('The item has been deleted.');
         this.facilities.splice(this.getIndexOfItem(), 1);
@@ -301,16 +282,17 @@ export class CalFacilitiesComponent implements OnInit {
         },
         () => {
           // final
+          this.loadingDataFlag = false;
         })
   }
 
   deleteTimeBlock(id, userInitiated = false) {
-    this.calFacilitySvc.deleteFacilityTimeBlock(id)
-      .subscribe(result => {
-        console.log('Deleted Block ID:', id);
-        if (userInitiated) // TODO: Turn this on after testing complete
-          this.toastSvc.showInfoMessage('Time block deleted.');
-      });
+    let idx = this.selectedFacility.days.findIndex(item => item.id == id);
+    if (idx > -1) {
+      this.selectedFacility.days.splice(idx, 1);
+      // NOTE: JB removed save b/c all others that call this, call saveItem()
+      // this.saveItem();
+    }
   }
 
   refreshCalendar() {
@@ -330,7 +312,6 @@ export class CalFacilitiesComponent implements OnInit {
   // mat-selection-list "selectionChange" does not work when in a modal,
   // so solving it by handling mat-list-option (selectionChange) here
   onTemplateSelectionChange(event, template) {
-
     // deselect all others & set selected
     if (event.selected) {
       event.source.selectionList.options.toArray().forEach(element => {
@@ -355,59 +336,46 @@ export class CalFacilitiesComponent implements OnInit {
       return;
     }
 
-    console.log('BEFORE selectedFacility.days', this.selectedFacility.days);
-
     let templateDays = this.selectedTemplate.days;
+    console.log('BEFORE selectedFacility.days', this.selectedFacility.days);
     console.log('TEMPLATE DAYS', this.selectedTemplate.days);
 
     // DELETE TIME BLOCKS IN THE CURRENT WEEK
-    let daysSansThisWeekDays = this.removeDatesWithinASpan(this.selectedFacility.days, this.selectedWorkWeek, 6);
-    console.log('1. Time blocks sans THIS weeks time blocks', daysSansThisWeekDays);
+    this.selectedFacility.days = CalendarUtils.removeDatesWithinASpan(this.selectedFacility.days, this.selectedWorkWeek, 6);
+    console.log('1. Time blocks sans THIS weeks time blocks', this.selectedFacility.days);
 
     // LOOP SELECTED TEMPLATE BLOCKS ASSIGN TO THIS WEEK
     templateDays.forEach(block => {
-      let bs = new Date(block.start);
-      let be = new Date(block.end);
+      let bs = new DayPilot.Date(block.start);
+      let be = new DayPilot.Date(block.end);
       let bDay = bs.getDay();
 
       // find the Date of the Day in the current week
-      let matchingDate = this.getDateObjByDay(bDay, this.selectedWorkWeek);
+      let matchingDate = CalendarUtils.getDateObjByDay(bDay, this.selectedWorkWeek);
 
       // Create new Time Block
       let newBlock = new CalFacilityTime();
-      newBlock.id = this.genLongId();
+      newBlock.id = CalendarUtils.genLongId();
       newBlock.facilityId = this.selectedFacility.id;
       newBlock.text = 'Available';
 
-      console.log('TEMPLATE BLOCK .getTimezoneOffset', bs.getTimezoneOffset());
+      console.log('TEMPLATE BLOCK date', bs);
       console.log('MATCHING DATE .getTimezoneOffset', matchingDate.getTimezoneOffset());
 
-      // merge TIME portion of 'block' into DATE portion of 'matchingDate'
-      newBlock.start = new Date(
+      newBlock.start = new DayPilot.Date(CalendarUtils.makeDPDateConstructorString(
         matchingDate.getFullYear(),
         matchingDate.getMonth(),
         matchingDate.getDate(),
-        bs.getHours() + 1,  // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
-        bs.getMinutes(), 0
-      );
-      newBlock.end = new Date(
+        bs.getHours(),
+        bs.getMinutes()
+      ));
+      newBlock.end = new DayPilot.Date(CalendarUtils.makeDPDateConstructorString(
         matchingDate.getFullYear(),
         matchingDate.getMonth(),
         matchingDate.getDate(),
-        be.getHours() + 1, // BEWARE!! this +1 is an ugly hack that WILL come back to bite (see note below)
-        be.getMinutes(), 0
-      );
-      /*
-      NOTE ABOUT +1 getHours() ABOVE - JB:6/21/2018
-          When creating a new date in this client, the offset is -04:00.
-          When saving and retrieving, the offset becomes -05:00.
-          So as a temp measure, the +1 is used until we solve this issue.
-          The solution will need to consider:
-          -- Server hosted in other time zones
-          -- Server in a time zone that doesn't observe DST
-          -- User in other time zones
-          -- User in a time zone that doesn't observe DST
-      */
+        be.getHours(),
+        be.getMinutes()
+      ));
 
       // Add the newBlock to Facility.days
       this.selectedFacility.days.push(newBlock);
@@ -419,39 +387,7 @@ export class CalFacilitiesComponent implements OnInit {
     console.log('AFTER selectedFacility.days', this.selectedFacility.days);
     // SAVE NEW BLOCKS
     this.saveItem();
-
   }
-
-  // TODO: move to Date Util Lib
-  private getDateObjByDay(day: number, start: any): Date {
-    let s = new Date(start);
-    let found = false;
-    while (!found) {
-      if (s.getDay() == day) {
-        found = true;
-        return s;
-      } else {
-        s = new Date(s.setDate(s.getDate() + 1))
-      }
-    }
-  }
-
-  // TODO: move to Date Util Lib
-  private getARangeOfDatesAndDays(start, span) {
-    let s = new Date(start);
-    let e = s.addDays(span);
-    let a = [];
-
-    while (s <= e) {
-      let o = {};
-
-      o['day'] = s.getDay();
-      o['date'] = s.getDate();
-      a.push(o);
-      s = new Date(s.setDate(s.getDate() + 1))
-    }
-    return a;
-  };
 
 
   // -------- APPLY TO NEXT WEEK SECTION ------------ //
@@ -461,15 +397,16 @@ export class CalFacilitiesComponent implements OnInit {
     let days = this.selectedFacility.days;
 
     // REMOVE TIME BLOCKS IN UPCOMING WEEK
-    let daysSansNextWeekDays = this.removeDatesWithinASpan(days, this.selectedWorkWeek.addDays(7), 6);
-    console.log('1. days Sans Next Weeks time blocks', daysSansNextWeekDays);
+    this.selectedFacility.days = CalendarUtils.removeDatesWithinASpan(days, this.selectedWorkWeek.addDays(7), 6);
+    console.log('1. days Sans Next Weeks time blocks', this.selectedFacility.days);
 
     // FIND TIME BLOCKS IN THIS WEEK DATES TO APPLY TO NEXT WEEK
-    let newTimeBlocks = this.findDatesWithinASpan(days, this.selectedWorkWeek, 6);
+    let newTimeBlocks = CalendarUtils.findDatesWithinASpan(days, this.selectedWorkWeek, 6);
     console.log('2. matching Time Blocks', newTimeBlocks);
 
     // CONVERT THIS WEEK'S TIME BLOCKS TO NEXT WEEK TIME BLOCKS
-    this.convertTimeBlocksToNextWeek(newTimeBlocks);
+    let nextWeeksDays = CalendarUtils.convertTimeBlocksToNextWeek(newTimeBlocks);
+    this.selectedFacility.days = [...days, ...nextWeeksDays]
     this.onSelectWorkWeek(this.selectedWorkWeek.addDays(7).toISOString());
     this.scheduler.control.update();
 
@@ -478,64 +415,6 @@ export class CalFacilitiesComponent implements OnInit {
       this.toastSvc.showInfoMessage('Week Saved!', 'The calendar has advanced to the following week.')
     }, 300);
   }
-
-  // TODO: move to util lib
-  private isWithinRangeByDay(day, start, end) {
-    let s = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0);
-    let e = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59);
-    let d = new Date(day);
-    return d >= s && d <= e;
-  }
-
-  // TODO: move to util lib
-  findDatesWithinASpan(arr, start, span) {
-    let rangeStart = new Date(start);
-    let rangeEnd = rangeStart.addDays(span);
-    let results = [];
-    arr.forEach(block => {
-      if (this.isWithinRangeByDay(block.start, rangeStart, rangeEnd)) {
-        results.push(Object.assign({}, block));
-      }
-    })
-    return results;
-  }
-
-  // TODO: move to util lib
-  /**
-   * @argument arr Array of time blocks
-   * @argument start:String a start date string
-   * @argument span number of days to span
-   * @description removes matching items from the array and calls delete EP
-   */
-  removeDatesWithinASpan(arr, start, span) {
-    let rangeStart = new Date(start);
-    let rangeEnd = rangeStart.addDays(span);
-
-    let deletedItems = []; // for debug only
-
-    for (var i = arr.length - 1; i >= 0; i--) {
-      if (this.isWithinRangeByDay(arr[i].start, rangeStart, rangeEnd)) {
-        deletedItems.push(Object.assign({}, arr[i]));
-        this.deleteTimeBlock(arr[i].id);
-        arr.splice(i, 1);
-      }
-    }
-    console.log('Deleted items', deletedItems);
-    return arr;
-  }
-
-  convertTimeBlocksToNextWeek(arr) {
-    let newItemsForComparison = [];
-    arr.forEach(block => {
-      block.start = new Date(block.start).addDays(7).toISOString();
-      block.end = new Date(block.end).addDays(7).toISOString();
-      block.id = this.genLongId();
-      this.selectedFacility.days.push(block);
-      newItemsForComparison.push(block); // for debug only
-    })
-    console.log('3. Next Weeks Time Blocks For Comparison', newItemsForComparison)
-  }
-
 
 
   // -------- TAGS MULTI-SELECT METHODS ---------- //
@@ -562,10 +441,7 @@ export class CalFacilitiesComponent implements OnInit {
 
     this.selectedFacility = this.facilities[0];
     this.copySelectedItem();
-    setTimeout(() => {
-      if (this.matSelectionList.options.first)
-        this.matSelectionList.options.first.selected = true;
-    }, 100);
+
   }
 
   private updateList(result) {
@@ -593,4 +469,3 @@ export class CalFacilitiesComponent implements OnInit {
   }
 
 }
-

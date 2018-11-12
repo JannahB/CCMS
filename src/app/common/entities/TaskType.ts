@@ -1,8 +1,8 @@
 
 export class TaskType {
 
-  taskTypeOID: number; 
-  courtOID: number; 
-  name: string; 
-  description:string;
+  taskTypeOID: number;
+  courtOID: number;
+  name: string;
+  description: string;
 }

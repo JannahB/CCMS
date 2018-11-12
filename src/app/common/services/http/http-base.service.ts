@@ -56,7 +56,7 @@ export abstract class HttpBaseService<T extends AuditEntity>{
     return this.http.get<T>(url);
   }
 
-  public put(id: string | number, data: T): Observable<T> {
+  public put<T>(id: string | number, data: T): Observable<T> {
     // let url:string = `${this.getBaseUrl()}/${id}`;
     let url: string = `${this.getBaseUrl()}`;
     return this.http.put<T>(url, data);
@@ -67,7 +67,7 @@ export abstract class HttpBaseService<T extends AuditEntity>{
     return this.http.patch<T>(url, data);
   }
 
-  public post(data: T): Observable<T> {
+  public post<T>(data: T): Observable<T> {
     let url: string = `${this.getBaseUrl()}`;
     return this.http.post<T>(url, data);
   }

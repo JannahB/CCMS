@@ -2,12 +2,12 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
 
-import { LookupService } from './../../../common/services/http/lookup.service';
+import { LookupService } from '../../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { AdminDataService } from '../../../common/services/http/admin-data.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
-import { CaseStatus } from './../../../common/entities/CaseStatus';
-import { environment } from './../../../../environments/environment';
+import { CaseStatus } from '../../../common/entities/CaseStatus';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-case-statuses',
@@ -22,19 +22,21 @@ import { environment } from './../../../../environments/environment';
     `
   ]
 })
-export class CaseStatusesComponent implements OnInit {
+export class CaseStatusesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   typeItems: CaseStatus[];
   selectedItem: CaseStatus;
+
   allowDeleteLookupItems: boolean;
   selectedItemIdx: number;
   selectedItemBak: CaseStatus;
-  showDeleteItemModal: boolean = false;
-  tableLabel:string = "Case Status"
+  showDeleteItemModal = false;
+
+  tableLabel = 'Case Status';
   refDataSubscription: Subscription;
 
   constructor(
-    private breadCrumbSvc:BreadcrumbService,
+    private breadCrumbSvc: BreadcrumbService,
     private lookupSvc: LookupService,
     private adminSvc: AdminDataService,
     private toastSvc: ToastService
@@ -43,11 +45,11 @@ export class CaseStatusesComponent implements OnInit {
       { label: 'Data Table Maintenance', routerLink: ['/admin/data'] },
       { label: 'Case Statuses', routerLink: ['/admin/data/casestatuses'] }
     ]);
-   }
+  }
 
   @ViewChild(MatSelectionList) itemsList: MatSelectionList;
 
-  ngOnInit(){
+  ngOnInit() {
     this.allowDeleteLookupItems = environment.allowDeleteLookupItems;
   }
 
@@ -66,7 +68,9 @@ export class CaseStatusesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if(this.refDataSubscription) this.refDataSubscription.unsubscribe();
+    if (this.refDataSubscription) {
+      this.refDataSubscription.unsubscribe();
+    }
   }
 
   getRefData() {
@@ -76,11 +80,12 @@ export class CaseStatusesComponent implements OnInit {
       this.copySelectedItem();
       // If items in list, default to first item
       setTimeout(() => {
-        if( this.itemsList.options.first )
-          this.itemsList.options.first.selected = true;
+        if (this.itemsList.options.first) {
+            this.itemsList.options.first.selected = true;
+          }
       }, 100);
 
-    })
+    });
   }
 
   onSelectionChange(event) {
@@ -94,15 +99,15 @@ export class CaseStatusesComponent implements OnInit {
     this.copySelectedItem();
   }
 
-  saveDataItem(){
+  saveDataItem() {
     this.adminSvc.saveCaseStatus(this.selectedItem).subscribe( result => {
       console.log('result', result);
 
-      let index:number = this.getIndexOfItem(result);
+      const index: number = this.getIndexOfItem(result);
 
-      if(index >= 0){
+      if (index >= 0) {
         this.typeItems[index] = result;
-      }else{
+      }else {
         this.typeItems.push(result);
       }
       this.toastSvc.showSuccessMessage('Item Saved');
@@ -113,22 +118,22 @@ export class CaseStatusesComponent implements OnInit {
     },
     () => {
       // final
-    })
+    });
 
   }
 
   copySelectedItem() {
-    this.selectedItemBak = Object.assign( new CaseStatus(), this.selectedItem );
+    this.selectedItemBak = Object.assign(new CaseStatus(), this.selectedItem);
     this.selectedItemIdx = this.getIndexOfItem(this.selectedItem);
   }
 
   cancelDataItemEdit(event) {
-    this.selectedItem = Object.assign( new CaseStatus(), this.selectedItemBak );
+    this.selectedItem = Object.assign(new CaseStatus(), this.selectedItemBak);
     this.typeItems[this.selectedItemIdx] = this.selectedItem;
   }
 
   deleteDataItemRequest() {
-    if(!this.allowDeleteLookupItems) {
+    if (!this.allowDeleteLookupItems) {
       this.toastSvc.showInfoMessage('Delete support is currently not available.');
       return;
     }
@@ -136,7 +141,7 @@ export class CaseStatusesComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.adminSvc.deleteLookupItem('CaseType', this.selectedItem.statusOID).subscribe( result => {
+    this.adminSvc.deleteLookupItem('CaseType', this.selectedItem.statusOID).subscribe(result => {
       this.typeItems.splice(this.getIndexOfItem(), 1);
       this.selectedItem = this.typeItems[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
@@ -147,16 +152,16 @@ export class CaseStatusesComponent implements OnInit {
     },
     () => {
       // final
-    })
+    });
   }
 
-  hideModals(){
+  hideModals() {
     this.showDeleteItemModal = false;
   }
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.typeItems
-        .findIndex(itm => itm.statusOID == item.statusOID);
+        .findIndex(itm => itm.statusOID === item.statusOID);
   }
 
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { LocalStorageService } from './../utility/local-storage.service';
-import { AuthorizedCourt } from './../../entities/AuthorizedCourt';
+import { LocalStorageService } from '../utility/local-storage.service';
+import { AuthorizedCourt } from '../../entities/AuthorizedCourt';
 import { GlobalState } from './global.state';
 
 @Injectable()

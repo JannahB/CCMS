@@ -1,8 +1,8 @@
-import { Language } from './../../entities/Language';
+import { Language } from '../../entities/Language';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { HttpBaseService } from '../http/http-base.service';
+import { HttpBaseService } from './http-base.service';
 
 
 @Injectable()
@@ -12,7 +12,7 @@ export class LanguageService extends HttpBaseService<Language> {
 
   // Override Base URL's set in Super
   protected getBaseUrl():string{
-    return `${super.getBaseUrl()}/FetchLanguage`;
+    return `${super.getBaseUrl()}/api/language-types`;
   }
 
   protected getBaseMockUrl():string{

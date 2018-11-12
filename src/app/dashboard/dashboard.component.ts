@@ -1,6 +1,6 @@
-import { LocalStorageService } from './../common/services/utility/local-storage.service';
-import { TaskCount } from './../common/entities/internal/TaskCount';
-import { GlobalState } from './../common/services/state/global.state';
+import { LocalStorageService } from '../common/services/utility/local-storage.service';
+import { TaskCount } from '../common/entities/internal/TaskCount';
+import { GlobalState } from '../common/services/state/global.state';
 import { Component, OnInit } from '@angular/core';
 import { BreadcrumbService } from '../breadcrumb.service';
 import { SelectItem } from 'primeng/components/common/selectitem';

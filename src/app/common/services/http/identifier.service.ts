@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { HttpBaseService } from '../http/http-base.service';
+import { HttpBaseService } from './http-base.service';
 import { Identifier } from '../../entities/Identifier';
 
 
@@ -12,7 +12,7 @@ export class IdentifierService extends HttpBaseService<Identifier> {
 
   // Override Base URL's set in Super
   protected getBaseUrl():string{
-    return `${super.getBaseUrl()}/FetchIdentifiers`;
+    return `${super.getBaseUrl()}/api/person-identification-types`;
   }
 
   protected getBaseMockUrl():string{

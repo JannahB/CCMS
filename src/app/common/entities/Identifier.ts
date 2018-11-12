@@ -6,6 +6,6 @@ export class Identifier extends LookupEntity {
   partyOID: number;
   identifierType: string;
   identifierValue: string;
-  notes:string;
+  notes: string;
   description: string;
 }

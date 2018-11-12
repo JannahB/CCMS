@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { BreadcrumbService } from '../../breadcrumb.service';
-import { CaseEvent } from './../../common/entities/CaseEvent';
+import { CaseEvent } from '../../common/entities/CaseEvent';
 import { LookupService } from '../../common/services/http/lookup.service';
 import { EventType } from '../../common/entities/EventType';
 import { AdminDataService } from '../../common/services/http/admin-data.service';
@@ -140,13 +140,15 @@ export class AdminWorkflowComponent implements OnInit {
         console.log('parties', this.parties);
         this.poolParties = this.mergePoolsAndParties(this.staffPools, this.parties);
         console.log('poolParties', this.poolParties);
-
-        this.showLoadingBar = false;
       },
-      error => {
-        this.showLoadingBar = false;
+      (error) => {
+        console.log('An error occurred fetching lookups', error)
         this.toastService
-          .showErrorMessage("An error occurred");
+          .showErrorMessage('An error occurred fetching lookups');
+      },
+      () => {
+        // final
+        this.showLoadingBar = false;
       }
     );
   }
@@ -216,13 +218,14 @@ export class AdminWorkflowComponent implements OnInit {
         eventWorkflow => {
           this.selectedEventWorkflow = eventWorkflow;
           this.sortWorkflowSteps();
-
-          this.showLoadingBar = false;
         },
-        error => {
-          this.showLoadingBar = false;
+        (error) => {
           this.toastService
             .showErrorMessage("An error occurred");
+        },
+        () => {
+          // final
+          this.showLoadingBar = false;
         }
       );
   }
@@ -292,11 +295,13 @@ export class AdminWorkflowComponent implements OnInit {
         workflow => {
           this.selectedEventWorkflow = workflow;
           this.sortWorkflowSteps();
-          this.showLoadingBar = false;
           this.toastService.showSuccessMessage("Workflow Saved");
         },
         error => {
           this.toastService.showErrorMessage("Error saving workflow");
+        },
+        () => {
+          // final
           this.showLoadingBar = false;
         }
       );
@@ -321,12 +326,14 @@ export class AdminWorkflowComponent implements OnInit {
         taskType => {
           this.taskTypes.push(taskType);
           this.taskTypes = this.taskTypes.copy();
-          this.showLoadingBar = false;
           this.clearTaskType();
           this.selectedStep.taskType = taskType;
         },
         error => {
           this.toastService.showErrorMessage("Error saving task type");
+        },
+        () => {
+          // final
           this.showLoadingBar = false;
         }
       )

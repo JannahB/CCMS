@@ -1,8 +1,8 @@
-import { ToastService } from './../../common/services/utility/toast.service';
-import { BreadcrumbService } from './../../breadcrumb.service';
+import { ToastService } from '../../common/services/utility/toast.service';
+import { BreadcrumbService } from '../../breadcrumb.service';
 import { SelectItem } from 'primeng/primeng';
-import { CourtCount } from './../../common/entities/CourtCount';
-import { CaseCountsService } from './../../common/services/http/case-counts.service';
+import { CourtCount } from '../../common/entities/CourtCount';
+import { CaseCountsService } from '../../common/services/http/case-counts.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 

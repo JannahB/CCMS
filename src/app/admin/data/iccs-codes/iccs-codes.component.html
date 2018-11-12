@@ -1,171 +1,98 @@
-<!--
-  --------------------------------------------------
-  This is the new layout that needs to be integrated
-
-  <div class="breadcrumb">{{miniBreadcrumb}}</div>
-<mat-tab-group [(selectedIndex)]="tabIdx" (selectedIndexChange)="selectedTabIndexChange($event)">
-	<mat-tab label="Section">
-		<ng-container *ngTemplateOutlet='listItems'></ng-container>
-	</mat-tab>
-	<mat-tab label="Division">
-		<ng-container *ngTemplateOutlet='parentListTmp'></ng-container>
-    <mat-divider></mat-divider>
-		<ng-container *ngTemplateOutlet='listItems'></ng-container>
-	</mat-tab>
-	<mat-tab label="Group">
-		<ng-container *ngTemplateOutlet='parentListTmp'></ng-container>
-    <mat-divider></mat-divider>
-		<ng-container *ngTemplateOutlet='listItems'></ng-container>
-	</mat-tab>
-	<mat-tab label="Class">
-		<ng-container *ngTemplateOutlet='parentListTmp'></ng-container>
-    <mat-divider></mat-divider>
-		<ng-container *ngTemplateOutlet='listItems'></ng-container>
-	</mat-tab>
-</mat-tab-group>
-
-
-<!-- Parent List Template
-<ng-template #parentListTmp>
-    <h3>Parent Code</h3>
-    <mat-select placeholder="Parent ICCS Code" (selectionChange)="selectedParentChange($event)"
-                [(ngModel)]="selectedParentItem.id">
-      <!-- [compareWith]=""
-      <mat-option [value]="p.id" *ngFor="let p of parentList" >
-        {{p.name}}
-      </mat-option>
-    </mat-select>
-  </ng-template>
-
-  <!-- List Items Template
-  <ng-template #listItems>
-    <h3>ICCS Items</h3>
-    <mat-selection-list [(ngModel)]="selectedItems" >
-      <mat-list-option *ngFor="let item of activeList; let i=index;" [value]="selectedItem">
-        {{item.name}}
-      </mat-list-option>
-    </mat-selection-list>
-  </ng-template>
-
- -->
-
 <div class="ui-g-4 ui-sm-12 mt-25">
+  <h2 class="mt-0" style="margin-bottom:35px;">{{tableLabel}}s </h2>
 
-    <h2 class="mt-0" style="margin-bottom:35px;">{{tableLabel}}s </h2>
+  <mat-selection-list #itemsList (selectionChange)="onSelectionChange($event)" class="items-list">
+    <mat-list-option *ngFor="let item of typeItems; let i=index; let itm" [class.hi]="selected" [value]="item">
+      {{ item.categoryName }}
+    </mat-list-option>
+  </mat-selection-list>
 
-    <mat-form-field class="width-full" >
-      <!-- [compareWith]="compareByCourtId" -->
-      <mat-select placeholder="Parent Case Type" name="ddParentCaseType" #ddParentCaseType
-          [disabled]="editing"
-          [value]="selectedParentItem?.iccsCodeOID"
-          (selectionChange)="parentItemOnChange($event)" >
-        <mat-option *ngFor="let pitem of parentList" [value]="pitem.iccsCodeOID">
-          {{pitem.name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <button mat-raised-button color="primary" (click)="createNewItem()" class="mt-15 width-full">
+    <mat-icon aria-label="Add data item button">add</mat-icon>
+    New Data Item
+  </button>
+</div>
 
-    <!-- this breaks [(ngModel)]="selectedItem" -->
-    <mat-selection-list #itemsList [disabled]="editing"
-        class="items-list" >
-      <mat-list-option *ngFor="let item of activeList; let i=index; let itm"
-          [class.hi]="selected"
-          [value]="item">
-        {{ item.name }}
-      </mat-list-option>
-    </mat-selection-list>
-
-    <button mat-raised-button color="primary" (click)="createNewItem()" class="mt-15 width-full">
-      <mat-icon aria-label="Add data item button">add</mat-icon>
-        New Data Item
-    </button>
+<div class="ui-g-8 ui-sm-12">
+  <div class="ui-g-6">
+    <h2 class="">{{tableLabel}}</h2>
+  </div>
+  <div class="ui-g-6 ta-r">
+    <!--  nothing to see hear, folks -->
   </div>
 
-  <div class="ui-g-8 ui-sm-12 mt-25">
-    <div class="ui-g-12 mt-0 pv-0">
-      <h2 class="mt-0">{{tableLabel}}</h2>
-    </div>
+  <div class="ui-g-12">
+    <!-- -->
+    <div class="card" style="min-height:322px;" *ngIf="selectedItem">
 
-    <div class="ui-g-12">
-      <!-- -->
-      <div  class="card" style="min-height:322px;" *ngIf="selectedItem" >
+      <form (ngSubmit)="saveDataItem()" #tplForm="ngForm" novalidate>
+        <div class="ui-g form-group">
 
-        <form (ngSubmit)="saveDataItem()" #tplForm="ngForm" novalidate>
-          <div class="ui-g form-group" >
-
-            <!-- NAME -->
-            <div class="ui-g-12">
+          <!-- Parent ID -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
               <mat-form-field class="width-full">
-                <input matInput name="tiName" #tiName="ngModel" placeholder="Name"
-                    [required]="true"
-                    [(ngModel)]="selectedItem.name">
-                  <div class="ui-message ui-messages-error ui-corner-all"
-                      *ngIf="tiName.errors?.required && tiName.touched" >
-                      Please enter a type Name
-                  </div>
+                <input matInput name="tiParentOID" #tiParentOID="ngModel" placeholder="Parent ID" [(ngModel)]="selectedItem.parentOID">
+                <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiParentOID.errors?.required && tiParentOID.touched">
+                  Please enter the Parent ID
+                </div>
               </mat-form-field>
-            </div>
-
-            <!-- SHORT NAME -->
-            <div class="ui-g-12">
-              <mat-form-field class="width-full">
-                <input matInput name="tiShortName" #tiShortName="ngModel" placeholder="Short Name"
-                        [(ngModel)]="selectedItem.shortName">
-                  <div class="ui-message ui-messages-error ui-corner-all"
-                        *ngIf="tiShortName.errors?.required && tiShortName.touched" >
-                        Please enter a Short Name
-                  </div>
-              </mat-form-field>
-            </div>
-
-            <!-- Description -->
-            <div class="ui-g-12">
-              <mat-form-field class="width-full">
-                <textarea matInput name="taDesc" #taDesc="ngModel" placeholder="Description"
-                          matTextareaAutosize matAutosizeMinRows="2"
-                          [(ngModel)]="selectedItem.description"
-                          [required]="true"
-                          matAutosizeMaxRows="5"></textarea>
-                  <div class="ui-message ui-messages-error ui-corner-all"
-                        *ngIf="taDesc.errors?.required && taDesc.touched" >
-                        Please enter a description
-                  </div>
-              </mat-form-field>
-            </div>
-
-            <!-- SAVE / CANCEL BUTTONS -->
-            <div class="ui-g-12 ta-r">
-              <button type="button"
-                      (click)="deleteDataItemRequest()"
-                      [disabled]="!selectedItem.casePhaseOID"
-                      label="Delete"
-                      icon="ui-icon-delete"
-                      class="ui-button-danger fl" pButton></button>
-              <button type="button"
-                      (click)="saveDataItem()"
-                      [disabled]="!tplForm.form.valid"
-                      label="Save"
-                      icon="ui-icon-check"
-                      class="secondary" pButton></button>
-              <button type="button"
-                      (click)="cancelDataItemEdit($event)"
-                      label="Cancel"
-                      icon="ui-icon-clear"
-                      class="ui-button-secondary"
-                      pButton></button>
             </div>
           </div>
-        </form>
-      </div>
+
+          <!-- Category Type and ID -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <mat-form-field class="width-full">
+                <input matInput name="tiCategoryID" #tiCategoryID="ngModel" placeholder="Category Identifier" [(ngModel)]="selectedItem.categoryIdentifier">
+                <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiCategoryID.errors?.required && tiCategoryID.touched">
+                  Please enter the Category Identifier
+                </div>
+              </mat-form-field>
+            </div>
+            <div class="ui-g-6">
+              <mat-form-field class="width-full">
+                <input matInput name="tiCategoryType" #tiCategoryType="ngModel" placeholder="Category Type" [(ngModel)]="selectedItem.categoryType">
+                <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiCategoryType.errors?.required && tiCategoryType.touched">
+                  Please enter a Category Type
+                </div>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Category Name -->
+          <div class="ui-g-12">
+            <mat-form-field class="width-full">
+              <input matInput name="tiCategoryName" #tiCategoryName="ngModel" placeholder=" Category Name" [required]="true"
+                [(ngModel)]="selectedItem.categoryName">
+              <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiCategoryName.errors?.required && tiCategoryName.touched">
+                Please enter the Category Name
+              </div>
+            </mat-form-field>
+          </div>
+
+          <!-- SAVE / CANCEL BUTTONS -->
+          <div class="ui-g-12 ta-r">
+            <button type="button" (click)="deleteDataItemRequest()" [disabled]="!selectedItem.iccsCodeOID" label="Delete"
+              icon="ui-icon-delete" class="ui-button-danger fl" pButton></button>
+            <button type="button" (click)="saveDataItem()" [disabled]="!tplForm.form.valid" label="Save" icon="ui-icon-check"
+              class="secondary" pButton></button>
+            <button type="button" (click)="cancelDataItemEdit()" label="Cancel" icon="ui-icon-clear" class="ui-button-secondary"
+              pButton></button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
+</div>
 
-  <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteItemModal" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-    <div>Are you sure you want to delete this item?</div>
-    <p-footer>
-      <div class="ui-dialog-buttonpane ui-helper-clearfix">
-        <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
-        <button label="Yes"   type="button" pButton icon="fa-check" (click)="deleteDataItem()" ></button>
-      </div>
-    </p-footer>
-  </p-dialog>
+<p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteItemModal" [responsive]="true" showEffect="fade"
+  [modal]="true" [closable]="false">
+  <div>Are you sure you want to delete this item?</div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
+      <button label="Yes" type="button" pButton icon="fa-check" (click)="deleteDataItem()"></button>
+    </div>
+  </p-footer>
+</p-dialog>

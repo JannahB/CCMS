@@ -10,7 +10,7 @@ import { CaseStatus } from './CaseStatus';
 import { Role } from './Role';
 import { StaffRole } from './StaffRole';
 import { CasePhase } from './CasePhase';
-import { CaseHearing } from './CaseHearing';
+import { CaseHearingDeprecated } from './CaseHearingDeprecated';
 import { CaseTask } from './CaseTask';
 import { IccsCode } from './IccsCode';
 import { CourtLocation } from './CourtLocation';
@@ -24,7 +24,7 @@ export class AuthorizedCourt extends LookupEntity {
   caseStatuses: CaseStatus[];
   caseTypes: CaseType[];
   casePartyRoles: CasePartyRole[];
-  hearingTypes: CaseHearing[];
+  hearingTypes: CaseHearingDeprecated[];
   caseTaskTypes: CaseTask[];
   iccsCodes: IccsCode[];
   eventTypes: CaseEvent[];
