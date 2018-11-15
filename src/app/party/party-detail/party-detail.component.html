@@ -10,9 +10,11 @@
         <div  *ngIf="party">
 
           <div class="ui-g-12 mb-20 ml-10">
-            <p-checkbox [(ngModel)]="party.isOrganization" binary="true" name="cb_isOrganization"
-                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
+            
+            <p-checkbox [(ngModel)]="party.isOrganization" binary="true" name="cb_isOrganization">
+              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
             </p-checkbox>
+          
             <span class="task-name">Is Organization?</span>
           </div>
 
