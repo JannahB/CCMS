@@ -1,10 +1,7 @@
+import { BaseTimeBlock } from "./BaseTimeBlock";
 
-export class CalTemplateTime {
+export class CalTemplateTime extends BaseTimeBlock {
 
-  id: number = null;
-  text: string = '';
-  start: Date = new Date();
-  end: Date = new Date();
   templateId: number = null;
 
 }

@@ -1,8 +1,8 @@
-import { AssociatedCase } from './AssociatedCase';
-import { Party } from './Party';
-import { CourtLocation } from './CourtLocation';
-import { HearingType } from './HearingType';
-
+/**
+ * THIS IS DEPRICATED AND CAN DELETED ONCE SAVING A HEARING
+ * IS COMPLETED USING THE NEW `CASEHEARING` ENTITY AND THE
+ * NEW SCHEDULE HEARING PIECE.
+ */
 /**
  * This object used for saving Hearing to the Server
  * CaseHearingDTO Object Model

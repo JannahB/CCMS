@@ -1,10 +1,7 @@
+import { BaseTimeBlock } from "./BaseTimeBlock";
 
-export class CalResourceTime {
+export class CalResourceTime extends BaseTimeBlock {
 
-  id: number = null;
-  text: string = '';
-  start: Date = new Date();
-  end: Date = new Date();
   resourceId: number = null;
 
 }

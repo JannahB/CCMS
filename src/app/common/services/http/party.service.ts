@@ -1,13 +1,13 @@
-import { Pool } from './../../entities/Pool';
-import { PhoneNumber } from './../../entities/PhoneNumber';
+import { Pool } from '../../entities/Pool';
+import { PhoneNumber } from '../../entities/PhoneNumber';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { DateConverter } from './../../utils/date-converter';
-import { HttpBaseService } from '../http/http-base.service';
-import { Party } from './../../entities/Party';
+import { DateConverter } from '../../utils/date-converter';
+import { HttpBaseService } from './http-base.service';
+import { Party } from '../../entities/Party';
 import { Identifier } from '../../entities/Identifier';
-import { Address } from './../../entities/Address';
+import { Address } from '../../entities/Address';
 import { Email } from '../../entities/Email';
 import { DatePipe } from '@angular/common';
 

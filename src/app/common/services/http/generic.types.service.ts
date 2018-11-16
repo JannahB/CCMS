@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { HttpBaseService } from '../http/http-base.service';
+import { HttpBaseService } from './http-base.service';
 
 
 @Injectable()
@@ -11,7 +11,7 @@ export class GenericTypesService extends HttpBaseService<any> {
 
   // Override Base URL's set in Super
   protected getBaseUrl():string{
-    return `${super.getBaseUrl()}/FetchGenericTypes`;
+    return `${super.getBaseUrl()}/api/contact-types`;
   }
 
   protected getBaseMockUrl():string{

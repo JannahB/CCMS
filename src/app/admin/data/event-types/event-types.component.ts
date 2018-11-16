@@ -2,12 +2,12 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
 
-import { LookupService } from './../../../common/services/http/lookup.service';
+import { LookupService } from '../../../common/services/http/lookup.service';
 import { BreadcrumbService } from '../../../breadcrumb.service';
 import { AdminDataService } from '../../../common/services/http/admin-data.service';
 import { ToastService } from '../../../common/services/utility/toast.service';
-import { environment } from './../../../../environments/environment';
-import { EventType } from './../../../common/entities/EventType';
+import { environment } from '../../../../environments/environment';
+import { EventType } from '../../../common/entities/EventType';
 
 
 @Component({
@@ -34,12 +34,12 @@ export class EventTypesComponent implements OnInit {
   showDeleteItemModal: boolean = false;
 
   eventCategories: any[];
-  tableLabel:string = "Event Type"
+  tableLabel: string = "Event Type"
   refDataSubscription: Subscription;
 
 
   constructor(
-    private breadCrumbSvc:BreadcrumbService,
+    private breadCrumbSvc: BreadcrumbService,
     private lookupSvc: LookupService,
     private adminSvc: AdminDataService,
     private toastSvc: ToastService
@@ -48,11 +48,11 @@ export class EventTypesComponent implements OnInit {
       { label: 'Data Table Maintenance', routerLink: ['/admin/data'] },
       { label: 'Event Types', routerLink: ['/admin/data/eventtypes'] }
     ]);
-   }
+  }
 
   @ViewChild(MatSelectionList) itemsList: MatSelectionList;
 
-  ngOnInit(){
+  ngOnInit() {
     this.allowDeleteLookupItems = environment.allowDeleteLookupItems;
   }
 
@@ -71,7 +71,7 @@ export class EventTypesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if(this.refDataSubscription) this.refDataSubscription.unsubscribe();
+    if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
   }
 
 
@@ -84,13 +84,13 @@ export class EventTypesComponent implements OnInit {
 
         // If items in list, default to first item
         setTimeout(() => {
-          if( this.itemsList.options.first )
+          if (this.itemsList.options.first)
             this.itemsList.options.first.selected = true;
         }, 100);
 
-    })
+      })
 
-    this.eventCategories = [{id:1, name: "Case"}, {id:2, name: "Log"} ]
+    this.eventCategories = [{ id: 1, name: "Case" }, { id: 2, name: "Log" }]
   }
 
   eventCatOnChange(event) {
@@ -103,40 +103,40 @@ export class EventTypesComponent implements OnInit {
     this.copySelectedItem();
   }
 
-  saveDataItem(){
-    this.adminSvc.saveEventType(this.selectedItem).subscribe( result => {
+  saveDataItem() {
+    this.adminSvc.saveEventType(this.selectedItem).subscribe(result => {
       console.log('result', result);
 
-      let index:number = this.getIndexOfItem(result);
+      let index: number = this.getIndexOfItem(result);
 
-      if(index >= 0){
+      if (index >= 0) {
         this.typeItems[index] = result;
-      }else{
+      } else {
         this.typeItems.push(result);
       }
       this.toastSvc.showSuccessMessage('Item Saved');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error saving the item.');
-    },
-    () => {
-      // final
-    })
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error saving the item.');
+      },
+      () => {
+        // final
+      })
   }
 
   copySelectedItem() {
-    this.selectedItemBak = Object.assign( new EventType(), this.selectedItem );
+    this.selectedItemBak = Object.assign(new EventType(), this.selectedItem);
     this.selectedItemIdx = this.getIndexOfItem(this.selectedItem);
   }
 
   cancelDataItemEdit(event) {
-    this.selectedItem = Object.assign( new EventType(), this.selectedItemBak );
+    this.selectedItem = Object.assign(new EventType(), this.selectedItemBak);
     this.typeItems[this.selectedItemIdx] = this.selectedItem;
   }
 
   deleteDataItemRequest() {
-    if(!this.allowDeleteLookupItems) {
+    if (!this.allowDeleteLookupItems) {
       this.toastSvc.showInfoMessage('Delete support is currently not available.');
       return;
     }
@@ -144,27 +144,27 @@ export class EventTypesComponent implements OnInit {
   }
 
   deleteDataItem() {
-    this.adminSvc.deleteLookupItem('CaseType', this.selectedItem.eventTypeOID).subscribe( result => {
+    this.adminSvc.deleteLookupItem('CaseType', this.selectedItem.eventTypeOID).subscribe(result => {
       this.typeItems.splice(this.getIndexOfItem(), 1);
       this.selectedItem = this.typeItems[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error deleting the item.');
-    },
-    () => {
-      // final
-    })
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error deleting the item.');
+      },
+      () => {
+        // final
+      })
   }
 
-  hideModals(){
+  hideModals() {
     this.showDeleteItemModal = false;
   }
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.typeItems
-        .findIndex(itm => itm.eventTypeOID == item.eventTypeOID);
+      .findIndex(itm => itm.eventTypeOID == item.eventTypeOID);
   }
 
 }

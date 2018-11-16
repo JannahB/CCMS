@@ -1,6 +1,9 @@
 // Overrides -------------
 
 body {
+
+  background: linear-gradient(to bottom, #E6EFF6, #e9fffb);
+
   .layout-wrapper{
     height: 100%;
     width: 100%;
@@ -17,6 +20,11 @@ body {
         padding: .5em;
         padding-left: 0;
         padding-right: 0px;
+        font-size: 10px;
+
+        .card {
+          padding: 0.25em 2em 0.25em 2em;
+        }
       }
     }
   }
@@ -235,4 +243,67 @@ body {
 
 .mat-selection-list .mat-list-option {
   font-size: 14px !important;
+}
+
+// TEXT INPUT PLACEHOLDER --------------------------
+body .ui-column-filter::placeholder {
+  color: #a1c8da;
+}
+body .ui-column-filter::-ms-input-placeholder {
+  color: #a1c8da;
+}
+
+body .ui-column-filter {
+  color:white;
+  border-bottom-color: #a1c8da;
+  border-bottom-width: 1px;
+}
+
+// DATA TABLE --------------------------------------
+body .lite-table .ui-datatable {
+
+  box-shadow: 0px 3px 24px 0px #dddddd;
+
+  .ui-datatable-thead > tr th {
+    background-color: white;
+    color: #1A87BF;
+  }
+  .ui-datatable-data tr.ui-state-highlight {
+    background-color: #E6EFF6;
+    color: #255d88;
+    border: 1px solid #d1e3f1;
+  }
+  .ui-datatable-data tr.ui-datatable-even.ui-state-highlight {
+    background-color: #E6EFF6;
+    color: #255d88;
+    border: 1px solid #d1e3f1;
+    box-shadow: 0px 4px 10px 1px #cccccc;
+  }
+  // TEXT INPUT PLACEHOLDER within a p-datatable --------------------------
+  .ui-column-filter::placeholder {
+    color: #adadad;
+  }
+  .ui-column-filter::-ms-input-placeholder {
+    color: #a1c8da;
+  }
+  .ui-column-filter {
+    color: #1A87BF;
+    border-bottom-color: #a1c8da;
+    border-bottom-width: 1px;
+    margin-top: 15px;
+  }
+}
+
+// Daypilot Calendar Override
+.calendar_default_event_inner {
+  line-height: 1em;
+}
+
+
+.ui-messages-error {
+  color: #ab1a0f;
+  background-color: #f7e2e1;
+  border-color: #ffcbc8;
+  font-size: 12px;
+  line-height: 12px;
 }

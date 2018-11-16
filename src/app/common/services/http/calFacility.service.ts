@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/Rx';
-import 'rxjs/Rx';
+import { Observable } from 'rxjs';
+import 'rxjs';
 import { DayPilot } from 'daypilot-pro-angular';
 
-import { HttpBaseService } from '../http/http-base.service';
-import { CalFacilityTime } from './../../entities/CalFacilityTime';
-import { CalFacility } from './../../entities/CalFacility';
+import { HttpBaseService } from './http-base.service';
+import { CalFacilityTime } from '../../entities/CalFacilityTime';
+import { CalFacility } from '../../entities/CalFacility';
 
 
 @Injectable()

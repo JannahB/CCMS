@@ -3,9 +3,9 @@ import { MatSelectionList, MatSelectionListChange } from '@angular/material';
 import * as moment from 'moment';
 import { DayPilot, DayPilotSchedulerComponent } from "daypilot-pro-angular";
 
-import { BreadcrumbService } from './../../../breadcrumb.service';
+import { BreadcrumbService } from '../../../breadcrumb.service';
 import { CalTemplateService } from '../../../common/services/http/calTemplate.service';
-import { ToastService } from './../../../common/services/utility/toast.service';
+import { ToastService } from '../../../common/services/utility/toast.service';
 import { CalTemplate } from '../../../common/entities/CalTemplate';
 
 @Component({
@@ -44,7 +44,8 @@ export class CalTemplatesComponent implements OnInit {
     scale: "CellDuration",
     cellDuration: 30,
     // days: new DayPilot.Date("2017-07-01").daysInMonth(),
-    days: 7,
+    days: 6,
+    businessWeekends: true,
     startDate: "2018-01-01",
     heightSpec: "Max",
     height: 300,
@@ -60,6 +61,7 @@ export class CalTemplatesComponent implements OnInit {
         resource: args.resource,
         text: 'Available'
       }));
+      this.saveItem();
 
       // -------- MODAL EVENT NAMING - Use this block to present a naming modal to user ------
       // DayPilot.Modal.prompt("Create a new task:", "Available").then(function (modal) {
@@ -124,11 +126,13 @@ export class CalTemplatesComponent implements OnInit {
     eventMoveHandling: "Update",
     onEventMoved: args => {
       console.log('move', args);
+      this.saveItem();
       // this.message("Event moved");
     },
     eventResizeHandling: "Update",
     onEventResized: args => {
       console.log('resize', args);
+      this.saveItem();
       // this.message("Event resized");
     },
     eventDeleteHandling: "Update",
@@ -141,12 +145,18 @@ export class CalTemplatesComponent implements OnInit {
         // NOTE: Deleting this individually causes 500 error
         //       EntityNotFoundException: Unable to find org.ncsc.ccms.domain.TemplateTimes with id 68
         //
-        this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)
-          .subscribe(result => {
-            this.selectedTemplate.days = this.selectedTemplate.days.slice();
-            this.toastSvc.showInfoMessage('Time block deleted.');
-          });
-        console.log('delete', args);
+
+        // NOTE: no need for explicit remove since binding removes the time block
+        // this.deleteTimeBlock(args.e.data.id, true);
+        this.selectedTemplate.days = this.selectedTemplate.days.slice();
+        this.saveItem();
+
+        // this.calendarSvc.deleteTemplateTimeBlock(args.e.data.id)
+        //   .subscribe(result => {
+        //     this.selectedTemplate.days = this.selectedTemplate.days.slice();
+        //     this.toastSvc.showInfoMessage('Time block deleted.');
+        //   });
+        // console.log('delete', args);
       }
     }
   };
@@ -175,6 +185,7 @@ export class CalTemplatesComponent implements OnInit {
       event.option.selected = true;
       this.selectedTemplate = event.option.value;
       this.copySelectedItem();
+      this.scheduler.control.clearSelection();
     });
 
     // Temp selected item
@@ -203,7 +214,7 @@ export class CalTemplatesComponent implements OnInit {
   }
 
   saveItem() {
-
+    this.scheduler.control.clearSelection();
     this.calendarSvc.save(this.selectedTemplate)
       .subscribe(result => {
         this.updateList(result);
@@ -222,6 +233,14 @@ export class CalTemplatesComponent implements OnInit {
   cancelDataItemEdit(event) {
     this.selectedTemplate = Object.assign(new CalTemplate(), this.selectedTemplateBak);
     this.templates[this.selectedTemplateIdx] = this.selectedTemplate;
+  }
+
+  deleteTimeBlock(id, userInitiated = false) {
+    let idx = this.selectedTemplate.days.findIndex(item => item.id == id);
+    if (idx > -1) {
+      this.selectedTemplate.days.splice(idx, 1);
+      // this.saveItem();
+    }
   }
 
   deleteDataItemRequest() {

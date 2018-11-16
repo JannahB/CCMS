@@ -1,10 +1,10 @@
-import { CourtCount } from './../../entities/CourtCount';
+import { CourtCount } from '../../entities/CourtCount';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Rx';
-import 'rxjs/Rx';
+import { Observable } from 'rxjs';
+import 'rxjs';
 
-import { HttpBaseService } from '../http/http-base.service';
+import { HttpBaseService } from './http-base.service';
 
 @Injectable()
 export class CaseCountsService extends HttpBaseService<any> {

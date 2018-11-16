@@ -1,5 +1,6 @@
 <div class="ui-g">
-
+    <loading-bar [visible]="loadingDataFlag" [message]="'loading resources data...'"></loading-bar>
+<!--  -->
     <!-- HEADER -->
     <div class="ui-g-12 pv-0">
       <h1 class="page-header mt-0">Resource Hours</h1>
@@ -8,20 +9,22 @@
     <div class="ui-g-12 card">
 
       <!-- Column 1 -->
-      <div class="ui-g-2 ui-sm-12 mt-25">
-
-        <mat-form-field class="width-full">
-          <input matInput name="tiSearch" #tiSearch="ngModel" placeholder="Search"
-              [(ngModel)]="searchText">
-
-        </mat-form-field>
-
-        <!-- LIST -->
-        <mat-selection-list #matSelectionList  class="items-list">
-          <mat-list-option *ngFor="let item of resources; let i=index; let itm" [class.hi]="selected" [value]="item">
-            {{ item.name }}
-          </mat-list-option>
-        </mat-selection-list>
+      <div class="ui-g-3 ui-sm-12 mt-25 lite-table">
+        <p-dataTable [value]="resources"
+                    selectionMode="single"
+                    [(selection)]="selectedResource"
+                    (onRowSelect)="resourceOnRowSelect($event)"
+                    scrollable="true" scrollHeight="338px"
+                    dataKey="id" #dtHearings>
+          <p-column field="lastName" header="Resources"
+                    filter="true"
+                    filterPlaceholder="search last name..."
+                    filterMatchMode="contains" >
+            <ng-template pTemplate="body" let-item="rowData">
+              <p class=" mv-5" >{{ item?.firstName }} {{ item?.lastName }}</p>
+            </ng-template>
+          </p-column>
+        </p-dataTable>
 
         <!-- <button mat-raised-button color="primary" (click)="createNewResource()" class="mt-15 width-full">
           <mat-icon aria-label="Add resource button">add</mat-icon>
@@ -30,10 +33,10 @@
       </div>
 
       <!-- Column 2 -->
-      <div class="ui-g-10 ui-sm-12">
+      <div class="ui-g-9 ui-sm-12">
 
         <div class="ui-g-12 pt-20">
-          <h2>{{selectedResource.name}}</h2>
+          <h2 class="mv-0">{{ selectedResource?.firstName }} {{ selectedResource?.lastName }}</h2>
         </div>
 
         <div class="ui-g-12">
@@ -85,13 +88,13 @@
             <p class="mv-0 muted-label">Click and drag to mark available hours. </p>
           </div>
           <div class="ta-r">
-              <button mat-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
+              <!-- <button mat-button color="warn" (click)="deleteDataItemRequest()" class="mt-30 fl">
                 <mat-icon aria-label="Add resource button">delete</mat-icon>
                 Delete Resource Hours
-              </button>
+              </button> -->
               <button mat-raised-button color="primary" (click)="saveItem()" class="mt-30">
                 <mat-icon aria-label="Add resource button">check</mat-icon>
-                Save Resource
+                Save Resource Hours
               </button>
               <button mat-button color="secondary" (click)="cancelDataItemEdit()" class="mt-30">
                 <mat-icon aria-label="Add resource button">clear</mat-icon>
@@ -99,9 +102,9 @@
               </button>
           </div>
         </div>
-        <div class="ui-g-12">
+        <!-- <div class="ui-g-12">
             <pre>{{selectedResource | json}}</pre>
-        </div>
+        </div> -->
       </div>
 
       <!-- ---------------- MODALS ---------------- -->

@@ -1,27 +1,27 @@
-import { UserService } from './../../common/services/utility/user.service';
+import { UserService } from '../../common/services/utility/user.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { SelectItem } from 'primeng/primeng';
 
-import { GenericTypesService } from './../../common/services/http/generic.types.service';
-import { PhoneNumber } from './../../common/entities/PhoneNumber';
-import { Address } from './../../common/entities/Address';
-import { PartyService } from './../../common/services/http/party.service';
-import { DropdownDataTransformService } from './../../common/services/utility/dropdown-data-transform.service';
+import { GenericTypesService } from '../../common/services/http/generic.types.service';
+import { PhoneNumber } from '../../common/entities/PhoneNumber';
+import { Address } from '../../common/entities/Address';
+import { PartyService } from '../../common/services/http/party.service';
+import { DropdownDataTransformService } from '../../common/services/utility/dropdown-data-transform.service';
 import { BreadcrumbService } from '../../breadcrumb.service';
-import { DateConverter } from './../../common/utils/date-converter';
-import { Identifier } from './../../common/entities/Identifier';
-import { IdentifierService } from './../../common/services/http/identifier.service';
+import { DateConverter } from '../../common/utils/date-converter';
+import { Identifier } from '../../common/entities/Identifier';
+import { IdentifierService } from '../../common/services/http/identifier.service';
 import { Language } from '../../common/entities/Language';
-import { LanguageService } from './../../common/services/http/language.service';
-import { Party } from './../../common/entities/Party';
+import { LanguageService } from '../../common/services/http/language.service';
+import { Party } from '../../common/entities/Party';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { Email } from '../../common/entities/Email';
 import { CountriesService } from '../../common/services/http/countries.service';
 import { CollectionUtil } from '../../common/utils/collection-util';
-import { Permission } from './../../common/entities/Permission';
+import { Permission } from '../../common/entities/Permission';
 
 
 @Component({
@@ -106,25 +106,25 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     });
     */
 
-    this.languageSubscription = this.languageSvc.getMock().subscribe(langs => {
+    this.languageSubscription = this.languageSvc.get().subscribe(langs => {
       this.languages = langs;
       // this.projectCopy = { ...this.project }
       console.log('languages', langs);
     });
 
-    this.identifierSubscription = this.identifierSvc.getMock().subscribe(items => {
+    this.identifierSubscription = this.identifierSvc.get().subscribe(items => {
       this.identifierTypes = items;
       this.identifierTypeOptions = this.dropdownSvc.transformSameLabelAndValue(this.identifierTypes, 'name');
     });
 
-    this.genericSubsciption = this.genericTypeSvc.getMock().subscribe(types => {
+    this.genericSubsciption = this.genericTypeSvc.get().subscribe(types => {
       let gTypes = this.dropdownSvc.transformSameLabelAndValue(types, 'name');
       this.emailTypes = gTypes;
       this.addressTypes = gTypes;
       this.phoneTypes = gTypes;
     });
 
-    this.countriesSubscription = this.countriesSvc.getMock().subscribe(countries => {
+    this.countriesSubscription = this.countriesSvc.get().subscribe(countries => {
       this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
     })
 
