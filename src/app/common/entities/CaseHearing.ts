@@ -10,7 +10,7 @@ export class CaseHearing {
   caseId: number = 0;
   courtLocationId: number = 0;
   hearingTypeId: number = 0;
-  judicialOfficerId: number;
+  judicialOfficerId: number = 0;
   days: CaseHearingTimesDTO[] = [];
   description: string = '';
   location: string = '';

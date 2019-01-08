@@ -74,10 +74,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   baseURL: string;
   selectedChargeLawTypeId: any;
   datePipe: DatePipe = new DatePipe("en");
+  actualCompletionDate: Date = null; //Used to capture the actual cask task completion date from the DB.
 
   //Rhea Seegobin
   selChargeFactor: string = ""; 
-
   public Permission: any = Permission;
 
   constructor(
@@ -865,6 +865,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   // -----------------------------------------------=
 
   selectedCaseTask: CaseTask;
+  
   showModalAddCaseTask: boolean = false;
   task: any = {};
   taskTypes: TaskType[];
@@ -896,6 +897,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.initCaseTaskModal(taskTypeId);
       return;
     }
+    
     this.loadingCaseTaskLookups = true;
     var source = Observable.forkJoin<any>(
       this.partySvc.fetchAny({ courtUser: "true" }),
@@ -921,6 +923,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   initCaseTaskModal(taskTypeId?) {
+
     this.loadingCaseTaskLookups = false;
     if (taskTypeId) {
       this.selectedCaseTask.taskType = this.taskTypes.find((task) => task.taskTypeOID == taskTypeId);
@@ -934,12 +937,24 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.selectedCaseTask.assignedPool = this.staffPools.find(s => s.poolOID == this.selectedCaseTask.assignedPool.poolOID);
     }
 
+    //This stores the actual completion date from the DB.
+    //Used in the event a user cancels their entry of a completion date.
+    this.actualCompletionDate = this.selectedCaseTask.doneDate;
+
   }
 
   onCancelCaseTask(form) {
+
+    //This would not overwrite the actual cast task:completion date with incorrect display data
+    if(this.actualCompletionDate == null) this.selectedCaseTask.doneDate = null;
     this.hideModals();
     // form.reset();  // this is deleting the selectedItem from the grid!!??~
     this.selectedCaseTask = null;
+  }
+
+  documentSelected(event: any): void {
+    console.log('documentSelected event', event);
+    this.selectedCaseTask.docTemplate = event;
   }
 
   saveCaseTask() {

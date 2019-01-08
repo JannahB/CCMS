@@ -12,7 +12,7 @@
           <div class="ui-g-12 mb-20 ml-10">
             
             <p-checkbox [(ngModel)]="party.isOrganization" binary="true" name="cb_isOrganization">
-              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
+              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
             </p-checkbox>
           
             <span class="task-name">Is Organization?</span>
@@ -105,7 +105,7 @@
                     inputStyleClass="width-full"
                     [(ngModel)]="party.dob"
                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                    dateFormat="mm/dd/yy"
+                    dateFormat="dd-M-yy"
                     placeholder="Date of Birth"
                     [showIcon]="true"
                     [yearNavigator]="true"
@@ -206,12 +206,12 @@
                       <p-column field="notes" header="Notes" [style]="{'width':'26%'}"></p-column>
                       <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
                       <ng-template pTemplate="body" let-item="rowData">
-                          {{item.startDate | date:'M/d/yyyy'}}
+                          {{item.startDate | date:'dd-MMM-yyyy'}}
                     </ng-template>
               </p-column>
               <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      {{item.endDate | date:'M/d/yyyy'}}
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
               <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
@@ -275,6 +275,7 @@
               <label class="minimal primary block">Start Date</label>
               <p-calendar id="identifierStartDate"
                 placeholder="Start Date"
+                dateFormat="dd-M-yy"
                 [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                 [(ngModel)]="selectedIdentifier.startDate"
                 [yearNavigator]="true"
@@ -287,6 +288,7 @@
               <label class="minimal primary block">End Date</label>
               <p-calendar id="identifierEndDate"
                   placeholder="End Date"
+                  dateFormat="dd-M-yy"
                   [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                   [(ngModel)]="selectedIdentifier.endDate"
                   [yearNavigator]="true"
@@ -331,12 +333,12 @@
               <p-column field="emailAddress" header="Email Address" [style]="{'width':'20%'}"></p-column>
               <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      {{item.startDate | date:'M/d/yyyy'}}
+                      {{item.startDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
               <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      {{item.endDate | date:'M/d/yyyy'}}
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
               <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
@@ -405,6 +407,7 @@
                 <label class="minimal primary block">Start Date</label>
                 <p-calendar id="emailStartDate" name="emailStartDate" #emailStartDate="ngModel"
                   placeholder="Start Date"
+                  dateFormat="dd-M-yy"
                   [required]="true"
                   [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                   [(ngModel)]="selectedEmail.startDate"
@@ -422,6 +425,7 @@
                 <label class="minimal primary block">End Date</label>
                 <p-calendar id="emailEndDate" name="emailEndDate" #emailEndDate="ngModel"
                     placeholder="End Date"
+                    dateFormat="dd-M-yy"
                     [(ngModel)]="selectedEmail.endDate"
                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                     [yearNavigator]="true"
@@ -467,12 +471,12 @@
               <p-column field="phoneNumber" header="Phone Number" [style]="{'width':'20%'}"></p-column>
               <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      {{item.startDate | date:'M/d/yyyy'}}
+                      {{item.startDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
               <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      {{item.endDate | date:'M/d/yyyy'}}
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
               <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
@@ -523,6 +527,7 @@
               <label class="minimal primary block">Start Date</label>
               <p-calendar id="phoneStartDate"
                 placeholder="Start Date"
+                dateFormat="dd-M-yy"
                 [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                 [(ngModel)]="selectedPhone.startDate"
                 [yearNavigator]="true"
@@ -535,6 +540,7 @@
               <label class="minimal primary block">End Date</label>
               <p-calendar id="phoneEndDate"
                   placeholder="End Date"
+                  dateFormat="dd-M-yy"
                   [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                   [(ngModel)]="selectedPhone.endDate"
                   [yearNavigator]="true"
@@ -582,12 +588,12 @@
               <p-column field="postalCode" header="Postal Code" [style]="{'width':'20%'}"></p-column>
               <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      {{item.startDate | date:'M/d/yyyy'}}
+                      {{item.startDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
               <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      {{item.endDate | date:'M/d/yyyy'}}
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
               <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
@@ -714,6 +720,7 @@
               <label class="minimal primary block">Start Date</label>
               <p-calendar id="addressStartDate"
                 placeholder="Start Date"
+                dateFormat="dd-M-yy"
                 [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                 [(ngModel)]="selectedAddress.startDate"
                 [yearNavigator]="true"
@@ -726,6 +733,7 @@
               <label class="minimal primary block">End Date</label>
               <p-calendar id="addressEndDate"
                   placeholder="End Date"
+                  dateFormat="dd-M-yy"
                   [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                   [(ngModel)]="selectedAddress.endDate"
                   [yearNavigator]="true"

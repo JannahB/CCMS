@@ -17,7 +17,7 @@ export class CaseTask {
   doneDate: Date = null;
   notDoneReason: string = '';
   taskOID: number = 0;
-  taskPriorityCode: number = null;
+  taskPriorityCode: number = 0;
   taskType: TaskType = new TaskType();
 
 }
