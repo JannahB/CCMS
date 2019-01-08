@@ -136,6 +136,7 @@ export class AdminWorkflowComponent implements OnInit {
         this.staffPools = results[3];
         this.parties = results[4];
 
+        
         // Merge Pool and Party items into a single list
         console.log('parties', this.parties);
         this.poolParties = this.mergePoolsAndParties(this.staffPools, this.parties);
@@ -165,7 +166,8 @@ export class AdminWorkflowComponent implements OnInit {
       });
     }
 
-    if (parties.length) {
+    
+    if (parties.length > 0) {
       parties.forEach(pty => {
         let obj: PoolParty = new PoolParty();
         obj.fullName = pty.firstName + ' ' + pty.lastName;
