@@ -453,7 +453,15 @@ export class AdminDataService {
         data.workflowSteps.forEach(item => {
         const step = {};
         
+<<<<<<< HEAD
         //RS: WorkflowStepOID needs to be initialized in the object class else the 
+=======
+<<<<<<< HEAD
+        //RS: WorkflowStepOID needs to be initialized in the object class else the 
+=======
+        //WorkflowStepOID needs to be initialized in the object class else the 
+>>>>>>> 0676f8670d15028f8eea36eae7232fdb0e5073fe
+>>>>>>> 3ac78d054b0dc91eab3a43f0bc25529f55defe65
         //delayDays and Task Object would not be passed to the server
 
         if (item.workflowStepOID != null) {

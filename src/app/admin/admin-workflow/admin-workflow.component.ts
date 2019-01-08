@@ -200,10 +200,17 @@ export class AdminWorkflowComponent implements OnInit {
     workflowStep.assignedPool = null;
     if (pp.type == 'pool') {
       
+<<<<<<< HEAD
       //RS let staffPool = this.staffPools.find(itm => itm.id == pp.id);
       //RS staffPool.poolOID = pp.id;
       
       
+=======
+      // let staffPool = this.staffPools.find(itm => itm.poolOID == pp.id);
+      //RS let staffPool = this.staffPools.find(itm => itm.id == pp.id);
+      //RS staffPool.poolOID = pp.id;
+      
+>>>>>>> 3ac78d054b0dc91eab3a43f0bc25529f55defe65
       let staffPool = this.staffPools.find(itm => itm.poolOID == pp.id);
       staffPool.poolOID = pp.id;
 

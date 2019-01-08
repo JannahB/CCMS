@@ -247,7 +247,11 @@
 
                 <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">                  
                     <ng-template pTemplate="body" let-item="rowData">
+<<<<<<< HEAD
                         {{item.startDate | date:'dd-MMM-yyyy'}}
+=======
+                        {{item.startDate | date:'M/d/yyyy'}}
+>>>>>>> 3ac78d054b0dc91eab3a43f0bc25529f55defe65
                         
                     </ng-template>
                 </p-column>
@@ -1416,7 +1420,11 @@
         <!-- COMPLETED DATE -->
         <div class="ui-g-12" *ngIf="selectedCaseTask && selectedCaseTask.taskOID > 0">
           <label class="minimal primary block">Completed Date</label>
+<<<<<<< HEAD
           <p-calendar id="task_doneDate" name="task_doneDate" placeholder="Completed Date"
+=======
+          <p-calendar id="task_doneDate" name="task_doneDate" placeholder="Done Date"
+>>>>>>> 3ac78d054b0dc91eab3a43f0bc25529f55defe65
               [ngModel]="selectedCaseTask?.doneDate"
               (ngModelChange)="doneDateOnChange($event)"
               [showIcon]="true"
