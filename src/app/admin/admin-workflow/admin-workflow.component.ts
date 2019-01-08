@@ -110,11 +110,13 @@ export class AdminWorkflowComponent implements OnInit {
     let documentTemplateObservable: Observable<DocTemplate[]> = this.lookupService
       .fetchLookup<DocTemplate>('FetchDocumentTemplate');
 
-    // let staffPoolObservable: Observable<Pool[]> = this.lookupService
-    //   .fetchLookup<Pool>('FetchStaffPool');
+    //This fetches all staff pools for a court you are currently logged into
+    let staffPoolObservable: Observable<Pool[]> = this.lookupService
+       .fetchLookup<Pool>('FetchStaffPool');
 
-    let staffPoolObservable: Observable<Pool[]> = this.partyService
-      .getAllStaffPoolSlim();
+    //Rhea Seegobin: This fetches all staff pools for all
+    //let staffPoolObservable: Observable<Pool[]> = this.partyService
+    //  .getAllStaffPoolSlim();
 
     // let partyObservable: Observable<Party[]> = this.partyService
     //   .fetchAny({ courtUser: "true" });
@@ -136,6 +138,7 @@ export class AdminWorkflowComponent implements OnInit {
         this.staffPools = results[3];
         this.parties = results[4];
 
+        
         // Merge Pool and Party items into a single list
         console.log('parties', this.parties);
         this.poolParties = this.mergePoolsAndParties(this.staffPools, this.parties);
@@ -160,12 +163,14 @@ export class AdminWorkflowComponent implements OnInit {
         let obj: PoolParty = new PoolParty();
         obj.fullName = p.poolName;
         obj.type = 'pool'
-        obj.id = p.id;
+        //Rhea Seegobin : obj.id = p.id;
+        obj.id = p.poolOID;
         arr.push(obj);
       });
     }
 
-    if (parties.length) {
+    
+    if (parties.length > 0) {
       parties.forEach(pty => {
         let obj: PoolParty = new PoolParty();
         obj.fullName = pty.firstName + ' ' + pty.lastName;
@@ -194,9 +199,14 @@ export class AdminWorkflowComponent implements OnInit {
     workflowStep.assignedParty = null;
     workflowStep.assignedPool = null;
     if (pp.type == 'pool') {
+      
       // let staffPool = this.staffPools.find(itm => itm.poolOID == pp.id);
-      let staffPool = this.staffPools.find(itm => itm.id == pp.id);
+      //RS let staffPool = this.staffPools.find(itm => itm.id == pp.id);
+      //RS staffPool.poolOID = pp.id;
+      
+      let staffPool = this.staffPools.find(itm => itm.poolOID == pp.id);
       staffPool.poolOID = pp.id;
+
       workflowStep.assignedPool = staffPool;
       return workflowStep;
     }

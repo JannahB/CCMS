@@ -432,28 +432,41 @@ export class AdminDataService {
     //       }
     //     }) : []
     // }
-    const workflow = {
-      workflowSteps: []
-    };
+
+    const workflow = {workflowSteps:[]};
+
+    
+
     if (data.eventWorkflowOID) {
       workflow['workflowOID'] = data.eventWorkflowOID.toString();
+      
     }
+
     workflow['triggeringEventOID'] = data.triggeringEvent.eventTypeOID.toString();
+    //console.log("triggeringEventOID" + data.triggeringEvent.eventTypeOID.toString());
+
     if (data.description) {
-      workflow['description'] = data.description;
+        workflow['description'] = data.description;
     }
+
     if (data.workflowSteps.length > 0) {
-      data.workflowSteps.forEach(item => {
+        data.workflowSteps.forEach(item => {
         const step = {};
-        if (item.workflowStepOID) {
+        
+        //RS: WorkflowStepOID needs to be initialized in the object class else the 
+        //delayDays and Task Object would not be passed to the server
+
+        if (item.workflowStepOID != null) {
           step['workflowStepOID'] = item.workflowStepOID.toString();
           step['delayDays'] = item.delayDays.toString();
           step['taskTypeOID'] = item.taskType.taskTypeOID.toString();
         }
+
         // if (party.ref.poolOID)
-        //     step.assignedPoolOID = party.ref.poolOID;
+        //    step.assignedPoolOID = party.ref.poolOID;
         // if (party.ref.partyOID)
         //     step.assignedPartyOID = party.ref.partyOID;
+
         if (item.assignedParty) {
           step['assignedPartyOID'] = item.assignedParty.partyOID.toString();
         }
@@ -466,6 +479,9 @@ export class AdminDataService {
         workflow.workflowSteps.push(step);
       });
     }
+
+    console.log(workflow);
+    
     const url = `${this.getBaseUrl()}/SaveEventWorkflow`;
 
     return this.http

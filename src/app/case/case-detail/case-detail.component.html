@@ -245,9 +245,10 @@
                 </p-column>
                 <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column> -->
 
-                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">                  
                     <ng-template pTemplate="body" let-item="rowData">
                         {{item.startDate | date:'M/d/yyyy'}}
+                        
                     </ng-template>
                 </p-column>
                 <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
@@ -459,10 +460,10 @@
 
         <!-- TASKS TAB -->
 
-        <p-tabPanel header="Tasks" leftIcon="ui-icon-timer">
+        <p-tabPanel header="Case Tasks" leftIcon="ui-icon-timer">
           <div class="ui-g">
             <div class="ui-g-12">
-              <h2>Tasks</h2>
+              <h2>Case Tasks</h2>
             </div>
 
             <div class="ui-g-12">
@@ -1403,7 +1404,7 @@
 
         <!-- DONE DATE -->
         <div class="ui-g-12" *ngIf="selectedCaseTask && selectedCaseTask.taskOID > 0">
-          <label class="minimal primary block">Done Date</label>
+          <label class="minimal primary block">Completed Date</label>
           <p-calendar id="task_doneDate" name="task_doneDate" placeholder="Done Date"
               [ngModel]="selectedCaseTask?.doneDate"
               (ngModelChange)="doneDateOnChange($event)"
