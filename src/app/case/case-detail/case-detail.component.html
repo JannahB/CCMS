@@ -47,7 +47,7 @@
                     [required]="true"
                     [disabled]="case.caseOID != 0 || !hasPermission(Permission.CREATE_CASE)"
                     [(ngModel)]="case.caseFilingDate"
-                    dateFormat="mm/dd/yy"
+                    dateFormat="dd-M-yy"
                     placeholder="Case Filing Date"
                     [showIcon]="true"
                     yearRange="2000:2030"
@@ -227,7 +227,7 @@
                       <div></div>
                       <div *ngIf="!item.caseParty.isOrganization">
                           <span class="smaller">
-                          DOB: {{ item.caseParty.dob | date:'M/d/yyyy' }}
+                          DOB: {{ item.caseParty.dob | date:'dd-MMM-yyyy' }}
                           Sex: {{ item.caseParty.sex }}
                           Age: {{ item.caseParty.age }}
                         </span>
@@ -245,14 +245,15 @@
                 </p-column>
                 <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column> -->
 
-                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">                  
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.startDate | date:'M/d/yyyy'}}
+                        {{item.startDate | date:'dd-MMM-yyyy'}}
+                        
                     </ng-template>
                 </p-column>
                 <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.endDate | date:'M/d/yyyy'}}
+                        {{item.endDate | date:'dd-MMM-yyyy'}}
                     </ng-template>
                 </p-column>
                 <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
@@ -459,10 +460,10 @@
 
         <!-- TASKS TAB -->
 
-        <p-tabPanel header="Tasks" leftIcon="ui-icon-timer">
+        <p-tabPanel header="Case Tasks" leftIcon="ui-icon-timer">
           <div class="ui-g">
             <div class="ui-g-12">
-              <h2>Tasks</h2>
+              <h2>Case Tasks</h2>
             </div>
 
             <div class="ui-g-12">
@@ -472,13 +473,22 @@
                           (onRowSelect)="taskOnRowSelect($event)"
                           scrollable="true"
                           dataKey="taskOID" #dtTasks>
-                <p-column field="dueDate" header="Due Date" [style]="{'width':'13%'}">
+
+                <!--p-column field="assignedDate" header="Assigned Date" [style]="{'width':'20%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.dueDate | date:'M/d/yyyy'}}
+                    {{item.assignedDate | date:'dd-MMM-yyyy'}}
+                    </ng-template>
+                </p-column-->          
+
+                <p-column field="dueDate" header="Due Date" [style]="{'width':'20%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.dueDate | date:'dd-MMM-yyyy'}}
                     </ng-template>
                 </p-column>
-                <p-column field="taskPriorityCode" header="Priority" [style]="{'width':'12%'}"></p-column>
-                <p-column field="" header="Assigned" [style]="{'width':'30%'}">
+
+                <p-column field="taskPriorityCode" header="Priority" [style]="{'width':'20%'}"></p-column>
+
+                <p-column field="" header="Assigned" [style]="{'width':'20%'}">
                   <ng-template pTemplate="body" let-item="rowData">
                       <div *ngIf="item.assignedParty?.partyOID">
                         {{ 'Party: ' + item.assignedParty.firstName + ' ' + item.assignedParty.lastName }}
@@ -488,7 +498,9 @@
                       </div>
                   </ng-template>
                 </p-column>
-                <p-column field="taskType.name" header="Task Type" [style]="{'width':'38%'}"></p-column>
+
+                <p-column field="taskType.name" header="Task Type" [style]="{'width':'20%'}"></p-column>
+
                 <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons" (click)="requestViewTask(item)">search</i>
@@ -607,12 +619,12 @@
                           dataKey="judicialAssignmentOID" #dtJudicialAssignment>
                 <p-column field="" header="Start Date/Time" [style]="{'width':'20%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.startDate | date:'MM/dd/yyyy hh:mm a'}}
+                        {{item.startDate | date:'dd-MMM-yyyy hh:mm a'}}
                     </ng-template>
                 </p-column>
                 <p-column field="" header="End Date/Time" [style]="{'width':'20%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.endDate | date:'MM/dd/yyyy hh:mm a'}}
+                        {{item.endDate | date:'dd-MMM-yyyy hh:mm a'}}
                     </ng-template>
                 </p-column>
                 <p-column field="" header="Assigned" [style]="{'width':'17%'}">
@@ -734,7 +746,7 @@
                       <!-- <div>{{ item.fullName }}</div> -->
                       <div *ngIf="!item.isOrganization">
                           <span class="smaller">
-                          DOB: {{ item.dob | date:'M/d/yyyy' }}
+                          DOB: {{ item.dob | date:'dd-MMM-yy' }}
                           Sex: {{ item.sex }}
                           Age: {{ item.age }}
                         </span>
@@ -788,7 +800,7 @@
                   <p-calendar id="dtStartDate" name="dtStartDate"
                         inputStyleClass="width-full"
                         [(ngModel)]="selectedSearchPartyStartDate"
-                        dateFormat="mm/dd/yy"
+                        dateFormat="dd-M-yy"
                         placeholder="Start Date"
                         [showIcon]="true"
                         [yearNavigator]="true"
@@ -800,7 +812,7 @@
                   <p-calendar id="dtEndDate" name="dtEndDate"
                         inputStyleClass="width-full"
                         [(ngModel)]="selectedSearchPartyEndDate"
-                        dateFormat="mm/dd/yy"
+                        dateFormat="dd-M-yy"
                         placeholder="End Date"
                         [showIcon]="true"
                         [yearNavigator]="true"
@@ -907,7 +919,7 @@
                         inputStyleClass="width-full"
                         [ngModel]="newCaseParty.caseParty?.dob"
                         (ngModelChange)="newCPdobChange($event)"
-                        dateFormat="mm/dd/yy"
+                        dateFormat="dd-M-yy"
                         placeholder="Date of Birth"
                         [showIcon]="true"
                         [yearNavigator]="true"
@@ -959,7 +971,7 @@
                 <p-calendar id="dtStartDate" name="dtStartDate"
                       inputStyleClass="width-full"
                       [(ngModel)]="newCaseParty.startDate"
-                      dateFormat="mm/dd/yy"
+                      dateFormat="dd-M-yy"
                       placeholder="Start Date"
                       [showIcon]="true"
                       [yearNavigator]="true"
@@ -971,7 +983,7 @@
                 <p-calendar id="dtEndDate" name="dtEndDate"
                       inputStyleClass="width-full"
                       [(ngModel)]="newCaseParty.endDate"
-                      dateFormat="mm/dd/yy"
+                      dateFormat="dd-M-yy"
                       placeholder="End Date"
                       [showIcon]="true"
                       [yearNavigator]="true"
@@ -1051,7 +1063,7 @@
                     inputStyleClass="width-full"
                     [ngModel]="selectedCaseParty.caseParty?.dob"
                     (ngModelChange)="editCPdobChange($event)"
-                    dateFormat="mm/dd/yy"
+                    dateFormat="dd-M-yy"
                     placeholder="Date of Birth"
                     [showIcon]="true"
                     [yearNavigator]="true"
@@ -1105,7 +1117,7 @@
                     [disabled]="true"
                     inputStyleClass="width-full"
                     [(ngModel)]="selectedCaseParty.startDate"
-                    dateFormat="mm/dd/yy"
+                    dateFormat="dd-M-yy"
                     placeholder="Start Date"
                     [showIcon]="true"
                     [yearNavigator]="true"
@@ -1117,7 +1129,7 @@
               <p-calendar id="dtEndDate" name="dtEndDate"
                     inputStyleClass="width-full"
                     [(ngModel)]="selectedCaseParty.endDate"
-                    dateFormat="mm/dd/yy"
+                    dateFormat="dd-M-yy"
                     placeholder="End Date"
                     [showIcon]="true"
                     [yearNavigator]="true"
@@ -1397,18 +1409,18 @@
               [ngModel]="selectedCaseTask?.dueDate"
               (ngModelChange)="dueDateOnChange($event)"
               [showIcon]="true"
-              dateFormat="mm/dd/yy"
+              dateFormat="dd-M-yy"
               appendTo="body"></p-calendar>
         </div>
 
-        <!-- DONE DATE -->
+        <!-- COMPLETED DATE -->
         <div class="ui-g-12" *ngIf="selectedCaseTask && selectedCaseTask.taskOID > 0">
-          <label class="minimal primary block">Done Date</label>
-          <p-calendar id="task_doneDate" name="task_doneDate" placeholder="Done Date"
+          <label class="minimal primary block">Completed Date</label>
+          <p-calendar id="task_doneDate" name="task_doneDate" placeholder="Completed Date"
               [ngModel]="selectedCaseTask?.doneDate"
               (ngModelChange)="doneDateOnChange($event)"
               [showIcon]="true"
-              dateFormat="mm/dd/yy"
+              dateFormat="dd-M-yy"
               appendTo="body"></p-calendar>
         </div>
 
@@ -1474,7 +1486,7 @@
           <p-calendar id="dtStartDate" name="dtStartDate" placeholder="Start Date" #dtStartDate="ngModel"
               [(ngModel)]="judge.startDate"
               [showIcon]="true"
-              dateFormat="mm/dd/yy"
+              dateFormat="dd-M-yy"
               appendTo="body"></p-calendar>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="dtStartDate.errors?.required && dtStartDate.touched" >
@@ -1487,7 +1499,7 @@
           <p-calendar id="dtEndDate" name="dtEndDate" placeholder="End Date" #dtEndDate="ngModel"
               [(ngModel)]="judge.endDate"
               [showIcon]="true"
-              dateFormat="mm/dd/yy"
+              dateFormat="dd-M-yy"
               appendTo="body"></p-calendar>
         </div>
 
@@ -1519,7 +1531,7 @@
           <p-calendar id="dtEventDate" name="dtEventDate" placeholder="Event Date" #dtEventDate="ngModel"
               [(ngModel)]="caseEvent.eventDate"
               [showIcon]="true"
-              dateFormat="mm/dd/yy"
+              dateFormat="dd-M-yy"
               [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
               appendTo="body"></p-calendar>
           <div class="ui-message ui-messages-error ui-corner-all"

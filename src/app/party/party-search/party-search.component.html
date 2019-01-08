@@ -53,7 +53,7 @@
           </p-column>
           <p-column field="dob" header="DOB" styleClass="ta-c" [style]="{'width':'15%'}">
               <ng-template pTemplate="body" let-item="rowData">
-                  {{item.dob | date:'M/d/yyyy'}}
+                  {{item.dob | date:'dd-MMM-yyyy'}}
               </ng-template>
           </p-column>
           <p-column field="age" header="Age" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>

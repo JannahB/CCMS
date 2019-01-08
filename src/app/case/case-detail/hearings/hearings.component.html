@@ -53,7 +53,7 @@
                 [ngModel]="selectedHearing?.hearingStartDateTime"
                 (ngModelChange)="hearingDateOnChange($event)"
                 [showIcon]="true"
-                dateFormat="mm/dd/yy"
+                dateFormat="dd-M-yy"
                 appendTo="body"></p-calendar>
             <div class="ui-message ui-messages-error ui-corner-all"
                   *ngIf="hearingDate.errors?.required && hearingDate.touched" >

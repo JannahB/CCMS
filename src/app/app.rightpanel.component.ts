@@ -210,6 +210,7 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       taskObj.overdueTaskCount = this.userTasks.filter( item => this.isOverdue(item)).length;
       this._state.notifyDataChanged('userTasks.count', taskObj);
       this.taskCounts = taskObj;
+    
     }
 
     updateCountsInLocStorage(taskCounts: TaskCount){

@@ -896,6 +896,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.initCaseTaskModal(taskTypeId);
       return;
     }
+    
     this.loadingCaseTaskLookups = true;
     var source = Observable.forkJoin<any>(
       this.partySvc.fetchAny({ courtUser: "true" }),

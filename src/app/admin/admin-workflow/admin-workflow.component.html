@@ -24,7 +24,7 @@
         <p-dropdown placeholder="choose Event Type..."
                     [required]="true"
                     [options]="eventTypes"
-                    optionLabel="eventTypeName"
+                    optionLabel="description"
                     [(ngModel)]="selectedEvent"
                     (onChange)="eventTypeOnChange($event)"
                     styleClass="width-full">
