@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-
 import { BreadcrumbService } from '../../breadcrumb.service';
 import { CaseEvent } from '../../common/entities/CaseEvent';
 import { LookupService } from '../../common/services/http/lookup.service';
+import { SelectItem } from 'primeng/primeng';
 import { EventType } from '../../common/entities/EventType';
 import { AdminDataService } from '../../common/services/http/admin-data.service';
 import { EventWorkflow } from '../../common/entities/EventWorkflow';
@@ -53,6 +53,30 @@ export class AdminWorkflowComponent implements OnInit {
   showDeleteWorkflowStepConfirmation: boolean = false;
   selectedWorkflowStepToDelete: WorkflowStep = null;
 
+  
+  public timeDelayUnits: SelectItem[] = [
+    { value: 0, label: 'Please Select a Time Unit'},
+    { value: 1, label: 'Minutes'},
+    { value: 2, label: 'Hours' },
+    { value: 3, label: 'Days' }];
+
+    
+  public priorityTypes: SelectItem[] = [
+      { value: 0, label: 'N/A' },
+      { value: 1, label: 'Urgent' },
+      { value: 2, label: 'High' },
+      { value: 3, label: 'Normal' }
+    ];
+
+
+  getLabelFromValue(val): any {
+      return this.timeDelayUnits[val].label;
+  }
+  
+  getPriorityValue(val): any {
+    return this.priorityTypes[val].label;
+  }
+
   get assignedPartyOrPool(): any {
     if (!this.selectedStep) {
       return null;
@@ -99,6 +123,8 @@ export class AdminWorkflowComponent implements OnInit {
 
   ngOnInit() {
 
+    console.log("Time Delay Unit Values ", this.timeDelayUnits[1].label);
+
     this.showLoadingBar = true;
 
     let eventTypeObservable: Observable<EventType[]> = this.lookupService
@@ -110,11 +136,13 @@ export class AdminWorkflowComponent implements OnInit {
     let documentTemplateObservable: Observable<DocTemplate[]> = this.lookupService
       .fetchLookup<DocTemplate>('FetchDocumentTemplate');
 
-    // let staffPoolObservable: Observable<Pool[]> = this.lookupService
-    //   .fetchLookup<Pool>('FetchStaffPool');
+    //This fetches all staff pools for a court you are currently logged into
+    let staffPoolObservable: Observable<Pool[]> = this.lookupService
+       .fetchLookup<Pool>('FetchStaffPool');
 
-    let staffPoolObservable: Observable<Pool[]> = this.partyService
-      .getAllStaffPoolSlim();
+    //Rhea Seegobin: This fetches all staff pools for all
+    //let staffPoolObservable: Observable<Pool[]> = this.partyService
+    //  .getAllStaffPoolSlim();
 
     // let partyObservable: Observable<Party[]> = this.partyService
     //   .fetchAny({ courtUser: "true" });
@@ -136,6 +164,7 @@ export class AdminWorkflowComponent implements OnInit {
         this.staffPools = results[3];
         this.parties = results[4];
 
+        
         // Merge Pool and Party items into a single list
         console.log('parties', this.parties);
         this.poolParties = this.mergePoolsAndParties(this.staffPools, this.parties);
@@ -150,7 +179,7 @@ export class AdminWorkflowComponent implements OnInit {
         // final
         this.showLoadingBar = false;
       }
-    );
+    );   
   }
 
   private mergePoolsAndParties(pools: Pool[], parties: Party[]) {
@@ -160,12 +189,14 @@ export class AdminWorkflowComponent implements OnInit {
         let obj: PoolParty = new PoolParty();
         obj.fullName = p.poolName;
         obj.type = 'pool'
-        obj.id = p.id;
+        //Rhea Seegobin : obj.id = p.id;
+        obj.id = p.poolOID;
         arr.push(obj);
       });
     }
 
-    if (parties.length) {
+    
+    if (parties.length > 0) {
       parties.forEach(pty => {
         let obj: PoolParty = new PoolParty();
         obj.fullName = pty.firstName + ' ' + pty.lastName;
@@ -194,9 +225,14 @@ export class AdminWorkflowComponent implements OnInit {
     workflowStep.assignedParty = null;
     workflowStep.assignedPool = null;
     if (pp.type == 'pool') {
-      // let staffPool = this.staffPools.find(itm => itm.poolOID == pp.id);
-      let staffPool = this.staffPools.find(itm => itm.id == pp.id);
+      
+      //RS let staffPool = this.staffPools.find(itm => itm.id == pp.id);
+      //RS staffPool.poolOID = pp.id;
+      
+      
+      let staffPool = this.staffPools.find(itm => itm.poolOID == pp.id);
       staffPool.poolOID = pp.id;
+
       workflowStep.assignedPool = staffPool;
       return workflowStep;
     }
@@ -227,7 +263,7 @@ export class AdminWorkflowComponent implements OnInit {
           // final
           this.showLoadingBar = false;
         }
-      );
+      );    
   }
 
   stepOnRowSelect(event) {
@@ -236,7 +272,6 @@ export class AdminWorkflowComponent implements OnInit {
 
   onAddStep() {
     this.selectedStep = new WorkflowStep();
-
     this.showWorkflowStepModal = true;
   }
 
@@ -252,6 +287,9 @@ export class AdminWorkflowComponent implements OnInit {
     console.log('workflowSteps', this.selectedEventWorkflow.workflowSteps)
 
     this.selectedEventWorkflow.workflowSteps = this.selectedEventWorkflow.workflowSteps.copy();
+    
+    //this.initTimeDelayDesc();
+
     this.sortWorkflowSteps();
     this.showWorkflowStepModal = false;
     this.selectedPoolParty = null;
@@ -305,6 +343,8 @@ export class AdminWorkflowComponent implements OnInit {
           this.showLoadingBar = false;
         }
       );
+
+      //this.initTimeDelayDesc();
   }
 
   documentSelected(event: any): void {
@@ -346,6 +386,14 @@ export class AdminWorkflowComponent implements OnInit {
     this.showNewTaskTypeModal = false;
   }
 
+  timeDelayUnitOnChange(event) {
+    this.selectedStep.delayUnit = event.value;
+  }
+
+  taskPriorityOnChange(event) {
+    this.selectedStep.taskPriorityCode = event.value;
+  }
+
   private sortWorkflowSteps() {
     if (!this.selectedEventWorkflow || !this.selectedEventWorkflow.workflowSteps) {
       return;
@@ -355,7 +403,7 @@ export class AdminWorkflowComponent implements OnInit {
       .workflowSteps
       .sort(
         (step1, step2) => {
-          return step1.delayDays - step2.delayDays;
+          return step1.delayMinutes - step2.delayMinutes;
         }
       )
   }
