@@ -228,8 +228,9 @@ export class AdminWorkflowComponent implements OnInit {
       
       //RS let staffPool = this.staffPools.find(itm => itm.id == pp.id);
       //RS staffPool.poolOID = pp.id;
-      
-      
+      // let staffPool = this.staffPools.find(itm => itm.poolOID == pp.id);
+      //RS let staffPool = this.staffPools.find(itm => itm.id == pp.id);
+      //RS staffPool.poolOID = pp.id;
       let staffPool = this.staffPools.find(itm => itm.poolOID == pp.id);
       staffPool.poolOID = pp.id;
 

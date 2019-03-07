@@ -984,6 +984,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     
   }
 
+  documentSelected(event: any): void {
+    console.log('documentSelected event', event);
+    this.selectedCaseTask.docTemplate = event;
+  }
+
   saveCaseTask() {
 
     if (!this.selectedCaseTask.assignedPool && !this.selectedCaseTask.assignedParty) {
