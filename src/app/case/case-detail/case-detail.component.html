@@ -486,15 +486,14 @@
 
 
         <!-- TASKS TAB -->
-<<<<<<< HEAD
+
         <p-tabPanel header="Case Tasks" leftIcon="ui-icon-timer">
           
           <div class="ui-g">         
-=======
 
         <p-tabPanel header="Case Tasks" leftIcon="ui-icon-timer">
           <div class="ui-g">
->>>>>>> c09b4c2b3a77bec02463f8195209d2a626d347a4
+
             <div class="ui-g-12">
               <h2>Case Tasks</h2>
             </div>
@@ -536,10 +535,8 @@
                 </p-column>
 
                 <p-column field="taskPriorityCode" header="Priority" [style]="{'width':'20%'}"></p-column>
-
                 <p-column field="" header="Assigned" [style]="{'width':'20%'}">
->>>>>>> b0b2a81ab178f7a61be32a787ed43fbc3728f5e3
->>>>>>> c09b4c2b3a77bec02463f8195209d2a626d347a4
+
                   <ng-template pTemplate="body" let-item="rowData">
                       <div *ngIf="item.assignedParty?.partyOID">
                         {{ 'Party: ' + item.assignedParty.firstName + ' ' + item.assignedParty.lastName }}
@@ -550,18 +547,13 @@
                   </ng-template>
                 </p-column>
 
-<<<<<<< HEAD
                 <p-column field="assignedDate" header="Assigned Date" [style]="{'width':'9%'}" [sortable]="true">
-=======
-<<<<<<< HEAD
+
                 <p-column field="assignedDate" header="Assigned Date" [style]="{'width':'14%'}" [sortable]="true">
->>>>>>> c09b4c2b3a77bec02463f8195209d2a626d347a4
                   <ng-template pTemplate="body" let-item="rowData">
                       {{item.assignedDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
                 </p-column>
-
-<<<<<<< HEAD
                 <p-column field="dueDate" header="Due Date and Time" [style]="{'width':'10%'}" [sortable]="true">
                     <ng-template pTemplate="body" let-item="rowData">              
                       <div >
@@ -579,11 +571,10 @@
                 </p-column>
 
                 <p-column field="doneDate" header="Completion Date" [style]="{'width':'10%'}" [sortable]="true">
-=======
+
                 <p-column field="dueDate" header="Due Date" [style]="{'width':'14%'}" [sortable]="true">
                     <ng-template pTemplate="body" let-item="rowData">
                         {{item.dueDate | date:'dd-MMM-yyyy'}}
-=======
                 <p-column field="taskType.name" header="Task Type" [style]="{'width':'20%'}"></p-column>
 
                 <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
@@ -691,7 +682,7 @@
         <p-tabPanel header="Hearings" leftIcon="ui-icon-gavel" >
           <div class="ui-g">
 
-            <!-- ------ HEARINGs COMPONENT -->
+            <!-- HEARINGs COMPONENT -->
             <hearings [case]="case"></hearings>
 
           </div>
@@ -1508,7 +1499,7 @@
         </div>
 
         <div class="ui-g-12">
-<<<<<<< HEAD
+
           <label class="minimal primary block" for="tiTaskDetails">Task Details</label>
             <textarea id="tiTaskDetails" name="tiTaskDetails"
               placeholder="Please Enter Task Details if needed"
@@ -1519,7 +1510,7 @@
               pInputTextarea
               autoResize="autoResize"
               styleClass="width-full"></textarea>
-=======
+
             <label class="minimal primary block" for="tiTaskDetails">Task Details</label>
             <textarea id="tiTaskDetails" name="tiTaskDetails"
                       [ngModel]="selectedCaseTask?.details"
@@ -1528,13 +1519,12 @@
                       pInputTextarea
                       autoResize="autoResize"
                       class="width-full"></textarea>
->>>>>>> c09b4c2b3a77bec02463f8195209d2a626d347a4
+
         </div>
 
 
-<<<<<<< HEAD
+
         <div class="ui-g-12 mb-0">
-<<<<<<< HEAD
             <label class="minimal primary block">Document Template</label>
           <p-dropdown name="ddDocTemplate" id="ddDocTemplate" #ddDocTemplate
               placeholder="Please select a document template if required"
@@ -1602,7 +1592,7 @@
           <span class="task-name">Task Completed?</span>
         </div>
         
-=======
+
             <label class="minimal primary block">Assigned Person</label>
             <p-dropdown name="ddAssignedPerson" id="ddAssignedPerson"
                 [options]="taskParties | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Assigned Person...'"
@@ -1628,7 +1618,7 @@
         <div class="ui-g-12" *ngIf="selectedCaseTask && selectedCaseTask.taskOID > 0">
           <label class="minimal primary block">Completed Date</label>
           <p-calendar id="task_doneDate" name="task_doneDate" placeholder="Completed Date"
-=======
+
         <!-- DUE DATE -->
         <div class="ui-g-12">
           <label class="minimal primary block">Due Date</label>
@@ -1643,12 +1633,10 @@
         <!-- COMPLETED DATE -->
         <div class="ui-g-12" *ngIf="selectedCaseTask && selectedCaseTask.taskOID > 0">
           <label class="minimal primary block">Completed Date</label>
-<<<<<<< HEAD
+
           <p-calendar id="task_doneDate" name="task_doneDate" placeholder="Completed Date"
-=======
+
           <p-calendar id="task_doneDate" name="task_doneDate" placeholder="Done Date"
->>>>>>> 3ac78d054b0dc91eab3a43f0bc25529f55defe65
->>>>>>> b0b2a81ab178f7a61be32a787ed43fbc3728f5e3
               [ngModel]="selectedCaseTask?.doneDate"
               (ngModelChange)="doneDateOnChange($event)"
               [disabled]="selectedCaseTask?.doneDate != null"
@@ -1656,9 +1644,6 @@
               dateFormat="dd-M-yy"
               appendTo="body"></p-calendar>
         </div>
-
-
->>>>>>> c09b4c2b3a77bec02463f8195209d2a626d347a4
       </div>
     </div>
 
