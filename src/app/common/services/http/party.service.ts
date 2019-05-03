@@ -1,7 +1,7 @@
 import { Pool } from '../../entities/Pool';
 import { PhoneNumber } from '../../entities/PhoneNumber';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { DateConverter } from '../../utils/date-converter';
 import { HttpBaseService } from './http-base.service';
@@ -27,27 +27,9 @@ export class PartyService extends HttpBaseService<Party> {
     return `${super.getBaseMockUrl()}/${this.mockFile}`;
   }
 
-  // public fetch(partyName:string):Observable<Party[]>{
-  //   let url: string = `${super.getBaseUrl()}/FetchParty`;
-
-  //   return this.http.post<Party[]>(url,
-  //     {
-  //       partyName: partyName
-  //     },
-  //     {
-  //       headers: {
-  //         uiVersion: "2"
-  //       }
-  //     })
-  //     .map(res => {
-  //       let parties:Party[] = res;
-  //       return this.convertDates(parties);
-  //     })
-  // }
-
-
   public getAllSlim(): Observable<Party[]> {
     let url: string = `${super.getBaseUrl()}/api/parties`;
+
     return this.http.get<Party[]>(url)
       .map(res => {
         let parties: Party[] = res;
@@ -55,11 +37,49 @@ export class PartyService extends HttpBaseService<Party> {
       });
   }
 
+  //This returns all the staff pools in the DB
   public getAllStaffPoolSlim(): Observable<Pool[]> {
+
     let url: string = `${super.getBaseUrl()}/api/staff-pools`;
     return this.http.get<Pool[]>(url)
       .map(res => {
-        let staffPools: Pool[] = res;
+        let poolResults: Pool[] = res;
+        return poolResults;
+      });
+  }
+
+  public getAllStaffPoolbyCourt(): Observable<Pool[]> {
+
+    //This returns all the pools for a specific court
+    let url: string = `${super.getBaseUrl()}/FetchStaffPool`;
+    return this.http.get<Pool[]>(url)
+      .map(result => {
+        let poolResults: Pool[] = result;
+        return poolResults;
+      });    
+  }
+
+  public fetchSpecificStaffPools(obj: any): Observable<Pool[]> {
+  
+    //This returns all pools that match a specific text entered.
+    let url: string = `${super.getBaseUrl()}/FetchStaffPool`;
+    return this.http.post<Pool[]>(url, obj,
+      {
+        headers: { uiVersion: "2" }
+      })
+      .map(res => {
+        let selectedPools: Pool[] = res;
+        return selectedPools;
+      })
+  }
+
+
+  public getStaffPoolMembers(id): Observable<Party[]> {
+
+    let url: string = `${super.getBaseUrl()}/api/staff-pools/${id}`;
+    return this.http.get<Party[]>(url)
+      .map(res => {
+        let staffPools: Party[] = res;
         return staffPools;
       });
   }
@@ -91,6 +111,8 @@ export class PartyService extends HttpBaseService<Party> {
         return party;
       })
   }
+
+  
 
   public saveParty(data: Party): Observable<Party> {
     //Generic object because some properties will be converted to string or number
@@ -198,10 +220,21 @@ export class PartyService extends HttpBaseService<Party> {
       party.notes = data.notes;
 
     let url: string = `${super.getBaseUrl()}/SaveParty`;
+      
     return this.http
       .post<Party[]>(url, party)
       .map(parties => this.convertDates(parties)[0]);
   }
+
+
+  public SaveStaffPool(updatedPool: Pool): Observable<Pool>{
+    
+    let url: string = `${super.getBaseUrl()}/SaveStaffPool`;
+    return this.http.post<Pool>(url,updatedPool,
+       {headers: new HttpHeaders({'Content-Type': 'application/json'})});
+   
+  }
+
 
   public getMock(): Observable<Party[]> {
     let url: string = this.getBaseMockUrl();

@@ -73,6 +73,7 @@ import {
 } from "primeng/primeng";
 import "rxjs/add/operator/toPromise";
 import { AdminUsersComponent } from "./admin/admin-users/admin-users.component";
+import { AdminStaffPoolComponent } from "./admin/admin-staffpools/admin-staffpools.component";
 import { AdminWorkflowComponent } from "./admin/admin-workflow/admin-workflow.component";
 import { AdminModule } from "./admin/admin.module";
 import { AppBreadcrumbComponent } from "./app.breadcrumb.component";
@@ -219,6 +220,7 @@ import { HearingsService } from './common/services/http/hearings.service';
     PartySearchComponent,
     AdminWorkflowComponent,
     AdminUsersComponent,
+    AdminStaffPoolComponent,
     LoginComponent,
     LoadingBarComponent,
     DropdownPipe,

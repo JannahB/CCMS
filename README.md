@@ -9,9 +9,9 @@ Sample change.
 ## Installation
 
 - cd to dir on local machine where you want the project
-- `git clone https://<yourusername>@bitbucket.org/reurgency/ccms-fe2.git`
+- `git clone https://<username>@bitbucket.org/natcenterstatecourts/acts-fe.git`
 - cd into the project dir
-- `npm intall` to install dependencies
+- `npm install` to install dependencies
 - `npm start` to run app locally and API resolves to the remote DEV server
 - `npm run start:local` to run the app locally and API resolves locally on http://127.0.0.1:8080
 

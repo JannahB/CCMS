@@ -72,18 +72,7 @@ export class AdminUsersComponent implements OnInit {
 
   }
 
-  /* User
-   -- authorizedCourts
-     -- courtOID: number = 0;
-     -- locationCode: string = "";
-     -- courtName: string = "";
-     -- staffRoles: StaffRole[]
-         -- staffRoleOID: number;
-         -- courtOID: number;
-         -- staffRoleName: string;
-         -- judicialOfficer: boolean;
-         -- ccmsAdmin: boolean;
-  */
+  
   addNewUser() {
     this.user = new User();
     this.user.authorizedCourts = [];
@@ -100,10 +89,8 @@ export class AdminUsersComponent implements OnInit {
   }
 
   courtOnChange(event, authCourtIdx) {
-    // console.log('onChange', event, authCourtIdx);
-    // Set the OUTER selected AuthorizedCourt
+    
     this.selectedAuthCourt = this.user.authorizedCourts[authCourtIdx];
-    // Set the courtOID on the User object
     this.user.authorizedCourts[authCourtIdx].courtOID = event.value.courtOID;
     this.user.authorizedCourts[authCourtIdx].courtName = event.value.courtName;
     this.user.authorizedCourts[authCourtIdx].locationCode = event.value.locationCode;

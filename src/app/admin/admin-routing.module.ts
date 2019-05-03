@@ -11,6 +11,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DataComponent } from './data/data.component';
 import { AdminUsersComponent } from './admin-users/admin-users.component';
+import { AdminStaffPoolComponent } from './admin-staffpools/admin-staffpools.component';
 import { AdminComponent } from './admin.component';
 import { AdminWorkflowComponent } from './admin-workflow/admin-workflow.component';
 import { CanActivateAuthenticationGuard } from '../common/guards/can-activate-authentication.guard';
@@ -46,6 +47,7 @@ const routes: Routes = [
       },
 
       { path: 'users', component: AdminUsersComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+      { path: 'staffpools', component: AdminStaffPoolComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
       { path: 'workflow', component: AdminWorkflowComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
       {
         path: 'calendar',
