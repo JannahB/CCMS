@@ -443,7 +443,6 @@ export class AdminDataService {
     }
 
     workflow['triggeringEventOID'] = data.triggeringEvent.eventTypeOID.toString();
-    //console.log("triggeringEventOID" + data.triggeringEvent.eventTypeOID.toString());
 
     if (data.description) {
         workflow['description'] = data.description;
@@ -484,8 +483,6 @@ export class AdminDataService {
         workflow.workflowSteps.push(step);
       });
     }
-
-    console.log(workflow);
     
     const url = `${this.getBaseUrl()}/SaveEventWorkflow`;
 

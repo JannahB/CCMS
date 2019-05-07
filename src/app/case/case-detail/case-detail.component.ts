@@ -187,19 +187,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         }
         
         for (let i = 0; i < this.case.caseTasks.length; i++){
-     
-          if(this.case.caseTasks[i].taskPriorityCode == 0)
-          this.case.caseTasks[i].taskPriorityDesc = "N/A";
 
-          if(this.case.caseTasks[i].taskPriorityCode == 1)
-          this.case.caseTasks[i].taskPriorityDesc = "Urgent";
-
-          if(this.case.caseTasks[i].taskPriorityCode == 2)
-          this.case.caseTasks[i].taskPriorityDesc = "High";
-
-          if(this.case.caseTasks[i].taskPriorityCode == 3)
-          this.case.caseTasks[i].taskPriorityDesc = "Normal";
-        
+          this.case.caseTasks[i].taskPriorityDesc = this.priorityCodeDesc(this.case.caseTasks[i].taskPriorityCode);        
         }
            
 
@@ -242,6 +231,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if (!this.case.caseType)
       this.toastSvc.showWarnMessage('Please choose Case Type first')
   }
+
+  priorityCodeDesc(taskPriorityCode): string {
+
+    if(taskPriorityCode == 0)
+    return "N/A";
+
+    else if(taskPriorityCode == 1)
+    return "Urgent";
+
+    else if(taskPriorityCode == 2)
+    return "High";
+
+    else return "Normal";
+}
 
 
   // MODALS --------------------------------------------
@@ -890,7 +893,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedCaseTask = event.data;
     if (this.selectedCaseTask.doneDate != null) this.selectedCaseTask.taskCompleted = true;
     this.onShowCaseTaskModal();
-    console.log('taskOnRowSelect selected case task', this.selectedCaseTask)
+
   }
 
   onShowCaseTaskModal(taskTypeId?) {
@@ -946,21 +949,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     for (let i = 0; i < this.case.caseTasks.length; i++){
      
-      if(this.case.caseTasks[i].taskPriorityCode == 0)
-      this.case.caseTasks[i].taskPriorityDesc = "N/A";
-
-      if(this.case.caseTasks[i].taskPriorityCode == 1)
-      this.case.caseTasks[i].taskPriorityDesc = "Urgent";
-
-      if(this.case.caseTasks[i].taskPriorityCode == 2)
-      this.case.caseTasks[i].taskPriorityDesc = "High";
-
-      if(this.case.caseTasks[i].taskPriorityCode == 3)
-      this.case.caseTasks[i].taskPriorityDesc = "Normal";
-    
+      this.case.caseTasks[i].taskPriorityDesc = this.priorityCodeDesc(this.case.caseTasks[i].taskPriorityCode);
+          
     }
 
   }
+
+
 
   onCancelCaseTask(form) {
 
@@ -985,7 +980,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   documentSelected(event: any): void {
-    console.log('documentSelected event', event);
+    
     this.selectedCaseTask.docTemplate = event;
   }
 
@@ -1010,7 +1005,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     if (this.selectedCaseTask.taskCompleted) task.taskCompleted = 'true';
     else task.taskCompleted = 'false';
-    //console.log('Saved Check Box Status is : ', task.taskCompleted);
 
     this.caseSvc.saveCaseTask(task).subscribe(result => {
       let savedTask = result[0];
@@ -1035,7 +1029,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       else {
         this.case.caseTasks.push(task);
         this.case.caseTasks = this.case.caseTasks.slice();
-        console.log ("New Task Saved: " + this.case.caseTasks[0]);
+        
       }
      
       // Refresh the grid --------
@@ -1049,7 +1043,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
  
   taskTypeOnChange(event) {
     this.selectedCaseTask.taskType = event.value;
-    //console.log ('Task Selected is', event.value.taskTypeOID);
   }
 
   priorityTypeOnChange(event) {

@@ -123,8 +123,6 @@ export class AdminWorkflowComponent implements OnInit {
 
   ngOnInit() {
 
-    console.log("Time Delay Unit Values ", this.timeDelayUnits[1].label);
-
     this.showLoadingBar = true;
 
     let eventTypeObservable: Observable<EventType[]> = this.lookupService
@@ -166,9 +164,8 @@ export class AdminWorkflowComponent implements OnInit {
 
         
         // Merge Pool and Party items into a single list
-        console.log('parties', this.parties);
         this.poolParties = this.mergePoolsAndParties(this.staffPools, this.parties);
-        console.log('poolParties', this.poolParties);
+        
       },
       (error) => {
         console.log('An error occurred fetching lookups', error)
@@ -211,8 +208,6 @@ export class AdminWorkflowComponent implements OnInit {
 
   poolPartyOnChange(id: number) {
     let pp: PoolParty = this.poolParties.find(pp => pp.id == id);
-    console.log('poolPartyOnChange pp', pp);
-
     this.selectedPoolParty = pp;
   }
 
@@ -282,11 +277,7 @@ export class AdminWorkflowComponent implements OnInit {
     }
 
     this.selectedStep = this.attachPoolOrPartyItem(this.selectedStep, this.selectedPoolParty);
-    console.log('selectedStep AFTER attach', this.selectedStep);
-
     this.selectedEventWorkflow.workflowSteps.push(this.selectedStep);
-    console.log('workflowSteps', this.selectedEventWorkflow.workflowSteps)
-
     this.selectedEventWorkflow.workflowSteps = this.selectedEventWorkflow.workflowSteps.copy();
     
     //this.initTimeDelayDesc();
@@ -349,7 +340,6 @@ export class AdminWorkflowComponent implements OnInit {
   }
 
   documentSelected(event: any): void {
-    console.log('documentSelected event', event);
     this.selectedStep.documentTemplateOID = event;
   }
 
