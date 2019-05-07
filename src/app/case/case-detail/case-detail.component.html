@@ -535,7 +535,7 @@
 
                 <p-column field="doneDate" header="Completion Date" [style]="{'width':'10%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
-                      {{item.doneDate | date:'dd-MMM-yyyy'}}
+                      {{item.doneDate | date:'dd-MMM-yyyy hh:mm a'}}
                   </ng-template>
                 </p-column>
    
@@ -1398,7 +1398,7 @@
 
 <!-- ADD CASE TASK MODAL -->
 
-<p-dialog header="Add Case Task" width="450" [(visible)]="showModalAddCaseTask" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+<p-dialog header="Case Task Details" width="450" [(visible)]="showModalAddCaseTask" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
   <loading-bar [visible]="loadingCaseTaskLookups" [message]="'loading task data...'"></loading-bar>
 
   <form (ngSubmit)="saveCaseTask()" #caseTaskForm="ngForm" novalidate>
