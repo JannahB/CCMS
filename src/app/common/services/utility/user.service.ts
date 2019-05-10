@@ -38,25 +38,46 @@ export class UserService {
   }
 
   public isAdminUser(): boolean {
-    if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
 
+    if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
     let idx = this.loggedInUser.roles.findIndex(itm => itm.ccmsAdmin == true);
     console.log('Logged in user', this.loggedInUser.userName);
-    console.log('  Admin Role', (idx > -1));
+    console.log('Admin Role', (idx > -1));
     return idx > -1;
+
   }
 
   public isCourtManager(): boolean {
+    
+    //This line of code allows administrator access to all menu items for a specific role.
+    if (this.loggedInUser.roles[0].staffRoleOID == 5) this.loggedInUser.roles[0].ccmsAdmin = true;
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
 
-    let idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 5); // staffRoleName == "Court Manager"
+    let idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 5);
     console.log('Logged in user', this.loggedInUser.userName);
-    console.log('  Admin Role', (idx > -1));
+    console.log('Admin Role', (idx > -1));
+    return idx > -1;
+  }
+
+
+  //This function prevents a supervisor from access the workflow
+    public isSupervisor(): boolean {
+    
+    //This line of code allows administrator access to all menu items for a specific role.
+    if (this.loggedInUser.roles[0].staffRoleOID == 6) {
+      this.loggedInUser.roles[0].ccmsAdmin = true;
+      return true;
+    }
+
+    if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
+    let idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 6);
+    console.log('Logged in user', this.loggedInUser.userName);
+    console.log('Admin Role', (idx > -1));
     return idx > -1;
   }
 
   hasPermission(pmId: number, courtOID?: number): boolean {
-    // console.log('pmId', pmId);
+
     if (!courtOID) courtOID = this.appState.selectedCourt.courtOID;
     if (!courtOID) return false;
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
@@ -68,7 +89,7 @@ export class UserService {
     let courtPermissions: Permission[] = roleByCourtId.permissions;
     if (!courtPermissions.length) return false;
     let idx = courtPermissions.findIndex(itm => itm.permissionID == pmId);
-    // console.log('  idx', idx)
+
     return idx > -1;
   }
 

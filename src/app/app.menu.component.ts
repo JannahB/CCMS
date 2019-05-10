@@ -28,8 +28,11 @@ export class AppMenuComponent implements OnInit {
   baseMenuItems: any[];
   adminMenuItems: any[];
   courtManagerMenuItems: any[];
+  supervisorMenuItems: any[];
+
   isAdmin: boolean = false;
   isCourtManager: boolean = false;
+  isSupervisor: boolean = false;
 
   constructor(
     public app: AppComponent,
@@ -69,6 +72,8 @@ export class AppMenuComponent implements OnInit {
 
 
   buildMenuItems() {
+
+    //These are the basic menu items
     this.baseMenuItems = [
       { label: 'Dashboard', icon: 'dashboard', routerLink: ['/'] },
       {
@@ -91,47 +96,31 @@ export class AppMenuComponent implements OnInit {
           { label: 'Case Counts', icon: 'filter_1', routerLink: ['/reports/case-count'] },
         ]
       },
-
-      // {
-      //     label: 'Themes', icon: 'palette', badge: '2',
-      //     items: [
-      //         {label: 'TT Blue', icon: 'brush', command: (event) => {this.changeTheme('tt'); }},
-      //         {label: 'TT Red', icon: 'brush', command: (event) => {this.changeTheme('tt2'); }},
-      //         {label: 'Login Page', icon: 'verified_user', url: 'assets/pages/login.html', target: '_blank'},
-      //         {label: 'Dark Menu', icon: 'label',  command: () => this.app.darkMenu = true},
-      //     ]
-      // },
-
     ];
 
+    //User Maintenance applies only to an IT Administrator.
+    //IT Admin has access to all modules.
     this.adminMenuItems = [
-      { label: 'User Maintenance', icon: 'account_box', routerLink: ['/admin/users'] },
+      { label: 'User Maintenance', icon: 'account_box', routerLink: ['/admin/users']},
     ];
 
+    //These are the court manager menu items
     this.courtManagerMenuItems = [
-      {
-        label: 'Lookup Tables', icon: 'chrome_reader_mode', routerLink: ['/admin/data/casetypes'],
-        // items:
-        //   [
-        //     { label: 'Case Types', icon: 'chevron_right', routerLink: ['/admin/data/casetypes'] },
-        //     { label: 'Case Phases', icon: 'chevron_right', routerLink: ['/admin/data/casephases'] },
-        //     { label: 'Case Statuses', icon: 'chevron_right', routerLink: ['/admin/data/casestatuses'] },
-        //     { label: 'Court Locations', icon: 'chevron_right', routerLink: ['/admin/data/courtlocations'] },
-        //     { label: 'Case Party Roles', icon: 'chevron_right', routerLink: ['/admin/data/casepartyroles'] },
-        //     { label: 'Event Types', icon: 'chevron_right', routerLink: ['/admin/data/eventtypes'] },
-        //     { label: 'Hearing Types', icon: 'chevron_right', routerLink: ['/admin/data/hearingtypes'] },
-        //     // {label:'ICCS Codes', icon:'chevron_right', routerLink: ['/admin/data/iccscodes']},
-        //   ]
-      }
+      { label: 'Lookup Tables', icon: 'chrome_reader_mode', routerLink: ['/admin/data/casetypes']},
     ];
 
-    if (this.allowAdminWorkflowFeature) {
+    this.supervisorMenuItems = [
+      { label: 'Staff Pool Management', icon: 'account_box', routerLink: ['/admin/staffpools']},
+    ];
+
+
+    //Only an IT admin or the court manager should be able to edit the workflow for the courts.
+    if (this.allowAdminWorkflowFeature && this.isSupervisor) {
       this.courtManagerMenuItems.push(
         { label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
       )
     }
 
-    // console.log('allowAdminCalendarFeature', this.allowAdminCalendarFeature)
     if (this.allowAdminCalendarFeature) {
       this.courtManagerMenuItems.push(
         {
@@ -144,6 +133,7 @@ export class AppMenuComponent implements OnInit {
         }
       )
     }
+
     if (this.allowJudgeAssignMgmtFeature) {
       this.courtManagerMenuItems.push(
         { label: 'Assignment Manager', icon: 'perm_contact_calendar', routerLink: ['/admin/assignment-mgr'] },
@@ -156,8 +146,10 @@ export class AppMenuComponent implements OnInit {
     this.buildMenuItems();
 
     this.isAdmin = (this.userSvc.loggedInUser && this.userSvc.isAdminUser());
+    this.isSupervisor = (this.userSvc.loggedInUser && this.userSvc.isSupervisor());
     this.isCourtManager = (this.userSvc.loggedInUser && (this.userSvc.isCourtManager() || this.userSvc.isAdminUser()));
-    console.log("isCourtManager", this.isCourtManager);
+    
+    console.log("Build Menu isSupervisor", this.isSupervisor);
 
     if (this.userSvc.loggedInUser) {
       this.model = this.baseMenuItems;
@@ -169,14 +161,24 @@ export class AppMenuComponent implements OnInit {
       this.model.push(
         {
           label: 'Admin', icon: 'security',
-          items: [...this.adminMenuItems, ...this.courtManagerMenuItems]
+          items: [...this.adminMenuItems, ...this.courtManagerMenuItems, ...this.supervisorMenuItems]
+          
         }
       )
     } else if (this.isCourtManager) {
       this.model.push(
         {
           label: 'Manage', icon: 'security',
-          items: this.courtManagerMenuItems
+          items: [...this.courtManagerMenuItems, , ...this.supervisorMenuItems]
+          
+        }
+      )
+    }else if (this.isSupervisor) {
+      this.model.push(
+        {
+          label: 'Manage', icon: 'security',
+          items: [...this.supervisorMenuItems]
+          
         }
       )
     }
