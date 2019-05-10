@@ -181,6 +181,7 @@ body {
             
             &:not(.ui-state-disabled):not(.ui-state-active):hover {
                 background-color: $primaryLightColor;
+                color: black;
                 @include border-radius(50%);
                 @include transition(background-color .3s);
             }

@@ -3,6 +3,7 @@ import { Pool } from './Pool';
 import { Party } from './Party';
 import { AssociatedCase } from './AssociatedCase';
 import { DocTemplate } from './DocTemplate';
+import { Time } from '@angular/common';
 
 export class CaseTask {
 
@@ -17,7 +18,9 @@ export class CaseTask {
   doneDate: Date = null;
   notDoneReason: string = '';
   taskOID: number = 0;
-  taskPriorityCode: number = null;
+  documentTemplateOID: number = 0;
+  taskPriorityCode: number = 0;
+  taskPriorityDesc: string = '';
   taskType: TaskType = new TaskType();
-
+  taskCompleted: boolean = false;
 }

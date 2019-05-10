@@ -24,7 +24,7 @@
         <p-dropdown placeholder="choose Event Type..."
                     [required]="true"
                     [options]="eventTypes"
-                    optionLabel="eventTypeName"
+                    optionLabel="description"
                     [(ngModel)]="selectedEvent"
                     (onChange)="eventTypeOnChange($event)"
                     styleClass="width-full">
@@ -50,18 +50,32 @@
         <h2>Workflow Steps</h2>
         <p-dataTable [value]="selectedEventWorkflow?.workflowSteps" selectionMode="single" [(selection)]="selectedStep" (onRowSelect)="stepOnRowSelect($event)"
           scrollable="true" scrollHeight="200px" #dtWorkflowSteps>
-          <p-column header="Time Delay" field="delayDays" [style]="{'width':'13%'}"></p-column>
-          <p-column header="Task" field="" [style]="{'width':'25%'}">
-            <ng-template let-item="rowData" pTemplate="body">
+          <p-column header="Time Delay" field="delayMinutes" [style]="{'width':'10%'}"></p-column>
+          
+          <p-column header="Time Delay Unit" field="" [style]="{'width':'7%'}" >
+              <ng-template let-item="rowData" pTemplate="body">
+                  {{ getLabelFromValue(item.delayUnit)}}
+               </ng-template>
+            </p-column>
+          
+          <p-column header="Task" field="" [style]="{'width':'15%'}" >
+            <ng-template let-item="rowData" pTemplate="body" >
               {{ item.taskType?.taskTypeOID | idToName:taskTypes:"taskTypeOID"}}
             </ng-template>
           </p-column>
+
+          <p-column header="Task Priority" field="" [style]="{'width':'7%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+                {{ getPriorityValue(item.taskPriorityCode)}}
+             </ng-template>
+          </p-column>
+
           <p-column header="Document" field="" [style]="{'width':'15%'}">
             <ng-template let-item="rowData" pTemplate="body">
               {{ item.documentTemplateOID | idToName:documentTemplates:"documentTemplateOID":"documentName" }}
             </ng-template>
           </p-column>
-          <p-column header="Assigned Resource" field="" [style]="{'width':'15%'}">
+          <p-column header="Assigned Resource" field="" [style]="{'width':'13%'}">
             <ng-template let-item="rowData" pTemplate="body">
               <span *ngIf="item.assignedParty">
                   {{ item.assignedParty.partyOID | idToName:parties:"id":"firstName" }}
@@ -118,35 +132,60 @@
       <form #workflowStepForm="ngForm" *ngIf="showWorkflowStepModal">
 
         <div class="ui-g-12">
-          <mat-form-field class="width-full" >
-            <label class="minimal primary block" for="timeDelay">Days to Delay* (enter 0 for immediate)</label>
-            <!-- <div>*Enter 0 for immediate</div> -->
-            <input matInput name="timeDelay" #timeDelayField="ngModel"
-                   [(ngModel)]="selectedStep.delayDays" required>
-              <div class="ui-message ui-messages-error ui-corner-all"
-                   *ngIf="timeDelayField.errors?.required && timeDelayField.touched" >
-                   Please enter number of days to delay
-             </div>
-          </mat-form-field>
+            <mat-form-field class="width-full" >
+              <label class="minimal primary block" for="timeDelay">Enter Time Delay Amount (Enter 0 for immediate)</label>
+              <!-- This system should not compute the due date based on the time unit entered by staff -->
+                 <input matInput name="timeDelay" #timeDelayField="ngModel"
+                        [(ngModel)]="selectedStep.delayMinutes" required>
+                    <div class="ui-message ui-messages-error ui-corner-all"
+                        *ngIf="timeDelayField.errors?.required && timeDelayField.touched" >
+                        Please enter a time delay
+                  </div>
+                </mat-form-field>
+        </div>
+
+        <div class="ui-g-12">        
+            <label class="minimal primary block" for="timeDelayUnits">Choose Time Delay Unit</label>
+            <p-dropdown 
+              name="delayUnit" #delayUnit="ngModel"
+              [options]="timeDelayUnits"    
+              [(ngModel)]= "selectedStep.delayUnit"
+              (onChange)="timeDelayUnitOnChange($event)"
+              (onSelect)="timeDelayUnitOnChange($event)"
+              styleClass="width-full"  appendTo="body">
+            </p-dropdown>
+        </div>
+
+        <div class="ui-g-12">        
+            <label class="minimal primary block" for="priorityTypes">Choose Task Priority</label>
+            <p-dropdown 
+              name="taskProprityCode" #taskProprity="ngModel"
+              [options]="priorityTypes"    
+              [(ngModel)]= "selectedStep.taskPriorityCode"
+              (onChange)="taskPriorityOnChange($event)"
+              (onSelect)="taskPriorityOnChange($event)"
+              styleClass="width-full"  appendTo="body">
+            </p-dropdown>
         </div>
 
         <div class="ui-g-12">
-          <label class="minimal primary block" for="task">Task*</label>
-          <p-dropdown name="task" #taskField="ngModel" placeholder="choose Task..."
-              [required]="true"
-              [options]="taskTypes"
-              optionLabel="name"
-              [(ngModel)]="selectedStep.taskType"
-              styleClass="width-full"  appendTo="body">
-          </p-dropdown>
-          <!-- <button pButton label="+" (click)="showNewTaskTypeModal = true;"></button> -->
-          <button pButton icon="fa-plus" class="mt-10 ui-button-secondary ui-button-icon-only clear-btn inline"
-                  (click)="showNewTaskTypeModal = true;"></button>
-          <div class="ui-message ui-messages-error ui-corner-all"
-                *ngIf="taskField.errors?.required && taskField.touched" >
-                Please select a task
+            <label class="minimal primary block" for="task">Task*</label>
+            <p-dropdown name="task" #taskField="ngModel" placeholder="choose Task..."
+                [required]="true"
+                [options]="taskTypes"
+                optionLabel="name"
+                [filter]="true"
+                [(ngModel)]="selectedStep.taskType"
+                styleClass="width-full"  appendTo="body">
+            </p-dropdown>
+            <!-- <button pButton label="+" (click)="showNewTaskTypeModal = true;"></button> -->
+            <button pButton icon="fa-plus" class="mt-10 ui-button-secondary ui-button-icon-only clear-btn inline"
+                    (click)="showNewTaskTypeModal = true;"></button>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="taskField.errors?.required && taskField.touched" >
+                  Please select a task
+            </div>
           </div>
-        </div>
 
         <div class="ui-g-12">
           <!-- <label class="minimal primary block">Document</label> -->

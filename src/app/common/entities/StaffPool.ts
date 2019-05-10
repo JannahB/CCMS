@@ -2,8 +2,8 @@ import { Party } from './Party';
 
 export class StaffPool {
 
-  courtOID = 0;
-  poolName = '';
-  poolOID = 0;
+  courtOID: number = 0;
+  poolName: string = '';
+  poolOID:number = 0;
 
 }

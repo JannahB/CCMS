@@ -2,7 +2,6 @@ import { CaseTaskDTO } from '../../entities/CaseTaskDTO';
 import { Injectable, forwardRef, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-
 import { CaseTask } from '../../entities/CaseTask';
 import { Address } from '../../entities/Address';
 import { Identifier } from '../../entities/Identifier';
@@ -315,16 +314,16 @@ export class CaseService extends HttpBaseService<Case> {
       caseParties: [],
       caseCharges: [],
       prevCaseNumber: null,
+      courtOfAppealNumber:null,
       caseNotes: null
     };
 
-    //RS
     if (data.prevCaseNumber)
       caseData.prevCaseNumber = data.prevCaseNumber.toString();
     if (data.caseNotes)
       caseData.caseNotes = data.caseNotes.toString();
-    //RS
-
+    if (data.courtOfAppealNumber)
+      caseData.courtOfAppealNumber = data.courtOfAppealNumber.toString();
     if (data.caseOID)
       caseData.caseOID = data.caseOID.toString();
     if (data.caseFilingDate)
