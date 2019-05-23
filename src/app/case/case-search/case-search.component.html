@@ -63,7 +63,7 @@
         <!-- SEARCH BUTTONS -->
         <div class="ui-g-12 mt-20 ta-c">
           <button type="submit" label="Search" icon="ui-icon-search" class="mr-20" pButton></button>
-
+          
           <button type="button" (click)="onReset()" label="Reset" icon="ui-icon-autorenew" class="ui-button-secondary " pButton></button>
         </div>
 
@@ -84,8 +84,10 @@
         <p-column field="casePhase.name" header="Case Phase" [style]="{'width':'15%'}"></p-column>
         <p-column styleClass="col-button" header="Create Assoc Case" [style]="{'width':'8%'}">
           <ng-template let-item="rowData" pTemplate="body">
-            <i class="material-icons" (click)="createAssocatedCase($event, item)">library_books</i>
-          </ng-template>
+            <i class="material-icons" 
+              (click)="createAssocatedCase($event, item)"
+             >library_books</i>
+          </ng-template>          
         </p-column>
       </p-dataTable>
     </div>

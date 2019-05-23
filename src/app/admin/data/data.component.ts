@@ -20,7 +20,7 @@ import { ToastService } from '../../common/services/utility/toast.service';
     `
   ]
 })
-export class DataComponent implements OnInit {
+export class DataComponent implements OnInit, OnDestroy {
 
   refDataTables: any[];
   routeSubscription: Subscription;
@@ -29,8 +29,8 @@ export class DataComponent implements OnInit {
   selectedTable: any;
 
   constructor(
-    private router:Router,
-    private activatedRoute:ActivatedRoute,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
     private breadCrumbSvc: BreadcrumbService,
     private adminSvc: AdminDataService,
     private toastSvc: ToastService
@@ -43,20 +43,23 @@ export class DataComponent implements OnInit {
   ngOnInit() {
 
     this.getRefData();
-    let url = this.activatedRoute.url;
+    const url = this.activatedRoute.url;
     console.log('url', url);
 
     this.urlSubscription = this.activatedRoute.firstChild.url.subscribe(url => {
-      let fragment = url[0].path;
-      if(fragment)
+      const fragment = url[0].path;
+      if (fragment) {
         this.setTableByUrlFragment(fragment);
+      }
     });
 
 
   }
 
   ngOnDestroy() {
-    if(this.urlSubscription) this.urlSubscription.unsubscribe();
+    if (this.urlSubscription) {
+      this.urlSubscription.unsubscribe();
+    }
   }
 
 
@@ -64,13 +67,19 @@ export class DataComponent implements OnInit {
 
     this.refDataTables = [
       { value: 1, route: 'casetypes', label: "Case Type" },
-      { value: 2, route: 'casephases', label: "Case Phase Type"},
+      { value: 2, route: 'casephases', label: "Case Phase Type" },
       { value: 3, route: 'casestatuses', label: "Case Status Type" },
       { value: 4, route: 'casepartyroles', label: "Case Party Role Type" },
       { value: 5, route: 'eventtypes', label: "Event Type" },
-      // { value: 6, route: 'iccscodes', label: "ICCS Code" },
+      { value: 6, route: 'iccscodes', label: "ICCS Code" },
       { value: 7, route: 'hearingtypes', label: "Hearing Type" },
       { value: 8, route: 'courtlocations', label: "Court Location" },
+      { value: 9, route: 'staffroles', label: "Staff Roles" },
+      { value: 10, route: 'courts', label: "Courts" },
+      { value: 11, route: 'rolepermissions', label: "Role Permissions" },
+      { value: 12, route: 'staffpools', label: 'Staff Pool' },
+      { value: 13, route: 'tasktypes', label: 'Task Types' },
+      { value: 14, route: 'personalidtypes', label: 'Personal ID Types' },
     ];
   }
 
@@ -80,31 +89,31 @@ export class DataComponent implements OnInit {
     this.navigateToTable(this.selectedTable['route']);
   }
 
-  setSelectedTable(id){
-    this.selectedTable = this.refDataTables.find((type) => type.value ==  id);
+  setSelectedTable(id) {
+    this.selectedTable = this.refDataTables.find((type) => type.value === id);
   }
 
   navigateToTable(route) {
-    this.router.navigate(['/admin/data/'+ route])
+    this.router.navigate(['/admin/data/' + route]);
   }
 
   setTableByUrlFragment(fragment) {
-    this.selectedTable = this.refDataTables.find((type) => type.route ==  fragment);
+    this.selectedTable = this.refDataTables.find((type) => type.route === fragment);
     this.selectedTableId = this.selectedTable['value'];
   }
 
 
   refreshLookups() {
-    this.adminSvc.refreshLookupTables().subscribe( result => {
+    this.adminSvc.refreshLookupTables().subscribe(result => {
       this.toastSvc.showSuccessMessage('Lookup Tables Refreshed');
     },
-    (error) => {
-      console.error(error);
-      this.toastSvc.showErrorMessage('There was an error refreshing lookup tables.')
-    },
-    () => {
-      // finally
-    })
+      (error) => {
+        console.error(error);
+        this.toastSvc.showErrorMessage('There was an error refreshing lookup tables.');
+      },
+      () => {
+        // finally
+      });
   }
 
 }

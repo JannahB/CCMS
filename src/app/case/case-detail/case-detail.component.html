@@ -34,18 +34,20 @@
       </div>
     </div>
 
-    <div class="ui-g-12 ">
+
+
+    <div class="ui-g-12" >
       <form #caseForm="ngForm" novalidate>
         <div *ngIf="case">
 
           <div class="ui-g-12 ui">
-            <div class="ui-g-12 ui-md-3">
+            <div class="ui-g-12 ui-md-2">
               <label class="minimal primary block">Filing Date</label>
               <p-calendar id="dtFilingDate" name="dtFilingDate" #dtFilingDate
                     [required]="true"
                     [disabled]="case.caseOID != 0 || !hasPermission(Permission.CREATE_CASE)"
                     [(ngModel)]="case.caseFilingDate"
-                    dateFormat="mm/dd/yy"
+                    dateFormat="dd-M-yy"
                     placeholder="Case Filing Date"
                     [showIcon]="true"
                     yearRange="2000:2030"
@@ -58,7 +60,7 @@
               </div>
             </div>
 
-            <div class="ui-g-12 ui-md-3 pr-20">
+            <div class="ui-g-12 ui-md-2 pr-20">
                 <label class="minimal block primary">Case Weight</label>
                 <div class="mar-0">{{ case.caseWeight }}</div>
                 <p-slider name="slCaseWeight" #slCaseWeight="ngModel"
@@ -74,10 +76,39 @@
                 </div>
             </div>
 
-            <div class="ui-g-12 ui-md-6 mt-25" *ngIf="case.caseOID > 0">
+            <div class="ui-g-12 ui-md-2 mt-25" *ngIf="case.caseOID > 0">
+                <span class="md-inputfield">
+                  <input pInputText type="text"
+                        #tiprevCaseNumber="ngModel"
+                        required name="tiprevCaseNumber"
+                        [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                        [required]="false"
+                        [(ngModel)]="case.prevCaseNumber"
+                        class="width-full" >
+                  <label>Previous Case Number</label>
+                </span>
+            </div>
+
+            <!-- Court of Appeal Number -->
+            <div class="ui-g-12 ui-md-2 mt-25" *ngIf="case.caseOID > 0">
+                <span class="md-inputfield">
+                  <input pInputText type="text"
+                        #tiprevCaseNumber="ngModel"
+                        required name="tiCourtofAppealCaseNumber"
+                        [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                        [required]="false"
+                        [(ngModel)]="case.courtOfAppealNumber"
+                        class="width-full" >
+                  <label>Court of Appeal Case Number</label>
+                </span>
+            </div>
+
+
+
+            <!-- Case Caption Field -->
+            <div class="ui-g-12 ui-md-4 mt-25" *ngIf="case.caseOID > 0">
               <span class="md-inputfield">
-                <!-- TODO: HANDLE BOTH CREATE_CASE &&  -->
-                <input pInputText type="text" #tiCaseCaption="ngModel" required name="tiCaseCaption"
+                  <input pInputText type="text" #tiCaseCaption="ngModel" required name="tiCaseCaption"
                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                       [(ngModel)]="case.caseCaption"
                       class="width-full" >
@@ -88,9 +119,12 @@
                     Please enter a Case Caption
               </div>
             </div>
+
           </div>
 
-          <div class="ui-g-12 ui">
+
+
+          <div class="ui-g-12">
 
             <div class="ui-g-12 ui-md-4">
               <label class="minimal primary block">Case Status</label>
@@ -99,6 +133,7 @@
                   [required]="true"
                   optionLabel="name"
                   [options]="caseStatuses"
+                  [filter]="true"
                   [(ngModel)]="case.caseStatus"
                   (onChange)="ddOnChange($event)"
                   styleClass="width-full">
@@ -145,10 +180,29 @@
                     Please choose a Case Phase
               </div>
             </div>
+
+
           </div>
 
+          <!-- Adding Case Notes Field  -->
+            <div class="ui-g-12 mb-20" *ngIf="case.caseOID > 0">
+                <label class="minimal primary block">Case Notes</label>
+                  <textarea name="tiCaseNotes"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      [rows]="2"
+                      [cols]="30"
+                      autoResize="autoResize"
+                      pInputTextarea placeholder="Enter Case Notes"
+                      [(ngModel)]="case.caseNotes"
+                      class="width-full">
+                   </textarea>
+            </div>
 
-          <!-- CASE PARTIES TABLE -->
+
+
+
+
+        <!-- CASE PARTIES TABLE -->
 
           <div class="ui-g-12 mt-20 ph-0">
 
@@ -188,7 +242,7 @@
                       <div></div>
                       <div *ngIf="!item.caseParty.isOrganization">
                           <span class="smaller">
-                          DOB: {{ item.caseParty.dob | date:'M/d/yyyy' }}
+                          DOB: {{ item.caseParty.dob | date:'dd-MMM-yyyy' }}
                           Sex: {{ item.caseParty.sex }}
                           Age: {{ item.caseParty.age }}
                         </span>
@@ -206,14 +260,15 @@
                 </p-column>
                 <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column> -->
 
-                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">                  
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.startDate | date:'M/d/yyyy'}}
+                        {{item.startDate | date:'dd-MMM-yyyy'}}
+                        
                     </ng-template>
                 </p-column>
                 <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.endDate | date:'M/d/yyyy'}}
+                        {{item.endDate | date:'dd-MMM-yyyy'}}
                     </ng-template>
                 </p-column>
                 <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
@@ -285,6 +340,12 @@
                 </p-column>
               </p-dataTable> -->
 
+              <!--ng-template pTemplate="body" let-item="rowData">
+                <div *ngFor="let factor of item.chargeFactors; let i = index">
+                "Testing"
+                </div>
+              </ng-template-->
+
 
               <p-dataTable [value]="case.caseCharges"
                           selectionMode="single"
@@ -293,16 +354,10 @@
                           scrollable="true" scrollHeight="200px"
                           dataKey="caseChargeOID" #dtCharges>
                 <p-column field="iccsCode.categoryIdentifier" header="UN Code" [style]="{'width':'7%'}"></p-column>
-                <p-column field="iccsCode.categoryName" header="Description" [style]="{'width':'15%'}"></p-column>
-                <p-column field="leaChargingDetails" header="Charge Description" [style]="{'width':'15%'}"></p-column>
-                <p-column field="" header="Charge Factors" [style]="{'width':'25%'}">
-                    <ng-template pTemplate="body" let-item="rowData">
-                      <div *ngFor="let factor of item.chargeFactors; let i = index">
-                        {{i+1}}) {{factor.description}}
-                      </div>
-                    </ng-template>
-                </p-column>
-                <p-column field="localCharge.localLaw" header="Charge/Law" [style]="{'width':'30%'}"></p-column>
+                <p-column field="iccsCode.categoryName" header="UNODC Charge Description" [style]="{'width':'15%'}"></p-column>
+                <p-column field="leaChargingDetails" header="Police Description" [style]="{'width':'15%'}"></p-column>
+                <p-column field="iccsCode.categoryName" header="Charge Factors" [style]="{'width':'25%'}"></p-column>
+                <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
                 <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
@@ -343,9 +398,10 @@
 
         <p-tabPanel header="Register" leftIcon="ui-icon-list">
           <div class="ui-g">
-            <div class="ui-g-12 ui-md-6">
+            <div class="ui-g-12 ui-md-4">
               <h2>Case Events</h2>
             </div>
+
             <!-- <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Event Category Filter</label>
               <p-dropdown
@@ -358,15 +414,16 @@
               </p-dropdown>
               <button label="" type="button" class="ml-10 ui-button-secondary ui-button-icon-only clear-btn inline" pButton icon="fa-close" (click)="clearEventFilter()"></button>
             </div> -->
-            <div class="ui-g-12 ui-md-3">
-                <label class="minimal primary block">Event ID Filter</label>
+
+            <div class="ui-g-12 ui-md-8">
+                <label class="minimal primary block">Event Description Filter</label>
                 <p-dropdown
+                    styleClass="strokeWidth"
                     placeholder="Event ID filter..."
                     [options]="eventTypes"
                     [(ngModel)]="eventTypeFilter"
-                    optionLabel="eventTypeName"
-                    (onChange)="eventTypeFilterChange($event)"
-                    styleClass="width-auto">
+                    optionLabel="description"
+                    (onChange)="eventTypeFilterChange($event)">
                 </p-dropdown>
                 <button label="" type="button" class="ml-10 ui-button-secondary ui-button-icon-only clear-btn inline" pButton icon="fa-close" (click)="clearEventFilter()"></button>
               </div>
@@ -376,7 +433,7 @@
                           selectionMode="single"
                           [(selection)]="caseEvent"
                           (onRowSelect)="caseEventOnRowSelect($event)"
-                          scrollable="true" scrollHeight="280px"
+                          scrollable="true"
                           dataKey="caseEventOID" #dtCaseEvents>
                 <!-- <p-column styleClass="col-button" header="Done" [style]="{'width':'6%'}">
                   <ng-template let-item="rowData" pTemplate="body">
@@ -417,11 +474,11 @@
 
 
         <!-- TASKS TAB -->
-
-        <p-tabPanel header="Tasks" leftIcon="ui-icon-timer">
-          <div class="ui-g">
+        <p-tabPanel header="Case Tasks" leftIcon="ui-icon-timer">
+          
+          <div class="ui-g">         
             <div class="ui-g-12">
-              <h2>Tasks</h2>
+              <h2>Case Tasks</h2>
             </div>
 
             <div class="ui-g-12">
@@ -429,15 +486,21 @@
                           selectionMode="single"
                           [(selection)]="selectedCaseTask"
                           (onRowSelect)="taskOnRowSelect($event)"
-                          scrollable="true" scrollHeight="280px"
+                          scrollable="true"
                           dataKey="taskOID" #dtTasks>
-                <p-column field="dueDate" header="Due Date" [style]="{'width':'13%'}">
-                    <ng-template pTemplate="body" let-item="rowData">
-                        {{item.dueDate | date:'M/d/yyyy'}}
-                    </ng-template>
+
+                <p-column field="taskType.name" header="Task Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="taskType.description" header="Task Description" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="details" header="Task Details" [style]="{'width':'12%'}" [sortable]="true"></p-column>
+                <p-column field="docTemplate.documentName" header="Document to Generate" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+
+                <p-column header="Priority" field="" [style]="{'width':'6%'}" >
+                  <ng-template let-item="rowData" pTemplate="body">
+                      {{ getPriorityValue(item.taskPriorityCode)}}
+                   </ng-template>
                 </p-column>
-                <p-column field="taskPriorityCode" header="Priority" [style]="{'width':'12%'}"></p-column>
-                <p-column field="" header="Assigned" [style]="{'width':'30%'}">
+                              
+                <p-column field="" header="Assigned Party" [style]="{'width':'13%'}">
                   <ng-template pTemplate="body" let-item="rowData">
                       <div *ngIf="item.assignedParty?.partyOID">
                         {{ 'Party: ' + item.assignedParty.firstName + ' ' + item.assignedParty.lastName }}
@@ -447,13 +510,36 @@
                       </div>
                   </ng-template>
                 </p-column>
-                <p-column field="taskType.name" header="Task Type" [style]="{'width':'38%'}"></p-column>
-                <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
-                    <ng-template let-item="rowData" pTemplate="body">
-                        <i class="material-icons" (click)="requestViewTask(item)">search</i>
+
+                <p-column field="assignedDate" header="Assigned Date" [style]="{'width':'9%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.assignedDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>
+
+                <p-column field="dueDate" header="Due Date and Time" [style]="{'width':'10%'}" [sortable]="true">
+                    <ng-template pTemplate="body" let-item="rowData">              
+                      <div >
+                          {{item.dueDate | date:'dd-MMM-yyyy hh:mm a'}}
+                      </div>
                     </ng-template>
-                </p-column> -->
-              </p-dataTable>
+                </p-column>
+
+                <p-column field="" header="Task Completed By" [style]="{'width':'10%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngIf="item.taskCompletedByParty?.partyOID">
+                        {{item.taskCompletedByParty.firstName + ' ' + item.taskCompletedByParty.lastName}}
+                      </div>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="doneDate" header="Completion Date" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.doneDate | date:'dd-MMM-yyyy hh:mm a'}}
+                  </ng-template>
+                </p-column>
+   
+            </p-dataTable>
 
             </div>
             <div class="ui-g-12">
@@ -519,7 +605,7 @@
                             selectionMode="single"
                             [(selection)]="selectedDoc"
                             (onRowSelect)="docOnRowSelect($event)"
-                            scrollable="true" scrollHeight="280px"
+                            scrollable="true"
                             dataKey="documentOID" #dtDocs>
                     <p-column field="lastUpdateDate" header="Document Date" [style]="{'width':'25%'}">
                         <ng-template pTemplate="body" let-item="rowData">
@@ -562,16 +648,16 @@
                           selectionMode="single"
                           [(selection)]="selectedJudicialAssignment"
                           (onRowSelect)="judicialAssignmentOnRowSelect($event)"
-                          scrollable="true" scrollHeight="280px"
+                          scrollable="true"
                           dataKey="judicialAssignmentOID" #dtJudicialAssignment>
                 <p-column field="" header="Start Date/Time" [style]="{'width':'20%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.startDate | date:'MM/dd/yyyy hh:mm a'}}
+                        {{item.startDate | date:'dd-MMM-yyyy hh:mm a'}}
                     </ng-template>
                 </p-column>
                 <p-column field="" header="End Date/Time" [style]="{'width':'20%'}">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.endDate | date:'MM/dd/yyyy hh:mm a'}}
+                        {{item.endDate | date:'dd-MMM-yyyy hh:mm a'}}
                     </ng-template>
                 </p-column>
                 <p-column field="" header="Assigned" [style]="{'width':'17%'}">
@@ -693,7 +779,7 @@
                       <!-- <div>{{ item.fullName }}</div> -->
                       <div *ngIf="!item.isOrganization">
                           <span class="smaller">
-                          DOB: {{ item.dob | date:'M/d/yyyy' }}
+                          DOB: {{ item.dob | date:'dd-MMM-yy' }}
                           Sex: {{ item.sex }}
                           Age: {{ item.age }}
                         </span>
@@ -747,7 +833,7 @@
                   <p-calendar id="dtStartDate" name="dtStartDate"
                         inputStyleClass="width-full"
                         [(ngModel)]="selectedSearchPartyStartDate"
-                        dateFormat="mm/dd/yy"
+                        dateFormat="dd-M-yy"
                         placeholder="Start Date"
                         [showIcon]="true"
                         [yearNavigator]="true"
@@ -759,7 +845,7 @@
                   <p-calendar id="dtEndDate" name="dtEndDate"
                         inputStyleClass="width-full"
                         [(ngModel)]="selectedSearchPartyEndDate"
-                        dateFormat="mm/dd/yy"
+                        dateFormat="dd-M-yy"
                         placeholder="End Date"
                         [showIcon]="true"
                         [yearNavigator]="true"
@@ -866,7 +952,7 @@
                         inputStyleClass="width-full"
                         [ngModel]="newCaseParty.caseParty?.dob"
                         (ngModelChange)="newCPdobChange($event)"
-                        dateFormat="mm/dd/yy"
+                        dateFormat="dd-M-yy"
                         placeholder="Date of Birth"
                         [showIcon]="true"
                         [yearNavigator]="true"
@@ -918,7 +1004,7 @@
                 <p-calendar id="dtStartDate" name="dtStartDate"
                       inputStyleClass="width-full"
                       [(ngModel)]="newCaseParty.startDate"
-                      dateFormat="mm/dd/yy"
+                      dateFormat="dd-M-yy"
                       placeholder="Start Date"
                       [showIcon]="true"
                       [yearNavigator]="true"
@@ -930,7 +1016,7 @@
                 <p-calendar id="dtEndDate" name="dtEndDate"
                       inputStyleClass="width-full"
                       [(ngModel)]="newCaseParty.endDate"
-                      dateFormat="mm/dd/yy"
+                      dateFormat="dd-M-yy"
                       placeholder="End Date"
                       [showIcon]="true"
                       [yearNavigator]="true"
@@ -962,6 +1048,23 @@
 <p-dialog header="Edit Party" width="450" [(visible)]="showModalEditCaseParty" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
     <form #editCasePartyForm="ngForm" novalidate>
       <div class="ui-g form-group" novalidate>
+
+
+        <!--div *ngIf="selectedCaseParty.isOrganization">
+             <div class="ui-g-12 mb-20 pl-0" >
+                <span class="md-inputfield">
+                  <input type="text" pInputText required 
+                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                          [(ngModel)]="selectedCaseParty.fullName" name="tiOrgName" #tiOrgName="ngModel" >
+                  <label>Organization Name</label>
+                </span>
+              </div>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                   *ngIf="tiOrgName.errors?.required && tiOrgName.touched" >
+                    Please enter the Organization Name
+              </div>
+            </div-->
+
 
         <div  *ngIf="selectedCaseParty">
 
@@ -1010,7 +1113,7 @@
                     inputStyleClass="width-full"
                     [ngModel]="selectedCaseParty.caseParty?.dob"
                     (ngModelChange)="editCPdobChange($event)"
-                    dateFormat="mm/dd/yy"
+                    dateFormat="dd-M-yy"
                     placeholder="Date of Birth"
                     [showIcon]="true"
                     [yearNavigator]="true"
@@ -1064,7 +1167,7 @@
                     [disabled]="true"
                     inputStyleClass="width-full"
                     [(ngModel)]="selectedCaseParty.startDate"
-                    dateFormat="mm/dd/yy"
+                    dateFormat="dd-M-yy"
                     placeholder="Start Date"
                     [showIcon]="true"
                     [yearNavigator]="true"
@@ -1076,7 +1179,7 @@
               <p-calendar id="dtEndDate" name="dtEndDate"
                     inputStyleClass="width-full"
                     [(ngModel)]="selectedCaseParty.endDate"
-                    dateFormat="mm/dd/yy"
+                    dateFormat="dd-M-yy"
                     placeholder="End Date"
                     [showIcon]="true"
                     [yearNavigator]="true"
@@ -1103,10 +1206,10 @@
 
 <!-- ADD CASE CHARGE MODAL -->
 
-<p-dialog header="Add Case Charge" width="580" [(visible)]="showModalAddCaseCharge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+<p-dialog header="Add Case Charge" width="80%" [(visible)]="showModalAddCaseCharge" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
   <form  #caseChargeForm="ngForm" novalidate><!-- (ngSubmit)="saveCaseCharge()" -->
     <div class="ui-g">
-      <div class="form-group" >
+      <div class="form-group">
 
         <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Section</label>
@@ -1137,10 +1240,10 @@
         </div>
 
         <div class="ui-g-12 mb-0 feature-box">
-          <p>Enter Charge/Law First</p>
+          <p>Enter Charge</p>
           <div class="feature-box-inner">
-            <label class="minimal primary block">Charge/Law</label>
-            <custom-autocomplete name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel" placeholder="choose Charge/Law..."
+            <label class="minimal primary block">Charge</label>
+            <custom-autocomplete name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel" placeholder="choose Charge..."
               [required]="true"
               [options]="chargeLawTypes"
               labelField="localCharge"
@@ -1171,7 +1274,7 @@
         </div>
 
         <div class="ui-g-12">
-          <label class="minimal primary block" for="tiLea">Police Lead Charge</label>
+          <label class="minimal primary block" for="tiLea">Police Description</label>
           <textarea id="tiLea" name="tiLea" #tiLea="ngModel"
                     [required]="true"
                     [(ngModel)]="leaLeadChargeText"
@@ -1181,25 +1284,51 @@
                     class="width-full"></textarea>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="tiLea.errors?.required && tiLea.touched" >
-                Police Lead Charge is required
+                Police Description is required
           </div>
         </div>
 
-        <div class="ui-g-12 ">
-          <label class="minimal primary block">Charge Factors</label>
+        <!--Rhea Seegobin Implemented 3 tier filtering without constant server calls-->
+
+        <!--div class="ui-g-12 ">
+            <div class="ui-g-3 ph-20 pv-5">
+            <label class="minimal primary block">Charge Factor Category</label>
+            <span class="ui-fluid">
+              <p-autoComplete name="acChargeFactorCategory" #acChargeFactorCategory="ngModel"
+                  [required]="true"
+                  field="chargeFactorCategoryDesc"
+                  [(ngModel)]="selectedChargeFactorCategory"
+                  [suggestions]="filteredChargeFactorCategory"
+                  (completeMethod)="getChargeFactorCategoryToFilter($event)"
+                  styleClass="width-full"
+                  [minLength]="1"
+                  placeholder="Please Select a Charge Factor Category"
+                  [dropdown]="true"
+                  appendTo="body"
+                  [multiple]="false">
+              </p-autoComplete>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="acChargeFactorCategory.errors?.required && acChargeFactorCategory.touched" >
+                  One or more Charge Factor Category is required.
+            </div>
+          </div>
+
+          <div class="ui-g-4 ph-20 pv-5">
+          <label class="minimal primary block">Charge Factor</label>
           <span class="ui-fluid">
             <p-autoComplete name="acChargeFactors" #acChargeFactors="ngModel"
                 [required]="true"
                 field="description"
                 [(ngModel)]="selectedChargeFactors"
                 [suggestions]="filteredChargeFactorTypes"
-                (completeMethod)="getChargeFactorsToFilter($event)"
+                (completeMethod)="getChargeFactorsToFilter($event,selectedChargeFactorCategory)"
                 styleClass="width-full"
                 [minLength]="1"
-                placeholder="select Charge Factors"
+                placeholder="Please select a Charge Factor"
                 [dropdown]="true"
                 appendTo="body"
-                [multiple]="true">
+                [multiple]="false">
             </p-autoComplete>
           </span>
           <div class="ui-message ui-messages-error ui-corner-all"
@@ -1208,15 +1337,57 @@
           </div>
         </div>
 
+        <!(completeMethod)="getChargeFactorsVariablesToFilter($event)" Taken out by RS>
+        <div class="ui-g-4 ph-20 pv-5">
+            <label class="minimal primary block">Charge Factor Variable</label>
+            <span class="ui-fluid">
+              <p-autoComplete name="acChargeFactorVariable" #acChargeFactorVariable="ngModel"
+                  [required]="true"
+                  field="chargeFactorVariableDesc"
+                  (completeMethod)= "getChargeFactorsVariablesToFilter($event,selectedChargeFactors)"
+                  [(ngModel)]="selectedChargeFactorVariables"
+                  [suggestions]="filteredChargeFactorVariables"
+                  styleClass="width-full"
+                  [minLength]="1"
+                  placeholder="Please Select a Charge Factor Variable"
+                  [dropdown]="true"
+                  appendTo="body"
+                  [multiple]="false">
+              </p-autoComplete>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="acChargeFactorVariable.errors?.required && acChargeFactorVariable.touched" >
+                  One or more Charge Factor Variables are required.
+            </div>
+          </div>
+
+          <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
+              <i class="material-icons delete-icon" (click)="requestDeleteAuthCourt(acIdx)">delete</i>
+            </div>
+
+
+
+        </div-->
+
+
       </div>
     </div>
 
     <p-footer>
+
         <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+
+          <!--button type="button" (click)="addChargeFactorDetails();" label="Add Additional Charge Factor Variables"
+            icon="ui-icon-add" class="ui-button-secondary mr-15"
+            pButton></button-->
+
           <button label="Save" type="submit" pButton icon="fa-check"
                   (click)="saveCaseCharge()"
                   [disabled]="!caseChargeForm.form.valid"></button>
+
           <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+
+          <!--Add button to add multiple charge factors-->
         </div>
     </p-footer>
 
@@ -1227,12 +1398,12 @@
 
 <!-- ADD CASE TASK MODAL -->
 
-<p-dialog header="Add Case Task" width="450" [(visible)]="showModalAddCaseTask" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+<p-dialog header="Case Task Details" width="450" [(visible)]="showModalAddCaseTask" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
   <loading-bar [visible]="loadingCaseTaskLookups" [message]="'loading task data...'"></loading-bar>
 
   <form (ngSubmit)="saveCaseTask()" #caseTaskForm="ngForm" novalidate>
     <div class="ui-g">
-      <div class="form-group" >
+      <div class="form-group" >   
 
         <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Task Type</label>
@@ -1241,6 +1412,8 @@
               [options]="taskTypes"
               optionLabel="name"
               [ngModel]="selectedCaseTask?.taskType"
+              [filter]="true"
+              [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
               (onChange)="taskTypeOnChange($event)"
               styleClass="width-full">
           </p-dropdown>
@@ -1253,72 +1426,102 @@
         <div class="ui-g-12 mb-0">
             <label class="minimal primary block">Priority</label>
             <p-dropdown name="ddPriority" id="ddPriority" placeholder="choose Priority..."
-                [options]="priorityTypes"
+                [options]="caseTaskPriorityTypes"
                 [ngModel]="selectedCaseTask?.taskPriorityCode"
+                [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
                 (onChange)="priorityTypeOnChange($event)"
                 styleClass="width-full">
             </p-dropdown>
         </div>
 
-        <div class="ui-g-12 mb-0">
-          <label class="minimal primary block">Assigned Person</label>
-          <p-dropdown name="ddAssignedPerson" id="ddAssignedPerson"
-              [options]="taskParties | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Assigned Person...'"
-              [ngModel]="selectedCaseTask?.assignedParty?.partyOID"
-              (onChange)="assignedPersonTypeOnChange($event)"
-              styleClass="width-full">
-          </p-dropdown>
-        </div>
-
-        <div class="ui-g-12 mb-0">
-          <label class="minimal primary block">Assigned Staff Pool</label>
-          <p-dropdown name="ddStaffPool" placeholder="choose Staff Pool..."
-              [options]="staffPools"
-              optionLabel="poolName"
-              [ngModel]="selectedCaseTask?.assignedPool"
-              (onChange)="staffPoolTypeOnChange($event)"
-              styleClass="width-full">
-          </p-dropdown>
-        </div>
-
-        <!-- DUE DATE -->
-        <div class="ui-g-12">
-          <label class="minimal primary block">Due Date</label>
-          <p-calendar id="task_dueDate" name="task_dueDate" placeholder="Due Date"
-              [ngModel]="selectedCaseTask?.dueDate"
-              (ngModelChange)="dueDateOnChange($event)"
-              [showIcon]="true"
-              dateFormat="mm/dd/yy"
-              appendTo="body"></p-calendar>
-        </div>
-
-        <!-- DONE DATE -->
-        <div class="ui-g-12" *ngIf="selectedCaseTask && selectedCaseTask.taskOID > 0">
-          <label class="minimal primary block">Done Date</label>
-          <p-calendar id="task_doneDate" name="task_doneDate" placeholder="Done Date"
-              [ngModel]="selectedCaseTask?.doneDate"
-              (ngModelChange)="doneDateOnChange($event)"
-              [showIcon]="true"
-              dateFormat="mm/dd/yy"
-              appendTo="body"></p-calendar>
-        </div>
-
         <div class="ui-g-12">
           <label class="minimal primary block" for="tiTaskDetails">Task Details</label>
-          <textarea id="tiTaskDetails" name="tiTaskDetails"
-                    [ngModel]="selectedCaseTask?.details"
-                    (ngModelChange)="taskDetailsOnChange($event)"
-                    [rows]="2"
-                    pInputTextarea
-                    autoResize="autoResize"
-                    class="width-full"></textarea>
+            <textarea id="tiTaskDetails" name="tiTaskDetails"
+              placeholder="Please Enter Task Details if needed"
+              [ngModel]="selectedCaseTask?.details"
+              (ngModelChange)="taskDetailsOnChange($event)"
+              [disabled]="!hasPermission(Permission.UPDATE_TASK) || selectedCaseTask?.doneDate != null"
+              [rows]="2" 
+              pInputTextarea
+              autoResize="autoResize"
+              styleClass="width-full"></textarea>
         </div>
+
+        <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Document Template</label>
+          <p-dropdown name="ddDocTemplate" id="ddDocTemplate" #ddDocTemplate
+              placeholder="Please select a document template if required"
+              [filter]="true"
+              [options]="documentTemplateTypes"
+              optionLabel="documentName"
+              [ngModel]="selectedCaseTask?.docTemplate"              
+              (onChange)="taskdocumentSelected($event)"
+              [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
+              styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+          <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Assigned Person</label>
+              <p-dropdown name="ddAssignedPerson" id="ddAssignedPerson"
+                  [options]="taskParties | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Assigned Person...'"
+                  [ngModel]="selectedCaseTask?.assignedParty?.partyOID"
+                  [filter]="true"
+                  [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
+                  (onChange)="assignedPersonTypeOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+            </div>
+
+          <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Assigned Staff Pool</label>
+              <p-dropdown name="ddStaffPool" placeholder="choose Staff Pool..."
+                  [options]="staffPools"
+                  optionLabel="poolName"
+                  [ngModel]="selectedCaseTask?.assignedPool"
+                  [filter]="true"
+                  [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
+                  (onChange)="staffPoolTypeOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+            </div>
+    
+            <div class="ui-g-12 mb-0">
+               <label class="minimal primary block">Due Date and Expected Completion Time</label>
+               <p-calendar id="ExpectedCompletionTime" name="ExpectedCompletionTime" placeholder="Enter Date and Time"
+                   [ngModel]="selectedCaseTask?.dueDate"
+                   (ngModelChange)="dueDateOnChange($event)"
+                   [showIcon]="true"
+                   appendTo="body"
+                   [inline]="false"
+                   [showTime]="true"
+                   [hourFormat]="12" 
+                   [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
+                   dateTimeFormat="dd-M-yy HH-mm a"
+                   [monthNavigator]="true" 
+                   [yearNavigator]="true" 
+                   yearRange="2000:2030">
+               </p-calendar>
+            </div>     
+
+
+        <div class="ui-g-12 mb-0" *ngIf="selectedCaseTask?.taskOID != 0">
+          <label class="minimal primary block">Task Completed?</label>  
+          <p-checkbox 
+              [ngModel]="selectedCaseTask?.taskCompleted" binary="true" name="taskCompleted"
+              (onChange)="taskCompletedOnChange($event)"
+              [disabled]="selectedCaseTask?.doneDate != null">
+          </p-checkbox>
+          <span class="task-name">Task Completed?</span>
+        </div>
+        
       </div>
     </div>
 
     <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
-          <button label="Save Task" type="submit" pButton icon="fa-check" [disabled]="!caseTaskForm.form.valid"></button>
+          <button label="Save Task" type="submit" pButton icon="fa-check" 
+                  [disabled]="!caseTaskForm.form.valid"></button>
           <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
                   (click)="onCancelCaseTask(caseTaskForm)" ></button>
         </div>
@@ -1365,7 +1568,7 @@
           <p-calendar id="dtStartDate" name="dtStartDate" placeholder="Start Date" #dtStartDate="ngModel"
               [(ngModel)]="judge.startDate"
               [showIcon]="true"
-              dateFormat="mm/dd/yy"
+              dateFormat="dd-M-yy"
               appendTo="body"></p-calendar>
           <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="dtStartDate.errors?.required && dtStartDate.touched" >
@@ -1378,7 +1581,7 @@
           <p-calendar id="dtEndDate" name="dtEndDate" placeholder="End Date" #dtEndDate="ngModel"
               [(ngModel)]="judge.endDate"
               [showIcon]="true"
-              dateFormat="mm/dd/yy"
+              dateFormat="dd-M-yy"
               appendTo="body"></p-calendar>
         </div>
 
@@ -1410,7 +1613,7 @@
           <p-calendar id="dtEventDate" name="dtEventDate" placeholder="Event Date" #dtEventDate="ngModel"
               [(ngModel)]="caseEvent.eventDate"
               [showIcon]="true"
-              dateFormat="mm/dd/yy"
+              dateFormat="dd-M-yy"
               [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
               appendTo="body"></p-calendar>
           <div class="ui-message ui-messages-error ui-corner-all"
@@ -1421,11 +1624,11 @@
 
         <!-- EVENT ID -->
         <div class="ui-g-12 mb-15">
-          <label class="minimal primary block">Event ID</label>
-          <p-dropdown name="ddEventId" id="ddEventId" placeholder="choose Event ID..." #ddEventId="ngModel"
+          <label class="minimal primary block">Event Description</label>
+          <p-dropdown name="ddEventId" id="ddEventId" placeholder="choose Event Description..." #ddEventId="ngModel"
               [required]="true"
               [options]="eventTypes"
-              optionLabel="eventTypeName"
+              optionLabel="description"
               [(ngModel)]="caseEvent.eventType"
               [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
               styleClass="width-full">

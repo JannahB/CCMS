@@ -34,4 +34,8 @@ export class Case extends LookupEntity {
   judicialAssignments: any[] = [];        // Entity NEEDED //
   searchCasePartyRoleOID: number = 0;
 
-}
+  prevCaseNumber: string = "";
+  caseNotes: string = "";
+  courtOfAppealNumber: string = "";
+
+  }

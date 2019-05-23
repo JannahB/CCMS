@@ -1,8 +1,9 @@
-
 export class ChargeFactor {
 
-  courtOID: number; 
-  chargeFactorOID: number; 
-  description: string;
-  name: string; 
+  courtOID: number = 0; 
+  chargeFactorOID: number = 0; 
+  description: string = "";
+  name: string = ""; 
+  disaggregationID: number = 0;
+
 }

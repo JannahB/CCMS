@@ -4,14 +4,14 @@ import {
   CommonModule,
   HashLocationStrategy,
   LocationStrategy
-} from "@angular/common";
-import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { ErrorHandler, NgModule } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { HttpModule } from "@angular/http";
-import { BrowserModule } from "@angular/platform-browser";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { MessageService } from "primeng/components/common/messageservice";
+} from '@angular/common';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ErrorHandler, NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MessageService } from 'primeng/components/common/messageservice';
 import {
   AccordionModule,
   AutoCompleteModule,
@@ -116,23 +116,25 @@ import { LookupService } from "./common/services/http/lookup.service";
 import { PartyService } from "./common/services/http/party.service";
 import { AppStateService } from "./common/services/state/app.state.sevice";
 import { CaseCountsService } from './common/services/http/case-counts.service';
-import { GlobalState } from "./common/services/state/global.state";
-import { DateParserService } from "./common/services/utility/dates/date-parser.service";
-import { DateValidatorService } from "./common/services/utility/dates/date-validator.service";
-import { DropdownDataTransformService } from "./common/services/utility/dropdown-data-transform.service";
-import { GlobalErrorHandlerService } from "./common/services/utility/global-error-handler.service";
-import { LocalStorageService } from "./common/services/utility/local-storage.service";
-import { ToastService } from "./common/services/utility/toast.service";
-import { UserService } from "./common/services/utility/user.service";
-import { DashboardComponent } from "./dashboard/dashboard.component";
-import { LoginComponent } from "./login/login.component";
-import { NewPasswordComponent } from "./login/new-password/new-password.component";
-import { ResetPasswordComponent } from "./login/reset-password/reset-password.component";
-import { PartyDetailComponent } from "./party/party-detail/party-detail.component";
-import { PartySearchComponent } from "./party/party-search/party-search.component";
+import { GlobalState } from './common/services/state/global.state';
+import { DateParserService } from './common/services/utility/dates/date-parser.service';
+import { DateValidatorService } from './common/services/utility/dates/date-validator.service';
+import { DropdownDataTransformService } from './common/services/utility/dropdown-data-transform.service';
+import { GlobalErrorHandlerService } from './common/services/utility/global-error-handler.service';
+import { LocalStorageService } from './common/services/utility/local-storage.service';
+import { ToastService } from './common/services/utility/toast.service';
+import { UserService } from './common/services/utility/user.service';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { LoginComponent } from './login/login.component';
+import { NewPasswordComponent } from './login/new-password/new-password.component';
+import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
+import { PartyDetailComponent } from './party/party-detail/party-detail.component';
+import { PartySearchComponent } from './party/party-search/party-search.component';
 import { CaseCountsComponent } from './reports/case-counts/case-counts.component';
-import { ConfigService } from "./common/services/config/config.service";
+import { ConfigService } from './common/services/config/config.service';
 import { HearingsService } from './common/services/http/hearings.service';
+import { CalResourcesComponent } from './admin/calendar/cal-resources/cal-resources.component';
+import { CalFacilitiesComponent } from './admin/calendar/cal-facilities/cal-facilities.component';
 
 @NgModule({
   imports: [
@@ -230,7 +232,9 @@ import { HearingsService } from './common/services/http/hearings.service';
     ResetPasswordComponent,
     NewPasswordComponent,
     CaseCountsComponent,
-    HearingsComponent
+    HearingsComponent,
+    CalResourcesComponent,
+    CalFacilitiesComponent
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

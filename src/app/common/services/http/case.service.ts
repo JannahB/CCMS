@@ -2,7 +2,6 @@ import { CaseTaskDTO } from '../../entities/CaseTaskDTO';
 import { Injectable, forwardRef, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-
 import { CaseTask } from '../../entities/CaseTask';
 import { Address } from '../../entities/Address';
 import { Identifier } from '../../entities/Identifier';
@@ -20,6 +19,8 @@ import { IccsCode } from '../../entities/IccsCode';
 import { DatePipe } from '@angular/common';
 import { CaseParty } from '../../entities/CaseParty';
 import { ChargeFactor } from '../../entities/ChargeFactor';
+import { ChargeFactorVariable } from '../../entities/ChargeFactorVariable'; //RS
+import { ChargeFactorCategory } from '../../entities/ChargeFactorCategory'; //RS
 import { CasePartyRole } from '../../entities/CasePartyRole';
 import { DocTemplate } from '../../entities/DocTemplate';
 import { Http, RequestOptionsArgs, Headers, ResponseContentType } from '@angular/http';
@@ -33,6 +34,7 @@ import { CaseStatus } from '../../entities/CaseStatus';
 import { CasePhase } from '../../entities/CasePhase';
 import { CaseHearingDTO } from '../../entities/CaseHearingDTO';
 import { LocalCharge } from '../../entities/LocalCharge';
+import { nullSafeIsEquivalent } from '@angular/compiler/src/output/output_ast';
 
 
 @Injectable()
@@ -276,6 +278,20 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http.post<ChargeFactor[]>(url, "");
   }
 
+  //RS Implementing Charge Factor Variables ---- This needs to be implemented on the BackEnd of in the Service Folder
+  public fetchChargeFactorVariables(): Observable<ChargeFactorVariable[]> {
+    let url: string = `${super.getBaseUrl()}/FetchChargeFactorVariables`;
+
+    return this.http.post<ChargeFactorVariable[]>(url, "");
+  }
+
+  //RS Implementing Charge Factor Category ---- This needs to be implemented on the BackEnd of in the Service Folder
+  public fetchChargeFactorCategory(): Observable<ChargeFactorCategory[]> {
+    let url: string = `${super.getBaseUrl()}/FetchChargeFactorCategory`;
+
+    return this.http.post<ChargeFactorCategory[]>(url, "");
+  }
+
   public fetchLocalCharge(): Observable<LocalCharge[]> {
     let url: string = `${super.getBaseUrl()}/FetchLocalCharge`;
 
@@ -284,6 +300,10 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public saveCourtCase(data: Case): Observable<Case> {
+
+
+    //Takes data from the UI, needs to parse to json string and pass it to server
+
     var caseData: any = {
       caseCaption: data.caseCaption || '',
       caseFilingDate: null,
@@ -292,11 +312,20 @@ export class CaseService extends HttpBaseService<Case> {
       casePhase: null,
       caseWeight: "0",
       caseParties: [],
-      caseCharges: []
+      caseCharges: [],
+      prevCaseNumber: null,
+      courtOfAppealNumber:null,
+      caseNotes: null
     };
+
+    if (data.prevCaseNumber)
+      caseData.prevCaseNumber = data.prevCaseNumber.toString();
+    if (data.caseNotes)
+      caseData.caseNotes = data.caseNotes.toString();
+    if (data.courtOfAppealNumber)
+      caseData.courtOfAppealNumber = data.courtOfAppealNumber.toString();
     if (data.caseOID)
       caseData.caseOID = data.caseOID.toString();
-
     if (data.caseFilingDate)
       caseData.caseFilingDate = this.datePipe.transform(data.caseFilingDate, "yyyy-MM-dd");
     if (data.caseType)
@@ -307,6 +336,8 @@ export class CaseService extends HttpBaseService<Case> {
       caseData.casePhase = data.casePhase.casePhaseOID.toString();
     if (data.caseWeight)
       caseData.caseWeight = data.caseWeight.toString();
+
+    //Save Case Parties
     if (data.caseParties.length > 0) {
       data.caseParties.forEach(value => {
         var party = {
@@ -322,18 +353,39 @@ export class CaseService extends HttpBaseService<Case> {
         caseData.caseParties.push(party);
       });
     }
+
+
     if (data.caseCharges.length > 0) {
+
       data.caseCharges.forEach(value => {
+
         var charge: any = {
           iccsCodeOID: value.iccsCode.iccsCodeOID.toString(),
           lea: value.leaChargingDetails,
-          factors: []
+          factors: [],
+          factorCategory: [],
+          factorVariable:[]
         };
+
         if (value.localCharge)
           charge.localChargeOID = value.localCharge.localChargeOID.toString();
-        value.chargeFactors.forEach(factor => {
-          charge.factors.push(factor.chargeFactorOID.toString());
-        });
+
+          /*value.chargeFactors.forEach(factor => {
+          charge.chargeFactors.push(factor.chargeFactorOID.toString());
+          });
+
+          //RS
+          value.chargeFactorCategory.forEach(factorCategory => {
+          charge.chargeFactorCategory.push(factorCategory.chargeFactorCategoryId.toString());
+
+          });
+
+          value.chargeFactorVariables.forEach(factorVariable => {
+          charge.chargeFactorVariables.push(factorVariable.chargeFactorVariableID.toString());
+          });
+          //RS*/
+
+
         caseData.caseCharges.push(charge);
       });
     }

@@ -2,10 +2,10 @@ import { Party } from './Party';
 
 export class Pool {
 
-  id: number;
-  poolOID: number;
-  poolName: string;
-  courtOID: number;
+  //id: number = 0;
+  poolOID: number = 0;
+  poolName: string = '';
+  courtOID: number = 0;
   poolStaffParties: Party[] = [];
 
 }

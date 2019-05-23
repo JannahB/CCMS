@@ -1,7 +1,6 @@
-<loading-bar [visible]="loadingDataFlag" [message]="'loading hearing data...'"></loading-bar>
-
-<div class="ui-g-12">
-
+<div class="ui-g-12 pos-relative">
+  <loading-bar [visible]="loadingDataFlag" [message]="'loading hearing data...'"></loading-bar>
+<!--  -->
   <div class="ui-g-12 pad-0">
     <div class="ui-g-6 pad-0">
       <h2>Hearings</h2>
@@ -30,16 +29,16 @@
       <p-column field="" header="Hearings" >
         <ng-template pTemplate="body" let-item="rowData">
           <h4 class="mb-10 mt-0">{{ item.hearingType?.name }}</h4>
-          <p class=" mv-0" >{{ item.judicialOfficer?.firstName }} {{ item.judicialOfficer?.lastName }}</p>
-          <p class=" mv-0" >{{ item.hearingStartDateTime | date:'MMM d, yyyy h:mm a' }} </p>
+          <p class=" mv-0 smaller" >{{ item.judicialOfficer?.firstName }} {{ item.judicialOfficer?.lastName }}</p>
+          <p class=" mv-0 smaller" >{{ item.hearingStartDateTime | date:'MMM d, yyyy h:mm a' }} </p>
+          <p class=" mv-0 smaller" >{{ item.hearingLocation?.courtroom }}</p>
         </ng-template>
       </p-column>
     </p-dataTable>
   </div>
 
   <!-- Column 2 -->
-  <div class="ui-g-9 ui-sm-12 pt-0">
-
+  <div class="ui-g-9 ui-sm-12 pt-0" [ngClass]="{invisible: !selectedHearing}" >
 
     <!-- BEGIN FORM GROUP ----------------- -->
 
@@ -54,7 +53,7 @@
                 [ngModel]="selectedHearing?.hearingStartDateTime"
                 (ngModelChange)="hearingDateOnChange($event)"
                 [showIcon]="true"
-                dateFormat="mm/dd/yy"
+                dateFormat="dd-M-yy"
                 appendTo="body"></p-calendar>
             <div class="ui-message ui-messages-error ui-corner-all"
                   *ngIf="hearingDate.errors?.required && hearingDate.touched" >
@@ -62,7 +61,7 @@
             </div>
           </div>
 
-          <div class="ui-g-9 ui-sm-12 ph-0 pt-0">
+          <div class="ui-g-9 ui-sm-12 pad-0">
             <div class="ui-g-6 mb-10">
               <label class="minimal primary block">Hearing Type</label>
               <p-dropdown name="ddHearingType" id="ddHearingType" #ddHearingType="ngModel" placeholder="choose Hearing Type..."
@@ -80,7 +79,6 @@
             </div>
             <div class="ui-g-6 mb-10">
               <label class="minimal primary block">Judicial Officer</label>
-              <!-- [options]="judges | dropdownPipe: ['firstName', 'lastName'] : 'id' : 'choose Judge...'" -->
               <p-dropdown name="ddHearingJudge" id="ddHearingJudge" #ddHearingJudge="ngModel" placeholder="choose Judgicial Officer..."
                   [required]="true"
                   [options]="judges"
@@ -94,7 +92,7 @@
                     Please select a Judicial Officer
               </div>
             </div>
-            <div class="ui-g-6 mb-10">
+            <div class="ui-g-6 mb-10 pt-0">
               <label class="minimal primary block">Hearing Location</label>
               <p-dropdown name="ddHearingLocation" id="ddHearingLocation" #ddHearingLocation="ngModel" placeholder="choose Hearing Location..."
                   [required]="true"
@@ -110,7 +108,7 @@
               </div>
             </div>
 
-            <div class="ui-g-6 mb-10">
+            <div class="ui-g-6 mb-10 pt-0">
                 <label class="minimal primary block">Description</label>
                 <textarea name="tiHearingDescription"
                           [ngModel]="selectedHearing?.description"
@@ -123,11 +121,12 @@
             </div>
 
 
-            <div class="ui-g-12">
-              <div class="" *ngIf="selectedHearing">
+            <!-- *ngIf="selectedHearing" -->
+            <div class="ui-g-12 pad-0">
+              <div class="" >
                 <!-- CALENDAR -->
                 <p class="mv-0 muted-label">Click and drag to mark hours. </p>
-                <daypilot-scheduler [config]="config" [events]="selectedHearing.days" #scheduler></daypilot-scheduler>
+                <daypilot-calendar [config]="config" [events]="selectedHearing?.days" #scheduler [ngClass]="{invisible: !selectedHearing}"></daypilot-calendar>
                 <div class="legend mt-10">
                   <div class="item">
                     <div class="box bg-available" ></div>
@@ -141,14 +140,22 @@
                     <div class="box bg-res" ></div>
                     <span class="txt">Judge Unavailable</span>
                   </div>
+                  <div class="item">
+                    <div class="box bg-hol" ></div>
+                    <span class="txt">Holiday</span>
+                  </div>
                 </div>
               </div>
               <div class="ta-r">
 
                 <div class="ui-g-12 mt-10">
-                  <button label="Save Hearing" class="mr-20" type="submit" pButton icon="fa-check" [disabled]="!hearingForm.form.valid"></button>
+                  <button label="Delete Hearing" class="fl ui-button-secondary" type="button" pButton icon="ui-icon-delete"
+                          [disabled]="!selectedHearing?.id"
+                          (click)="deleteDataItemRequest()"></button>
+                  <button label="Save Hearing" class="mr-20" type="submit" pButton icon="fa-check"
+                          [disabled]="!hearingForm.form.valid"></button>
                   <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
-                          (click)="onCancelEditHearing(hearingForm)" ></button>
+                          (click)="onCancelEditHearing(hearingForm)"></button>
                 </div>
               </div>
             </div>
@@ -160,32 +167,9 @@
     <!-- // END FORM GROUP ------------------ -->
 
 
-    <!-- <div class="ui-g-12 pt-20">
-      <h2>{{selectedResource.name}}</h2>
-    </div> -->
-
+    <!-- For Debug -->
     <!-- <div class="ui-g-12">
-      <div class="ui-g-3">
-        <label class="minimal primary block">Work Week</label>
-        <p-calendar id="dtWorkWeek" name="dtWorkWeek" #dtWorkWeek
-              styleClass="larger"
-              [required]="false"
-              [disabled]="false"
-              [(ngModel)]="selectedWorkWeek"
-              (onSelect)="onSelectWorkWeek($event)"
-              dateFormat="mm/dd/yy"
-              placeholder="Work Week"
-              [showIcon]="true"
-              yearRange="2018:2038"
-              [yearNavigator]="false"
-              appendTo="body" ></p-calendar>
-              <!-- (onSelect)="generalDetailsOnBlur($event)"
-      </div>
-    </div> -->
-
-
-    <!-- <div class="ui-g-12">
-        <pre>{{selectedResource | json}}</pre>
+        <pre>{{selectedHearing | json}}</pre>
     </div> -->
   </div>
 

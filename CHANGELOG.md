@@ -2,6 +2,109 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.8"></a>
+## [1.9.8](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.7...v1.9.8) (2018-10-25)
+
+
+### Features
+
+* **AC-348:** adding new EP service call for judicial officer params ([51feaea](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/51feaea))
+* **Hearings:** AC-347 hide form fields when no selected or new hearing ([2735787](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/2735787))
+* **Hearings:** prevent adding time block when invalid properties AC-346 ([1349521](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/1349521))
+* **Hearings:** prevent more than one new hearing at a time ([76ee1a9](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/76ee1a9))
+
+
+
+<a name="1.9.7"></a>
+## [1.9.7](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.6...v1.9.7) (2018-10-17)
+
+
+
+<a name="1.9.6"></a>
+## [1.9.6](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.5...v1.9.6) (2018-10-17)
+
+
+### Features
+
+* **data-tables:** added court table editor ([c46972b](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/c46972b))
+* **data-tables:** added staff role editor ([a546d7c](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/a546d7c))
+* **data-tables:** added staff role permissions editor ([abdcf6c](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/abdcf6c))
+* **material-ui:** import material checkbox ([51c0205](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/51c0205))
+
+
+
+<a name="1.9.5"></a>
+## [1.9.5](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.4...v1.9.5) (2018-10-16)
+
+
+### Features
+
+* **Calendar:** add loading bar to resources and locations ([a2ac84f](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/a2ac84f))
+
+
+
+<a name="1.9.4"></a>
+## [1.9.4](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.3...v1.9.4) (2018-10-15)
+
+
+### Bug Fixes
+
+* **scheduling:** fix for save hearing failing validation ([e1c82d8](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/e1c82d8))
+* **scheduling:** one more fix for save hearing ([e42e9f0](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/e42e9f0))
+
+
+
+<a name="1.9.3"></a>
+## [1.9.3](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.2...v1.9.3) (2018-10-09)
+
+
+### Bug Fixes
+
+* **Hearings:** fix hearing time blocks ([b784170](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/b784170))
+
+
+### Features
+
+* **Hearings:** 0 id == post ([867f13e](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/867f13e))
+* **Hearings:** new time block  properties ([f39e0a9](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/f39e0a9))
+
+
+
+<a name="1.9.2"></a>
+## [1.9.2](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.1...v1.9.2) (2018-10-07)
+
+
+### Bug Fixes
+
+* **Judicial Assignment:** add name prop and use new EP ([4cb3553](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/4cb3553))
+
+
+### Features
+
+* **app:** add childrens logo ([7f62430](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/7f62430))
+* **Hearing:** display other hearings time blocks ([5d4a9db](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/5d4a9db))
+* **Hearings:** add hearing location to list items ([292cbe5](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/292cbe5))
+* **Hearings:** show all case hearings in cal, use calendar format ([6619b04](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/6619b04))
+* **Hearings:** show holiday blocks in hearings schedule ([e355ca5](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/e355ca5))
+
+
+
+<a name="1.9.1"></a>
+## [1.9.1](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.9.0...v1.9.1) (2018-09-21)
+
+
+### Bug Fixes
+
+* **Calendar:** remove max-height on p-datatable ([74b3650](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/74b3650))
+* **Hearing:** new heaings showing 2x in list AC-338, AC-339 ([bc988dd](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/bc988dd))
+
+
+### Features
+
+* **Hearing:** delete hearing support ([ee3b7c9](https://bitbucket.org/natcenterstatecourts/acts-fe/commits/ee3b7c9))
+
+
+
 <a name="1.9.0"></a>
 # [1.9.0](https://bitbucket.org/natcenterstatecourts/acts-fe/compare/v1.5.2...v1.9.0) (2018-09-18)
 

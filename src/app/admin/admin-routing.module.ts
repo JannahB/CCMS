@@ -3,7 +3,7 @@ import { CalFacilitiesComponent } from './calendar/cal-facilities/cal-facilities
 import { CalResourcesComponent } from './calendar/cal-resources/cal-resources.component';
 import { CalTemplatesComponent } from './calendar/cal-templates/cal-templates.component';
 import { HolidaysComponent } from './calendar/holidays/holidays.component';
-import { IccsCodesComponent } from './data/iccs-codes/iccs-codes.component';
+import { ICCSCodesComponent } from './data/iccs-codes/iccs-codes.component';
 import { CaseStatusesComponent } from './data/case-statuses/case-statuses.component';
 import { CasePhasesComponent } from './data/case-phases/case-phases.component';
 import { CaseTypesComponent } from './data/case-types/case-types.component';
@@ -20,8 +20,15 @@ import { CourtLocationsComponent } from './data/court-locations/court-locations.
 import { CasePartyRolesComponent } from './data/case-party-roles/case-party-roles.component';
 import { EventTypesComponent } from './data/event-types/event-types.component';
 import { HearingTypeComponent } from './data/hearing-type/hearing-type.component';
+import { StaffRoleComponent } from './data/staff-role/staff-role.component';
+import { CourtComponent } from './data/court/court.component';
 import { CanActivateIsCourtMgrGuard } from '../common/guards/can-activate-is-court-mgr.guard';
 import { AssignmentManagerComponent } from './assignment-manager/assignment-manager.component';
+import { RolePermissions } from './data/role-permissions/role-permissions.component';
+import { StaffPoolComponent } from './data/staff-pool/staff-pool.component';
+import { TaskTypesComponent } from './data/task-types/task-types.component';
+import { PersonIdTypesComponent } from './data/person-id-types/person-id-types.component';
+// import { IccsCodesLocalChargesComponent } from './data/iccs-codes-local-charges/iccs-codes-local-charges.component';
 
 const routes: Routes = [
   {
@@ -42,7 +49,27 @@ const routes: Routes = [
           { path: 'casepartyroles', component: CasePartyRolesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
           { path: 'eventtypes', component: EventTypesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
           { path: 'hearingtypes', component: HearingTypeComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
-          { path: 'iccscodes', component: IccsCodesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+          { path: 'staffroles', component: StaffRoleComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+          { path: 'courts', component: CourtComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+          { path: 'rolepermissions', component: RolePermissions, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+          {
+            path: 'iccscodes', component: ICCSCodesComponent,
+            canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard]
+          },
+          // { path: 'iccscodeslocalcharges', component: IccsCodesLocalChargesComponent,
+          //         canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard] },
+          {
+            path: 'staffpools', component: StaffPoolComponent,
+            canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard]
+          },
+          {
+            path: 'tasktypes', component: TaskTypesComponent,
+            canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard]
+          },
+          {
+            path: 'personalidtypes', component: PersonIdTypesComponent,
+            canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtUserGuard]
+          }
         ]
       },
 
@@ -54,14 +81,24 @@ const routes: Routes = [
         children: [
           { path: '', pathMatch: 'full', redirectTo: 'holidays' },
           { path: 'holidays', component: HolidaysComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard] },
-          { path: 'templates', component: CalTemplatesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard] },
-          { path: 'resources', component: CalResourcesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard] },
-          { path: 'facilities', component: CalFacilitiesComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard] }
+          {
+            path: 'templates', component: CalTemplatesComponent,
+            canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]
+          },
+          {
+            path: 'resources', component: CalResourcesComponent,
+            canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]
+          },
+          {
+            path: 'facilities', component: CalFacilitiesComponent,
+            canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]
+          }
 
         ]
       },
       {
-        path: 'assignment-mgr', component: AssignmentManagerComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]
+        path: 'assignment-mgr', component: AssignmentManagerComponent,
+        canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]
       },
       {
         path: 'pdf-viewer', component: PdfViewerComponent, canActivate: [CanActivateAuthenticationGuard, CanActivateIsCourtMgrGuard]

@@ -22,7 +22,7 @@ import { environment } from '../../../../environments/environment';
     `
   ]
 })
-export class CaseTypesComponent implements OnInit {
+export class CaseTypesComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   typeItems: CaseType[];
@@ -31,9 +31,9 @@ export class CaseTypesComponent implements OnInit {
   allowDeleteLookupItems: boolean;
   selectedItemIdx: number;
   selectedItemBak: CaseType;
-  showDeleteItemModal: boolean = false;
+  showDeleteItemModal = false;
 
-  tableLabel: string = "Case Type"
+  tableLabel = 'Case Type';
   refDataSubscription: Subscription;
 
   constructor(
@@ -69,7 +69,9 @@ export class CaseTypesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.refDataSubscription) this.refDataSubscription.unsubscribe();
+    if (this.refDataSubscription) {
+      this.refDataSubscription.unsubscribe();
+    }
   }
 
 
@@ -80,11 +82,12 @@ export class CaseTypesComponent implements OnInit {
       this.copySelectedItem();
       // If items in list, default to first item
       setTimeout(() => {
-        if (this.itemsList.options.first)
-          this.itemsList.options.first.selected = true;
+        if (this.itemsList.options.first) {
+            this.itemsList.options.first.selected = true;
+          }
       }, 100);
 
-    })
+    });
   }
 
   onSelectionChange(event) {
@@ -102,7 +105,7 @@ export class CaseTypesComponent implements OnInit {
     this.adminSvc.saveCaseType(this.selectedItem).subscribe(result => {
       console.log('result', result);
 
-      let index: number = this.getIndexOfItem(result);
+      const index: number = this.getIndexOfItem(result);
 
       if (index >= 0) {
         this.typeItems[index] = result;
@@ -117,7 +120,7 @@ export class CaseTypesComponent implements OnInit {
       },
       () => {
         // final
-      })
+      });
 
   }
 
@@ -151,7 +154,7 @@ export class CaseTypesComponent implements OnInit {
       },
       () => {
         // final
-      })
+      });
   }
 
   hideModals() {
@@ -160,7 +163,7 @@ export class CaseTypesComponent implements OnInit {
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.typeItems
-      .findIndex(itm => itm.caseTypeOID == item.caseTypeOID);
+      .findIndex(itm => itm.caseTypeOID === item.caseTypeOID);
   }
 
 }

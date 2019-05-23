@@ -1,7 +1,7 @@
 import { TaskCount } from './common/entities/internal/TaskCount';
 import { UserService } from './common/services/utility/user.service';
-import {Component, OnInit} from '@angular/core';
-import {AppComponent} from './app.component';
+import { Component, OnInit } from '@angular/core';
+import { AppComponent } from './app.component';
 import { AuthorizationInterceptor } from './common/interceptors/authorization.interceptor';
 import { AuthenticationService } from './common/services/http/authentication.service';
 import { Party } from './common/entities/Party';
@@ -116,14 +116,16 @@ import { GlobalState } from './common/services/state/global.state';
                                 <a href="#" class="topbar-message">
                                     <p class="mb-0">Important Message </p>
                                     <p class="muted-label mt-0">Dec 31, 2017</p>
-                                    <span class="muted-label">A message for all to see here. Very importantant announcement about an upcoming case. Read about the change here... </span>
+                                    <span class="muted-label">A message for all to see here.
+                                    Very importantant announcement about an upcoming case. Read about the change here... </span>
                                 </a>
                             </li>
                             <li role="menuitem">
                                 <a href="#" class="topbar-message">
                                     <p class="mb-0">Happy New Year </p>
                                     <p class="muted-label mt-0">Jan 1, 2017</p>
-                                    <span class="muted-label">Happy new year to all our employees. Very importantant announcement about an upcoming case. Read about the change here... </span>
+                                    <span class="muted-label">Happy new year to all our employees.
+                                    Very importantant announcement about an upcoming case. Read about the change here... </span>
                                 </a>
                             </li>
                             <li role="menuitem">
@@ -137,7 +139,8 @@ import { GlobalState } from './common/services/state/global.state';
                                 <a href="#" class="topbar-message">
                                     <p class="mb-0">Message </p>
                                     <p class="muted-label mt-0">Jan 3, 2017</p>
-                                    <span class="muted-label">A message for all to see here. Very importantant announcement about an upcoming case. Read about the change here... </span>
+                                    <span class="muted-label">A message for all to see here.
+                                    Very importantant announcement about an upcoming case. Read about the change here... </span>
                                 </a>
                             </li>
 
@@ -166,40 +169,40 @@ import { GlobalState } from './common/services/state/global.state';
         </div>
     `
 })
-export class AppTopbarComponent {
+export class AppTopbarComponent implements OnInit {
 
-  loggedInUser: Party;
-  userTaskCount: number;
+    loggedInUser: Party;
+    userTaskCount: number;
 
     constructor(
-      public app: AppComponent,
-      public _state:GlobalState,
-      public authSvc: AuthenticationService,
-      public userSvc: UserService
+        public app: AppComponent,
+        public _state: GlobalState,
+        public authSvc: AuthenticationService,
+        public userSvc: UserService
     ) { }
 
     ngOnInit() {
 
-      this._state.subscribe('app.loggedIn', (user) => {
-        this.loggedInUser = user;
-      });
+        this._state.subscribe('app.loggedIn', (user) => {
+            this.loggedInUser = user;
+        });
 
-      this._state.subscribe('userTasks.count', (counts:TaskCount) => {
-        this.userTaskCount = counts.totalTaskCount;
-      })
+        this._state.subscribe('userTasks.count', (counts: TaskCount) => {
+            this.userTaskCount = counts.totalTaskCount;
+        });
 
-      this.loggedInUser = this.userSvc.loggedInUser;
+        this.loggedInUser = this.userSvc.loggedInUser;
 
     }
 
-    sendThemeChange(theme:string) {
-        this._state.notifyDataChanged('theme.change', theme, true );
+    sendThemeChange(theme: string) {
+        this._state.notifyDataChanged('theme.change', theme, true);
     }
 
-    public logout():void {
-      this.userSvc.loggedInUser = null;
-      AuthorizationInterceptor.authToken = null;
-      this._state.notifyDataChanged('app.loggedOut', null, true );
+    public logout(): void {
+        this.userSvc.loggedInUser = null;
+        AuthorizationInterceptor.authToken = null;
+        this._state.notifyDataChanged('app.loggedOut', null, true);
     }
 
 }

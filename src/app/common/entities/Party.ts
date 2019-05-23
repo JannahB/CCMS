@@ -28,11 +28,12 @@ export class Party extends LookupEntity {
   interpreterRequiredIndicator: boolean = false;
   spokenLanguages: Language[] = [];
   alternativeName: string = "";
+  //alternativeName2: string = "";
+  //alternativeName3: string = "";
   authorizedCourts: AuthorizedCourt[] = [];
   queryName: string = "";
-
   age: number = 0;
-
   isOrganization: boolean = false;
   fullName: string = "";
+
 }

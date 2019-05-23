@@ -411,6 +411,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.showDeleteAddressModal = true;
     this.addressToDelete = address;
   }
+
   deleteAddress() {
     this.showDeleteAddressModal = false;
 

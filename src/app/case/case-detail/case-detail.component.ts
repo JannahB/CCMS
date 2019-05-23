@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { SelectItem } from 'primeng/primeng';
-
 import { ObjectUtils } from '../../common/utils/object-utils';
 import { Pool } from '../../common/entities/Pool';
 import { EventType } from '../../common/entities/EventType';
@@ -22,6 +21,8 @@ import { Party } from '../../common/entities/Party';
 import { TaskType } from '../../common/entities/TaskType';
 import { IccsCode } from '../../common/entities/IccsCode';
 import { ChargeFactor } from '../../common/entities/ChargeFactor';
+import { ChargeFactorVariable } from '../../common/entities/ChargeFactorVariable'; //RS
+import { ChargeFactorCategory } from '../../common/entities/ChargeFactorCategory'; //RS
 import { ToastService } from '../../common/services/utility/toast.service';
 import { CollectionUtil } from '../../common/utils/collection-util';
 import { PartyService } from '../../common/services/http/party.service';
@@ -40,7 +41,7 @@ import { UserService } from '../../common/services/utility/user.service';
 import { Permission } from '../../common/entities/Permission';
 import { LocalCharge } from '../../common/entities/LocalCharge';
 import { IccsCodeCategory } from '../../common/entities/IccsCodeCategory';
-
+import { componentRefresh } from '@angular/core/src/render3/instructions';
 
 @Component({
   selector: 'app-case-detail',
@@ -72,9 +73,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   casePhases: CasePhase[] = [];
   baseURL: string;
   selectedChargeLawTypeId: any;
-
   datePipe: DatePipe = new DatePipe("en");
-
+  actualCompletionDate: Date = null; //Used to capture the actual cask task completion date from the DB.
+  selChargeFactor: string = ""; 
   public Permission: any = Permission;
 
   constructor(
@@ -184,6 +185,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
             cp.caseParty.age = this.calculateAge(cp.caseParty.dob);
           })
         }
+        
+        for (let i = 0; i < this.case.caseTasks.length; i++){
+
+          this.case.caseTasks[i].taskPriorityDesc = this.priorityCodeDesc(this.case.caseTasks[i].taskPriorityCode);        
+        }
+           
 
         this.eventTypeFilter = null;
         this.filterCaseEvents();
@@ -224,6 +231,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if (!this.case.caseType)
       this.toastSvc.showWarnMessage('Please choose Case Type first')
   }
+
+  priorityCodeDesc(taskPriorityCode): string {
+
+    if(taskPriorityCode == 0)
+    return "N/A";
+
+    else if(taskPriorityCode == 1)
+    return "Urgent";
+
+    else if(taskPriorityCode == 2)
+    return "High";
+
+    else return "Normal";
+}
 
 
   // MODALS --------------------------------------------
@@ -507,10 +528,21 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   chargeLawTypes: any[];
   selectedChargeLawType: any;
   leaLeadChargeText: string;
+
   chargeFactorTypes: ChargeFactor[];        // FetchChargeFactor GET
-  selectedChargeFactors: ChargeFactor[];
+  selectedChargeFactors: ChargeFactor[]; 
   filteredChargeFactorTypes: ChargeFactor[];
   lastSelectedTypeLocalCharges: any[] = [];
+
+  //RS Implementing Charge Factor Variables
+  chargeFactorVariables: ChargeFactorVariable[];
+  selectedChargeFactorVariables: ChargeFactorVariable[];
+  filteredChargeFactorVariables: ChargeFactorVariable[];
+
+  chargeFactorCategory: ChargeFactorCategory[]; //Holds values returned from the server
+  selectedChargeFactorCategory: ChargeFactorCategory[]; //Holds values selected from the UI
+  filteredChargeFactorCategory: ChargeFactorCategory[]; //Holds filtered values based on a selection
+
 
   onAddCaseCharge(caseChargeForm) {
     if (!this.case.caseOID || this.case.caseOID == 0) {
@@ -534,6 +566,23 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.chargeFactorTypes = chargeFactors;
         this.filteredChargeFactorTypes = chargeFactors;
       });
+
+
+    //RS Implementing Charge Factor Variables in UI
+    this.caseSvc
+      .fetchChargeFactorVariables()
+      .subscribe(chargeFactorVariables => {
+        this.chargeFactorVariables = chargeFactorVariables;
+        this.filteredChargeFactorVariables = chargeFactorVariables;
+      });
+
+      //RS Implementing Charge Factor Category in UI
+      this.caseSvc
+      .fetchChargeFactorCategory()
+      .subscribe(chargeFactorCategory => {
+        this.chargeFactorCategory = chargeFactorCategory;
+        this.filteredChargeFactorCategory = chargeFactorCategory;
+      });  
   }
 
   resetIccsCodes() {
@@ -650,28 +699,79 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  getChargeFactorsToFilter(event) {
+
+  getChargeFactorCategoryToFilter(event) {
     let query = event.query;
-    this.filteredChargeFactorTypes = this.filterChargeFactors(query, this.chargeFactorTypes);
+    this.filteredChargeFactorCategory = this.filterChargeFactorCategory(query, this.filteredChargeFactorCategory);
   }
 
-  filterChargeFactors(query, chargeFactorTypes: any[]): any[] {
+  filterChargeFactorCategory(query, chargeFactorCategory: any[]): any[] {
     let filtered: any[] = [];
-    for (let i = 0; i < chargeFactorTypes.length; i++) {
-      let cf = chargeFactorTypes[i];
-      if (cf.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-        filtered.push(cf);
+
+    for (let i = 0; i < chargeFactorCategory.length; i++) {
+     
+        filtered.push(chargeFactorCategory[i]);
+      
+    }
+    return filtered;
+  }
+
+
+  getChargeFactorsToFilter(event,selCFC: ChargeFactorCategory) {
+    let query = event.query;
+    this.filteredChargeFactorTypes = this.filterChargeFactors(query,selCFC,this.chargeFactorTypes);
+  }
+
+
+  filterChargeFactors(query,selcfc: ChargeFactorCategory, cfactors: ChargeFactor[]): any[] {
+    
+
+    let filtered: any[] = [];
+    let catID: number = selcfc.chargeFactorCategoryId;
+    let catCID: number = selcfc.courtOID;
+    
+    for (let i = 0; i < cfactors.length; i++) {
+       
+        if (catID === cfactors[i].disaggregationID.valueOf()) {
+              
+          filtered.push(cfactors[i]);    
+        }    
+    }
+
+    return filtered;
+  }//filtereChargeFactors
+
+  //RS Implementing Charge Factor Variables, the results returned are based on the user's selection of a charge factor
+  getChargeFactorsVariablesToFilter(event, selCF: ChargeFactor) {
+    let query = event.query;
+    this.filteredChargeFactorVariables = this.filterChargeFactorVariables(query,selCF,this.chargeFactorVariables);
+  }
+
+  filterChargeFactorVariables(query, selcf: ChargeFactor, cfVariables: ChargeFactorVariable[]): any[] {
+
+    let i:number = 0;
+    let filtered: any[] = [];
+    
+    for (i = 0; i < cfVariables.length; i++) {
+       
+        if (selcf.name === cfVariables[i].chargeFactorName) {
+              
+          filtered.push(cfVariables[i]);    
       }
     }
     return filtered;
   }
+
+  //RS Implementing Charge Factor Variables*/
+
 
   saveCaseCharge() {
     let charge: CaseCharge;
 
     if (this.selectedCharge) {
       charge = this.selectedCharge;
-    } else {
+    } 
+    else {
       charge = new CaseCharge();
     }
 
@@ -685,8 +785,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     charge.caseOID = this.case.caseOID;
     charge.courtOID = this.case.court.courtOID;
-    charge.chargeFactors = this.selectedChargeFactors;
     charge.iccsCode = iccsCode;
+
+    charge.chargeFactorCategory = this.selectedChargeFactorCategory;
+    charge.chargeFactors = this.selectedChargeFactors;
+    charge.chargeFactorVariables = this.selectedChargeFactorVariables;
+    
 
     if (iccsCode) {
       charge.iccsChargeCategoryOID = iccsCode.iccsCodeOID;
@@ -743,6 +847,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.saveCase(false);
   }
 
+  addChargeFactorDetails() {
+    /*let authCourtsLen = this.user.authorizedCourts.push(new AuthorizedCourt());
+    this.user.authorizedCourts[authCourtsLen - 1].roles.push(new Role());
+    this.selectedAuthCourt = this.user.authorizedCourts[authCourtsLen - 1];*/
+    // console.log('this.user.authorizedCourts', this.user.authorizedCourts);
+  }
+
 
 
   // ------------------------------------------------
@@ -750,29 +861,39 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   // -----------------------------------------------=
 
   selectedCaseTask: CaseTask;
+  
   showModalAddCaseTask: boolean = false;
   task: any = {};
   taskTypes: TaskType[];
-  priorityTypes: SelectItem[] = [
+
+
+  public caseTaskPriorityTypes: SelectItem[] = [
     { value: 0, label: 'N/A' },
     { value: 1, label: 'Urgent' },
     { value: 2, label: 'High' },
     { value: 3, label: 'Normal' }
   ];
+  
   taskParties: Party[];
   staffPools: Pool[];
   loadingCaseTaskLookups: boolean = false;
 
+  getPriorityValue(val): any {
+    return this.caseTaskPriorityTypes[val].label;
+}
+
   createCaseTask(taskTypeId?) {
     this.selectedCaseTask = new CaseTask();
     this.onShowCaseTaskModal(taskTypeId);
+    
   }
 
   taskOnRowSelect(event) {
     if (!this.hasPermission(this.Permission.UPDATE_TASK)) return false;
     this.selectedCaseTask = event.data;
+    if (this.selectedCaseTask.doneDate != null) this.selectedCaseTask.taskCompleted = true;
     this.onShowCaseTaskModal();
-    console.log('taskOnRowSelect selected case task', this.selectedCaseTask)
+
   }
 
   onShowCaseTaskModal(taskTypeId?) {
@@ -781,6 +902,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.initCaseTaskModal(taskTypeId);
       return;
     }
+    
     this.loadingCaseTaskLookups = true;
     var source = Observable.forkJoin<any>(
       this.partySvc.fetchAny({ courtUser: "true" }),
@@ -805,7 +927,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       });
   }
 
+  //This populates all the existing fields for Add Case Task Module
   initCaseTaskModal(taskTypeId?) {
+
     this.loadingCaseTaskLookups = false;
     if (taskTypeId) {
       this.selectedCaseTask.taskType = this.taskTypes.find((task) => task.taskTypeOID == taskTypeId);
@@ -819,12 +943,45 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.selectedCaseTask.assignedPool = this.staffPools.find(s => s.poolOID == this.selectedCaseTask.assignedPool.poolOID);
     }
 
+    //This stores the actual completion date from the DB.
+    //Used in the event a user cancels their entry of a completion date.
+    this.actualCompletionDate = this.selectedCaseTask.doneDate;
+
+    for (let i = 0; i < this.case.caseTasks.length; i++){
+     
+      this.case.caseTasks[i].taskPriorityDesc = this.priorityCodeDesc(this.case.caseTasks[i].taskPriorityCode);
+          
+    }
+
   }
 
+
+
   onCancelCaseTask(form) {
+
+    //This would not overwrite the actual cast task:completion date with incorrect display data
+    if(this.actualCompletionDate == null) this.selectedCaseTask.doneDate = null;
     this.hideModals();
     // form.reset();  // this is deleting the selectedItem from the grid!!??~
     this.selectedCaseTask = null;
+
+  }
+
+  taskdocumentSelected(event){
+    this.selectedCaseTask.documentTemplateOID = event.value.documentTemplateOID;
+   
+  }
+
+  //This records if 
+  taskCompletedOnChange(event){
+
+    this.selectedCaseTask.taskCompleted = event;
+    
+  }
+
+  documentSelected(event: any): void {
+    
+    this.selectedCaseTask.docTemplate = event;
   }
 
   saveCaseTask() {
@@ -834,7 +991,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let task = new CaseTaskDTO();
+    //This converts all parameters to string form to be sent to the server
+    let task = new CaseTaskDTO(); 
     if (this.selectedCaseTask.taskOID) task.taskOID = this.selectedCaseTask.taskOID.toString();
     task.caseOID = this.case.caseOID.toString();
     task.taskDetails = this.selectedCaseTask.details;
@@ -842,10 +1000,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     task.taskParty = this.selectedCaseTask.assignedParty ? this.selectedCaseTask.assignedParty.partyOID.toString() : null;
     task.taskStaffPool = this.selectedCaseTask.assignedPool ? this.selectedCaseTask.assignedPool.poolOID.toString() : null;
     task.taskType = this.selectedCaseTask.taskType.taskTypeOID.toString();
-    task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.dueDate, "yyyy-MM-dd"); // taskDueDate:"2018-01-31"
-    if (this.selectedCaseTask.doneDate)
-      task.doneDate = this.datePipe.transform(this.selectedCaseTask.doneDate, "yyyy-MM-dd"); // taskDueDate:"2018-01-31"
+    task.taskDocumentTemplateOID = this.selectedCaseTask.documentTemplateOID.toString();    
+    task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.dueDate, "yyyy-MM-dd HH:mm"); // taskDueDate:"2018-01-31"
 
+    if (this.selectedCaseTask.taskCompleted) task.taskCompleted = 'true';
+    else task.taskCompleted = 'false';
 
     this.caseSvc.saveCaseTask(task).subscribe(result => {
       let savedTask = result[0];
@@ -856,7 +1015,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       if (this.selectedCaseTask.assignedPool)
         Object.assign(this.selectedCaseTask.assignedPool, savedTask.assignedPool);
 
-      this.selectedCaseTask.taskOID = savedTask.taskOID;
+      
+      if (this.selectedCaseTask.assignedDate)
+        Object.assign(this.selectedCaseTask.assignedDate, savedTask.assignedDate);   
 
       let task = this.selectedCaseTask;
 
@@ -864,11 +1025,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       let idx = this.case.caseTasks.findIndex(item => item.taskOID == task.taskOID);
 
       if (idx > -1) this.case.caseTasks[idx] = task;
+     
       else {
         this.case.caseTasks.push(task);
         this.case.caseTasks = this.case.caseTasks.slice();
+        
       }
-
+     
       // Refresh the grid --------
       // this.case.caseTasks = this.case.caseTasks.slice();
 
@@ -877,13 +1040,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.selectedCaseTask = null;
     });
   }
-
+ 
   taskTypeOnChange(event) {
     this.selectedCaseTask.taskType = event.value;
   }
 
   priorityTypeOnChange(event) {
     this.selectedCaseTask.taskPriorityCode = event.value;
+    
   }
 
   assignedPersonTypeOnChange(event) {
@@ -896,10 +1060,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   dueDateOnChange(event) {
     this.selectedCaseTask.dueDate = event;
-  }
-
-  doneDateOnChange(event) {
-    this.selectedCaseTask.doneDate = event;
   }
 
   taskDetailsOnChange(event) {
@@ -1112,8 +1272,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   ddOnChange(event): void {
-    //This event handler is called multiple places but did not exist.
-    //Created as a placeholder.
+    
+    
   }
 
 }

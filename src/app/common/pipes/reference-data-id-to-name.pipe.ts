@@ -1,17 +1,17 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name:'idToName' })
-export class ReferenceDataIdToNamePipe implements PipeTransform{
+@Pipe({ name: 'idToName' })
+export class ReferenceDataIdToNamePipe implements PipeTransform {
 
-    transform(id:string | number, referenceDataCollection:any[], idPropertyName:string = "id", labelPropertyName:string = "name"){
-        if(!referenceDataCollection){
-            return "";
+    transform(id: string | number, referenceDataCollection: any[], idPropertyName: string = 'id', labelPropertyName: string = 'name') {
+        if (!referenceDataCollection) {
+            return '';
         }
 
-        let referenceItem:any = referenceDataCollection.find(data => data[idPropertyName] == id);
+        const referenceItem: any = referenceDataCollection.find(data => data[idPropertyName] === id);
 
-        if(!referenceItem){
-            return "";
+        if (!referenceItem) {
+            return '';
         }
 
         return referenceItem[labelPropertyName];

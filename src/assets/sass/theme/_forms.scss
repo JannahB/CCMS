@@ -18,6 +18,7 @@ body {
 
         &:disabled {
             border-bottom: 1px dotted;
+            color: black;
         }
 
         &.ui-widget-content {
@@ -1289,6 +1290,7 @@ body {
                 }
 
                 input:disabled {
+                    color: black;
                     width: 0;
                 }
             }

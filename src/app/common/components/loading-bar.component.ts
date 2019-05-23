@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-    selector: 'loading-bar',
-    template: `
+  selector: 'loading-bar',
+  template: `
       <div class="outer-bg" *ngIf="visible">
+        <div class="blur-bg"></div>
         <div class="container">
           <div class="load-bar">
             <div class="bar"></div>
@@ -15,15 +16,24 @@ import { Component, Input } from '@angular/core';
         <p-progressSpinner class="spinner" strokeWidth="4" [style]="{width: '40px', height: '40px'}"></p-progressSpinner>
       </div>
     `,
-    styles: [
-      `
+  styles: [
+    `
       .msg{
         color: #085981;
         font-size: 0.9em;
         margin-top: 10px;
       }
+      .blur-bg {
+        background-color: rgba(122, 122, 122, 0.5);
+        width: 106%;
+        min-height: 106%;
+        position: absolute;
+        top: -3%;
+        left: -3%;
+        filter: blur(8px);
+      }
       .outer-bg {
-        background-color: rgba(125, 174, 212, 0.35);
+        /* background-color: rgba(125, 174, 212, 0.35);*/
         width: 100%;
         min-height: 100%;
         position: absolute;
@@ -37,20 +47,21 @@ import { Component, Input } from '@angular/core';
         left: 49%;
       }
       .container {
-        width: 100%;
+        width: 95%;
         margin: 0 auto;
         text-align: center;
         padding-top: 0px;
         padding-bottom: 10px;
-        background-color: rgba(255,255,255, 0.75);
+        background-color: rgba(255,255,255, 0.9);
         top: 2px;
         position: relative;
+        border-radius: 7px;
       }
       .load-bar {
         position: relative;
         margin-top: 100px;
         width: 100%;
-        height: 3px;
+        height: 5px;
         background-color: #ffffff;
       }
       .bar {
@@ -90,9 +101,9 @@ import { Component, Input } from '@angular/core';
       }
 
       `
-    ]
+  ]
 })
 export class LoadingBarComponent {
-    @Input() visible = true;
-    @Input() message = 'loading...';
+  @Input() visible = true;
+  @Input() message = 'loading...';
 }

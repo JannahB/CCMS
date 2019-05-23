@@ -231,6 +231,7 @@
                 <mat-select placeholder="Staff Roles" name="ddStaffRoles" multiple
                     [compareWith]="compareByRoleId"
                     [value]="authCourt.roles"
+                    (filter) = "true"
                     (selectionChange)="staffRolesOnChange($event, acIdx)" >
                   <mat-option *ngFor="let sRole of staffRoles" [value]="sRole">
                     {{sRole.staffRoleName}}

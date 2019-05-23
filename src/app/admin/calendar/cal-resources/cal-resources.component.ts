@@ -19,6 +19,7 @@ export class CalResourcesComponent implements OnInit {
   @ViewChild("scheduler")
   scheduler: DayPilotSchedulerComponent;
 
+  loadingDataFlag: boolean = false;
   resources: CalResource[] = [];
   selectedResource: CalResource;
   selectedResourceBak: CalResource;
@@ -172,6 +173,7 @@ export class CalResourcesComponent implements OnInit {
 
   ngOnInit() {
 
+    this.loadingDataFlag = true;
     this.resources = [];
     this.selectedWorkWeek = CalendarUtils.getMonday();
     this.selectedResource = new CalResource();
@@ -193,12 +195,20 @@ export class CalResourcesComponent implements OnInit {
 
   ngAfterViewInit(): void {
     this.onSelectWorkWeek(this.selectedWorkWeek);
-    this.calResourceSvc.get().subscribe(result => {
+    this.calResourceSvc.getJudicialOfficers().subscribe(result => {
       console.log('resources', result);
       this.resources = result;
 
       this.setFirstListItem();
-    });
+    },
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error loading resources.');
+      },
+      () => {
+        // final
+        this.loadingDataFlag = false;
+      });
 
     this.calTemplateSvc.get().subscribe(result => {
       this.templates = result;
@@ -219,6 +229,7 @@ export class CalResourcesComponent implements OnInit {
 
   saveItem() {
     // console.log('BEFORE Save RESOURCE:', this.selectedResource);
+    this.loadingDataFlag = true;
     this.scheduler.control.clearSelection();
     this.calResourceSvc.save(this.selectedResource)
       .subscribe(result => {
@@ -233,6 +244,7 @@ export class CalResourcesComponent implements OnInit {
         },
         () => {
           // final
+          this.loadingDataFlag = false;
         });
   }
 
@@ -246,6 +258,7 @@ export class CalResourcesComponent implements OnInit {
   }
 
   deleteDataItem() {
+    this.loadingDataFlag = true;
     this.calResourceSvc.delete(this.selectedResource.id)
       .subscribe(result => {
         this.toastSvc.showSuccessMessage('The item has been deleted.');
@@ -259,6 +272,7 @@ export class CalResourcesComponent implements OnInit {
         },
         () => {
           // final
+          this.loadingDataFlag = false;
         })
   }
 

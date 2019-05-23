@@ -88,6 +88,8 @@ export class AdminUsersComponent implements OnInit {
     // console.log('this.user.authorizedCourts', this.user.authorizedCourts);
   }
 
+  
+
   courtOnChange(event, authCourtIdx) {
     
     this.selectedAuthCourt = this.user.authorizedCourts[authCourtIdx];
@@ -142,6 +144,9 @@ export class AdminUsersComponent implements OnInit {
   }
 
   saveUser(addUserForm) {
+
+    
+
     if (this.validateAuthCourts() && this.passwordsSame()) {
       this.loadingMessage = 'Saving User';
       this.loadingUser = true;

@@ -121,6 +121,9 @@ export class PartyService extends HttpBaseService<Party> {
       firstName: '',
       lastName: '',
       alertnativeName: '',
+      isOrganization: '',
+      //alertnativeName2: '',
+      //alertnativeName3: '',
       sex: '',
       dob: '',
       notes: ''
@@ -137,9 +140,12 @@ export class PartyService extends HttpBaseService<Party> {
     party.lastName = data.lastName;
     party.fullName = data.fullName;
     party.alternativeName = data.alternativeName;
+    //party.alternativeName2 = data.alternativeName2;
+    //party.alternativeName3 = data.alternativeName3;
     party.sex = data.sex;
     party.dob = this.datePipe.transform(data.dob, "yyyy-MM-dd");
     party.isOrganization = (data.isOrganization ? "1" : "0");
+
     if (data.identifiers) {
       party.identifiers = [];
       data.identifiers.forEach(identifier => {

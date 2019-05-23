@@ -1,7 +1,7 @@
-import { Pipe, PipeTransform } from "@angular/core";
-import { NamedEntity } from "../interfaces/named-entity";
+import { Pipe, PipeTransform } from '@angular/core';
+import { NamedEntity } from '../interfaces/named-entity';
 
-@Pipe({ name: "nameFilter" })
+@Pipe({ name: 'nameFilter' })
 export class NameFilterPipe implements PipeTransform {
   transform(items: NamedEntity[], filterText: string): NamedEntity[] {
     if (!items) {
