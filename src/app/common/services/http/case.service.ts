@@ -61,13 +61,14 @@ export class CaseService extends HttpBaseService<Case> {
 
 
   public fetchAny(obj: any): Observable<Case[]> {
+    
     let url: string = `${super.getBaseUrl()}/FetchCase`;
 
     return this.http.post<Case[]>(url, obj)
       .map(res => {
         let kases: Case[] = res;
         return this.convertDates(kases);
-      })
+      })     
   }
 
   public fetchOne(id: string): Observable<Case> {
@@ -142,6 +143,7 @@ export class CaseService extends HttpBaseService<Case> {
       })
   }
 
+  //This retrieves all case related information
   private convertDates(kases: Case[]) {
     if (!kases || !kases.length || Object.keys(kases).length === 0 || kases[0] == undefined) {
       return [];
@@ -238,8 +240,8 @@ export class CaseService extends HttpBaseService<Case> {
       if (caseTasks) {
         caseTasks.forEach(ct => {
           ct.assignedDate = DateConverter.convertDate(ct.assignedDate);
-          ct.dueDate = DateConverter.convertDate(ct.dueDate);
-          ct.doneDate = DateConverter.convertDate(ct.doneDate);
+          ct.taskDueDate = DateConverter.convertDate(ct.taskDueDate);
+          ct.taskDoneDate = DateConverter.convertDate(ct.taskDoneDate);
         })
       }
 
@@ -419,10 +421,18 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public fetchDocumentTemplate(): Observable<DocTemplate[]> {
-    let url: string = `${super.getBaseUrl()}/FetchDocumentTemplate`;
 
-    return this.http
+    let url: string = `${super.getBaseUrl()}/FetchDocumentTemplate`;
+      return this.http
       .get<DocTemplate[]>(url);
+  }
+
+  //RS
+  public fetchCaseTasks(): Observable<CaseTask[]> {
+
+    let url: string = `${super.getBaseUrl()}/FetchCaseTasks`;
+      return this.http
+      .get<CaseTask[]>(url);
   }
 
   public saveCaseHearing(data: CaseHearingDTO): Observable<CaseHearingDeprecated> {

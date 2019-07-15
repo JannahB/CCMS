@@ -70,6 +70,7 @@
                     (selectionChange)="staffPoolMemberOnChange($event,acIdx)">
                     
                       <mat-option *ngFor="let sParties of staffParties" 
+                        filter = "true"
                         [value] = "sParties">
                         {{sParties.firstName}} {{sParties.lastName}}
                       </mat-option>

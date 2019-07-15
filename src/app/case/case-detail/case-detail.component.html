@@ -481,6 +481,15 @@
               <h2>Case Tasks</h2>
             </div>
 
+            <div class="ui-g-12 ta-r mt-30">
+              <button type="button"
+                  *ngIf="hasPermission(Permission.CREATE_TASK)"
+                  (click)="createCaseTask()"
+                  label="Add Case Task"
+                  icon="ui-icon-add"
+                  class="ui-button-secondary mr-15" pButton></button>
+            </div>
+
             <div class="ui-g-12">
               <p-dataTable [value]="case.caseTasks"
                           selectionMode="single"
@@ -491,8 +500,10 @@
 
                 <p-column field="taskType.name" header="Task Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
                 <p-column field="taskType.description" header="Task Description" [style]="{'width':'10%'}" [sortable]="true"></p-column>
-                <p-column field="details" header="Task Details" [style]="{'width':'12%'}" [sortable]="true"></p-column>
+                <p-column field="taskDetails" header="Task Details" [style]="{'width':'10%'}" [sortable]="true"></p-column>
                 <p-column field="docTemplate.documentName" header="Document to Generate" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                
+
 
                 <p-column header="Priority" field="" [style]="{'width':'6%'}" >
                   <ng-template let-item="rowData" pTemplate="body">
@@ -500,29 +511,50 @@
                    </ng-template>
                 </p-column>
                               
-                <p-column field="" header="Assigned Party" [style]="{'width':'13%'}">
+                <p-column field="" header="Assigned Group" [style]="{'width':'10%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                      <div *ngIf="item.assignedParty?.partyOID">
+                      <!--div *ngIf="item.assignedParty?.partyOID">
                         {{ 'Party: ' + item.assignedParty.firstName + ' ' + item.assignedParty.lastName }}
-                      </div>
+                      </div-->
                       <div *ngIf="item.assignedPool?.poolOID">
-                        {{ 'Pool: ' + item.assignedPool.poolName }}
+                        {{ item.assignedPool.poolName }}
                       </div>
                   </ng-template>
                 </p-column>
 
-                <p-column field="assignedDate" header="Assigned Date" [style]="{'width':'9%'}" [sortable]="true">
+                <p-column field="assignedDate" header="Assigned Date" [style]="{'width':'8%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
                       {{item.assignedDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
                 </p-column>
 
-                <p-column field="dueDate" header="Due Date and Time" [style]="{'width':'10%'}" [sortable]="true">
+                <p-column field="taskDueDate" header="Due Date and Time" [style]="{'width':'9%'}" [sortable]="true">
                     <ng-template pTemplate="body" let-item="rowData">              
                       <div >
-                          {{item.dueDate | date:'dd-MMM-yyyy hh:mm a'}}
+                          {{item.taskDueDate | date:'dd-MMM-yyyy hh:mm a'}}
                       </div>
                     </ng-template>
+                </p-column>
+
+                <!--p-column field="taskCheckedOutBy" header="Task Checked Out" [style]="{'width':'5%'}" [sortable]="true"></p-column-->
+
+                <p-column header="Task Checked Out" field="" [style]="{'width':'6%'}" [sortable]="true">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <div *ngIf="item.taskCheckedOutBy">
+                        {{ getTaskCheckoutValue(item.taskCheckedOutBy)}}
+                      </div>
+                   </ng-template>
+                </p-column>
+
+                <p-column field="" header="Task Checked Out By" [style]="{'width':'8%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <!--div *ngIf="item.taskCompletedByParty?.partyOID">
+                        {{item.taskCompletedByParty.firstName + ' ' + item.taskCompletedByParty.lastName}}
+                      </div-->
+                      <div *ngIf="item.taskCheckedOutByParty?.partyOID">
+                        {{ item.taskCheckedOutByParty.firstName + ' ' + item.taskCheckedOutByParty.lastName }}
+                      </div>
+                  </ng-template>
                 </p-column>
 
                 <p-column field="" header="Task Completed By" [style]="{'width':'10%'}">
@@ -533,23 +565,30 @@
                   </ng-template>
                 </p-column>
 
-                <p-column field="doneDate" header="Completion Date" [style]="{'width':'10%'}" [sortable]="true">
+                <p-column field="taskDoneDate" header="Completion Date" [style]="{'width':'8%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
-                      {{item.doneDate | date:'dd-MMM-yyyy hh:mm a'}}
+                      {{item.taskDoneDate | date:'dd-MMM-yyyy hh:mm a'}}
                   </ng-template>
                 </p-column>
    
             </p-dataTable>
 
             </div>
-            <div class="ui-g-12">
+
+            
+            
+
+            <div class="ui-g-12 ta-r mt-30">
               <button type="button"
-                  *ngIf="hasPermission(Permission.CREATE_TASK)"
-                  (click)="createCaseTask()"
-                  label="Add Case Task"
-                  icon="ui-icon-add"
-                  class="ui-button-secondary mr-15" pButton></button>
+                  *ngIf="hasPermission(Permission.CREATE_CASE)"
+                  (click)="saveCase()"
+                  label="Save Case"
+                  icon="ui-icon-check"
+                  class="btn-big" pButton
+                  [disabled]="!caseForm.form.valid"></button>
             </div>
+
+
           </div>
         </p-tabPanel>
 
@@ -926,7 +965,7 @@
 
               <div class="ui-g-12 mb-20">
                 <span class="md-inputfield">
-                  <input type="text" pInputText #newCPfullName="ngModel" name="newCPfullName" required
+                  <input type="text" pInputText #newCPfullName="ngModel" name="newCPfullName"
                           [ngModel]="newCaseParty.caseParty?.fullName" (ngModelChange)="newCPlFullNameChanged($event)">
                   <label>Full Name</label>
                 </span>
@@ -1413,7 +1452,7 @@
               optionLabel="name"
               [ngModel]="selectedCaseTask?.taskType"
               [filter]="true"
-              [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
+              [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
               (onChange)="taskTypeOnChange($event)"
               styleClass="width-full">
           </p-dropdown>
@@ -1428,7 +1467,7 @@
             <p-dropdown name="ddPriority" id="ddPriority" placeholder="choose Priority..."
                 [options]="caseTaskPriorityTypes"
                 [ngModel]="selectedCaseTask?.taskPriorityCode"
-                [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
+                [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
                 (onChange)="priorityTypeOnChange($event)"
                 styleClass="width-full">
             </p-dropdown>
@@ -1438,9 +1477,9 @@
           <label class="minimal primary block" for="tiTaskDetails">Task Details</label>
             <textarea id="tiTaskDetails" name="tiTaskDetails"
               placeholder="Please Enter Task Details if needed"
-              [ngModel]="selectedCaseTask?.details"
+              [ngModel]="selectedCaseTask?.taskDetails"
               (ngModelChange)="taskDetailsOnChange($event)"
-              [disabled]="!hasPermission(Permission.UPDATE_TASK) || selectedCaseTask?.doneDate != null"
+              [disabled]="!hasPermission(Permission.UPDATE_TASK) || selectedCaseTask?.taskDoneDate != null"
               [rows]="2" 
               pInputTextarea
               autoResize="autoResize"
@@ -1455,23 +1494,23 @@
               [options]="documentTemplateTypes"
               optionLabel="documentName"
               [ngModel]="selectedCaseTask?.docTemplate"              
-              (onChange)="taskdocumentSelected($event)"
-              [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
+              (onChange)="taskdocumentSelectedOnChange($event)"
+              [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
               styleClass="width-full">
           </p-dropdown>
         </div>
 
-          <div class="ui-g-12 mb-0">
-              <label class="minimal primary block">Assigned Person</label>
+          <!--div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Checked out By</label>
               <p-dropdown name="ddAssignedPerson" id="ddAssignedPerson"
                   [options]="taskParties | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Assigned Person...'"
                   [ngModel]="selectedCaseTask?.assignedParty?.partyOID"
                   [filter]="true"
-                  [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
+                  [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
                   (onChange)="assignedPersonTypeOnChange($event)"
                   styleClass="width-full">
               </p-dropdown>
-            </div>
+            </div-->
 
           <div class="ui-g-12 mb-0">
               <label class="minimal primary block">Assigned Staff Pool</label>
@@ -1480,7 +1519,7 @@
                   optionLabel="poolName"
                   [ngModel]="selectedCaseTask?.assignedPool"
                   [filter]="true"
-                  [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
+                  [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
                   (onChange)="staffPoolTypeOnChange($event)"
                   styleClass="width-full">
               </p-dropdown>
@@ -1489,14 +1528,14 @@
             <div class="ui-g-12 mb-0">
                <label class="minimal primary block">Due Date and Expected Completion Time</label>
                <p-calendar id="ExpectedCompletionTime" name="ExpectedCompletionTime" placeholder="Enter Date and Time"
-                   [ngModel]="selectedCaseTask?.dueDate"
+                   [ngModel]="selectedCaseTask?.taskDueDate"
                    (ngModelChange)="dueDateOnChange($event)"
                    [showIcon]="true"
                    appendTo="body"
                    [inline]="false"
                    [showTime]="true"
                    [hourFormat]="12" 
-                   [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.doneDate != null"
+                   [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
                    dateTimeFormat="dd-M-yy HH-mm a"
                    [monthNavigator]="true" 
                    [yearNavigator]="true" 
@@ -1504,13 +1543,22 @@
                </p-calendar>
             </div>     
 
+        <div class="ui-g-12 mb-0" *ngIf="selectedCaseTask?.taskOID != 0">
+              <label class="minimal primary block">Task Checked Out?</label>  
+              <p-checkbox 
+                  [ngModel]="selectedCaseTask?.taskCheckedOut" binary="true" name="taskCheckedOut"
+                  (onChange)="taskCheckedOutOnChange($event)"
+                  [disabled]="(!hasPermission(Permission.CREATE_TASK) && selectedCaseTask?.taskCheckedOutBy == 1) || selectedCaseTask?.taskDoneDate != null">
+              </p-checkbox>
+              <span class="task-name">Task Checked Out?</span>
+        </div>
 
         <div class="ui-g-12 mb-0" *ngIf="selectedCaseTask?.taskOID != 0">
           <label class="minimal primary block">Task Completed?</label>  
           <p-checkbox 
               [ngModel]="selectedCaseTask?.taskCompleted" binary="true" name="taskCompleted"
               (onChange)="taskCompletedOnChange($event)"
-              [disabled]="selectedCaseTask?.doneDate != null">
+              [disabled]="selectedCaseTask?.taskDoneDate != null">
           </p-checkbox>
           <span class="task-name">Task Completed?</span>
         </div>

@@ -184,6 +184,7 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     }
 
     getUserTasks(userRefresh:boolean = false) {
+      console.log("Retrieveing Staff ID", this.authSvc);
       // if we've already fetched once before then don't show loading bar
       if(!this.userTasks || userRefresh) this.isLoadingTasks = true;
       this.taskSubscription = this.lookupSvc.fetchLookup<UserTask>('FetchUserTasks').subscribe(items => {

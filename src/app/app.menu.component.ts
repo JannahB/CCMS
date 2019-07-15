@@ -132,7 +132,8 @@ export class AppMenuComponent implements OnInit {
 
 
     //Only an IT admin or the court manager should be able to edit the workflow for the courts.
-    if (this.allowAdminWorkflowFeature && this.isSupervisor) {
+    //if (this.allowAdminWorkflowFeature && this.isSupervisor) {
+      if (this.allowAdminWorkflowFeature) {  
       this.courtManagerMenuItems.push(
         { label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
       );
@@ -189,7 +190,8 @@ export class AppMenuComponent implements OnInit {
 
         }
       )
-    }else if (this.isSupervisor) {
+    }
+    /*else if (this.isSupervisor) {
       this.model.push(
         {
           label: 'Manage', icon: 'security',
@@ -197,7 +199,7 @@ export class AppMenuComponent implements OnInit {
 
         }
       );
-    }
+    }*/
 
     this.model = this.model.slice();
     //console.log("*** BUILD MENU CALLED ***", this.model);

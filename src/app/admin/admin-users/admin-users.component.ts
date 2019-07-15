@@ -256,7 +256,6 @@ export class AdminUsersComponent implements OnInit {
   }
 
   partyOnRowSelect(event) {
-    console.log(event)
     let partyId = event.data.partyOID;
     this.user = event.data;
     this.showResetPassword = false;

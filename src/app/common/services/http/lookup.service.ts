@@ -25,7 +25,6 @@ export class LookupService {
 
   public fetchLookup<T>(endpoint: string): Observable<T[]> {
     const url: string = this.getBaseUrl() + '/' + endpoint;
-
     return this.http.get<T[]>(url);
   }
 

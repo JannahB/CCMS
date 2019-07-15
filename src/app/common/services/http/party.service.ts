@@ -37,10 +37,10 @@ export class PartyService extends HttpBaseService<Party> {
       });
   }
 
-  //This returns all the staff pools in the DB
+  //This returns all the staff pools in the DB for a specific court
   public getAllStaffPoolSlim(): Observable<Pool[]> {
 
-    let url: string = `${super.getBaseUrl()}/api/staff-pools`;
+    let url: string = `${super.getBaseUrl()}/FetchStaffPool`;
     return this.http.get<Pool[]>(url)
       .map(res => {
         let poolResults: Pool[] = res;
@@ -48,7 +48,7 @@ export class PartyService extends HttpBaseService<Party> {
       });
   }
 
-  public getAllStaffPoolbyCourt(): Observable<Pool[]> {
+  /*public getAllStaffPoolbyCourt(): Observable<Pool[]> {
 
     //This returns all the pools for a specific court
     let url: string = `${super.getBaseUrl()}/FetchStaffPool`;
@@ -57,20 +57,16 @@ export class PartyService extends HttpBaseService<Party> {
         let poolResults: Pool[] = result;
         return poolResults;
       });    
-  }
+  }*/
 
-  public fetchSpecificStaffPools(obj: any): Observable<Pool[]> {
+  public fetchSpecificStaffPools(pname: string): Observable<Pool[]> {
   
-    //This returns all pools that match a specific text entered.
-    let url: string = `${super.getBaseUrl()}/FetchStaffPool`;
-    return this.http.post<Pool[]>(url, obj,
-      {
-        headers: { uiVersion: "2" }
-      })
+      let url: string = `${super.getBaseUrl()}/FetchStaffPoolByName/${pname}`;
+      return this.http.get<Pool[]>(url)
       .map(res => {
-        let selectedPools: Pool[] = res;
-        return selectedPools;
-      })
+        let poolResults: Pool[] = res;
+        return poolResults;
+      });
   }
 
 

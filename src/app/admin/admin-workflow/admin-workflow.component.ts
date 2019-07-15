@@ -136,7 +136,7 @@ export class AdminWorkflowComponent implements OnInit {
 
     //This fetches all staff pools for a court you are currently logged into
     let staffPoolObservable: Observable<Pool[]> = this.lookupService
-       .fetchLookup<Pool>('FetchStaffPool');
+      .fetchLookup<Pool>('FetchStaffPool');
 
     //Rhea Seegobin: This fetches all staff pools for all
     //let staffPoolObservable: Observable<Pool[]> = this.partyService
@@ -162,9 +162,9 @@ export class AdminWorkflowComponent implements OnInit {
         this.staffPools = results[3];
         this.parties = results[4];
 
-        
         // Merge Pool and Party items into a single list
         this.poolParties = this.mergePoolsAndParties(this.staffPools, this.parties);
+        
         
       },
       (error) => {
@@ -181,6 +181,7 @@ export class AdminWorkflowComponent implements OnInit {
 
   private mergePoolsAndParties(pools: Pool[], parties: Party[]) {
     const arr = [];
+    
     if (pools.length) {
       pools.forEach(p => {
         let obj: PoolParty = new PoolParty();
@@ -192,8 +193,10 @@ export class AdminWorkflowComponent implements OnInit {
       });
     }
 
+    //RS: This doesn't load the staff Parties
+    // RS: It may be needed at a later date, hence no deletion
     
-    if (parties.length > 0) {
+    /*if (parties.length > 0) {
       parties.forEach(pty => {
         let obj: PoolParty = new PoolParty();
         obj.fullName = pty.firstName + ' ' + pty.lastName;
@@ -201,7 +204,7 @@ export class AdminWorkflowComponent implements OnInit {
         obj.id = pty.id;
         arr.push(obj);
       });
-    }
+    }*/
 
     return arr;
   }

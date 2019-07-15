@@ -87,7 +87,6 @@ export class AdminStaffPoolComponent implements OnInit {
         this.staffRoles = results[1] as StaffRole[];
         this.staffPool = results[2] as Pool[];
         this.poolResults = results[2] as Pool[];
-        console.log('Staff Pool retrieved from Server is: ', this.staffPool);
       });
 
 
@@ -159,22 +158,6 @@ export class AdminStaffPoolComponent implements OnInit {
           this.loadingUpdateStatus = false;
           this.toastSvc.showSuccessMessage('Staff Pool Updated Successfully')
         });
-
-      let obj = { "poolName": this.poolNameText, courtUser: "true" };
-      this.partySvc
-      .fetchSpecificStaffPools(obj)
-      .subscribe((result) => {
-        this.isSearching = false;
-        this.poolResults = result;
-        this.staffPool = result;
-        this.showNumberOfRecordsFound(result.length);
-      },
-        (error) => {
-          this.isSearching = false;
-        },
-        () => {
-          this.isSearching = false;
-        });
   }
 
     
@@ -194,8 +177,10 @@ export class AdminStaffPoolComponent implements OnInit {
     this.isSearching = true;
     let obj = { "poolName": this.poolNameText, courtUser: "true" };
     
-    this.partySvc
-      .fetchSpecificStaffPools(obj)
+
+    if(this.poolNameText.length == 0){
+      this.partySvc
+      .getAllStaffPoolSlim()
       .subscribe((result) => {
         this.isSearching = false;
         this.poolResults = result;
@@ -208,6 +193,26 @@ export class AdminStaffPoolComponent implements OnInit {
         () => {
           this.isSearching = false;
         });
+
+    }
+
+    else{
+    this.partySvc
+      .fetchSpecificStaffPools(this.poolNameText)
+      .subscribe((result) => {
+        this.isSearching = false;
+        this.poolResults = result;
+        this.staffPool = result;
+        this.showNumberOfRecordsFound(result.length);
+      },
+        (error) => {
+          this.isSearching = false;
+        },
+        () => {
+          this.isSearching = false;
+        });
+
+      }
   }
 
   showNumberOfRecordsFound(num) {
@@ -232,22 +237,6 @@ export class AdminStaffPoolComponent implements OnInit {
 
   staffPoolOnRowSelect(event){
 
-    let obj = { "poolName": this.poolNameText, courtUser: "true" };
-    this.partySvc
-      .fetchSpecificStaffPools(obj)
-      .subscribe((result) => {
-        this.isSearching = false;
-        this.poolResults = result;
-        this.staffPool = result;
-        this.showNumberOfRecordsFound(result.length);
-      },
-        (error) => {
-          this.isSearching = false;
-        },
-        () => {
-          this.isSearching = false;
-        });
-   
     if(this.poolResults.length == 1)
       this.selectedPool.poolStaffParties = this.poolResults[0].poolStaffParties;
     

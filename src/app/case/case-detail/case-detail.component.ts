@@ -60,6 +60,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   caseWeightRanges: number[] = [1, 10];
   loadingCase: boolean = false;
   loadingMessage: string = 'loading case...';
+  showLoadingBar: boolean = false;
   selectedCharge: CaseCharge;
   selectedParty: Party;
   selectedDoc: CaseDocument;
@@ -124,6 +125,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .fetchEventType()
       .subscribe(types => this.eventTypes = types);
+
+    
   }
 
   ngOnDestroy() {
@@ -168,7 +171,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.toastSvc.showWarnMessage('There is no case with caseOID of ' + caseId + '.', 'No Case Found');
       } else {
         this.case = kase;
-        console.log(kase);
+        console.log("Loading Current Case",kase);
         // Remove all files with a '^' in the docName - they are orphans
         this.case.caseDocs = this.case.caseDocs.filter(cd => {
           return cd.documentName.indexOf('^') == -1;
@@ -873,6 +876,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     { value: 2, label: 'High' },
     { value: 3, label: 'Normal' }
   ];
+
+  public caseTaskCheckOutStatus: SelectItem[] = [
+    { value: 0, label: 'No' },
+    { value: 1, label: 'Yes' }
+  ];
   
   taskParties: Party[];
   staffPools: Pool[];
@@ -880,7 +888,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   getPriorityValue(val): any {
     return this.caseTaskPriorityTypes[val].label;
-}
+  }
+
+  getTaskCheckoutValue(val): any {
+      return this.caseTaskCheckOutStatus[val].label;
+  }
 
   createCaseTask(taskTypeId?) {
     this.selectedCaseTask = new CaseTask();
@@ -891,9 +903,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   taskOnRowSelect(event) {
     if (!this.hasPermission(this.Permission.UPDATE_TASK)) return false;
     this.selectedCaseTask = event.data;
-    if (this.selectedCaseTask.doneDate != null) this.selectedCaseTask.taskCompleted = true;
+    if (this.selectedCaseTask.taskDoneDate != null) this.selectedCaseTask.taskCompleted = true;
     this.onShowCaseTaskModal();
-
+    if(event.data.taskCheckedOutBy == 1) this.selectedCaseTask.taskCheckedOut = true;
   }
 
   onShowCaseTaskModal(taskTypeId?) {
@@ -905,15 +917,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     
     this.loadingCaseTaskLookups = true;
     var source = Observable.forkJoin<any>(
-      this.partySvc.fetchAny({ courtUser: "true" }),
+      //RS: This no longer needed since we are only assigning tasks to pools
+      // It significantly reduces the load time of this module
+      //this.partySvc.fetchAny({ courtUser: "true" }), 
       this.lookupSvc.fetchLookup<TaskType>('FetchTaskType'),
       this.lookupSvc.fetchLookup<Pool>('FetchStaffPool')
     );
     this.caseTaskSubscription = source.subscribe(
       results => {
-        this.taskParties = results[0] as Party[];
-        this.taskTypes = results[1] as TaskType[];
-        this.staffPools = results[2] as Pool[];
+        //this.taskParties = results[0] as Party[];
+        this.taskTypes = results[0] as TaskType[];
+        this.staffPools = results[1] as Pool[];
 
         this.initCaseTaskModal(taskTypeId);
       },
@@ -935,9 +949,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.selectedCaseTask.taskType = this.taskTypes.find((task) => task.taskTypeOID == taskTypeId);
     }
 
-    if (this.selectedCaseTask.assignedParty) {
-      this.selectedCaseTask.assignedParty = this.taskParties.find(p => p.partyOID == this.selectedCaseTask.assignedParty.partyOID);
-    }
+    //if (this.selectedCaseTask.assignedParty) {
+    //  this.selectedCaseTask.assignedParty = this.taskParties.find(p => p.partyOID == this.selectedCaseTask.assignedParty.partyOID);
+    //}
 
     if (this.selectedCaseTask.assignedPool) {
       this.selectedCaseTask.assignedPool = this.staffPools.find(s => s.poolOID == this.selectedCaseTask.assignedPool.poolOID);
@@ -945,7 +959,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     //This stores the actual completion date from the DB.
     //Used in the event a user cancels their entry of a completion date.
-    this.actualCompletionDate = this.selectedCaseTask.doneDate;
+    this.actualCompletionDate = this.selectedCaseTask.taskDoneDate;
 
     for (let i = 0; i < this.case.caseTasks.length; i++){
      
@@ -960,25 +974,28 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   onCancelCaseTask(form) {
 
     //This would not overwrite the actual cast task:completion date with incorrect display data
-    if(this.actualCompletionDate == null) this.selectedCaseTask.doneDate = null;
+    if(this.actualCompletionDate == null) this.selectedCaseTask.taskDoneDate = null;
     this.hideModals();
     // form.reset();  // this is deleting the selectedItem from the grid!!??~
     this.selectedCaseTask = null;
 
   }
 
-  taskdocumentSelected(event){
-    this.selectedCaseTask.documentTemplateOID = event.value.documentTemplateOID;
+  taskdocumentSelectedOnChange(event){
+    this.selectedCaseTask.taskDocumentTemplateOID = event.value.documentTemplateOID;
    
   }
 
-  //This records if 
+  //This records if task was completed or not
   taskCompletedOnChange(event){
-
-    this.selectedCaseTask.taskCompleted = event;
-    
+    this.selectedCaseTask.taskCompleted = event;   
   }
 
+  //This records if task was checked out or not
+  taskCheckedOutOnChange(event){
+    this.selectedCaseTask.taskCheckedOut = event;   
+  }
+  
   documentSelected(event: any): void {
     
     this.selectedCaseTask.docTemplate = event;
@@ -995,16 +1012,22 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     let task = new CaseTaskDTO(); 
     if (this.selectedCaseTask.taskOID) task.taskOID = this.selectedCaseTask.taskOID.toString();
     task.caseOID = this.case.caseOID.toString();
-    task.taskDetails = this.selectedCaseTask.details;
+    task.taskDetails = this.selectedCaseTask.taskDetails.toString();
     task.taskPriorityCode = this.selectedCaseTask.taskPriorityCode.toString();
     task.taskParty = this.selectedCaseTask.assignedParty ? this.selectedCaseTask.assignedParty.partyOID.toString() : null;
     task.taskStaffPool = this.selectedCaseTask.assignedPool ? this.selectedCaseTask.assignedPool.poolOID.toString() : null;
     task.taskType = this.selectedCaseTask.taskType.taskTypeOID.toString();
-    task.taskDocumentTemplateOID = this.selectedCaseTask.documentTemplateOID.toString();    
-    task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.dueDate, "yyyy-MM-dd HH:mm"); // taskDueDate:"2018-01-31"
+    task.taskDocumentTemplateOID = this.selectedCaseTask.taskDocumentTemplateOID.toString();    
+    task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.taskDueDate, "yyyy-MM-dd HH:mm"); // taskDueDate:"2018-01-31"
 
+    
     if (this.selectedCaseTask.taskCompleted) task.taskCompleted = 'true';
     else task.taskCompleted = 'false';
+
+
+    if (this.selectedCaseTask.taskCheckedOut) task.taskCheckedOut = 'true';
+      else task.taskCheckedOut = 'false';
+    
 
     this.caseSvc.saveCaseTask(task).subscribe(result => {
       let savedTask = result[0];
@@ -1059,11 +1082,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   dueDateOnChange(event) {
-    this.selectedCaseTask.dueDate = event;
+    this.selectedCaseTask.taskDueDate = event;
   }
 
   taskDetailsOnChange(event) {
-    this.selectedCaseTask.details = event;
+    this.selectedCaseTask.taskDetails = event;
   }
 
 

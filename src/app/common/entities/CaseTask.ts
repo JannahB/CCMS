@@ -12,15 +12,16 @@ export class CaseTask {
   assignedPool: Pool = new Pool();
   associatedCase: AssociatedCase = new AssociatedCase();
   courtOID: number = null;
-  details: string = '';
+  taskDetails: string = '';
   docTemplate: DocTemplate = new DocTemplate();
-  dueDate: Date = null;
-  doneDate: Date = null;
+  taskDueDate: Date = null;
+  taskDoneDate: Date = null;
   notDoneReason: string = '';
   taskOID: number = 0;
-  documentTemplateOID: number = 0;
+  taskDocumentTemplateOID: number = 0;
   taskPriorityCode: number = 0;
   taskPriorityDesc: string = '';
   taskType: TaskType = new TaskType();
+  taskCheckedOut: boolean = false;
   taskCompleted: boolean = false;
 }

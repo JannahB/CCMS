@@ -76,7 +76,7 @@ export class StaffPoolComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   getRefData() {
-    this.refDataSubscription = this.lookupSvc.fetchLookup<StaffPool>('FetchStaffPool').subscribe(result => {
+    this.refDataSubscription = this.lookupSvc.fetchLookup<StaffPool>('api/staff-pools').subscribe(result => {
       this.typeItems = result;
       this.selectedItem = this.typeItems[0];
       this.copySelectedItem();
