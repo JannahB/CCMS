@@ -85,7 +85,6 @@ export class AdminUsersComponent implements OnInit {
     let authCourtsLen = this.user.authorizedCourts.push(new AuthorizedCourt());
     this.user.authorizedCourts[authCourtsLen - 1].roles.push(new Role());
     this.selectedAuthCourt = this.user.authorizedCourts[authCourtsLen - 1];
-    // console.log('this.user.authorizedCourts', this.user.authorizedCourts);
   }
 
   

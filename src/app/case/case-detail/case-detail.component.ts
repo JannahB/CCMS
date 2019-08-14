@@ -32,6 +32,7 @@ import { CaseTaskDTO } from '../../common/entities/CaseTaskDTO';
 import { JudicialAssignment } from '../../common/entities/JudicialAssignment';
 import { JudicialOfficer } from '../../common/entities/JudicialOfficer';
 import { CaseType } from '../../common/entities/CaseType';
+import { CaseDispositionType } from '../../common/entities/CaseDispositionType';
 import { CaseStatus } from '../../common/entities/CaseStatus';
 import { CasePhase } from '../../common/entities/CasePhase';
 import { CaseSubType } from '../../common/entities/CaseSubType';
@@ -80,6 +81,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   routeSubscription: Subscription;
   caseTypes: CaseType[] = [];
   caseApplicationTypes: CaseApplicationType[] = [];
+  caseDispositionTypes: CaseDispositionType[] = [];
   caseStatuses: CaseStatus[] = [];
   casePhases: CasePhase[] = [];
   caseSubTypes: CaseSubType[] = [];
@@ -149,6 +151,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .fetchCaseStatus()
       .subscribe(results => this.caseStatuses = results);
+
+    this.caseSvc
+      .fetchCaseDispositionType()
+      .subscribe(results => this.caseDispositionTypes = results);   
 
     this.caseSvc
       .fetchEventType()
@@ -316,10 +322,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.toastSvc.showWarnMessage('Please choose Case Type first')
   }
 
-  isCaseSubTypeSelected($event) {
-    if (!this.case.caseType)
-      this.toastSvc.showWarnMessage('Please choose Case Type first')
+ 
+  caseDispositionTypeChange(event): void {
+    if (this.case.caseDispositionType) {
+      this.caseSvc
+      .fetchCaseDispositionType()
+      .subscribe(results => this.caseDispositionTypes = results);
+    }
   }
+
 
   priorityCodeDesc(taskPriorityCode): string {
 
@@ -1471,9 +1482,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedCaseTask.taskDocumentTemplateOID = event.value.documentTemplateOID;
   }
 
-  //This records if task was completed or not
+
   taskCompletedOnChange(event){
-    this.selectedCaseTask.taskCompleted = event;   
+    this.selectedCaseTask.taskCompleted = event;
+    if(this.selectedCaseTask.taskCompleted)
+      this.toastSvc.showInfoMessage('You have marked this task as completed. Please ensure all the relavent information is completed before saving this task');      
   }
 
   //This records if task was checked out or not
@@ -1506,7 +1519,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.taskDueDate, "yyyy-MM-dd HH:mm"); // taskDueDate:"2018-01-31"
 
     
-    if (this.selectedCaseTask.taskCompleted) task.taskCompleted = 'true';
+    if (this.selectedCaseTask.taskCompleted) {
+      task.taskCompleted = 'true';
+      //this.toastSvc.showInfoMessage('You have marked this task as completed. Please ensure all relavent information is completed before saving this task');
+    }
     else task.taskCompleted = 'false';
 
 

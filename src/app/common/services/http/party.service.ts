@@ -7,6 +7,7 @@ import { DateConverter } from '../../utils/date-converter';
 import { HttpBaseService } from './http-base.service';
 import { Party } from '../../entities/Party';
 import { Identifier } from '../../entities/Identifier';
+import { Occupation } from '../../entities/Occupation';
 import { Address } from '../../entities/Address';
 import { Email } from '../../entities/Email';
 import { DatePipe } from '@angular/common';
@@ -111,8 +112,11 @@ export class PartyService extends HttpBaseService<Party> {
   
 
   public saveParty(data: Party): Observable<Party> {
+    
     //Generic object because some properties will be converted to string or number
-    //for save
+
+    console.log('Party Object passed is  ', data);
+
     let party: any = {
       firstName: '',
       lastName: '',
@@ -121,26 +125,52 @@ export class PartyService extends HttpBaseService<Party> {
       //alertnativeName2: '',
       //alertnativeName3: '',
       sex: '',
+      maritalStatus: '',
       dob: '',
-      notes: ''
+      notes: '',    
     };
     if (data.partyOID) {
       party.partyOID = data.partyOID ? data.partyOID.toString() : "0";
-      // only update court user on update
+      //only update court user on update
       party.isCourtUser = (data.isCourtUser ? "1" : "0");
     }
 
     party.interpreterRequiredIndicator = (data.interpreterRequiredIndicator ? "1" : "0");
+    party.signLanguageInterpreterRequiredIndicator = (data.signLanguageInterpreterRequiredIndicator ? "1" : "0");
+    party.visuallyImpairedIndicator = (data.visuallyImpairedIndicator ? "1" : "0");
     party.spokenLanguages = data.spokenLanguages.map(language => language.languageName);
     party.firstName = data.firstName;
     party.lastName = data.lastName;
     party.fullName = data.fullName;
     party.alternativeName = data.alternativeName;
+    party.countryOfBirth = data.countryOfBirth;
+    party.countryOfResidence = data.countryOfResidence;
     //party.alternativeName2 = data.alternativeName2;
     //party.alternativeName3 = data.alternativeName3;
     party.sex = data.sex;
+    party.maritalStatus = data.maritalStatus;
     party.dob = this.datePipe.transform(data.dob, "yyyy-MM-dd");
     party.isOrganization = (data.isOrganization ? "1" : "0");
+
+    if (data.occupations) {
+      party.occupations = [];
+      data.occupations.forEach(occupation => {
+        let value: any = {};
+        Object.assign(value, occupation);
+
+        if (value.startDate)
+          value.startDate = this.datePipe.transform(value.startDate, "yyyy-MM-dd");
+        if (value.endDate)
+          value.endDate = this.datePipe.transform(value.endDate, "yyyy-MM-dd");
+        else
+          value.endDate = '';
+
+        value.partyOccupationOID = value.partyOccupationOID ? value.partyOccupationOID.toString() : "0";
+        value.partyOID = value.partyOID ? value.partyOID.toString() : "0";
+
+        party.occupations.push(value);
+      });
+    }
 
     if (data.identifiers) {
       party.identifiers = [];
@@ -267,6 +297,13 @@ export class PartyService extends HttpBaseService<Party> {
     parties.forEach(p => {
       p.dob = DateConverter.convertDate(p.dob);
 
+      let occs: Occupation[] = p.occupations;
+      if (occs) {
+        occs.forEach(occ => {
+          occ.startDate = DateConverter.convertDate(occ.startDate);
+          occ.endDate = DateConverter.convertDate(occ.endDate);
+        })
+      }
       let idents: Identifier[] = p.identifiers;
       if (idents) {
         idents.forEach(idf => {

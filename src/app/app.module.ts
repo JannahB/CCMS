@@ -108,6 +108,7 @@ import { CalResourceService } from "./common/services/http/calResource.service";
 import { CalTemplateService } from "./common/services/http/calTemplate.service";
 import { CaseService } from "./common/services/http/case.service";
 import { CountriesService } from "./common/services/http/countries.service";
+import { OccupationService } from "./common/services/http/occupation.service";
 import { CourtService } from "./common/services/http/court.service";
 import { GenericTypesService } from "./common/services/http/generic.types.service";
 import { IdentifierService } from "./common/services/http/identifier.service";
@@ -250,6 +251,7 @@ import { CalFacilitiesComponent } from './admin/calendar/cal-facilities/cal-faci
     PartyService,
     GenericTypesService,
     CountriesService,
+    OccupationService,
     CaseService,
     LookupService,
     CanActivateAuthenticationGuard,

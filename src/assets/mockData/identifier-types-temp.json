@@ -12,5 +12,5 @@
   { "name": "Social Services ID", "id": 11 },
   { "name": "Home No.", "id": 12 },
   { "name": "Rehabilitation Centre", "id": 13 },
-  { "name": "Other", "id": 14 }
+  { "name": "Others", "id": 14 }
 ]

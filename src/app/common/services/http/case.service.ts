@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { CaseTask } from '../../entities/CaseTask';
 import { Address } from '../../entities/Address';
 import { Identifier } from '../../entities/Identifier';
+import { Occupation } from '../../entities/Occupation';
 import { Party } from '../../entities/Party';
 import { CaseHearingDeprecated } from '../../entities/CaseHearingDeprecated';
 import { CaseEvent } from '../../entities/CaseEvent';
@@ -31,6 +32,7 @@ import { FileSaver } from '../utility/file-saver.service';
 import { EventType } from '../../entities/EventType';
 import { CaseType } from '../../entities/CaseType';
 import { CaseApplicationType } from '../../entities/CaseApplicationType';
+import { CaseDispositionType } from '../../entities/CaseDispositionType';
 import { CaseStatus } from '../../entities/CaseStatus';
 import { CasePhase } from '../../entities/CasePhase';
 import { CaseSubType } from '../../entities/CaseSubType';
@@ -159,6 +161,10 @@ export class CaseService extends HttpBaseService<Case> {
         kase.caseFilingDate = DateConverter.convertDate(kase.caseFilingDate);
       }
 
+      if (kase.caseDispositionDate) {
+        kase.caseDispositionDate = DateConverter.convertDate(kase.caseDispositionDate);
+      }
+
       let caseDocs: CaseDocument[] = kase.caseDocs;
       if (caseDocs) {
         caseDocs.forEach(cd => {
@@ -195,6 +201,13 @@ export class CaseService extends HttpBaseService<Case> {
             idents.forEach(idf => {
               idf.startDate = DateConverter.convertDate(idf.startDate);
               idf.endDate = DateConverter.convertDate(idf.endDate);
+            })
+          }
+          let occs: Occupation[] = caseParty.occupations;
+          if (occs) {
+            occs.forEach(occ => {
+              occ.startDate = DateConverter.convertDate(occ.startDate);
+              occ.endDate = DateConverter.convertDate(occ.endDate);
             })
           }
           let addresses: Address[] = caseParty.addresses;
@@ -335,7 +348,9 @@ export class CaseService extends HttpBaseService<Case> {
     var caseData: any = {
       caseCaption: data.caseCaption || '',
       caseFilingDate: null,
+      caseDispositionDate: null,
       caseType: null,
+      caseDispositionType: null,
       caseStatus: null,
       casePhase: null,
       caseSubType: null,
@@ -357,8 +372,14 @@ export class CaseService extends HttpBaseService<Case> {
       caseData.caseOID = data.caseOID.toString();
     if (data.caseFilingDate)
       caseData.caseFilingDate = this.datePipe.transform(data.caseFilingDate, "yyyy-MM-dd");
+    if (data.caseDispositionDate){
+       caseData.caseDispositionDate = this.datePipe.transform(data.caseDispositionDate, "yyyy-MM-dd");
+    }      
     if (data.caseType)
       caseData.caseType = data.caseType.caseTypeOID.toString();
+    if (data.caseDispositionType){
+      caseData.caseDispositionType = data.caseDispositionType.caseDispositionTypeOID.toString();  
+    }
     if (data.caseStatus)
       caseData.caseStatus = data.caseStatus.statusOID.toString();
     if (data.casePhase)
@@ -656,6 +677,13 @@ export class CaseService extends HttpBaseService<Case> {
 
     return this.http
       .get<CaseApplicationType[]>(url);
+  }
+  
+  public fetchCaseDispositionType(): Observable<CaseDispositionType[]> {
+    
+    let url: string = `${super.getBaseUrl()}/FetchCaseDispositionTypes`;
+    return this.http
+      .get<CaseDispositionType[]>(url);
   }
 
   public fetchCaseStatus(): Observable<CaseStatus[]> {

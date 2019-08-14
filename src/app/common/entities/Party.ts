@@ -6,6 +6,7 @@ import { Language } from './Language';
 import { LookupEntity } from './base/lookup-entity';
 import { PhoneNumber } from './PhoneNumber';
 import { Role } from './Role';
+import { Occupation } from './Occupation';
 
 export class Party extends LookupEntity {
 
@@ -15,6 +16,7 @@ export class Party extends LookupEntity {
   lastName: string = "";
   firstName: string = "";
   sex: string = "";
+  maritalStatus: string = "";
   password: string = "";
   dob: any = null;
   isCourtUser: boolean = false;
@@ -25,7 +27,12 @@ export class Party extends LookupEntity {
   emails: Email[] = [];
   phoneNumbers: PhoneNumber[] = [];
   identifiers: Identifier[] = [];
+  occupations: Occupation[] = [];
   interpreterRequiredIndicator: boolean = false;
+  signLanguageInterpreterRequiredIndicator: boolean = false;
+  visuallyImpairedIndicator: boolean = false;
+  countryOfBirth : string = "";
+  countryOfResidence : string = "";
   spokenLanguages: Language[] = [];
   alternativeName: string = "";
   //alternativeName2: string = "";

@@ -25,6 +25,7 @@
                     [required]="true"
                     [options]="eventTypes"
                     optionLabel="description"
+                    [filter] = "true"
                     [(ngModel)]="selectedEvent"
                     (onChange)="eventTypeOnChange($event)"
                     styleClass="width-full">

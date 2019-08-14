@@ -1,5 +1,6 @@
 import { Language } from './Language';
 import { Identifier } from './Identifier';
+import { Occupation } from './Occupation';
 import { StaffRole } from './StaffRole';
 import { Address } from './Address';
 import { Email } from './Email';
@@ -22,6 +23,7 @@ export class User {
   emails: Email[] = [new Email()];
   phoneNumbers: PhoneNumber[] = [];
   identifiers: Identifier[] = [];
+  occupations: Occupation[] = [];
   interpreterRequiredIndicator: boolean = false;
   spokenLanguages: Language[] = [];
   alternativeName: string = "";

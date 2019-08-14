@@ -153,6 +153,7 @@
                   [required]="true"
                   optionLabel="name"
                   [options]="caseTypes"
+                  [filter]="true"
                   [(ngModel)]="case.caseType"
                   (onChange)="caseTypeChange($event)"
                   styleClass="width-full">
@@ -172,6 +173,7 @@
                   (click)="isCaseTypeSelected($event)"
                   optionLabel="name"
                   [options]="casePhases"
+                  [filter]="true"
                   [(ngModel)]="case.casePhase"
                   (onChange)="ddOnChange($event)"
                   styleClass="width-full">
@@ -204,7 +206,49 @@
 
           </div>
 
-          <!-- Adding Case Notes Field  -->
+  
+            <div class="ui-g-12 ui">
+  
+              <div class="ui-g-12 ui-md-3" *ngIf="case.caseOID != 0">
+                <label class="minimal primary block">Disposition Date</label>
+                <p-calendar id="DispositionDate" name="DispositionDate" #finalDispositionDate
+                      
+                      [required]="false"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE)"
+                      [(ngModel)]="case.caseDispositionDate"
+                      dateFormat="mm/dd/yy"
+                      placeholder="Case Disposition Date"
+                      [showIcon]="true"
+                      yearRange="2000:2030"
+                      [yearNavigator]="true"
+                      appendTo="body" ></p-calendar>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="dtFilingDate.errors?.required && dtFilingDate.touched" >
+                      Please choose a Dispisition Date
+                </div>
+              </div>
+  
+              <div class="ui-g-12 ui-md-5" *ngIf="case.caseOID != 0">
+                <label class="minimal primary block">Disposition Type</label>
+                <p-dropdown name="ddCaseDispositionType" #ddCaseDispositionType placeholder="case disposition type..."
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [required]="false"
+                    [filter] = "true"
+                    optionLabel="name"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE)"
+                    [options]="caseDispositionTypes"
+                    [(ngModel)]="case.caseDispositionType"
+                    (onChange)="caseDispositionTypeChange($event)"
+                    styleClass="width-full">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="ddCaseType.errors?.required && ddCaseType.touched" >
+                      Please choose a Disposition Type
+                </div>
+              </div>
+            </div>  
+            
+                      <!-- Adding Case Notes Field  -->
             <div class="ui-g-12 mb-20" *ngIf="case.caseOID > 0">
                 <label class="minimal primary block">Case Notes</label>
                   <textarea name="tiCaseNotes"
@@ -217,8 +261,6 @@
                       class="width-full">
                    </textarea>
             </div>
-
-
 
 
 
@@ -490,6 +532,7 @@
                     styleClass="strokeWidth"
                     placeholder="Event ID filter..."
                     [options]="eventTypes"
+                    [filter] = "true"
                     [(ngModel)]="eventTypeFilter"
                     optionLabel="description"
                     (onChange)="eventTypeFilterChange($event)">
@@ -1052,6 +1095,7 @@
                     [required]="true"
                     [options]="casePartyRoleTypes"
                     optionLabel="name"
+                    [filter] = "true"
                     [(ngModel)]="selectedSearchPartyRole"
                     (onChange)="searchPartyRoleTypeOnChange($event)"
                     styleClass="width-full">
@@ -1924,19 +1968,8 @@
           </p-dropdown>
         </div>
 
-          <!--div class="ui-g-12 mb-0">
-              <label class="minimal primary block">Checked out By</label>
-              <p-dropdown name="ddAssignedPerson" id="ddAssignedPerson"
-                  [options]="taskParties | dropdownPipe: ['firstName', 'lastName'] : 'partyOID' : 'choose Assigned Person...'"
-                  [ngModel]="selectedCaseTask?.assignedParty?.partyOID"
-                  [filter]="true"
-                  [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
-                  (onChange)="assignedPersonTypeOnChange($event)"
-                  styleClass="width-full">
-              </p-dropdown>
-            </div-->
 
-          <div class="ui-g-12 mb-0">
+        <div class="ui-g-12 mb-0">
               <label class="minimal primary block">Assigned Staff Pool</label>
               <p-dropdown name="ddStaffPool" placeholder="choose Staff Pool..."
                   [options]="staffPools"

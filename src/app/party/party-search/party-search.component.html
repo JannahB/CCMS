@@ -45,7 +45,7 @@
                 <!-- <i class="fa ui-icon-close"*ngIf="!item.isOrganization" ></i> -->
             </ng-template>
           </p-column>
-          <p-column field="fullName" header="Full Name" [style]="{'width':'35%'}">
+          <p-column field="fullName" header="Full Name" [style]="{'width':'20%'}">
             <!-- Christian: changed first/lastName to fullName -->
               <ng-template pTemplate="body" let-item="rowData">
                   {{item.fullName?item.fullName:item.firstName+" "+item.lastName}}
@@ -58,6 +58,8 @@
           </p-column>
           <p-column field="age" header="Age" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>
           <p-column field="sex" header="Sex" styleClass="ta-c" [style]="{'width':'15%'}"></p-column>
+          <p-column field="maritalStatus" header="Marital Status" styleClass="ta-c" [style]="{'width':'10%'}"></p-column>
+          <p-column field="countryOfBirth" header="Nationality" styleClass="ta-c" [style]="{'width':'10%'}"></p-column>
         </p-dataTable>
       </div>
 

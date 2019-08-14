@@ -126,6 +126,21 @@
                     [(ngModel)]="party.sex"
                     (onChange)="genderTypesOnChange($event)">
                 </p-dropdown>
+
+                
+
+            </div>
+
+            <div class="ui-g-12 mb-0">
+                <label class="minimal primary block">Marital Status</label>
+                <p-dropdown
+                    placeholder="Choose Marital Status"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [options]="maritalStatus"
+                    [(ngModel)]="party.maritalStatus"
+                    (onChange)="maritalStatusOnChange($event)">
+                </p-dropdown>
+
             </div>
 
           </div>
@@ -133,11 +148,27 @@
           <!-- column 3 -->
           <div class="ui-g-12 ui-md-5" *ngIf="!party.isOrganization">
             <div class="ui-g-12 ">
-              <label class="minimal primary mr-10">Interpreter Required</label>
+              <label class="minimal primary mr-10">Foreign Language Interpreter Required</label>
               <p-inputSwitch [(ngModel)]="party.interpreterRequiredIndicator" 
                              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
               </p-inputSwitch>
-              <!--[(ngModel)]="switchChecked"-->
+
+            </div>
+
+            <div class="ui-g-12 ">
+              <label class="minimal primary mr-10">Hearing Impaired / Sign Language Interpreter Required</label>
+              <p-inputSwitch [(ngModel)]="party.signLanguageInterpreterRequiredIndicator" 
+                             [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
+              </p-inputSwitch>
+
+            </div>
+
+            <div class="ui-g-12 ">
+              <label class="minimal primary mr-10">Visually Impaired</label>
+              <p-inputSwitch [(ngModel)]="party.visuallyImpairedIndicator" 
+                             [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
+              </p-inputSwitch>
+
             </div>
 
             <div class="ui-g-12 ">
@@ -158,6 +189,36 @@
               </span>
             </div>
 
+            <div class="ui-g-12 ">
+              <label class="minimal primary block">Country of Birth</label>
+              <span class="ui-fluid">
+                <p-dropdown
+                  placeholder="Choose Country of Birth"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="party.countryOfBirth"
+                  [filter] = "true"
+                  [options]="countries"
+                  [style]="{'width':'100%'}"
+                  (onChange)="countryOfBirthOnChange($event)">
+                </p-dropdown>
+              </span>
+
+            </div>
+
+            <div class="ui-g-12 ">
+              <label class="minimal primary block">Country of Residence</label>
+              <span class="ui-fluid">
+                <p-dropdown
+                  placeholder="Choose Country of Birth"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="party.countryOfResidence"
+                  [filter] = "true"
+                  [options]="countries"
+                  [style]="{'width':'100%'}"
+                  (onChange)="countryOfResidenceOnChange($event)">
+                </p-dropdown>
+              </span>
+            </div>
           </div>
 
           <div class="ui-g-12 pt-0">
@@ -187,6 +248,127 @@
 
         </div>
 
+      </div>
+    </p-fieldset>
+
+    <!-- OCCUPATION -->
+    <p-fieldset legend="Employment History / Occupation" toggleable="true" collapsed="true">
+      <div class="ui-g form-group">
+
+        <div class="ui-g-12">
+          <p-dataTable [value]="party?.occupations" [loading]="newOccupationMode" [loadingIcon]="null"
+                       selectionMode="single"
+                       [(selection)]="selectedOccupation"
+                       scrollable="true" scrollHeight="200px"
+                       (onRowSelect)="identifierOnRowSelect($event)"
+                       dataKey="partyOccupationOID" #dtOccupation>
+                      <p-column field="jobTitle" header="Job Title" [style]="{'width':'20%'}"></p-column>
+                      <p-column field="identifierValue" header="Employment Status" [style]="{'width':'20%'}"></p-column>
+                      <p-column field="notes" header="Notes" [style]="{'width':'26%'}"></p-column>
+                      <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                      <ng-template pTemplate="body" let-item="rowData">
+                          {{item.startDate | date:'dd-MMM-yyyy'}}
+                    </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+          </p-dataTable>       
+        </div>
+        
+        <div class="ui-g-12" *ngIf="!newOccupationMode">
+          <button type="button"
+              *ngIf="hasPermission(Permission.UPDATE_PARTY)"
+              (click)="newOccupation()"
+              label="Add Occupation"
+              icon="ui-icon-add"
+              class="" pButton></button>
+        </div>
+
+        <div class="ui-g-12" *ngIf="selectedOccupation">
+          <h3 class="mt-0">{{ newOccupationMode ? 'New' : 'Edit'}} Occupation</h3>
+
+          <div class="ui-g-12 ui-md-6">
+              <div class="ui-g-12 mb-20">
+                  <label class="minimal primary block">Occupation Title</label>
+                  <p-dropdown
+                      placeholder="choose type"
+                      styleClass="width-full"
+                      [options]="occupation"
+                      [filter] = "true"
+                      [(ngModel)]="selectedOccupation.jobTitle"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      (onChange)="occupationTypeOnChange($event)">
+                  </p-dropdown>
+                </div>
+
+                <div class="ui-g-12 mb-20">
+                  <span class="md-inputfield">
+                      <input [(ngModel)]="selectedOccupation.identifierValue"
+                             [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                              type="text" pInputText>
+                      <label>Employment Status</label>
+                  </span>
+                </div>
+
+                <div class="ui-g-12 mb-20">
+                  <span class="md-inputfield">
+                    <input type="text"
+                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)" 
+                          [(ngModel)]="selectedOccupation.notes" pInputText>
+                    <label>Notes</label>
+                  </span>
+                </div>
+          </div>
+
+          <div class="ui-g-12 ui-md-6">
+
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="occupationStartDate"
+                placeholder="Start Date"
+                dateFormat="dd-M-yy"
+                [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                [(ngModel)]="selectedOccupation.startDate"
+                [yearNavigator]="true"
+                yearRange="2000:2030"
+                [showIcon]="true">
+              </p-calendar>
+            </div>
+
+            <div class="ui-g-12  mb-0">
+              <label class="minimal primary block">End Date</label>
+              <p-calendar id="occupationEndDate"
+                  placeholder="End Date"
+                  dateFormat="dd-M-yy"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="selectedOccupation.endDate"
+                  [yearNavigator]="true"
+                  yearRange="2000:2030"
+                  [showIcon]="true">
+                </p-calendar>
+            </div>
+
+          </div>
+          <div class="ui-g-12 ta-r" *ngIf="hasPermission(Permission.UPDATE_PARTY)">
+
+            <button type="button"
+                    label="Cancel"
+                    class="ui-button-secondary mr-15"
+                    (click)="cancelOccupationEdit()"
+                    icon="ui-icon-clear"
+                    pButton></button>
+            <button type="button"
+                    label="Save"
+                    class=""
+                    (click)="saveOccupation()"
+                    icon="ui-icon-check"
+                    pButton></button>
+          </div>
+
+        </div>
       </div>
     </p-fieldset>
 
@@ -240,6 +422,7 @@
                       placeholder="choose type"
                       styleClass="width-full"
                       [options]="identifierTypeOptions"
+                      [filter] = "true"
                       [(ngModel)]="selectedIdentifier.identifierType"
                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                       (onChange)="identifierTypeOnChange($event)">
@@ -698,6 +881,7 @@
               placeholder="Choose Country"
               [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
               [(ngModel)]="selectedAddress.countryName"
+              [filter] = "true"
               [options]="countries"
               [style]="{'width':'100%'}"
               (onChange)="countryOnChange($event)">

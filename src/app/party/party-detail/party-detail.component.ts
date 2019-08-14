@@ -20,8 +20,10 @@ import { Party } from '../../common/entities/Party';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { Email } from '../../common/entities/Email';
 import { CountriesService } from '../../common/services/http/countries.service';
+import { OccupationService } from '../../common/services/http/occupation.service';
 import { CollectionUtil } from '../../common/utils/collection-util';
 import { Permission } from '../../common/entities/Permission';
+import { Occupation } from '../../common/entities/Occupation';
 
 
 @Component({
@@ -32,23 +34,28 @@ import { Permission } from '../../common/entities/Permission';
 export class PartyDetailComponent implements OnInit, OnDestroy {
 
   lockApiCalls: boolean = false;
-
   addressTypes: SelectItem[];
   selectedAddress: Address;
   addressToDelete: Address;
   selectedAddressCopy: Address;
   countries: SelectItem[];
   countriesSubscription: Subscription;
+  occupation: SelectItem[];
+  occupationSubscription: Subscription;
   emailTypes: SelectItem[];
   selectedEmail: Email;
   emailToDelete: Email;
   selectedEmailCopy: Email;
   filteredLanguages: string[];
   genderTypes: any[];
+  maritalStatus: any[];
   genericSubsciption: Subscription;
   selectedIdentifier: Identifier;
+  selectedOccupation: Occupation;
   identifierToDelete: Identifier;
+  occupationToDelete: Occupation;
   selectedIdentifierCopy: Identifier;
+  selectedOccupationCopy: Occupation;
   identifierTypes: Identifier[];
   identifierTypeOptions: SelectItem[];
   identifierSubscription: Subscription;
@@ -63,10 +70,12 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   newEmailMode: boolean = false;
   newIdentifierMode: boolean = false;
+  newOccupationMode: boolean = false;
   newPhoneMode: boolean = false;
   newAddressMode: boolean = false;
 
   showDeleteIdentifierModal: boolean = false;
+  showDeleteOccupationModal = false;
   showDeleteEmailModal: boolean = false;
   showDeletePhoneModal: boolean = false;
   showDeleteAddressModal: boolean = false;
@@ -82,6 +91,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     private partySvc: PartyService,
     private genericTypeSvc: GenericTypesService,
     private countriesSvc: CountriesService,
+    private occupationSvc: OccupationService,
     private router: Router,
     private userSvc: UserService
   ) {
@@ -128,6 +138,10 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
     })
 
+    this.occupationSubscription = this.occupationSvc.get().subscribe(occupation => {
+      this.occupation = this.dropdownSvc.transformSameLabelAndValue(occupation, 'name');
+    })
+    
     this.buildRefData();
 
     this.router.events
@@ -146,6 +160,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       // TODO: Create New Party with empty properties;
       // new'ing doesn't bring properties w/o constructor on entity!?
       this.party = new Party();
+      console.log('Create New Party',this.party);
     } else {
       this.partySubscription = this.partySvc.fetchOne(partyId).subscribe(party => {
         this.party = party;
@@ -180,6 +195,10 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.party.sex = event.value;
   }
 
+  maritalStatusOnChange(event) {
+    this.party.maritalStatus = event.value;
+  }
+
   getLangsToFilter(event) {
     let query = event.query;
     // this.languageService.get().then(langs => {
@@ -209,6 +228,67 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.saveParty();
   }
 
+    /* -------------------
+      Occupation Methods
+    ---------------------*/
+    newOccupation() {
+
+      this.newOccupationMode = true;
+      this.selectedOccupation = new Occupation();
+      this.party.occupations.push(this.selectedOccupation);
+      this.party.occupations = this.party.occupations.slice();
+    }
+
+    occupationOnRowSelect(event) {
+      this.selectedOccupationCopy = { ...this.selectedOccupation }
+      this.selectedOccupation = event.data;
+    }
+
+    occupationTypeOnChange(event) {
+      this.selectedOccupation.jobTitle = event.value;
+    }
+
+    requestDeleteOccupation(occupation: Occupation) {
+      this.showDeleteOccupationModal = true;
+      this.occupationToDelete = occupation;
+    }
+  
+    deleteOccupation() {
+      this.showDeleteOccupationModal = false;
+      CollectionUtil.removeArrayItem(this.party.occupations, this.occupationToDelete);
+      this.saveParty(false);
+      this.occupationToDelete = null;
+      this.selectedOccupationCopy = null;
+      this.selectedOccupation = null;
+      this.newOccupationMode = false;
+    }
+
+    cancelOccupationEdit(){
+      this.newOccupationMode = false;
+      if (!this.selectedOccupation.partyOccupationOID) {
+        // remove from datasource
+        let list = this.party.occupations;
+        let i: number = list.indexOf(this.selectedOccupation);
+        list.splice(i, 1);
+        // force binding refresh
+        this.party.occupations = list.slice();
+        this.selectedOccupation = null;
+      } else {
+        this.selectedOccupation = { ...this.selectedOccupationCopy }
+      }
+      // deselect item in grid
+      this.selectedOccupation = null;
+      this.selectedOccupationCopy = null;
+    }
+
+    saveOccupation(){    
+
+      this.selectedOccupation = null;
+      this.newOccupationMode = false;
+      this.saveParty();   
+    }
+
+
   /* -------------------
       Identifier Methods
     --------------------  */
@@ -228,6 +308,14 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.selectedIdentifier.identifierType = event.value;
   }
 
+  countryOfBirthOnChange(event) {
+    this.party.countryOfBirth = event.value;
+  }
+
+  countryOfResidenceOnChange(event) {
+    this.party.countryOfResidence = event.value;
+  }
+
   requestDeleteIdentifier(identifier: Identifier) {
     this.showDeleteIdentifierModal = true;
     this.identifierToDelete = identifier;
@@ -235,7 +323,6 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   deleteIdentifier() {
     this.showDeleteIdentifierModal = false;
-
     CollectionUtil.removeArrayItem(this.party.identifiers, this.identifierToDelete);
     this.saveParty(false);
     this.identifierToDelete = null;
@@ -263,7 +350,6 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   saveIdentifier() {
     this.newIdentifierMode = false;
-
     this.selectedIdentifier = null;
     this.saveParty();
   }
@@ -448,6 +534,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   hideModals() {
     this.showDeleteIdentifierModal = false;
+    this.showDeleteOccupationModal = false;
     this.showDeleteEmailModal = false;
     this.showDeletePhoneModal = false;
     this.showDeleteAddressModal = false;
@@ -459,6 +546,15 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
     this.genderTypes = [
       { label: 'M', value: 'M' }, { label: 'F', value: 'F' },
+    ];
+
+    this.maritalStatus = [
+      { label: 'Single', value: 'Single' }, 
+      { label: 'Married', value: 'Married' },
+      { label: 'Separated', value: 'Separated' },
+      { label: 'Divorced', value: 'Divorced' },
+      { label: 'Widowed', value: 'Widowed' },
+      { label: 'Spinster', value: 'Spinster' },
     ];
 
   }

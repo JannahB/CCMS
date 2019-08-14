@@ -4,6 +4,7 @@ import { CaseEvent } from './CaseEvent';
 import { CaseType } from './CaseType';
 import { CaseSubType } from './CaseSubType';
 import { CasePhase } from './CasePhase';
+import { CaseDispositionType } from './CaseDispositionType';
 import { Court } from './Court';
 import { CaseStatus } from './CaseStatus';
 import { CaseTask } from './CaseTask';
@@ -24,7 +25,7 @@ export class Case extends LookupEntity {
   caseSubType: CaseSubType = null;
   caseStatus: CaseStatus = null;
   caseType: CaseType = null;
-
+  
   caseCharges: CaseCharge[] = [];
   caseDocs: CaseDocument[] = [];
   caseEvents: CaseEvent[] = [];
@@ -51,5 +52,8 @@ export class Case extends LookupEntity {
   prevCaseNumber: string = "";
   caseNotes: string = "";
   courtOfAppealNumber: string = "";
+
+  caseDispositionType: CaseDispositionType = null;
+  caseDispositionDate: Date = null;
 
   }
