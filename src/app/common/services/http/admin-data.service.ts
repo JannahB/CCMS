@@ -65,6 +65,15 @@ export class AdminDataService {
     );
   }
 
+  public fetchSubTypeByTypeLookup<T>(caseTypeOID: string | number): Observable<T[]> {
+    const url: string = this.getBaseUrl() + '/FetchCaseSubType';
+
+    return this.http.post<T[]>(
+      url,
+      { typeOID: caseTypeOID.toString() }
+    );
+  }
+
 
   // FetchICCSCodeParent
   // {categoryType: "1"}

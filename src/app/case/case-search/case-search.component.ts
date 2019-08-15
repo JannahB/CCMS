@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Case } from '../../common/entities/Case';
 import { CaseService } from '../../common/services/http/case.service';
 import { CaseType } from '../../common/entities/CaseType';
+import { CaseSubType } from '../../common/entities/CaseSubType';
 import { CasePhase } from '../../common/entities/CasePhase';
 import { CaseStatus } from '../../common/entities/CaseStatus';
 import { CasePartyRole } from '../../common/entities/CasePartyRole';
@@ -32,6 +33,7 @@ export class CaseSearchComponent implements OnInit {
   caseTypes: CaseType[];
   caseTypeOptions: SelectItem[];
   casePhaseTypes: CasePhase[];
+  caseSubTypes: CaseSubType[];
   casePhaseTypeOptions: SelectItem[];
   caseStatusTypes: CaseStatus[];
   caseStatusTypeOptions: SelectItem[];
@@ -41,6 +43,7 @@ export class CaseSearchComponent implements OnInit {
   caseSubsciption: Subscription;
   caseTypesSubscription: Subscription;
   casePhaseTypesSubscription: Subscription;
+  caseSubTypeSubscription: Subscription;
   caseStatusTypesSubscription: Subscription;
   casePartyRoleTypesSubscription: Subscription;
 
@@ -75,6 +78,10 @@ export class CaseSearchComponent implements OnInit {
     let typeOID = event.value.caseTypeOID.toString(); // TODO: Verify this is event.value
     this.casePhaseTypesSubscription = this.lookupSvc.fetchPhaseByTypeLookup<CasePhase>(typeOID).subscribe(items => {
       this.casePhaseTypes = items;
+    });
+
+    this.caseSubTypeSubscription = this.lookupSvc.fetchSubTypeByTypeLookup<CaseSubType>(typeOID).subscribe(items => {
+      this.caseSubTypes = items;
     });
 
   }

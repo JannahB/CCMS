@@ -41,6 +41,19 @@ export class LookupService {
     );
   }
 
+  public fetchSubTypeByTypeLookup<T>(caseTypeOID: string | number): Observable<T[]> {
+    const url: string = this.getBaseUrl() + '/FetchCaseSubType';
+
+    return this.http.post<T[]>(
+      url,
+      { typeOID: caseTypeOID.toString() },
+      {
+        headers:
+          { uiVersion: '2' }
+      }
+    );
+  }
+
   public getMock(fileName) {
     const url: string = this.getBaseMockUrl() + fileName;
 

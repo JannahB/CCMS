@@ -19,8 +19,8 @@ import { IccsCode } from '../../entities/IccsCode';
 import { DatePipe } from '@angular/common';
 import { CaseParty } from '../../entities/CaseParty';
 import { ChargeFactor } from '../../entities/ChargeFactor';
-import { ChargeFactorVariable } from '../../entities/ChargeFactorVariable'; //RS
-import { ChargeFactorCategory } from '../../entities/ChargeFactorCategory'; //RS
+import { ChargeFactorVariable } from '../../entities/ChargeFactorVariable';
+import { ChargeFactorCategory } from '../../entities/ChargeFactorCategory';
 import { CasePartyRole } from '../../entities/CasePartyRole';
 import { DocTemplate } from '../../entities/DocTemplate';
 import { Http, RequestOptionsArgs, Headers, ResponseContentType } from '@angular/http';
@@ -30,11 +30,15 @@ import { JudicialAssignment } from '../../entities/JudicialAssignment';
 import { FileSaver } from '../utility/file-saver.service';
 import { EventType } from '../../entities/EventType';
 import { CaseType } from '../../entities/CaseType';
+import { CaseApplicationType } from '../../entities/CaseApplicationType';
 import { CaseStatus } from '../../entities/CaseStatus';
 import { CasePhase } from '../../entities/CasePhase';
+import { CaseSubType } from '../../entities/CaseSubType';
 import { CaseHearingDTO } from '../../entities/CaseHearingDTO';
 import { LocalCharge } from '../../entities/LocalCharge';
 import { nullSafeIsEquivalent } from '@angular/compiler/src/output/output_ast';
+import { CaseApplication } from '../../entities/CaseApplication';
+import { CaseApplicant } from '../../entities/CaseApplicant';
 
 
 @Injectable()
@@ -312,6 +316,7 @@ export class CaseService extends HttpBaseService<Case> {
       caseType: null,
       caseStatus: null,
       casePhase: null,
+      caseSubType: null,
       caseWeight: "0",
       caseParties: [],
       caseCharges: [],
@@ -336,6 +341,8 @@ export class CaseService extends HttpBaseService<Case> {
       caseData.caseStatus = data.caseStatus.statusOID.toString();
     if (data.casePhase)
       caseData.casePhase = data.casePhase.casePhaseOID.toString();
+    if (data.caseSubType)
+      caseData.caseSubType = data.caseSubType.caseSubTypeOID.toString();  
     if (data.caseWeight)
       caseData.caseWeight = data.caseWeight.toString();
 
@@ -403,6 +410,14 @@ export class CaseService extends HttpBaseService<Case> {
     let url: string = `${super.getBaseUrl()}/SaveCaseTask`;
     return this.http
       .post<CaseTask>(url, data)
+      .map(t => this.convertCaseTaskDates(t))
+  }
+
+  //This calls the CaseApplicationResrouce in the BackEnd
+  public saveCaseApplication(data: CaseApplication): Observable<CaseApplication> {
+    let url: string = `${super.getBaseUrl()}/SaveCaseApplication`;
+    return this.http
+      .post<CaseApplication>(url, data)
       .map(t => this.convertCaseTaskDates(t))
   }
 
@@ -585,6 +600,13 @@ export class CaseService extends HttpBaseService<Case> {
       .get<CaseType[]>(url);
   }
 
+  public fetchCaseApplicationType(): Observable<CaseApplicationType[]> {
+    let url: string = `${super.getBaseUrl()}/FetchCaseApplicationType`;
+
+    return this.http
+      .get<CaseApplicationType[]>(url);
+  }
+
   public fetchCaseStatus(): Observable<CaseStatus[]> {
     let url: string = `${super.getBaseUrl()}/FetchCaseStatus`;
 
@@ -603,11 +625,44 @@ export class CaseService extends HttpBaseService<Case> {
       .post<CasePhase[]>(url, params);
   }
 
+  public fetchCaseSubType(type: number): Observable<CaseSubType[]> {
+    let url: string = `${super.getBaseUrl()}/FetchCaseSubType`;
+
+    let params: object = {
+      typeOID: type.toString()
+    }
+
+    return this.http
+      .post<CaseSubType[]>(url, params);
+  }
+
   public fetchHearing(data: any): Observable<CaseHearingDeprecated[]> {
     let url: string = `${super.getBaseUrl()}/FetchHearing`;
 
     return this.http
       .post<CaseHearingDeprecated[]>(url, data);
+  }
+
+  //This fetches all the case applications for a specific case
+  public fetchCaseApplication(caseNum: number): Observable<CaseApplication[]> {
+    let url: string = `${super.getBaseUrl()}/FetchCaseApplication`;
+
+    let params: object = {
+      caseOID: caseNum.toString()
+    }
+
+    return this.http.post<CaseApplication[]>(url, params);
+  }
+
+  //This fetches all the applications for a specific case application
+  public fetchCaseApplicants(applicationNum: number): Observable<CaseApplicant[]> {
+    let url: string = `${super.getBaseUrl()}/FetchCaseApplicant`;
+
+    let params: object = {
+      caseApplicationOID: applicationNum.toString()
+    }
+
+    return this.http.post<CaseApplicant[]>(url, params);
   }
 
 }

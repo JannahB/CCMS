@@ -2,6 +2,7 @@ import { LookupEntity } from './base/lookup-entity';
 import { CaseDocument } from './CaseDocument';
 import { CaseEvent } from './CaseEvent';
 import { CaseType } from './CaseType';
+import { CaseSubType } from './CaseSubType';
 import { CasePhase } from './CasePhase';
 import { Court } from './Court';
 import { CaseStatus } from './CaseStatus';
@@ -9,6 +10,8 @@ import { CaseTask } from './CaseTask';
 import { CaseCharge } from './CaseCharge';
 import { CaseParty } from './CaseParty';
 import { CaseHearingDeprecated } from './CaseHearingDeprecated';
+import { CaseApplication } from '../../common/entities/CaseApplication';
+import { CaseApplicant } from '../../common/entities/CaseApplicant';
 
 export class Case extends LookupEntity {
 
@@ -16,12 +19,14 @@ export class Case extends LookupEntity {
   caseCaption: string = "";
   caseFilingDate: Date = null;
   casePhase: CasePhase = null;
+  caseSubType: CaseSubType = null;
   caseStatus: CaseStatus = null;
   caseType: CaseType = null;
 
   caseCharges: CaseCharge[] = [];
   caseDocs: CaseDocument[] = [];
   caseEvents: CaseEvent[] = [];
+  caseSubTypes: CaseSubType[] = [];
 
   caseHearings: CaseHearingDeprecated[] = [];      // Needs modifications on server side to work properly //
 
@@ -29,6 +34,9 @@ export class Case extends LookupEntity {
   caseOID: number = 0;
   caseParties: CaseParty[] = [];
   caseTasks: CaseTask[] = [];
+  caseApplications: CaseApplication[] = []; // used to capture all applications for a case
+  caseApplicants: CaseApplicant [] = []; 
+
   caseWeight: number = 0;
   court: Court = null;
   judicialAssignments: any[] = [];        // Entity NEEDED //

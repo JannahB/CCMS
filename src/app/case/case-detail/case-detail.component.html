@@ -111,6 +111,7 @@
                   <input pInputText type="text" #tiCaseCaption="ngModel" required name="tiCaseCaption"
                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                       [(ngModel)]="case.caseCaption"
+                      [required]="false"
                       class="width-full" >
                 <label>Case Caption</label>
               </span>
@@ -126,7 +127,7 @@
 
           <div class="ui-g-12">
 
-            <div class="ui-g-12 ui-md-4">
+            <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Case Status</label>
               <p-dropdown name="ddCaseStaus" #ddCaseStaus placeholder="case status..."
                   [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
@@ -144,7 +145,7 @@
               </div>
             </div>
 
-            <div class="ui-g-12 ui-md-4">
+            <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Case Type</label>
               <!-- [disabled]="case.caseOID != 0" -->
               <p-dropdown name="ddCaseType" #ddCaseType placeholder="case type..."
@@ -162,7 +163,7 @@
               </div>
             </div>
 
-            <div class="ui-g-12 ui-md-4">
+            <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Case Phase</label>
               <!-- [disabled]="!casePhases || !case.caseType || case.caseOID != 0" -->
               <p-dropdown name="ddCasePhase" #ddCasePhase placeholder="case phase..."
@@ -178,6 +179,25 @@
               <div class="ui-message ui-messages-error ui-corner-all"
                   *ngIf="ddCasePhase.errors?.required && ddCasePhase.touched" >
                     Please choose a Case Phase
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Case Sub Type</label>
+              <!-- [disabled]="!casePhases || !case.caseType || case.caseOID != 0" -->
+              <p-dropdown name="ddCaseSubPhase" #ddCasePhase placeholder="case subtype..."
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [required]="true"
+                  (click)="isCaseTypeSelected($event)"
+                  optionLabel="name"
+                  [options]="caseSubTypes"
+                  [(ngModel)]="case.caseSubType"
+                  (onChange)="ddOnChangeSubType($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddCasePhase.errors?.required && ddCasePhase.touched" >
+                    Please choose a Case Sub Type
               </div>
             </div>
 
@@ -280,12 +300,61 @@
             </div>
           </div>
 
+        <!-- CASE APPLICATIONS -->
+
+          <div class="ui-g-12 mt-20 ph-0">
+
+            <div class="ui-g-12 ui-md-6">
+              <h2 class="mb-10">Case Applications</h2>
+            </div>
+
+            <div class="ui-g-12 ui-md-6 ta-r pos-relative">
+              <button type="button"
+                  *ngIf="hasPermission(Permission.CREATE_CASE)"
+                  (click)="showAddCaseCaseApplication();"
+                  label="Add Case Application"
+                  icon="ui-icon-add"
+                  class="ui-button-secondary mr-15 abs-btn" pButton></button>
+            </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.caseApplications"
+                          selectionMode="single"
+                          [(selection)]="selectedCaseApplication"
+                          (onRowSelect)="showAddCaseCaseApplication($event)"
+                          scrollable="true" scrollHeight="200px"
+                          dataKey=".caseApplicationOID" #dtCaseApps>
+
+                <p-column field="caseApplicationNumber" header="Application #" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="caseApplicationType" header="Application Type" [style]="{'width':'10%'}"></p-column>
+                <p-column field="caseApplicationStatus" header="Application Status" [style]="{'width':'10%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                    {{ getApplicationStatusDesc(item.caseApplicationStatus)}}
+                 </ng-template>
+                </p-column>
+                <!--p-column field="applicantName" header="Applicant Name" [style]="{'width':'10%'}"></p-column>
+                <p-column field="applicantRole" header="Applicant Role" [style]="{'width':'10%'}"></p-column-->
+                <p-column field="caseApplicationStartDate" header="Start Date" [style]="{'width':'10%'}" [sortable]="true">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.caseApplicationStartDate | date:'M/d/yyyy'}}
+                    </ng-template>
+                </p-column>
+                <p-column field="caseApplicationEndDate" header="End Date" [style]="{'width':'10%'}" [sortable]="true">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.caseApplicationEndDate | date:'M/d/yyyy'}}
+                    </ng-template>
+                </p-column>
+                
+              </p-dataTable>
+            </div>
+          </div>           
+
 
 
 
           <!-- CHARGES TABLE -->
 
-          <div class="ui-g-12 mt-30">
+          <!--div class="ui-g-12 mt-30">
 
             <div class="ui-g-12 ui-md-6">
               <h2 class="mb-10">Charges</h2>
@@ -301,7 +370,7 @@
 
             <div class="ui-g-12">
 
-              <!--
+              <
                 ******** NEW TABLE ***********
                 Waiting for Aaron to add the
                 dependency tree in case data
@@ -344,7 +413,7 @@
                 <div *ngFor="let factor of item.chargeFactors; let i = index">
                 "Testing"
                 </div>
-              </ng-template-->
+              </ng-template>
 
 
               <p-dataTable [value]="case.caseCharges"
@@ -358,14 +427,14 @@
                 <p-column field="leaChargingDetails" header="Police Description" [style]="{'width':'15%'}"></p-column>
                 <p-column field="iccsCode.categoryName" header="Charge Factors" [style]="{'width':'25%'}"></p-column>
                 <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
-                <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                     <ng-template let-item="rowData" pTemplate="body">
                         <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
                     </ng-template>
-                </p-column> -->
+                </p-column> 
               </p-dataTable>
             </div>
-          </div>
+          </div-->
 
           <p-message *ngIf="staticMessage.visible" severity="{{staticMessage.severity}}" text="{{staticMessage.message}}"></p-message>
 
@@ -1241,6 +1310,165 @@
     </form>
 
 </p-dialog>
+
+<!-- START: ADD CASE APPLICATION MODAL -->
+
+<p-dialog header="Case Application Details" styleClass="casePartyModal" width="850" [(visible)]="showModalAddCaseApplication" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+
+  <form #caseApplicationForm="ngForm" *ngIf="showModalAddCaseApplication">
+    <div class="ui-g">
+      <div class="form-group" >
+
+        <div class="ui-g-12">
+          
+          <div class="ui-g-12 ui-md-3" *ngIf="case.caseNumber != 0">
+            <label class="minimal primary block">Case Number</label>
+            <div class="mar-0">{{case.caseNumber}}</div>
+          </div>
+
+          <div class="ui-g-12 ui-md-3" *ngIf="selectedCaseApplication.caseApplicationOID != 0">
+              <label class="minimal primary block">Application Number</label>
+              <div class="mar-0">{{selectedCaseApplication.caseApplicationNumber}}</div>
+           </div>
+            
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Application Type</label>
+              <p-dropdown name="ddApplicationType" id="ddApplicationType"  placeholder="Choose Application Type"
+                  [required]="true"
+                  [options]="caseApplicationTypes"
+                  optionLabel="name"
+                  filter = "true"
+                  [(ngModel)]="selectedCaseApplication.caseApplicationTypeDisplay"
+                  (onChange)="applicationTypeOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+              
+            </div>  
+            
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Application Status</label>
+              <p-dropdown name="ddApplicationStatus" id="ddApplicationStatus" #ddApplicationStatus="ngModel" placeholder="Choose Application Type"
+                  [required]="true"
+                  [options]="applicationStatus"
+                  optionLabel="label"
+                  filter = "true"
+                  [ngModel]="selectedCaseApplication.caseApplicationStatusDisplay"
+                  appendTo="body"
+                  (onChange)="applicationStatusOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+           </div>   
+        </div>
+
+        <div class="ui-g-12">
+
+           <div class="ui-g-12 ui-md-4">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="appStartDate" name="appStartDate"
+                    inputStyleClass="width-full"                  
+                    (ngModelChange) = "caseApplicationStartDateOnChange($event)"
+                    [ngModel]="selectedCaseApplication?.caseApplicationStartDate"
+                    [required]="true"
+                    dateFormat="dd-M-yy"
+                    placeholder="Start Date"
+                    [showIcon]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2030"
+                    appendTo="body">
+                  </p-calendar>
+           </div>
+          
+
+          <div class="ui-g-12 ui-md-4">
+            <label class="minimal primary block">End Date</label>
+            <p-calendar id="appEndDate" name="appEndDate"
+                  inputStyleClass="width-full"
+                  [(ngModel)]="selectedCaseApplication.caseApplicationEndDate"
+                  dateFormat="dd-M-yy"
+                  placeholder="End Date"
+                  [showIcon]="true"
+                  [yearNavigator]="true"
+                  yearRange="2000:2030"
+                  appendTo="body"></p-calendar>
+          </div>               
+       </div>
+
+        <!-- ADD PARTY APPLICANT & PARTY ROLES SECTION  -->
+
+        <div class="ui-g-12 mt-0">
+          <div class="ui-g-12">
+            <header class="mb-10">Party Applicant &amp; Party Roles</header>
+          </div>
+
+          <div class="ui-g-12 mb-5 partyNames-th">
+            <div class="ui-g-5 pv-0">
+              <label class="minimal primary block">Party Name</label>
+            </div>
+            <div class="ui-g-6 pv-0">
+              <label class="minimal primary block">Party Role</label>
+            </div>
+          </div>
+
+          <div class="ui-g-12 mb-5 caseapplicant-row" *ngFor="let caseapplicant of case.caseApplicants; let acIdx = index">
+            
+            <div class="ui-g-5 ph-20 pv-5">
+              <mat-form-field class="width-full" >
+                  <mat-select name="ddCPName"
+                    [value]="caseapplicant"
+                    [compareWith]="compareByCasePartyId"
+                    (filter) = "true"
+                    (selectionChange)="caseApplicantOnChange($event, acIdx)">
+                    
+                  <mat-option *ngFor="let caName of appCaseParties" [value]="caName">
+                    {{caName.fullName}}
+                  </mat-option>
+             
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="ui-g-5 ph-20 pv-5">
+               <mat-form-field class="width-full" >
+                   <mat-select name="ddCPRole"
+                      [value]="caseapplicant"
+                      [compareWith]="compareByCasePartyRoleId"
+                      (selectionChange)="caseApplicantRoleOnChange($event, acIdx)" >                 
+                    <mat-option *ngFor="let roleTypes of casePartyRoleTypes" [value]="roleTypes">
+                      {{roleTypes.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
+              <i class="material-icons delete-icon" (click)="requestDeleteCasePartyApplicant(acIdx)">delete</i>
+            </div>
+        </div>
+     </div>
+     </div>
+    </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+        
+               
+        <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
+                (click)="hideModals()" >
+        </button>
+        <button label="Save Application Details" type="submit" pButton icon="fa-check"
+                (click)="addCaseApplication()"
+                [disabled]="!caseApplicationForm.form.valid">
+        </button> 
+        <button type="button" (click)="addCaseApplicant();" label="Add Applicant &amp; Role"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+                pButton>
+        </button>
+      </div>
+    </p-footer>
+  </form>
+</p-dialog>
+
+<!-- END: ADD CASE APPLICATION MODAL -->
 
 
 <!-- ADD CASE CHARGE MODAL -->
