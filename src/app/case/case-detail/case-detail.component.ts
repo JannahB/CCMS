@@ -46,6 +46,8 @@ import { CaseApplication } from '../../common/entities/CaseApplication';
 import { componentRefresh } from '@angular/core/src/render3/instructions';
 import { CaseApplicant } from '../../common/entities/CaseApplicant';
 import { CaseApplicationType } from '../../common/entities/CaseApplicationType';
+import { CountriesService } from '../../common/services/http/countries.service';
+import { DropdownDataTransformService } from '../../common/services/utility/dropdown-data-transform.service';
 
 @Component({
   selector: 'app-case-detail',
@@ -86,10 +88,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   selChargeFactor: string = ""; 
   casePartyRoleTypes: CasePartyRole[];  
   caseApplications: CaseApplication[] = []; // used to capture all applications for a case
-  //caseApplicants: CaseApplicant[] = []; //used to capture all the case applicants for any application 
-  
-  selectedCaseApplicant: CaseApplicant = new CaseApplicant();
   selectedCaseApplication: CaseApplication = new CaseApplication();
+  countries: SelectItem[];
+  countriesSubscription: Subscription;
+  
  
 
   public Permission: any = Permission;
@@ -103,6 +105,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     private toastSvc: ToastService,
     private lookupSvc: LookupService,
     private localStorageService: LocalStorageService,
+    private countriesSvc: CountriesService,
+    private dropdownSvc: DropdownDataTransformService,
     private userSvc: UserService
   ) {
     this.breadCrumbSvc.setItems([
@@ -149,7 +153,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .fetchCaseApplicationType()
       .subscribe(appTypes => this.caseApplicationTypes = appTypes);
 
-    
+      this.countriesSubscription = this.countriesSvc.get().subscribe(countries => {
+        this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
+      })    
   }
 
   ngOnDestroy() {
@@ -157,6 +163,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if (this.caseSubscription) this.caseSubscription.unsubscribe();
     if (this.caseTaskSubscription) this.caseTaskSubscription.unsubscribe();
     if (this.routeSubscription) this.routeSubscription.unsubscribe();
+    if (this.countriesSubscription) this.countriesSubscription.unsubscribe();
   }
 
   hasPermission(pm) {
@@ -231,11 +238,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.caseSvc
           .fetchCaseApplication(caseId)
           .subscribe(results => this.case.caseApplications = results);  
-
-        console.log('Case Applications Retrieved',this.case.caseApplications);
-
-           
-
+         
         this.eventTypeFilter = null;
         this.filterCaseEvents();
       }
@@ -355,40 +358,24 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   showModalAddCaseOrder: boolean = false;
   showModalMaintenancePayments = false;
 
-  applicationTypes: SelectItem[] = [
-    { value: 1, label: 'Divorce' },
-    { value: 2, label: 'Custody' },
-    { value: 3, label: 'Maintenance' },
-    { value: 4, label: 'Property Settlement' }
+  applicationStatus: any[] = [
+    { value: 'Active', label: 'Active' },
+    { value: 'Inactive', label: 'Inactive' },
+    { value: 'Closed', label: 'Closed' }
   ];
 
-  applicationStatus: SelectItem[] = [
-    { value: 1, label: 'Active' },
-    { value: 2, label: 'Inactive' },
-    { value: 3, label: 'Closed' }
-  ];
-
-  getApplicationStatusDesc(val): any {
-    return this.applicationStatus[val].label;
-  }
 
   applicationTypeOnChange(event) {
     this.selectedCaseApplication.caseApplicationType = event.value.caseApplicationTypeOID;
     this.selectedCaseApplication.caseApplicationTypeDisplay = event.value.shortName;
-    console.log ('Selected Application Type event is', event);
-    console.log ('Selected Application Type is', this.selectedCaseApplication.caseApplicationType);
   }
 
   applicationStatusOnChange(event) {
-    this.selectedCaseApplication.caseApplicationStatus = event.value.value;
-    console.log ('Selected Application Status is', this.selectedCaseApplication.caseApplicationStatus);
+    this.selectedCaseApplication.caseApplicationStatus = event.value;
   }
 
   applicantRoleTypeOnChange(event){
-
     this.selectedCaseApplication.caseApplicationRole = event.value.casePartyRoleOID;
-    console.log ('Application Role  selected is', this.selectedCaseApplication.caseApplicationRole);
- 
   }
 
   compareByCasePartyId(item1, item2) {
@@ -400,42 +387,42 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   addCaseApplicant() {
-    let authPartyAppLen = this.case.caseApplicants.push(new CaseApplicant());
-    //this.this.selectedCaseApplicants[authPartyAppLen - 1].roles.push(new Role());
-    //this.caseApplications = this.selectedCaseApplicants[authPartyAppLen - 1];
+    let newApplicant = new CaseApplicant();
+    let authPartyAppLen = this.selectedCaseApplication.caseApplicants.push(newApplicant);
   }
 
   caseApplicantOnChange(event, authCourtIdx) {
 
-    this.case.caseApplicants[authCourtIdx].caseApplicantPartyOID = event.value.partyOID 
-    this.case.caseApplicants[authCourtIdx].caseOID = this.case.caseOID;
-    console.log('Case ID Selected is ', this.case.caseApplicants[authCourtIdx].caseOID);
+    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseApplicantPartyOID = event.value.partyOID; 
+    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseOID = this.case.caseOID;
   }
 
   caseApplicantRoleOnChange (event, authCourtIdx) {
-    this.case.caseApplicants[authCourtIdx].caseApplicantRoleOID = event.value.casePartyRoleOID 
-    console.log('Case Role ID Selected is ', event.value.casePartyRoleOID);
+    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseApplicantRoleOID = event.value.casePartyRoleOID; 
   }
 
   requestDeleteCasePartyApplicant(authCourtIdx) {
-    this.case.caseApplicants.splice(authCourtIdx, 1);
+    this.selectedCaseApplication.caseApplicants.splice(authCourtIdx, 1);
+  }
+
+  editStreetAddressOnChange(event){
+    this.selectedCaseApplication.aomStreetName = event;
+  }
+
+  editCityAddressOnChange(event){
+    this.selectedCaseApplication.aomCityName = event;
   }
 
   addCaseApplication(){
 
     // The conversion of the data types is done on the server side.
-    // The JSON string on the server side is parsed according to the object structure.
-
-    
-    this.selectedCaseApplication.caseApplicants = this.case.caseApplicants;
+    // The JSON string on the server side is parsed according to the object structure.    
     
     // Get the current list of case applicants.
     // A case application needs at least one applicant to be a valid case application
     // Applicants can be added as needed
-    
-
-
-    if(this.selectedCaseApplication.caseApplicants.length > 0){
+   
+    if(this.selectedCaseApplication.caseApplicants.length > 0){ 
 
        //Store all case applications 
         this.case.caseApplications.push(this.selectedCaseApplication);
@@ -448,46 +435,71 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.selectedCaseApplication.caseOID = this.case.caseOID;
 
         this.caseSvc.saveCaseApplication(this.selectedCaseApplication).subscribe(result => {
-        this.selectedCaseApplication.caseApplicants = result[0];
+        this.selectedCaseApplication = result[0];
         });
 
-        this.toastSvc.showSuccessMessage('Case Application was saved');
-    
+        this.toastSvc.showSuccessMessage('Case Application Saved');
+   
     }
     else this.toastSvc.showWarnMessage('An application must contain one or more applicants', 'Case Application was not saved');
 
-    this.hideModals();
 
-    //Return the applications that were saved on a case
-    this.caseSvc
-          .fetchCaseApplication(this.case.caseOID)
-          .subscribe(results => this.case.caseApplications = results);  
-
-        console.log('Case Applications Retrieved',this.case.caseApplications);
+    this.saveCase();
      
     //After an application is saved, reset so fresh data can be reloaded
-    //this.selectedCaseApplication = new CaseApplication ();
+    this.selectedCaseApplication = new CaseApplication ();
+    this.selectedCaseApplication.caseApplicants = null;
+    this.hideModals();
   }
 
   caseApplicationStartDateOnChange(event) {
     this.selectedCaseApplication.caseApplicationStartDate = event;
   }
 
+  caseApplicationEndDateOnChange(event) {
+    this.selectedCaseApplication.caseApplicationEndDate = event;
+  }
 
+  dateOfMarriageOnChange(event) {
+    this.selectedCaseApplication.dateOfMarriage = event;
+  }
+
+  countryOfMarriageOnChange(event) {
+    this.selectedCaseApplication.aomCountryName = event.value;
+  }
+
+  resetAddCaseApplicationModal(){
+    this.selectedCaseApplication = new CaseApplication();
+    this.showAddCaseCaseApplication();
+  }
+
+  showAddCaseCaseApplication() { 
+
+    this.showModalAddCaseApplication = true;
+  
+    //Convert the dates for the selected applications
+    this.caseSvc.convertCaseApplicationDates(this.selectedCaseApplication);
+    
+    //Load the current parties associated with this case
+    for (let i = 0; i < this.case.caseParties.length; i++){
+      this.appCaseParties[i] = this.case.caseParties[i].caseParty;    
+      this.appCaseParties[i].fullName = this.appCaseParties[i].firstName.concat(" ",this.appCaseParties[i].lastName);   
+    }
+
+    if(this.selectedCaseApplication.caseApplicationOID == 0){
+      this.case.caseApplicants = [];
+    }
+
+  }
   // -------------------------
   //   END: ADD CASE APPLICATION
   // -------------------------
 
-
-
-
-
-
   searchPartyRoleTypeOnChange(event) {
-
   }
 
   partyOnRowSelect(event) {
+
     if (!this.hasPermission(this.Permission.UPDATE_CASE)) return false;
     this.selectedCaseParty = event.data;
     this.showModalEditCaseParty = true;
@@ -505,58 +517,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .fetchCasePartyRole()
       .subscribe(roles => this.casePartyRoleTypes = roles);*/
   }
-
-  showAddCaseCaseApplication() { 
-
-
-    //NEED TO WRITE CODE TO DISPLAY FIELDS IF THIS IS NOT A NEW APPLICATION
-  
-    this.showModalAddCaseApplication = true;
-
-    //Load the current parties associated with this case
-    for (let i = 0; i < this.case.caseParties.length; i++){
-      this.appCaseParties[i] = this.case.caseParties[i].caseParty;    
-      this.appCaseParties[i].fullName = this.appCaseParties[i].firstName.concat(" ",this.appCaseParties[i].lastName);   
-    }
-
-    //appStartDate = this.selectedCaseApplication.caseApplicationStartDate
-
-    console.log('selectedCaseApplicants for this case is',this.selectedCaseApplication);
-
-    //cannot use any other object besides the Case object since it is binded to the case service
-    this.caseSvc
-    .fetchCaseApplicants(this.selectedCaseApplication.caseApplicationOID)
-    .subscribe(results => this.case.caseApplicants = results);  
-
-    console.log('Case Applicants Retrieved',this.case.caseApplicants);
-    
-    //old data will be cleared.
-    /*if(this.selectedCaseApplication.caseApplicationOID == 0){
-      this.selectedCaseApplication = new CaseApplication(); 
-    }
-    else {*/
-
-      //load the case application info and the case applicants info in the modal.
-      /*for(let i = 0; i < this.case.caseApplications.length; i++){
-
-        console.log('selectedCaseApplicants for this case is',this.selectedCaseApplication.caseApplicationOID);
-        console.log('CaseApplicants for this case is',this.case.caseApplications[i]);
-        
-        if (this.selectedCaseApplication.caseApplicationOID == this.case.caseApplications[i].caseApplicationOID){
-            this.selectedCaseApplication =  this.caseApplications[i];
-            break;
-        }
-      }  */    
-    //}
-
-    
-
-  }
-
-
-
-
-
 
   searchForParty() {
     let obj = { "partyName": this.partySearchText };
@@ -1321,6 +1281,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       // this.case.caseTasks = this.case.caseTasks.slice();
 
       this.toastSvc.showSuccessMessage('Your case task has been saved.', 'Task Saved');
+      this.saveCase();
       this.hideModals();
       this.selectedCaseTask = null;
     });

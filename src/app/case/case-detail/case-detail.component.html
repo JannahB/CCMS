@@ -311,7 +311,7 @@
             <div class="ui-g-12 ui-md-6 ta-r pos-relative">
               <button type="button"
                   *ngIf="hasPermission(Permission.CREATE_CASE)"
-                  (click)="showAddCaseCaseApplication();"
+                  (click)="resetAddCaseApplicationModal();"
                   label="Add Case Application"
                   icon="ui-icon-add"
                   class="ui-button-secondary mr-15 abs-btn" pButton></button>
@@ -323,25 +323,25 @@
                           [(selection)]="selectedCaseApplication"
                           (onRowSelect)="showAddCaseCaseApplication($event)"
                           scrollable="true" scrollHeight="200px"
-                          dataKey=".caseApplicationOID" #dtCaseApps>
+                          dataKey="caseApplicationOID" #dtCaseApps>
 
                 <p-column field="caseApplicationNumber" header="Application #" [style]="{'width':'10%'}" [sortable]="true"></p-column>
-                <p-column field="caseApplicationType" header="Application Type" [style]="{'width':'10%'}"></p-column>
-                <p-column field="caseApplicationStatus" header="Application Status" [style]="{'width':'10%'}">
-                  <ng-template let-item="rowData" pTemplate="body">
+                <p-column field="caseApplicationObjType.name" header="Application Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="caseApplicationStatus" header="Application Status" [style]="{'width':'10%'}" [sortable]="true">
+                  <!--ng-template let-item="rowData" pTemplate="body">
                     {{ getApplicationStatusDesc(item.caseApplicationStatus)}}
-                 </ng-template>
+                 </ng-template-->
                 </p-column>
                 <!--p-column field="applicantName" header="Applicant Name" [style]="{'width':'10%'}"></p-column>
                 <p-column field="applicantRole" header="Applicant Role" [style]="{'width':'10%'}"></p-column-->
                 <p-column field="caseApplicationStartDate" header="Start Date" [style]="{'width':'10%'}" [sortable]="true">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.caseApplicationStartDate | date:'M/d/yyyy'}}
+                        {{item.caseApplicationStartDate | date:'dd-MMM-yyyy'}}
                     </ng-template>
                 </p-column>
                 <p-column field="caseApplicationEndDate" header="End Date" [style]="{'width':'10%'}" [sortable]="true">
                     <ng-template pTemplate="body" let-item="rowData">
-                        {{item.caseApplicationEndDate | date:'M/d/yyyy'}}
+                        {{item.caseApplicationEndDate | date:'dd-MMM-yyyy'}}
                     </ng-template>
                 </p-column>
                 
@@ -1313,7 +1313,7 @@
 
 <!-- START: ADD CASE APPLICATION MODAL -->
 
-<p-dialog header="Case Application Details" styleClass="casePartyModal" width="850" [(visible)]="showModalAddCaseApplication" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+<p-dialog header="Case Application Details" styleClass="caseApplicationModal" width="850" [(visible)]="showModalAddCaseApplication" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
 
   <form #caseApplicationForm="ngForm" *ngIf="showModalAddCaseApplication">
     <div class="ui-g">
@@ -1326,7 +1326,7 @@
             <div class="mar-0">{{case.caseNumber}}</div>
           </div>
 
-          <div class="ui-g-12 ui-md-3" *ngIf="selectedCaseApplication.caseApplicationOID != 0">
+           <div class="ui-g-12 ui-md-3" *ngIf="selectedCaseApplication.caseApplicationOID != 0">
               <label class="minimal primary block">Application Number</label>
               <div class="mar-0">{{selectedCaseApplication.caseApplicationNumber}}</div>
            </div>
@@ -1337,22 +1337,21 @@
                   [required]="true"
                   [options]="caseApplicationTypes"
                   optionLabel="name"
-                  filter = "true"
-                  [(ngModel)]="selectedCaseApplication.caseApplicationTypeDisplay"
+                  [disabled]="!hasPermission(Permission.CREATE_TASK) && selectedCaseApplication.caseApplicationOID > 0"
+                  [filter] = "true"
+                  [(ngModel)]="selectedCaseApplication.caseApplicationObjType"
                   (onChange)="applicationTypeOnChange($event)"
                   styleClass="width-full">
-              </p-dropdown>
-              
+              </p-dropdown>             
             </div>  
             
             <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Application Status</label>
-              <p-dropdown name="ddApplicationStatus" id="ddApplicationStatus" #ddApplicationStatus="ngModel" placeholder="Choose Application Type"
+              <p-dropdown name="ddApplicationStatus" id="ddApplicationStatus" placeholder="Choose Application Type"
                   [required]="true"
                   [options]="applicationStatus"
-                  optionLabel="label"
                   filter = "true"
-                  [ngModel]="selectedCaseApplication.caseApplicationStatusDisplay"
+                  [ngModel]="selectedCaseApplication.caseApplicationStatus"
                   appendTo="body"
                   (onChange)="applicationStatusOnChange($event)"
                   styleClass="width-full">
@@ -1361,37 +1360,107 @@
         </div>
 
         <div class="ui-g-12">
-
            <div class="ui-g-12 ui-md-4">
               <label class="minimal primary block">Start Date</label>
-              <p-calendar id="appStartDate" name="appStartDate"
-                    inputStyleClass="width-full"                  
-                    (ngModelChange) = "caseApplicationStartDateOnChange($event)"
+              <p-calendar id="dtAppStartDate" name="dtAppStartDate" placeholder="Start Date"                      
+                    (ngModelChange) ="caseApplicationStartDateOnChange($event)"
                     [ngModel]="selectedCaseApplication?.caseApplicationStartDate"
                     [required]="true"
-                    dateFormat="dd-M-yy"
-                    placeholder="Start Date"
+                    appendTo="body"
+                    [inline] = "false"
+                    dateFormat="dd-M-yy"                    
                     [showIcon]="true"
+                    [monthNavigator]="true" 
                     [yearNavigator]="true"
                     yearRange="2000:2030"
                     appendTo="body">
-                  </p-calendar>
+              </p-calendar>
            </div>
-          
-
+    
           <div class="ui-g-12 ui-md-4">
             <label class="minimal primary block">End Date</label>
-            <p-calendar id="appEndDate" name="appEndDate"
-                  inputStyleClass="width-full"
-                  [(ngModel)]="selectedCaseApplication.caseApplicationEndDate"
-                  dateFormat="dd-M-yy"
-                  placeholder="End Date"
-                  [showIcon]="true"
-                  [yearNavigator]="true"
-                  yearRange="2000:2030"
-                  appendTo="body"></p-calendar>
-          </div>               
+            <p-calendar id="dtAppEndDate" name="dtAppEndDate" placeholder="Application End Date"                      
+                    (ngModelChange) ="caseApplicationEndDateOnChange($event)"
+                    [ngModel]="selectedCaseApplication?.caseApplicationEndDate"
+                    [required]="false"
+                    appendTo="body"
+                    [inline] = "false"
+                    dateFormat="dd-M-yy"                    
+                    [showIcon]="true"
+                    [monthNavigator]="true" 
+                    [yearNavigator]="true"
+                    yearRange="2000:2030"
+                    appendTo="body">
+              </p-calendar>
+          </div>   
+
+          <!-- CAPTURE THE PLACE OF MARRIAGE  -->
+          <div class="ui-g-12 ui-md-3" *ngIf="selectedCaseApplication.caseApplicationType == 1">
+            <label class="minimal primary block">Date of Marriage</label>
+            <p-calendar id="dtOfMarriage" name="dtOfMarriage" placeholder="Application End Date"                      
+                    (ngModelChange) ="dateOfMarriageOnChange($event)"
+                    [ngModel]="selectedCaseApplication?.dateOfMarriage"
+                    [required]="true"
+                    appendTo="body"
+                    [inline] = "false"
+                    dateFormat="dd-M-yy"                    
+                    [showIcon]="true"
+                    [monthNavigator]="true" 
+                    [yearNavigator]="true"
+                    yearRange="2000:2030"
+                    appendTo="body">
+              </p-calendar>
+         </div>
+
        </div>
+
+       <div class="ui-g-12">      
+          <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">        
+          <span class="md-inputfield">
+            <input type="text" pInputText #martialStreetAddress="ngModel" name="martialStreetAddress" 
+                    [required] = "true"
+                    [disabled]="false"
+                    [ngModel]="selectedCaseApplication.aomStreetName"  
+                    (ngModelChange)="editStreetAddressOnChange($event)">
+            <label>Place of Marriage: Street Address </label>
+          </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="martialStreetAddress.errors?.required && martialStreetAddress.touched" >
+                  Please enter the street address for place of marriage
+            </div>
+            </div>
+         
+            <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">        
+            <span class="md-inputfield">
+              <input type="text" pInputText #martialCityAddress="ngModel" name="martialCityAddress" 
+                      [required] = "true"
+                      [disabled]="false"
+                      [ngModel]="selectedCaseApplication.aomCityName"  
+                      (ngModelChange)="editCityAddressOnChange($event)">
+              <label>Place of Marriage: Name of City / Town </label>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="martialCityAddress.errors?.required && martialCityAddress.touched" >
+                  Please enter the city / towm for place of marriage
+            </div>
+            </div>
+               
+            <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1"> 
+                       
+                  <label class="minimal primary block">Country of Marriage</label>
+                  <p-dropdown name="ddAomCountry" id="ddAomCountry" #ddAomCountry="ngModel" 
+                    placeholder="Choose Country of Marriage"
+                    [required] = "true"
+                    [filter] = "true"
+                    [(ngModel)]="selectedCaseApplication.aomCountryName"
+                    [options]="countries"                    
+                    [style]="{'width':'100%'}"
+                    (onChange)="countryOfMarriageOnChange($event)">
+                  </p-dropdown>
+              </div>
+        </div>
+
+       
 
         <!-- ADD PARTY APPLICANT & PARTY ROLES SECTION  -->
 
@@ -1409,7 +1478,7 @@
             </div>
           </div>
 
-          <div class="ui-g-12 mb-5 caseapplicant-row" *ngFor="let caseapplicant of case.caseApplicants; let acIdx = index">
+          <div class="ui-g-12 mb-5 caseapplicant-row" *ngFor="let caseapplicant of selectedCaseApplication.caseApplicants; let acIdx = index">
             
             <div class="ui-g-5 ph-20 pv-5">
               <mat-form-field class="width-full" >

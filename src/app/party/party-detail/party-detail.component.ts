@@ -109,7 +109,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.languageSubscription = this.languageSvc.get().subscribe(langs => {
       this.languages = langs;
       // this.projectCopy = { ...this.project }
-      console.log('languages', langs);
+      //console.log('languages', langs);
     });
 
     this.identifierSubscription = this.identifierSvc.get().subscribe(items => {
