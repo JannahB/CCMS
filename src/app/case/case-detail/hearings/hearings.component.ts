@@ -37,15 +37,15 @@ export class HearingsComponent implements OnInit {
   selectedHearing: CaseHearing;
   selectedHearingBak: CaseHearing;
   selectedHearingIdx: number;
-  loadingDataFlag: boolean = false;
+  loadingDataFlag = false;
   hearingLocations: CourtLocation[];
   hearingTypes: HearingType[];
   hearingSubscription: Subscription;
   conflicts: CaseHearingUnavailableBlock[];
-  loadingConflicts: boolean = false;
-  showDeleteHearingModal: boolean = false;
+  loadingConflicts = false;
+  showDeleteHearingModal = false;
   judges: JudicialOfficer[];
-  showDeleteItemModal: boolean = false;
+  showDeleteItemModal = false;
   selectedWorkWeek: any;
   blockedHours = [];
   blockedHearings = [];
@@ -142,7 +142,7 @@ export class HearingsComponent implements OnInit {
     },
 
     onBeforeRowHeaderRender: args => {
-      let duration = args.row.events.totalDuration();
+      const duration = args.row.events.totalDuration();
       if (duration.totalSeconds() === 0) {
         return;
       }
@@ -165,7 +165,7 @@ export class HearingsComponent implements OnInit {
       // args.data.areas = [
       //   { right: 2, top: 6, height: 20, width: 30, html: duration.toString("h:mm") }
       // ];
-      let showbar = args.data.tags && args.data.tags.hearingId && args.data.tags.hearingId == this.selectedHearing.id;
+      const showbar = args.data.tags && args.data.tags.hearingId && args.data.tags.hearingId == this.selectedHearing.id;
       args.data.barHidden = !showbar;
       // args.data.barColor = "red";
       // args.data.cssClass = "myclass";
@@ -173,7 +173,7 @@ export class HearingsComponent implements OnInit {
 
     },
     onBeforeResHeaderRender: args => {
-      let dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const dow = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       // To Show day of week only use
       // args.resource.html = dow[args.resource.index];
 
@@ -186,12 +186,12 @@ export class HearingsComponent implements OnInit {
       }
     },
     onBeforeCellRender: args => {
-      let cellStart = args.cell.start.getTotalTicks();
-      let cellEnd = args.cell.end.getTotalTicks();
+      const cellStart = args.cell.start.getTotalTicks();
+      const cellEnd = args.cell.end.getTotalTicks();
 
       this.blockedHours.forEach(item => {
-        let denyStart = new DayPilot.Date(item.start).getTotalTicks();
-        let denyEnd = new DayPilot.Date(item.end).getTotalTicks();
+        const denyStart = new DayPilot.Date(item.start).getTotalTicks();
+        const denyEnd = new DayPilot.Date(item.end).getTotalTicks();
 
         if (cellStart >= denyStart && cellEnd <= denyEnd) {
           if (item.tag == 'Facility')
@@ -238,10 +238,10 @@ export class HearingsComponent implements OnInit {
     // TODO: move this to a date util lib
     Date.prototype.addDays = function (numberOfDays) {
       // send negative number to subtract days
-      var dat = new Date(this.valueOf());
+      let dat = new Date(this.valueOf());
       dat.setDate(dat.getDate() + numberOfDays);
       return dat;
-    }
+    };
   }
 
   ngOnInit() {
@@ -265,7 +265,7 @@ export class HearingsComponent implements OnInit {
 
   getLookups() {
     this.loadingDataFlag = true;
-    var source = Observable.forkJoin<any>(
+    let source = Observable.forkJoin<any>(
       this.hearingSvc.getJudicialOfficer(),
       this.hearingSvc.getCourtLocations(),
       this.hearingSvc.getHearingTypes(),
@@ -285,7 +285,7 @@ export class HearingsComponent implements OnInit {
       },
       (error) => {
         console.log('getLookups error', error);
-        this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.')
+        this.toastSvc.showErrorMessage('There was an error fetching hearing reference data.');
       },
       () => {
         this.loadingDataFlag = false;
@@ -299,7 +299,7 @@ export class HearingsComponent implements OnInit {
       this.hearings = this.hearings.slice();
       if (this.hearings.length) {
         this.initHearingData();
-        let selectedIndex = (resultHearing) ? this.getIndexOfItem(resultHearing) : 0;
+        const selectedIndex = (resultHearing) ? this.getIndexOfItem(resultHearing) : 0;
         this.setSelectedHearing(this.hearings[selectedIndex]);
         this.getUnavailableBlocks();
       } else {
@@ -308,7 +308,7 @@ export class HearingsComponent implements OnInit {
     },
       (error) => {
         console.log('getHearings error', error);
-        this.toastSvc.showErrorMessage('There was an error fetching hearings.')
+        this.toastSvc.showErrorMessage('There was an error fetching hearings.');
       },
       () => {
         this.loadingDataFlag = false;
@@ -337,14 +337,18 @@ export class HearingsComponent implements OnInit {
   }
 
   private preSelectDropdowns() {
-    if (this.selectedHearing.judicialOfficerId)
+    if (this.selectedHearing.judicialOfficerId) {
       this.selectedHearing.judicialOfficer = this.judges.find(j => j.id == this.selectedHearing.judicialOfficerId);
+    }
 
-    if (this.selectedHearing.courtLocationId)
+    if (this.selectedHearing.courtLocationId) {
       this.selectedHearing.hearingLocation = this.hearingLocations.find(h => h.id == this.selectedHearing.courtLocationId);
+    }
 
-    if (this.selectedHearing.hearingTypeId)
+
+    if (this.selectedHearing.hearingTypeId) {
       this.selectedHearing.hearingType = this.hearingTypes.find(ht => ht.id == this.selectedHearing.hearingTypeId);
+    }
   }
 
 
@@ -378,7 +382,7 @@ export class HearingsComponent implements OnInit {
 
 
   createBlockedArrays() {
-    let h = this.selectedHearing;
+    const h = this.selectedHearing;
     let blockedHoursOfOperation = [];
     let blockedHearingsDays = [];
 
@@ -441,7 +445,7 @@ export class HearingsComponent implements OnInit {
       this.toastSvc.showWarnMessage('Only one new hearing can be created at a time.');
       return;
     }
-    let newHearing = new CaseHearing();
+    const newHearing = new CaseHearing();
     newHearing.id = 0;
     newHearing.description = 'New hearing description...';
     newHearing.caseId = this.case.caseOID;
@@ -529,7 +533,7 @@ export class HearingsComponent implements OnInit {
   saveHearing() {
     console.info('selectedHearing.days', this.selectedHearing.days);
     this.scheduler.control.clearSelection();
-    let h = this.selectedHearing
+    const h = this.selectedHearing;
     if (!this.hasValidHearingProperties()) return;
 
     if (!h.days || !h.days.length) {
@@ -563,7 +567,7 @@ export class HearingsComponent implements OnInit {
       },
         (error) => {
           console.log(error);
-          this.toastSvc.showErrorMessage('There was an error while saving hearings.')
+          this.toastSvc.showErrorMessage('There was an error while saving hearings.');
         },
         () => {
           // final
@@ -572,7 +576,7 @@ export class HearingsComponent implements OnInit {
   }
 
   setWorkWeek(e) {
-    console.log('setWorkWeek(e)', e)
+    console.log('setWorkWeek(e)', e);
     this.selectedWorkWeek = CalendarUtils.getMonday(new Date(e).toDateString());
     this.scheduler.control.startDate = this.selectedWorkWeek;
     this.scheduler.control.update();
@@ -603,7 +607,7 @@ export class HearingsComponent implements OnInit {
         },
         () => {
           // final
-        })
+        });
   }
 
   refreshCalendar() {
@@ -618,11 +622,11 @@ export class HearingsComponent implements OnInit {
   private hasValidHearingProperties(): boolean {
 
     if (!this.selectedHearing) {
-      this.toastSvc.showInfoMessage('Please select or create a new hearing before creating a time block.')
+      this.toastSvc.showInfoMessage('Please select or create a new hearing before creating a time block.');
       return false;
     }
 
-    let h = this.selectedHearing;
+    const h = this.selectedHearing;
     if (!h.courtLocationId || !h.hearingTypeId || !h.judicialOfficerId) {
       this.toastSvc.showInfoMessage('Please complete all required fields before creating a time block.');
       return false;
@@ -649,7 +653,7 @@ export class HearingsComponent implements OnInit {
           d.start = new DayPilot.Date(newStart);
           d.end = new DayPilot.Date(newEnd);
         }
-      })
+      });
     }
   }
 
