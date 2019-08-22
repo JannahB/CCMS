@@ -40,7 +40,7 @@ export class UserService {
   public isAdminUser(): boolean {
 
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
-    let idx = this.loggedInUser.roles.findIndex(itm => itm.ccmsAdmin == true);
+    const idx = this.loggedInUser.roles.findIndex(itm => itm.ccmsAdmin == true);
     console.log('Logged in user', this.loggedInUser.userName);
     console.log('Admin Role', (idx > -1));
     return idx > -1;
@@ -48,21 +48,36 @@ export class UserService {
   }
 
   public isCourtManager(): boolean {
-    
+
     //This line of code allows administrator access to all menu items for a specific role.
     if (this.loggedInUser.roles[0].staffRoleOID == 5) this.loggedInUser.roles[0].ccmsAdmin = true;
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
 
-    let idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 5);
+    const idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 5);
     console.log('Logged in user', this.loggedInUser.userName);
     console.log('Admin Role', (idx > -1));
     return idx > -1;
   }
 
+  public isJudicialOfficer(): boolean {
+
+    if (this.loggedInUser.roles[0].staffRoleName === "Judicial") {
+      this.loggedInUser.roles[0].isJudicialOfficer = true;
+    }
+    if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) {
+      return false;
+    }
+
+    const idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID === 5);
+    console.log('Logged in user', this.loggedInUser.userName);
+    console.log('Judicial Role', (idx > -1));
+    return idx > -1;
+  }
+
 
   //This function prevents a supervisor from access the workflow
-    public isSupervisor(): boolean {
-    
+  public isSupervisor(): boolean {
+
     //This line of code allows administrator access to all menu items for a specific role.
     if (this.loggedInUser.roles[0].staffRoleOID == 6) {
       this.loggedInUser.roles[0].ccmsAdmin = true;
@@ -70,7 +85,7 @@ export class UserService {
     }
 
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
-    let idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 6);
+    const idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 6);
     console.log('Logged in user', this.loggedInUser.userName);
     console.log('Admin Role', (idx > -1));
     return idx > -1;
@@ -82,13 +97,13 @@ export class UserService {
     if (!courtOID) return false;
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
 
-    let roles: Role[] = this.loggedInUser.roles;
-    let roleByCourtId = roles.find(itm => itm.courtOID == courtOID);
+    const roles: Role[] = this.loggedInUser.roles;
+    const roleByCourtId = roles.find(itm => itm.courtOID == courtOID);
     if (!roleByCourtId) return false;
 
-    let courtPermissions: Permission[] = roleByCourtId.permissions;
+    const courtPermissions: Permission[] = roleByCourtId.permissions;
     if (!courtPermissions.length) return false;
-    let idx = courtPermissions.findIndex(itm => itm.permissionID == pmId);
+    const idx = courtPermissions.findIndex(itm => itm.permissionID == pmId);
 
     return idx > -1;
   }
