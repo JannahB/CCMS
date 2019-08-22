@@ -135,7 +135,11 @@ import { ConfigService } from './common/services/config/config.service';
 import { HearingsService } from './common/services/http/hearings.service';
 import { CalResourcesComponent } from './admin/calendar/cal-resources/cal-resources.component';
 import { CalFacilitiesComponent } from './admin/calendar/cal-facilities/cal-facilities.component';
-
+import { MinutesComponent } from './case/case-detail/hearings/minutes/minutes.component';
+import { MinuteService } from './common/services/http/minute.service';
+import { TempHearingsComponent } from './case/case-detail/temp-hearings/temp-hearings.component';
+import { CaseRegisterService } from './common/services/http/case-register.service';
+import { EventService } from "./common/services/http/event.service";
 @NgModule({
   imports: [
     BrowserModule,
@@ -234,7 +238,9 @@ import { CalFacilitiesComponent } from './admin/calendar/cal-facilities/cal-faci
     CaseCountsComponent,
     HearingsComponent,
     CalResourcesComponent,
-    CalFacilitiesComponent
+    CalFacilitiesComponent,
+    MinutesComponent,
+    TempHearingsComponent
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
@@ -273,6 +279,9 @@ import { CalFacilitiesComponent } from './admin/calendar/cal-facilities/cal-faci
     AssignmentManagerService,
     ConfigService,
     HearingsService,
+    MinuteService,
+    CaseRegisterService,
+    EventService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthorizationInterceptor,

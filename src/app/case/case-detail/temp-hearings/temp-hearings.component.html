@@ -1,0 +1,202 @@
+<div class="ui-g-12 pos-relative">
+  <loading-bar [visible]="loadingDataFlag" [message]="'loading hearing data...'"></loading-bar>
+  <div class="ui-g-12 pad-0">
+    <div class="ui-g-6 pad-0">
+      <h2>Hearings</h2>
+    </div>
+    <div class="ui-g-6 pad-0 ta-r">
+      <button type="button" *ngIf="hasPermission(Permission.CREATE_CASE_HEARING)" (click)="showHearingModal()"
+        label="Add Hearing" icon="ui-icon-add" class="ui-button-secondary mt-10" pButton>
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="ui-g-12 ui-sm-12 pl-0 pr-30 lite-table">
+    <!-- scrollHeight="360px" -->
+    <p-dataTable [value]="hearings" selectionMode="single" [(selection)]="selectedHearing"
+      (onRowSelect)="hearingOnRowSelect($event)" scrollable="true" dataKey="id" #dtHearings styleClass="lite-header">
+      <p-column field="" header="Hearing Date">
+        <ng-template pTemplate="body" let-item="rowData">
+          <p class=" mv-0 smaller center-td">&emsp;{{ item.hearingDate |date:'longDate'}}</p>
+        </ng-template>
+      </p-column>
+      <p-column field="" header="Hearing">
+        <ng-template pTemplate="body" let-item="rowData">
+          <p class=" mv-0 smaller">{{ item.hearingType?.name }}</p>
+        </ng-template>
+      </p-column>
+      <p-column field="" header="Judicial Officer">
+        <ng-template pTemplate="body" let-item="rowData">
+          <p class=" mv-0 smaller center-td">{{ item.judicialOfficer?.firstName }} {{ item.judicialOfficer?.lastName }}
+          </p>
+        </ng-template>
+      </p-column>
+      <p-column field="" header="Start" [style]="{'width':'8%'}">
+        <ng-template pTemplate="body" let-item="rowData">
+          <p class=" mv-0 smaller center-td">&emsp;{{ item.startDateTime | date: 'shortTime'}} </p>
+        </ng-template>
+      </p-column>
+      <p-column field="" header="End" [style]="{'width':'8%'}">
+        <ng-template pTemplate="body" let-item="rowData">
+          <p class=" mv-0 smaller center-td">&emsp;{{ item.endDateTime | date: 'shortTime'}}</p>
+        </ng-template>
+      </p-column>
+      <p-column field="" header="CourtRoom" [style]="{'width':'30%'}">
+        <ng-template pTemplate="body" let-item="rowData">
+          <p class=" mv-0 smaller">{{ item.hearingLocation?.fullcourtroom }}</p>
+        </ng-template>
+      </p-column>
+    </p-dataTable>
+  </div>
+
+  <p-dialog header="Add New Hearing" [width]="800" [(visible)]="showModalAddHearing" [responsive]="true"
+    showEffect="fade" [modal]="true" [closable]="false">
+
+    <form (ngSubmit)="saveHearing()" #hearingForm="ngForm" novalidate>
+      <div class="ui-g">
+        <div class="form-group">
+          <div class="ui-g-6">
+            <!-- HEARING DATE -->
+            <label class="minimal primary block">Hearing Date</label>
+            <p-calendar id="hearingDate" name="hearingDate" #hearingDate="ngModel" placeholder="Hearing Date"
+              [ngModel]="selectedHearing?.hearingDate" (ngModelChange)="hearingDateOnChange($event)" [showIcon]="true"
+              dateFormat="dd/mm/yy" appendTo="body"></p-calendar>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="hearingDate.errors?.required && hearingDate.touched">
+              Please choose a Hearing Date
+            </div>
+          </div>
+          <!-- JUDICIAL OFFICER -->
+          <div class="ui-g-6">
+            <label class="minimal primary block">Judicial Officer</label>
+            <p-dropdown name="ddHearingJudge" id="ddHearingJudge" #ddHearingJudge="ngModel"
+              placeholder="choose Judicial Officer..." [required]="true" [options]="judges" optionLabel="name"
+              [ngModel]="selectedHearing?.judicialOfficer" (onChange)="hearingJudgeOnChange($event)"
+              styleClass="width-full" [filter]="true" filterBy="label,value.name">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddHearingJudge.errors?.required && ddHearingJudge.touched">
+              Please select a Judicial Officer
+            </div>
+          </div>
+
+
+          <!-- Conflicts Panel -->
+          <div class="ui-g-12" *ngIf="hearingConflicts.length > 0 || !hearingConflicts">
+            <p-panel header="Potential Schedule Conflicts" toggleable="true" collapsed="false">
+              <div class="lite-table">
+                <p-dataTable [value]="hearingConflicts" scrollable="true" dataKey="id" #dtConflicts
+                  styleClass="lite-header">
+                  <p-column field="" header="Hearing Times">
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <p class=" mv-0 smaller center-td">&emsp;{{ item.startDateTime | date: 'shortTime'}} </p>
+                      <p class=" mv-0 smaller center-td">&emsp;{{ item.endDateTime | date: 'shortTime'}}</p>
+                    </ng-template>
+                  </p-column>
+                  <p-column field="" header="Case Number">
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <p class=" mv-0 smaller center-td">&emsp;{{ item.caseId }}</p>
+                    </ng-template>
+                  </p-column>
+                  <p-column field="" header="Location">
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <p class=" mv-0 smaller center-td">&emsp;{{ item.hearingLocation.courtroom }}</p>
+                    </ng-template>
+                  </p-column>
+                  <p-column field="" header="Assigned">
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <p class=" mv-0 smaller center-td">&emsp;{{ item.judicialOfficer.name}}</p>
+                    </ng-template>
+
+                  </p-column>
+                </p-dataTable>
+              </div>
+            </p-panel>
+          </div>
+          <!-- Time -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <label class="minimal primary block">Start</label>
+              <p-calendar id="startDateTime" name="startDateTime" #startDateTime="ngModel" placeholder="Start Time"
+                [ngModel]="selectedHearing?.startDateTime" (ngModelChange)="startTimeOnChange($event)" [timeOnly]="true"
+                [inline]="true" dateFormat="dd/mm/yy" hourFormat="12" appendTo="body"></p-calendar>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="startDateTime.errors?.required && startDateTime.touched">
+                Please choose a Start Time
+              </div>
+            </div>
+
+            <div class="ui-g-6">
+              <label class="minimal primary block">End</label>
+              <p-calendar id="endDateTime" name="endDateTime" #endDateTime="ngModel" placeholder="End Time"
+                [ngModel]="selectedHearing?.endDateTime" (ngModelChange)="endTimeOnChange($event)" [timeOnly]="true"
+                [inline]="true" dateFormat="dd/mm/yy" hourFormat="12" appendTo="body"></p-calendar>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="startDateTime.errors?.required && endDateTime.touched">
+                Please choose a End Time
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="ui-g-12 ui-sm-12 pad-0">
+
+          <!-- HEARING TYPE -->
+          <div class="ui-g-4">
+            <label class="minimal primary block">Hearing Type</label>
+            <p-dropdown name="ddHearingType" id="ddHearingType" #ddHearingType="ngModel"
+              placeholder="choose Hearing Type..." [required]="true" [options]="hearingTypes" optionLabel="name"
+              [ngModel]="selectedHearing?.hearingType" (onChange)="hearingTypeOnChange($event)" styleClass="width-full"
+              [filter]="true" filterBy="label,value.name">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddHearingType.errors?.required && ddHearingType.touched">
+              Please choose a Hearing Type
+            </div>
+          </div>
+
+
+
+          <!-- HEARING LOCATION -->
+          <div class="ui-g-8">
+            <label class="minimal primary block">Hearing Location</label>
+            <p-dropdown name="ddHearingLocation" id="ddHearingLocation" #ddHearingLocation="ngModel"
+              placeholder="choose Hearing Location..." [required]="true" [options]="hearingLocations"
+              optionLabel="fullcourtroom" [ngModel]="selectedHearing?.hearingLocation"
+              (onChange)="hearingLocationOnChange($event)" styleClass="width-full" [filter]="true"
+              filterBy="label,value.name">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddHearingLocation.errors?.required && ddHearingLocation.touched">
+              Please choose a Hearing Location
+            </div>
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div class="ui-g-12 mb-10 pt-0">
+            <label class="minimal primary block">Description</label>
+            <textarea name="tiHearingDescription" [ngModel]="selectedHearing?.description"
+              (ngModelChange)="hearingDescriptionOnChange($event)" [rows]="1" pInputTextarea autoResize="autoResize"
+              class="width-full"></textarea>
+          </div>
+
+
+        </div>
+
+        <p-footer>
+          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+            <button label="Add Hearing" type="submit" pButton icon="fa-check"
+              [disabled]="!hearingForm.form.valid"></button>
+            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+              (click)="hideModal()"></button>
+          </div>
+        </p-footer>
+
+      </div>
+    </form>
+  </p-dialog>
+
+
+</div>

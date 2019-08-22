@@ -1,0 +1,247 @@
+<div class="ui-g-12 pos-relative" fragment='test'>
+  <loading-bar [visible]="loadingDataFlag" [message]="'loading minutes data...'"></loading-bar>
+  <!--  -->
+  <div class="ui-g-12 pad-0">
+    <div class="ui-g-6 pad-0">
+      <h2>Minutes</h2>
+    </div>
+    <div class="ui-g-6 pad-0 ta-r">
+      <button type="button" (click)="showMinuteModal()" label="New Minute" icon="ui-icon-add"
+        class="ui-button-secondary mt-10" pButton></button>
+    </div>
+  </div>
+
+
+  <!-- Table -->
+  <div class="ui-g-12 ui-sm-12 pl-0 pr-30 lite-table">
+
+    <p-dataTable [value]="minutes" selectionMode="single" [(selection)]="selectedMinute"
+      (onRowSelect)="minuteOnRowSelect($event)" scrollable="true" scrollHeight="360px" dataKey="id" #dtMinutes
+      styleClass="lite-header">
+      <p-column field="" header="Minutes">
+        <ng-template pTemplate="body" let-item="rowData">
+          <p class=" mv-0 smaller">{{ item.minuteDate | date:'MMM d, yyyy h:mm a' }} </p>
+          <p class=" mv-0 smaller">{{ item.hearing.hearingName }} </p>
+          <ng-container
+            *ngIf="item.courtOrders == null || item.courtOrders == ''; then showGeneralMinutes; else showOrders">
+          </ng-container>
+          <ng-template #showGeneralMinutes>
+            <p class=" mv-0 smaller">General Minutes: <br />{{ item.generalMinutes }}</p>
+          </ng-template>
+          <ng-template #showOrders>
+            <p class=" mv-0 smaller">Order: <br />{{ item.courtOrders }}</p>
+          </ng-template>
+        </ng-template>
+      </p-column>
+    </p-dataTable>
+  </div>
+
+
+  <!-- Add Minute Modal -->
+  <p-dialog header="Add New Minute" width="450" [(visible)]="showModalAddMinute" [responsive]="true" showEffect="fade"
+    [modal]="true" [closable]="false" scrollable="false">
+    <form (ngSubmit)="saveMinute(minuteForm)" #minuteForm="ngForm" novalidate>
+      <ng-container *ngIf="this.isEdit == false; else editButton">
+        <div class="ui-g">
+          <div class="form-group">
+
+            <!-- Hearings -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Hearings</label>
+              <p-dropdown name="ddHearings" id="ddHearings" #ddHearings="ngModel" placeholder="Select Hearing..."
+                [required]="true" [options]="hearings" optionLabel="hearingName" autofocus="true"
+                [ngModel]="this.selectedHearing" (onChange)="hearingOnChange($event)" styleClass="width-full"
+                [filter]="true" filterBy="label,value.name">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddHearings.errors?.required && ddHearings.touched">
+                Please select a Hearing
+              </div>
+            </div>
+
+            <!-- MINUTE DATE -->
+            <div class="ui-g-12">
+              <label class="minimal primary block">Minute Date</label>
+              <p-calendar id="minuteDate" name="minuteDate" #minuteDate="ngModel" placeholder="Minute Date"
+                [ngModel]="selectedMinute?.minuteDate" (ngModelChange)="minuteDateOnChange($event)" [required]="true"
+                showTime="true" hourFormat="12" timeonly="true" readonlyInput [showIcon]="true" disabled
+                dateFormat="dd/mm/yy" appendTo="body"></p-calendar>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="minuteDate.errors?.required && minuteDate.touched">
+                Please choose a Minute Date
+              </div>
+            </div>
+
+            <!-- JUDICIAL OFFICER -->
+            <!-- <div class="ui-g-12 mt-15">
+            <label class="minimal primary block">Judicial Officer</label>
+            <span class="md-inputfield">
+              <input pInputText id="tiJudicialOfficer" [required]="true" name="tiJudicialOfficer" class="width-full" [(ngModel)]="selectedMinute.judicialOfficer" />
+            </span>
+          </div> -->
+
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Judicial Officer</label>
+              <p-dropdown name="ddHearingJudge" id="ddHearingJudge" #ddHearingJudge="ngModel"
+                placeholder="choose Judicial Officer..." [required]="true" [options]="judges" optionLabel="name"
+                [ngModel]="this.selectedJudge" (onChange)="hearingJudgeOnChange($event)" styleClass="width-full"
+                [filter]="true" filterBy="label,value.name">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddHearingJudge.errors?.required && ddHearingJudge.touched">
+                Please select a Judicial Officer
+              </div>
+            </div>
+
+            <!-- APPEARANCES -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Appearances</label>
+              <span class="md-inputfield">
+                <!-- <p-chips pInputText id="tiAppearances" [required]="true" name="tiAppearances" class="width-full"
+                  [(ngModel)]="this.appearances" type="text"></p-chips> -->
+                <p-autoComplete id="tiAppearances" [required]="true" name="tiAppearances" [(ngModel)]="this.appearances"
+                  [suggestions]="filteredCaseParties" (completeMethod)="search($event)" [multiple]="true"
+                  [dropdown]="true" styleClass="width-full" [minLength]="1" appendTo="body" forceSelection="true">
+                </p-autoComplete>
+              </span>
+            </div>
+
+            <!-- GENERAL MINUTES -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">General Minutes</label>
+              <textarea id="tiMinuteDescription" name="tiMinuteDescription" [required]="true"
+                [(ngModel)]="selectedMinute.generalMinutes" [rows]="5" pInputTextarea autoResize="autoResize"
+                class="width-full"></textarea>
+            </div>
+
+            <!-- COURT ORDER -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Order</label>
+              <textarea name="tiOrderDescription" [(ngModel)]="selectedMinute.courtOrders" [rows]="5" pInputTextarea
+                autoResize="autoResize" class="width-full"></textarea>
+            </div>
+
+            <!-- EXHIBITS -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Exhibits</label>
+              <span class="md-inputfield">
+                <p-chips pInputText id="tiExhibits" name="tiExhibits" class="width-full" [(ngModel)]="this.exhibits"
+                  type="text">
+                </p-chips>
+              </span>
+            </div>
+
+            <!-- WITNESSES -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Witnesses</label>
+              <span class="md-inputfield">
+                <p-chips pInputText id="tiWitnesses" name="tiWitnesses" class="width-full" [(ngModel)]="this.witnesses"
+                  type="text">
+                </p-chips>
+
+              </span>
+            </div>
+
+          </div>
+        </div>
+        <p-footer>
+          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+            <button label="Add Minute" type="submit" pButton icon="fa-check"
+              [disabled]="!minuteForm.form.valid"></button>
+            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+              (click)="hideModal(); minuteForm.reset()"></button>
+          </div>
+        </p-footer>
+      </ng-container>
+      <ng-template #editButton>
+        <div class="ui-g">
+          <div class="form-group">
+
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Hearing</label>
+              <span class="md-inputfield">
+                <input pInputText id="tiHearing" disabled [required]="true" name="tiHearing" class="width-full"
+                  [(ngModel)]="selectedMinute.hearing.hearingName" />
+              </span>
+            </div>
+
+            <!-- MINUTE DATE -->
+            <div class="ui-g-12">
+              <label class="minimal primary block">Minute Date</label>
+              <p-calendar id="minuteDate" name="minuteDate" #minuteDate="ngModel" placeholder="Minute Date"
+                [ngModel]="selectedMinute?.minuteDate" (ngModelChange)="minuteDateOnChange($event)" [required]="true"
+                showTime="true" hourFormat="12" timeonly="true" readonlyInput [showIcon]="true" disabled
+                dateFormat="dd/mm/yy" appendTo="body"></p-calendar>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="minuteDate.errors?.required && minuteDate.touched">
+                Please choose a Minute Date
+              </div>
+            </div>
+
+            <!-- JUDICIAL OFFICER -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Judicial Officer</label>
+              <span class="md-inputfield">
+                <input pInputText id="tiJudicialOfficer" disabled [required]="true" name="tiJudicialOfficer"
+                  class="width-full" [(ngModel)]="selectedMinute.judicialOfficer" />
+              </span>
+            </div>
+
+            <!-- APPEARANCES -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Appearances</label>
+              <span class="md-inputfield">
+                <p-chips pInputText id="tiAppearances" [required]="true" name="tiAppearances" class="width-full"
+                  [(ngModel)]="this.appearances" type="text"></p-chips>
+              </span>
+            </div>
+
+            <!-- GENERAL MINUTES -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">General Minutes</label>
+              <textarea id="tiMinuteDescription" name="tiMinuteDescription" [required]="true"
+                [(ngModel)]="selectedMinute.generalMinutes" [rows]="5" pInputTextarea autoResize="autoResize"
+                class="width-full"></textarea>
+            </div>
+
+            <!-- COURT ORDER -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Order</label>
+              <textarea name="tiOrderDescription" [(ngModel)]="selectedMinute.courtOrders" [rows]="5" pInputTextarea
+                autoResize="autoResize" class="width-full"></textarea>
+            </div>
+
+            <!-- EXHIBITS -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Exhibits</label>
+              <span class="md-inputfield">
+                <p-chips pInputText id="tiExhibits" name="tiExhibits" class="width-full" [(ngModel)]="this.exhibits"
+                  type="text">
+                </p-chips>
+              </span>
+            </div>
+
+            <!-- WITNESSES -->
+            <div class="ui-g-12 mt-15">
+              <label class="minimal primary block">Witnesses</label>
+              <span class="md-inputfield">
+                <p-chips pInputText id="tiWitnesses" name="tiWitnesses" class="width-full" [(ngModel)]="this.witnesses"
+                  type="text">
+                </p-chips>
+
+              </span>
+            </div>
+
+          </div>
+        </div>
+        <p-footer>
+          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+            <button label="Save Changes" type="submit" pButton icon="fa-check"
+              [disabled]="!minuteForm.form.valid"></button>
+            <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+              (click)="hideModal()"></button>
+          </div>
+        </p-footer>
+      </ng-template>
+    </form>
+  </p-dialog>
