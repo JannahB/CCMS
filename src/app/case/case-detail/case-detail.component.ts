@@ -46,6 +46,8 @@ import { CaseApplication } from '../../common/entities/CaseApplication';
 import { componentRefresh } from '@angular/core/src/render3/instructions';
 import { CaseApplicant } from '../../common/entities/CaseApplicant';
 import { CaseApplicationType } from '../../common/entities/CaseApplicationType';
+import { DocumentType } from '../../common/entities/DocumentType';
+import { DropdownDataTransformService } from '../../common/services/utility/dropdown-data-transform.service';
 
 @Component({
   selector: 'app-case-detail',
@@ -54,24 +56,25 @@ import { CaseApplicationType } from '../../common/entities/CaseApplicationType';
 })
 export class CaseDetailComponent implements OnInit, OnDestroy {
 
+
   @ViewChild('caseForm') caseForm: any;
 
   authToken: string;
-  activeTabIndex: number = 1;
+  activeTabIndex = 1;
   case: Case;
   caseSubscription: Subscription;
   caseTaskSubscription: Subscription;
   caseWeightRanges: number[] = [1, 10];
-  loadingCase: boolean = false;
-  loadingMessage: string = 'loading case...';
-  showLoadingBar: boolean = false;
+  loadingCase = false;
+  loadingMessage = 'loading case...';
+  showLoadingBar = false;
   selectedCharge: CaseCharge;
   selectedParty: Party;
   selectedDoc: CaseDocument;
   selectedEvent: CaseEvent;
   selectedJudicialAssignment: any;
   documentTemplateTypes: DocTemplate[] = [];
-  selectedDocumentTemplateType: DocTemplate;
+  selectedDocumentTemplateType: DocumentType;
   routeSubscription: Subscription;
   caseTypes: CaseType[] = [];
   caseApplicationTypes: CaseApplicationType[] = [];
@@ -83,14 +86,40 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   appCaseParties: Party[] = [];
   datePipe: DatePipe = new DatePipe("en");
   actualCompletionDate: Date = null;
-  selChargeFactor: string = ""; 
-  casePartyRoleTypes: CasePartyRole[];  
+  selChargeFactor = "";
+  casePartyRoleTypes: CasePartyRole[];
   caseApplications: CaseApplication[] = []; // used to capture all applications for a case
-  //caseApplicants: CaseApplicant[] = []; //used to capture all the case applicants for any application 
-  
+  // caseApplicants: CaseApplicant[] = []; //used to capture all the case applicants for any application
+
   selectedCaseApplicant: CaseApplicant = new CaseApplicant();
   selectedCaseApplication: CaseApplication = new CaseApplication();
- 
+
+  initDocumentTypes: DocumentType[] = [];
+  initDocType: DocumentType = new DocumentType();
+
+  // Doc by Category for drilldown
+  docTypesCategories: DocumentType[] = [];
+
+  // multipurpose all types
+  allTypesFull: DocumentType[] = [];
+
+  // court docs all
+  courtDocs: DocumentType[] = [];
+
+  // Doc by Category for filter
+  docTypesFilter: DocumentType[] = [];
+  // selected filter
+  filterDT: DocumentType;
+  // filtered case docs
+  filterDocs: CaseDocument[];
+  // filterDocsBak:CaseDocument[];
+  dtFilterText = "";
+
+  selCatDT: DocumentType;
+  selDocTypeUpload: DocumentType;
+
+  docTypesShown: DocumentType[] = [];
+  docTypeNames: String[] = [];
 
   public Permission: any = Permission;
 
@@ -103,7 +132,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     private toastSvc: ToastService,
     private lookupSvc: LookupService,
     private localStorageService: LocalStorageService,
-    private userSvc: UserService
+    private userSvc: UserService,
+    private dropdownSvc: DropdownDataTransformService
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Case', routerLink: ['/case-detail'] }
@@ -114,16 +144,70 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  arrToDD(arr: String[]): DocumentType[] {
+    const dts: DocumentType[] = [];
+    arr.forEach(function (val) {
+      const itm: DocumentType = new DocumentType();
+      itm.name = val as string;
+      dts.push(itm);
+    });
+    console.log(dts);
+    return dts;
+  }
 
 
   ngOnInit() {
+
+    // console.log("ngOnInit called!");
+
+    const dta: DocumentType = new DocumentType();
+    dta.name = "Filings";
+
+    const dtb: DocumentType = new DocumentType();
+    dtb.name = "Court Documents";
+
+    this.docTypesCategories.push(dta);
+    this.docTypesCategories.push(dtb);
+
+    const dtc: DocumentType = new DocumentType();
+    dtc.name = "All";
+
+    this.docTypesFilter.push(dtc);
+    this.docTypesFilter.push(dta);
+    this.docTypesFilter.push(dtb);
+
 
     this.baseURL = environment.apiUrl;
 
     this.routeSubscription = this.activatedRoute.params.subscribe(params => {
       const caseId = params['caseId'];
-      this.getCase(caseId);
+
+      this.initDocType.name = "onload";
+
+      this.caseSvc.fetchNewDocTypesFull().subscribe(results => {
+        this.allTypesFull = results;
+        this.initDocumentTypes = results.filter(fDocTypes => {
+          return fDocTypes.can_start === 1;
+        });
+
+        this.caseSvc
+          .fetchNewDocTypes("court_docs")
+          .subscribe(
+            doctypes => {
+              this.docTypeNames = doctypes;
+
+            }
+          );
+
+        this.courtDocs = this.allTypesFull.filter(cdocs =>
+          cdocs.is_court_doc === 1
+        );
+        // console.log(this.allTypesFull);
+        // console.log(this.courtDocs);
+        this.getCase(caseId);
+      });
     });
+
 
     this.caseSvc
       .fetchDocumentTemplate()
@@ -132,7 +216,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .fetchCaseType()
       .subscribe(results => this.caseTypes = results);
-     
+
     this.caseSvc
       .fetchCaseStatus()
       .subscribe(results => this.caseStatuses = results);
@@ -145,28 +229,34 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .fetchCasePartyRole()
       .subscribe(roles => this.casePartyRoleTypes = roles);
 
-      this.caseSvc
+    this.caseSvc
       .fetchCaseApplicationType()
       .subscribe(appTypes => this.caseApplicationTypes = appTypes);
 
-    
+
   }
 
-  ngOnDestroy() {
-
-    if (this.caseSubscription) this.caseSubscription.unsubscribe();
-    if (this.caseTaskSubscription) this.caseTaskSubscription.unsubscribe();
-    if (this.routeSubscription) this.routeSubscription.unsubscribe();
+  ngOnDestroy(): void {
+    if (this.caseSubscription) {
+      this.caseSubscription.unsubscribe();
+    }
+    if (this.caseTaskSubscription) {
+      this.caseTaskSubscription.unsubscribe();
+    }
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
   }
 
   hasPermission(pm) {
-    if (!this.case) return false;
+    if (!this.case) { return false; }
     return this.userSvc.hasPermission(pm);
     // if (!this.case || !this.case.court) return false;
     // let courtOID = this.case.court.courtOID;
     // return this.userSvc.hasPermission(pm, courtOID);
   }
 
+  // tslint:disable: member-ordering
   staticMessage: any = {};
 
   showStaticMessage(showIt: boolean, severity?: string, detail?: string, summary?: string) {
@@ -189,7 +279,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.loadingMessage = 'loading case...';
     this.loadingCase = true;
 
-    
+
 
 
     this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe(kase => {
@@ -198,43 +288,43 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.toastSvc.showWarnMessage('There is no case with caseOID of ' + caseId + '.', 'No Case Found');
       } else {
         this.case = kase;
-        console.log("Loading Current Case",kase);
+        // console.log("Loading Current Case", kase);
         // Remove all files with a '^' in the docName - they are orphans
         this.case.caseDocs = this.case.caseDocs.filter(cd => {
           return cd.documentName.indexOf('^') == -1;
-        })
+        });
 
         if (this.case.caseType) {
-          
-          //load filtered case phases
+
+          // load filtered case phases
           this.caseSvc
             .fetchPhaseByType(this.case.caseType.caseTypeOID)
             .subscribe(results => this.casePhases = results);
 
-          //load filtered case sub types  
+          // load filtered case sub types
           this.caseSvc
             .fetchCaseSubType(this.case.caseType.caseTypeOID)
-            .subscribe(results => this.caseSubTypes = results);  
+            .subscribe(results => this.caseSubTypes = results);
         }
-        
+
         if (this.case.caseParties.length > 0) {
           this.case.caseParties.map(cp => {
             cp.caseParty.age = this.calculateAge(cp.caseParty.dob);
-          })
-        }
-        
-        for (let i = 0; i < this.case.caseTasks.length; i++){
-          this.case.caseTasks[i].taskPriorityDesc = this.priorityCodeDesc(this.case.caseTasks[i].taskPriorityCode);        
+          });
         }
 
-        //cannot use any other object besides the Case object since it is binded to the case service
+        for (let i = 0; i < this.case.caseTasks.length; i++) {
+          this.case.caseTasks[i].taskPriorityDesc = this.priorityCodeDesc(this.case.caseTasks[i].taskPriorityCode);
+        }
+
+        // cannot use any other object besides the Case object since it is binded to the case service
         this.caseSvc
           .fetchCaseApplication(caseId)
-          .subscribe(results => this.case.caseApplications = results);  
+          .subscribe(results => this.case.caseApplications = results);
 
-        console.log('Case Applications Retrieved',this.case.caseApplications);
+        console.log('Case Applications Retrieved', this.case.caseApplications);
 
-           
+
 
         this.eventTypeFilter = null;
         this.filterCaseEvents();
@@ -263,13 +353,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   caseTypeChange(event): void {
     if (this.case.caseType) {
-      
-      //Load case phases
+
+      // Load case phases
       this.caseSvc
         .fetchPhaseByType(this.case.caseType.caseTypeOID)
         .subscribe(results => this.casePhases = results);
 
-      //Load case sub types
+      // Load case sub types
       this.caseSvc
         .fetchCaseSubType(this.case.caseType.caseTypeOID)
         .subscribe(results => this.caseSubTypes = results);
@@ -290,29 +380,100 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  isCaseTypeSelected($event){
-    if (!this.case.caseType)
-      this.toastSvc.showWarnMessage('Please choose Case Type first')
+  isCaseTypeSelected($event) {
+    if (!this.case.caseType) {
+      this.toastSvc.showWarnMessage('Please choose Case Type first');
+    }
   }
 
   isCaseSubTypeSelected($event) {
-    if (!this.case.caseType)
-      this.toastSvc.showWarnMessage('Please choose Case Type first')
+    if (!this.case.caseType) {
+      this.toastSvc.showWarnMessage('Please choose Case Type first');
+    }
   }
 
   priorityCodeDesc(taskPriorityCode): string {
 
-    if(taskPriorityCode == 0)
-    return "N/A";
+    if (taskPriorityCode == 0)
+      return "N/A";
 
-    else if(taskPriorityCode == 1)
-    return "Urgent";
+    else if (taskPriorityCode == 1)
+      return "Urgent";
 
-    else if(taskPriorityCode == 2)
-    return "High";
+    else if (taskPriorityCode == 2)
+      return "High";
 
     else return "Normal";
-}
+  }
+
+  ddOnDocCatChange($event) {
+    if (this.selCatDT.name === this.docTypesCategories[0].name) {
+      // filings
+      this.docTypesShown = this.allTypesFull.filter(fDocType => {
+        return fDocType.is_filing === 1;
+      });
+    } else {
+      // court_docs
+      this.docTypesShown = this.allTypesFull.filter(fDocType => {
+        return fDocType.is_court_doc === 1;
+      });
+    }
+  }
+
+  dtNameToCat(name: string): string {
+    if (name !== undefined) {
+      const eDT: DocumentType[] = this.allTypesFull.filter(fDocType => {
+        return fDocType.name === name;
+      });
+      if (eDT.length >= 1) {
+        if (eDT[0].is_filing === 1) {
+          return this.docTypesCategories[0].name;
+        } else {
+          return this.docTypesCategories[1].name;
+        }
+      }
+    }
+    return "unknown category";
+  }
+
+  ddOnFilterDTChange($event) {
+    /*if (this.filterDT.name==this.docTypesFilter[0].name){
+      this.filterDocs=this.case.caseDocs;
+    } else {
+      this.filterDocs=this.case.caseDocs.filter(docs=>{
+        return (this.dtNameToCat(docs.documentType)==this.filterDT.name);
+      });
+    }
+    */
+    this.onDtFilterTextChange($event);
+  }
+
+  onDtFilterTextChange($event) {
+    if (this.filterDT !== undefined) {
+      if (this.filterDT.name === this.docTypesFilter[0].name) {
+        this.filterDocs = this.case.caseDocs;
+      } else {
+        this.filterDocs = this.case.caseDocs.filter(docs => {
+          return this.dtNameToCat(docs.documentType) === this.filterDT.name;
+        });
+      }
+    } else {
+      this.filterDocs = this.case.caseDocs;
+    }
+    const needles: string[] = this.dtFilterText.toLowerCase().split(" ");
+    this.filterDocs = this.filterDocs.filter(docs => {
+      let haystack = docs.documentName + this.dtNameToCat(docs.documentType);
+      haystack += docs.documentType + docs.lastUpdateDate + docs.documentURL;
+      haystack = haystack.toLowerCase();
+      let found = false;
+      needles.forEach(needle => {
+        if (haystack.contains(needle)) {
+          found = true;
+        }
+      });
+      return found;
+    });
+  }
 
 
   // MODALS --------------------------------------------
@@ -333,12 +494,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   //   ADD CASE PARTY MODAL
   // ------------------------=
 
-  showModalAddCaseParty: boolean = false;
-  showDeletePartyModal: boolean = false;
-  showModalEditCaseParty: boolean = false;
+  showModalAddCaseParty = false;
+  showDeletePartyModal = false;
+  showModalEditCaseParty = false;
   partySearchText: string;
   searchPartyResults: Party[];
- 
+
   selectedSearchParty: Party;
   selectedSearchPartyRole: CasePartyRole = null;
   selectedSearchPartyStartDate: Date;
@@ -351,8 +512,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   //  START: ADD CASE APPLICATION
   // -------------------------
 
-  showModalAddCaseApplication: boolean = false;
-  showModalAddCaseOrder: boolean = false;
+  showModalAddCaseApplication = false;
+  showModalAddCaseOrder = false;
   showModalMaintenancePayments = false;
 
   applicationTypes: SelectItem[] = [
@@ -375,20 +536,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   applicationTypeOnChange(event) {
     this.selectedCaseApplication.caseApplicationType = event.value.caseApplicationTypeOID;
     this.selectedCaseApplication.caseApplicationTypeDisplay = event.value.shortName;
-    console.log ('Selected Application Type event is', event);
-    console.log ('Selected Application Type is', this.selectedCaseApplication.caseApplicationType);
+    console.log('Selected Application Type event is', event);
+    console.log('Selected Application Type is', this.selectedCaseApplication.caseApplicationType);
   }
 
   applicationStatusOnChange(event) {
     this.selectedCaseApplication.caseApplicationStatus = event.value.value;
-    console.log ('Selected Application Status is', this.selectedCaseApplication.caseApplicationStatus);
+    console.log('Selected Application Status is', this.selectedCaseApplication.caseApplicationStatus);
   }
 
-  applicantRoleTypeOnChange(event){
+  applicantRoleTypeOnChange(event) {
 
     this.selectedCaseApplication.caseApplicationRole = event.value.casePartyRoleOID;
-    console.log ('Application Role  selected is', this.selectedCaseApplication.caseApplicationRole);
- 
+    console.log('Application Role  selected is', this.selectedCaseApplication.caseApplicationRole);
+
   }
 
   compareByCasePartyId(item1, item2) {
@@ -400,20 +561,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   addCaseApplicant() {
-    let authPartyAppLen = this.case.caseApplicants.push(new CaseApplicant());
+    const authPartyAppLen = this.case.caseApplicants.push(new CaseApplicant());
     //this.this.selectedCaseApplicants[authPartyAppLen - 1].roles.push(new Role());
     //this.caseApplications = this.selectedCaseApplicants[authPartyAppLen - 1];
   }
 
   caseApplicantOnChange(event, authCourtIdx) {
 
-    this.case.caseApplicants[authCourtIdx].caseApplicantPartyOID = event.value.partyOID 
+    this.case.caseApplicants[authCourtIdx].caseApplicantPartyOID = event.value.partyOID;
     this.case.caseApplicants[authCourtIdx].caseOID = this.case.caseOID;
     console.log('Case ID Selected is ', this.case.caseApplicants[authCourtIdx].caseOID);
   }
 
-  caseApplicantRoleOnChange (event, authCourtIdx) {
-    this.case.caseApplicants[authCourtIdx].caseApplicantRoleOID = event.value.casePartyRoleOID 
+  caseApplicantRoleOnChange(event, authCourtIdx) {
+    this.case.caseApplicants[authCourtIdx].caseApplicantRoleOID = event.value.casePartyRoleOID;
     console.log('Case Role ID Selected is ', event.value.casePartyRoleOID);
   }
 
@@ -421,38 +582,38 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.case.caseApplicants.splice(authCourtIdx, 1);
   }
 
-  addCaseApplication(){
+  addCaseApplication() {
 
     // The conversion of the data types is done on the server side.
     // The JSON string on the server side is parsed according to the object structure.
 
-    
+
     this.selectedCaseApplication.caseApplicants = this.case.caseApplicants;
-    
+
     // Get the current list of case applicants.
     // A case application needs at least one applicant to be a valid case application
     // Applicants can be added as needed
-    
 
 
-    if(this.selectedCaseApplication.caseApplicants.length > 0){
 
-       //Store all case applications 
-        this.case.caseApplications.push(this.selectedCaseApplication);
+    if (this.selectedCaseApplication.caseApplicants.length > 0) {
 
-        //Set the values to be used to generate an application number
-        //The application type code is set then the case type is selected upon the initial
-        //creation of the application.
-        this.selectedCaseApplication.numOfCaseApplications = this.case.caseApplications.length;
-        this.selectedCaseApplication.caseNumberDisplay = this.case.caseNumber;
-        this.selectedCaseApplication.caseOID = this.case.caseOID;
+      //Store all case applications
+      this.case.caseApplications.push(this.selectedCaseApplication);
 
-        this.caseSvc.saveCaseApplication(this.selectedCaseApplication).subscribe(result => {
+      //Set the values to be used to generate an application number
+      //The application type code is set then the case type is selected upon the initial
+      //creation of the application.
+      this.selectedCaseApplication.numOfCaseApplications = this.case.caseApplications.length;
+      this.selectedCaseApplication.caseNumberDisplay = this.case.caseNumber;
+      this.selectedCaseApplication.caseOID = this.case.caseOID;
+
+      this.caseSvc.saveCaseApplication(this.selectedCaseApplication).subscribe(result => {
         this.selectedCaseApplication.caseApplicants = result[0];
-        });
+      });
 
-        this.toastSvc.showSuccessMessage('Case Application was saved');
-    
+      this.toastSvc.showSuccessMessage('Case Application was saved');
+
     }
     else this.toastSvc.showWarnMessage('An application must contain one or more applicants', 'Case Application was not saved');
 
@@ -460,11 +621,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     //Return the applications that were saved on a case
     this.caseSvc
-          .fetchCaseApplication(this.case.caseOID)
-          .subscribe(results => this.case.caseApplications = results);  
+      .fetchCaseApplication(this.case.caseOID)
+      .subscribe(results => this.case.caseApplications = results);
 
-        console.log('Case Applications Retrieved',this.case.caseApplications);
-     
+    console.log('Case Applications Retrieved', this.case.caseApplications);
+
     //After an application is saved, reset so fresh data can be reloaded
     //this.selectedCaseApplication = new CaseApplication ();
   }
@@ -506,50 +667,50 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .subscribe(roles => this.casePartyRoleTypes = roles);*/
   }
 
-  showAddCaseCaseApplication() { 
+  showAddCaseCaseApplication() {
 
 
     //NEED TO WRITE CODE TO DISPLAY FIELDS IF THIS IS NOT A NEW APPLICATION
-  
+
     this.showModalAddCaseApplication = true;
 
     //Load the current parties associated with this case
-    for (let i = 0; i < this.case.caseParties.length; i++){
-      this.appCaseParties[i] = this.case.caseParties[i].caseParty;    
-      this.appCaseParties[i].fullName = this.appCaseParties[i].firstName.concat(" ",this.appCaseParties[i].lastName);   
+    for (let i = 0; i < this.case.caseParties.length; i++) {
+      this.appCaseParties[i] = this.case.caseParties[i].caseParty;
+      this.appCaseParties[i].fullName = this.appCaseParties[i].firstName.concat(" ", this.appCaseParties[i].lastName);
     }
 
     //appStartDate = this.selectedCaseApplication.caseApplicationStartDate
 
-    console.log('selectedCaseApplicants for this case is',this.selectedCaseApplication);
+    console.log('selectedCaseApplicants for this case is', this.selectedCaseApplication);
 
     //cannot use any other object besides the Case object since it is binded to the case service
     this.caseSvc
-    .fetchCaseApplicants(this.selectedCaseApplication.caseApplicationOID)
-    .subscribe(results => this.case.caseApplicants = results);  
+      .fetchCaseApplicants(this.selectedCaseApplication.caseApplicationOID)
+      .subscribe(results => this.case.caseApplicants = results);
 
-    console.log('Case Applicants Retrieved',this.case.caseApplicants);
-    
+    console.log('Case Applicants Retrieved', this.case.caseApplicants);
+
     //old data will be cleared.
     /*if(this.selectedCaseApplication.caseApplicationOID == 0){
-      this.selectedCaseApplication = new CaseApplication(); 
+      this.selectedCaseApplication = new CaseApplication();
     }
     else {*/
 
-      //load the case application info and the case applicants info in the modal.
-      /*for(let i = 0; i < this.case.caseApplications.length; i++){
+    //load the case application info and the case applicants info in the modal.
+    /*for(let i = 0; i < this.case.caseApplications.length; i++){
 
-        console.log('selectedCaseApplicants for this case is',this.selectedCaseApplication.caseApplicationOID);
-        console.log('CaseApplicants for this case is',this.case.caseApplications[i]);
-        
-        if (this.selectedCaseApplication.caseApplicationOID == this.case.caseApplications[i].caseApplicationOID){
-            this.selectedCaseApplication =  this.caseApplications[i];
-            break;
-        }
-      }  */    
+      console.log('selectedCaseApplicants for this case is',this.selectedCaseApplication.caseApplicationOID);
+      console.log('CaseApplicants for this case is',this.case.caseApplications[i]);
+
+      if (this.selectedCaseApplication.caseApplicationOID == this.case.caseApplications[i].caseApplicationOID){
+          this.selectedCaseApplication =  this.caseApplications[i];
+          break;
+      }
+    }  */
     //}
 
-    
+
 
   }
 
@@ -559,7 +720,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
 
   searchForParty() {
-    let obj = { "partyName": this.partySearchText };
+    const obj = { "partyName": this.partySearchText };
     this.partySvc
       .fetchAny(obj)
       .subscribe(results => {
@@ -570,7 +731,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         }
         this.searchPartyResults.map(cp => {
           cp.age = this.calculateAge(cp.dob);
-        })
+        });
       });
   }
 
@@ -585,19 +746,19 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if (!this.selectedSearchParty) return;
 
     // Check for duplicate party
-    let isPartyOnCase = this.case.caseParties.findIndex(item => item.caseParty.partyOID == this.selectedSearchParty.partyOID) > -1;
+    const isPartyOnCase = this.case.caseParties.findIndex(item => item.caseParty.partyOID == this.selectedSearchParty.partyOID) > -1;
     if (isPartyOnCase) {
       this.toastSvc.showWarnMessage('A party can only be added to the case once.', 'Duplicate Party');
       return;
     }
 
-    let caseParty: CaseParty = new CaseParty();
+    const caseParty: CaseParty = new CaseParty();
     caseParty.caseParty = this.selectedSearchParty;
     caseParty.role = this.selectedSearchPartyRole;
     caseParty.startDate = this.selectedSearchPartyStartDate ? this.datePipe.transform(this.selectedSearchPartyStartDate, "MM/dd/yyyy") : "";
     caseParty.endDate = this.selectedSearchPartyEndDate ? this.datePipe.transform(this.selectedSearchPartyEndDate, "MM/dd/yyyy") : "";
 
-    let caseParties: CaseParty[] = this.case.caseParties.slice();
+    const caseParties: CaseParty[] = this.case.caseParties.slice();
     caseParties.push(caseParty);
     this.case.caseParties = caseParties;
 
@@ -631,7 +792,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.loadingCase = true;
 
     // CREATE LOCAL PARTY
-    let party: Party = this.newCaseParty.caseParty;
+    const party: Party = this.newCaseParty.caseParty;
     party.dob = party.dob ? this.datePipe.transform(party.dob, "MM/dd/yyyy") : "";
 
     // SAVE THE PARTY
@@ -641,13 +802,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.toastSvc.showSuccessMessage('Party saved');
 
       // CREATE LOCAL CASE PARTY
-      let caseParty: CaseParty = this.newCaseParty;
+      const caseParty: CaseParty = this.newCaseParty;
       caseParty.startDate = caseParty.startDate ? this.datePipe.transform(caseParty.startDate, "MM/dd/yyyy") : "";
       caseParty.endDate = caseParty.endDate ? this.datePipe.transform(caseParty.endDate, "MM/dd/yyyy") : "";
       caseParty.caseParty = result;
 
       // ADD CASE PARTY TO CASE PARTIES
-      let caseParties: CaseParty[] = this.case.caseParties.slice();
+      const caseParties: CaseParty[] = this.case.caseParties.slice();
       caseParties.push(caseParty);
       this.case.caseParties = caseParties;
 
@@ -659,7 +820,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       }
       this.hideModals();
 
-    })
+    });
   }
 
   editParty() {
@@ -667,7 +828,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.loadingCase = true;
 
     // CREATE LOCAL PARTY
-    let party: Party = this.selectedCaseParty.caseParty;
+    const party: Party = this.selectedCaseParty.caseParty;
     party.dob = party.dob ? this.datePipe.transform(party.dob, "MM/dd/yyyy") : "";
 
     // SAVE THE PARTY
@@ -677,7 +838,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.toastSvc.showSuccessMessage('Party saved');
 
       // CREATE LOCAL CASE PARTY
-      let caseParty: CaseParty = this.selectedCaseParty;
+      const caseParty: CaseParty = this.selectedCaseParty;
       caseParty.startDate = caseParty.startDate ? this.datePipe.transform(caseParty.startDate, "MM/dd/yyyy") : "";
       caseParty.endDate = caseParty.endDate ? this.datePipe.transform(caseParty.endDate, "MM/dd/yyyy") : "";
       caseParty.caseParty = result;
@@ -690,7 +851,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.saveCase();
       this.hideModals();
 
-    })
+    });
   }
 
   saveCase(shouldShowSuccessMessage: boolean = true) {
@@ -699,7 +860,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.toastSvc.showWarnMessage('The Case Weight must be greater than 0', 'Case Weight Needed');
       return;
     }
-    if (!this.doesCasePartyContainPetitioner() &&  !this.doesCasePartyContainApplicant()) {
+    if (!this.doesCasePartyContainPetitioner() && !this.doesCasePartyContainApplicant()) {
       this.toastSvc.showWarnMessage('The case must have a Petitioner / Applicant Case Party assigned.', 'Applicant/Petitioner Needed');
       return;
     }
@@ -707,7 +868,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.loadingMessage = 'saving case...';
     this.loadingCase = true;
 
-    let shouldRefreshURL: boolean = this.case.caseOID == 0;
+    const shouldRefreshURL: boolean = this.case.caseOID == 0;
 
     this.caseSvc
       .saveCourtCase(this.case)
@@ -719,13 +880,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
           this.toastSvc.showSuccessMessage("Case Saved");
         }
         if (shouldRefreshURL) {
-          this.router.navigate(['/case-detail', this.case.caseOID])
+          this.router.navigate(['/case-detail', this.case.caseOID]);
         }
       },
         (error) => {
           console.log(error);
           this.loadingCase = false;
-          this.toastSvc.showErrorMessage('There was an error saving the case.')
+          this.toastSvc.showErrorMessage('There was an error saving the case.');
         },
         () => {
           this.loadingCase = false;
@@ -735,7 +896,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   doesCasePartyContainChild(): boolean {
     return this.case.caseParties.findIndex(cp => cp.role.casePartyRoleOID == 1) > -1;
   }
-  
+
   doesCasePartyContainApplicant(): boolean {
     return this.case.caseParties.findIndex(cp => cp.role.casePartyRoleOID == 16) > -1;
   }
@@ -746,10 +907,22 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   newCPfNameChanged(event) {
     this.newCaseParty.caseParty.firstName = event;
+    if (this.newCaseParty.caseParty.lastName) {
+      this.newCaseParty.caseParty.fullName = this.newCaseParty.caseParty.firstName + " "
+        + this.newCaseParty.caseParty.lastName;
+    } else {
+      this.newCaseParty.caseParty.fullName = this.newCaseParty.caseParty.firstName;
+    }
   }
 
   newCPlNameChanged(event) {
     this.newCaseParty.caseParty.lastName = event;
+    if (this.newCaseParty.caseParty.firstName) {
+      this.newCaseParty.caseParty.fullName = this.newCaseParty.caseParty.firstName + " "
+        + this.newCaseParty.caseParty.lastName;
+    } else {
+      this.newCaseParty.caseParty.fullName = this.newCaseParty.caseParty.lastName;
+    }
   }
 
   newCPlFullNameChanged(event) {
@@ -757,7 +930,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   newCPaltNameChanged(event) {
-    console.log('newCPaltNameChanged(event)', event)
+    console.log('newCPaltNameChanged(event)', event);
     this.newCaseParty.caseParty.alternativeName = event;
   }
 
@@ -779,8 +952,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   //   ADD CASE CHARGE MODAL
   // ------------------------=
 
-  showModalAddCaseCharge: boolean = false;
-  showDeleteChargeModal: boolean = false;
+  showModalAddCaseCharge = false;
+  showDeleteChargeModal = false;
 
   sectionTypes: IccsCode[];        // FetchICCSCategory GET
   selectedSectionType: IccsCode = null;
@@ -795,7 +968,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   leaLeadChargeText: string;
 
   chargeFactorTypes: ChargeFactor[];        // FetchChargeFactor GET
-  selectedChargeFactors: ChargeFactor[]; 
+  selectedChargeFactors: ChargeFactor[];
   filteredChargeFactorTypes: ChargeFactor[];
   lastSelectedTypeLocalCharges: any[] = [];
 
@@ -841,13 +1014,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.filteredChargeFactorVariables = chargeFactorVariables;
       });
 
-      //RS Implementing Charge Factor Category in UI
-      this.caseSvc
+    //RS Implementing Charge Factor Category in UI
+    this.caseSvc
       .fetchChargeFactorCategory()
       .subscribe(chargeFactorCategory => {
         this.chargeFactorCategory = chargeFactorCategory;
         this.filteredChargeFactorCategory = chargeFactorCategory;
-      });  
+      });
   }
 
   resetIccsCodes() {
@@ -913,7 +1086,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     return options
       .filter(o => {
-        let text: string = `${o.categoryIdentifier} ${o.localCharge}`;
+        const text = `${o.categoryIdentifier} ${o.localCharge}`;
 
         return text.contains(filterText, false);
       });
@@ -966,41 +1139,41 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
 
   getChargeFactorCategoryToFilter(event) {
-    let query = event.query;
+    const query = event.query;
     this.filteredChargeFactorCategory = this.filterChargeFactorCategory(query, this.filteredChargeFactorCategory);
   }
 
   filterChargeFactorCategory(query, chargeFactorCategory: any[]): any[] {
-    let filtered: any[] = [];
+    const filtered: any[] = [];
 
     for (let i = 0; i < chargeFactorCategory.length; i++) {
-     
-        filtered.push(chargeFactorCategory[i]);
-      
+
+      filtered.push(chargeFactorCategory[i]);
+
     }
     return filtered;
   }
 
 
-  getChargeFactorsToFilter(event,selCFC: ChargeFactorCategory) {
-    let query = event.query;
-    this.filteredChargeFactorTypes = this.filterChargeFactors(query,selCFC,this.chargeFactorTypes);
+  getChargeFactorsToFilter(event, selCFC: ChargeFactorCategory) {
+    const query = event.query;
+    this.filteredChargeFactorTypes = this.filterChargeFactors(query, selCFC, this.chargeFactorTypes);
   }
 
 
-  filterChargeFactors(query,selcfc: ChargeFactorCategory, cfactors: ChargeFactor[]): any[] {
-    
+  filterChargeFactors(query, selcfc: ChargeFactorCategory, cfactors: ChargeFactor[]): any[] {
 
-    let filtered: any[] = [];
-    let catID: number = selcfc.chargeFactorCategoryId;
-    let catCID: number = selcfc.courtOID;
-    
+
+    const filtered: any[] = [];
+    const catID: number = selcfc.chargeFactorCategoryId;
+    const catCID: number = selcfc.courtOID;
+
     for (let i = 0; i < cfactors.length; i++) {
-       
-        if (catID === cfactors[i].disaggregationID.valueOf()) {
-              
-          filtered.push(cfactors[i]);    
-        }    
+
+      if (catID === cfactors[i].disaggregationID.valueOf()) {
+
+        filtered.push(cfactors[i]);
+      }
     }
 
     return filtered;
@@ -1008,20 +1181,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   //RS Implementing Charge Factor Variables, the results returned are based on the user's selection of a charge factor
   getChargeFactorsVariablesToFilter(event, selCF: ChargeFactor) {
-    let query = event.query;
-    this.filteredChargeFactorVariables = this.filterChargeFactorVariables(query,selCF,this.chargeFactorVariables);
+    const query = event.query;
+    this.filteredChargeFactorVariables = this.filterChargeFactorVariables(query, selCF, this.chargeFactorVariables);
   }
 
   filterChargeFactorVariables(query, selcf: ChargeFactor, cfVariables: ChargeFactorVariable[]): any[] {
 
-    let i:number = 0;
-    let filtered: any[] = [];
-    
+    let i = 0;
+    const filtered: any[] = [];
+
     for (i = 0; i < cfVariables.length; i++) {
-       
-        if (selcf.name === cfVariables[i].chargeFactorName) {
-              
-          filtered.push(cfVariables[i]);    
+
+      if (selcf.name === cfVariables[i].chargeFactorName) {
+
+        filtered.push(cfVariables[i]);
       }
     }
     return filtered;
@@ -1035,16 +1208,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     if (this.selectedCharge) {
       charge = this.selectedCharge;
-    } 
+    }
     else {
       charge = new CaseCharge();
     }
 
-    let iccsCode: IccsCode = this.setIccsCodes();
+    const iccsCode: IccsCode = this.setIccsCodes();
 
     // CHECK FOR DUPLICATE CHARGE
     if (this.checkForDupCharge(iccsCode)) {
-      this.toastSvc.showWarnMessage('Duplicate charges are not permitted.', 'Duplicate Charge')
+      this.toastSvc.showWarnMessage('Duplicate charges are not permitted.', 'Duplicate Charge');
       return;
     }
 
@@ -1055,7 +1228,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     charge.chargeFactorCategory = this.selectedChargeFactorCategory;
     charge.chargeFactors = this.selectedChargeFactors;
     charge.chargeFactorVariables = this.selectedChargeFactorVariables;
-    
+
 
     if (iccsCode) {
       charge.iccsChargeCategoryOID = iccsCode.iccsCodeOID;
@@ -1095,8 +1268,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   checkForDupCharge(iccsCode) {
-    let charges: CaseCharge[] = this.case.caseCharges;
-    let idx: number = charges.findIndex(c => ObjectUtils.areObjectsEqualDeep(c.iccsCode, iccsCode));
+    const charges: CaseCharge[] = this.case.caseCharges;
+    const idx: number = charges.findIndex(c => ObjectUtils.areObjectsEqualDeep(c.iccsCode, iccsCode));
     return idx > -1;
   }
 
@@ -1126,8 +1299,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   // -----------------------------------------------=
 
   selectedCaseTask: CaseTask;
-  
-  showModalAddCaseTask: boolean = false;
+
+  showModalAddCaseTask = false;
   task: any = {};
   taskTypes: TaskType[];
 
@@ -1143,23 +1316,23 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     { value: 0, label: 'No' },
     { value: 1, label: 'Yes' }
   ];
-  
+
   taskParties: Party[];
   staffPools: Pool[];
-  loadingCaseTaskLookups: boolean = false;
+  loadingCaseTaskLookups = false;
 
   getPriorityValue(val): any {
     return this.caseTaskPriorityTypes[val].label;
   }
 
   getTaskCheckoutValue(val): any {
-      return this.caseTaskCheckOutStatus[val].label;
+    return this.caseTaskCheckOutStatus[val].label;
   }
 
   createCaseTask(taskTypeId?) {
     this.selectedCaseTask = new CaseTask();
     this.onShowCaseTaskModal(taskTypeId);
-    
+
   }
 
   taskOnRowSelect(event) {
@@ -1167,7 +1340,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedCaseTask = event.data;
     if (this.selectedCaseTask.taskDoneDate != null) this.selectedCaseTask.taskCompleted = true;
     this.onShowCaseTaskModal();
-    if(event.data.taskCheckedOutBy == 1) this.selectedCaseTask.taskCheckedOut = true;
+    if (event.data.taskCheckedOutBy == 1) this.selectedCaseTask.taskCheckedOut = true;
   }
 
   onShowCaseTaskModal(taskTypeId?) {
@@ -1176,12 +1349,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.initCaseTaskModal(taskTypeId);
       return;
     }
-    
+
     this.loadingCaseTaskLookups = true;
-    var source = Observable.forkJoin<any>(
+    const source = Observable.forkJoin<any>(
       //RS: This no longer needed since we are only assigning tasks to pools
       // It significantly reduces the load time of this module
-      //this.partySvc.fetchAny({ courtUser: "true" }), 
+      //this.partySvc.fetchAny({ courtUser: "true" }),
       this.lookupSvc.fetchLookup<TaskType>('FetchTaskType'),
       this.lookupSvc.fetchLookup<Pool>('FetchStaffPool')
     );
@@ -1196,7 +1369,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       (error) => {
         console.log(error);
         this.loadingCaseTaskLookups = false;
-        this.toastSvc.showErrorMessage('There was an error fetching task reference data.')
+        this.toastSvc.showErrorMessage('There was an error fetching task reference data.');
       },
       () => {
         this.loadingCaseTaskLookups = false;
@@ -1223,10 +1396,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     //Used in the event a user cancels their entry of a completion date.
     this.actualCompletionDate = this.selectedCaseTask.taskDoneDate;
 
-    for (let i = 0; i < this.case.caseTasks.length; i++){
-     
+    for (let i = 0; i < this.case.caseTasks.length; i++) {
+
       this.case.caseTasks[i].taskPriorityDesc = this.priorityCodeDesc(this.case.caseTasks[i].taskPriorityCode);
-          
+
     }
 
   }
@@ -1236,30 +1409,30 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   onCancelCaseTask(form) {
 
     //This would not overwrite the actual cast task:completion date with incorrect display data
-    if(this.actualCompletionDate == null) this.selectedCaseTask.taskDoneDate = null;
+    if (this.actualCompletionDate == null) this.selectedCaseTask.taskDoneDate = null;
     this.hideModals();
     // form.reset();  // this is deleting the selectedItem from the grid!!??~
     this.selectedCaseTask = null;
 
   }
 
-  taskdocumentSelectedOnChange(event){
+  taskdocumentSelectedOnChange(event) {
     this.selectedCaseTask.taskDocumentTemplateOID = event.value.documentTemplateOID;
-   
+
   }
 
   //This records if task was completed or not
-  taskCompletedOnChange(event){
-    this.selectedCaseTask.taskCompleted = event;   
+  taskCompletedOnChange(event) {
+    this.selectedCaseTask.taskCompleted = event;
   }
 
   //This records if task was checked out or not
-  taskCheckedOutOnChange(event){
-    this.selectedCaseTask.taskCheckedOut = event;   
+  taskCheckedOutOnChange(event) {
+    this.selectedCaseTask.taskCheckedOut = event;
   }
-  
+
   documentSelected(event: any): void {
-    
+
     this.selectedCaseTask.docTemplate = event;
   }
 
@@ -1271,7 +1444,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
 
     //This converts all parameters to string form to be sent to the server
-    let task = new CaseTaskDTO(); 
+    const task = new CaseTaskDTO();
     if (this.selectedCaseTask.taskOID) task.taskOID = this.selectedCaseTask.taskOID.toString();
     task.caseOID = this.case.caseOID.toString();
     task.taskDetails = this.selectedCaseTask.taskDetails.toString();
@@ -1279,20 +1452,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     task.taskParty = this.selectedCaseTask.assignedParty ? this.selectedCaseTask.assignedParty.partyOID.toString() : null;
     task.taskStaffPool = this.selectedCaseTask.assignedPool ? this.selectedCaseTask.assignedPool.poolOID.toString() : null;
     task.taskType = this.selectedCaseTask.taskType.taskTypeOID.toString();
-    task.taskDocumentTemplateOID = this.selectedCaseTask.taskDocumentTemplateOID.toString();    
+    task.taskDocumentTemplateOID = this.selectedCaseTask.taskDocumentTemplateOID.toString();
     task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.taskDueDate, "yyyy-MM-dd HH:mm"); // taskDueDate:"2018-01-31"
 
-    
+
     if (this.selectedCaseTask.taskCompleted) task.taskCompleted = 'true';
     else task.taskCompleted = 'false';
 
 
     if (this.selectedCaseTask.taskCheckedOut) task.taskCheckedOut = 'true';
-      else task.taskCheckedOut = 'false';
-    
+    else task.taskCheckedOut = 'false';
+
 
     this.caseSvc.saveCaseTask(task).subscribe(result => {
-      let savedTask = result[0];
+      const savedTask = result[0];
 
       if (this.selectedCaseTask.assignedParty)
         Object.assign(this.selectedCaseTask.assignedParty, savedTask.assignedParty);
@@ -1300,23 +1473,23 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       if (this.selectedCaseTask.assignedPool)
         Object.assign(this.selectedCaseTask.assignedPool, savedTask.assignedPool);
 
-      
-      if (this.selectedCaseTask.assignedDate)
-        Object.assign(this.selectedCaseTask.assignedDate, savedTask.assignedDate);   
 
-      let task = this.selectedCaseTask;
+      if (this.selectedCaseTask.assignedDate)
+        Object.assign(this.selectedCaseTask.assignedDate, savedTask.assignedDate);
+
+      const task = this.selectedCaseTask;
 
       // see if item exists in list
-      let idx = this.case.caseTasks.findIndex(item => item.taskOID == task.taskOID);
+      const idx = this.case.caseTasks.findIndex(item => item.taskOID == task.taskOID);
 
       if (idx > -1) this.case.caseTasks[idx] = task;
-     
+
       else {
         this.case.caseTasks.push(task);
         this.case.caseTasks = this.case.caseTasks.slice();
-        
+
       }
-     
+
       // Refresh the grid --------
       // this.case.caseTasks = this.case.caseTasks.slice();
 
@@ -1325,14 +1498,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       this.selectedCaseTask = null;
     });
   }
- 
+
   taskTypeOnChange(event) {
     this.selectedCaseTask.taskType = event.value;
   }
 
   priorityTypeOnChange(event) {
     this.selectedCaseTask.taskPriorityCode = event.value;
-    
+
   }
 
   assignedPersonTypeOnChange(event) {
@@ -1357,10 +1530,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   //   ADD JUDGE MODAL
   // ------------------------=
 
-  showModalAddJudge: boolean = false;
+  showModalAddJudge = false;
   judges: JudicialOfficer[];
   judge: JudicialAssignment = new JudicialAssignment();
-  loadingJudgeLookups: boolean = false;
+  loadingJudgeLookups = false;
 
 
   // Handles a row click
@@ -1402,7 +1575,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         (error) => {
           console.log(error);
           this.loadingJudgeLookups = false;
-          this.toastSvc.showErrorMessage('There was an error fetching judicial data.')
+          this.toastSvc.showErrorMessage('There was an error fetching judicial data.');
         },
         () => {
           this.loadingJudgeLookups = false;
@@ -1414,7 +1587,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     // If this a new Judicical Assignment
     if (!this.judge.judicialAssignmentOID || this.judge.judicialAssignmentOID == 0) {
       // Check for duplicate
-      let isJudgeOnCase = this.case.judicialAssignments
+      const isJudgeOnCase = this.case.judicialAssignments
         .findIndex(item => item.judicialOfficial.partyOID == this.judge.judicialOfficial.partyOID) > -1;
       if (isJudgeOnCase) {
         this.toastSvc.showWarnMessage('A judge can only be added to the case once.', 'Duplicate Judge');
@@ -1427,7 +1600,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .saveJudicialAssignment(this.judge)
       .subscribe(assignment => {
-        let index: number = this.case.judicialAssignments
+        const index: number = this.case.judicialAssignments
           .findIndex(a => a.judicialAssignmentOID == assignment.judicialAssignmentOID);
 
         if (index >= 0) {
@@ -1450,7 +1623,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   //   (in Register tab)
   // ------------------------=
 
-  showModalAddEvent: boolean = false;
+  showModalAddEvent = false;
   events: any[];
   filteredEvents: CaseEvent[] = [];
   caseEvent: CaseEvent = new CaseEvent();
@@ -1498,16 +1671,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   saveEvent() {
-    console.log('this.caseEvent.caseEventOID BEFORE SAVE', this.caseEvent.caseEventOID)
+    console.log('this.caseEvent.caseEventOID BEFORE SAVE', this.caseEvent.caseEventOID);
     this.caseEvent.initiatedByParty = this.selectedInitiatedByParty && this.selectedInitiatedByParty.caseParty ? this.selectedInitiatedByParty.caseParty : null;
 
     this.caseSvc
       .saveCaseEvent(this.caseEvent)
       .subscribe(savedCaseEvent => {
-        console.log('savedCaseEvent.caseEventOID AFTER SAVE', savedCaseEvent.caseEventOID)
+        console.log('savedCaseEvent.caseEventOID AFTER SAVE', savedCaseEvent.caseEventOID);
         savedCaseEvent.eventType = this.eventTypes.find(e => e.eventTypeOID == savedCaseEvent.eventType.eventTypeOID);
 
-        let index: number = this.case.caseEvents
+        const index: number = this.case.caseEvents
           .findIndex(ce => ce.caseEventOID == savedCaseEvent.caseEventOID);
 
         if (index >= 0) {
@@ -1531,29 +1704,86 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+
   // -------------------------
   //   DOCUMENTS TAB
   //
   // ------------------------=
   uploadedFiles: any[] = [];
+  uploadPVis: boolean;
+  uploadPMsg: string;
 
   generateDoc(): void {
     this.caseSvc
-      .downloadCourtDocument(this.case.caseOID, this.selectedDocumentTemplateType.documentTemplateOID)
+      .downloadCourtDocument(
+        this.case.caseOID,
+        // this.selectedDocumentTemplateType.documentTemplateOID
+        this.selectedDocumentTemplateType.filename
+      )
       .subscribe();
   }
 
   onUpload(event) {
-    for (let file of event.files) {
+    for (const file of event.files) {
       this.uploadedFiles.push(file);
     }
-    this.toastSvc.showSuccessMessage('File Uploaded');
+    console.log("post upload!!");
+    console.log(event.xhr.response);
+    this.uploadPMsg = "updating case documents...";
+    const currCaseOID: string = (this.case.caseOID as any) as string;
+    console.log(currCaseOID);
+    this.caseSubscription = this.caseSvc.fetchOne(currCaseOID).subscribe(
+      kase => {
+        this.case.caseDocs = kase.caseDocs;
+        this.filterDocs = this.case.caseDocs;
+        this.toastSvc.showInfoMessage("Case Documents updated");
+      },
+      error => {
+        this.toastSvc.showInfoMessage("Updating Case");
+        setTimeout(() => {
+          this.router
+            .navigateByUrl("/admin", { skipLocationChange: true })
+            .then(() =>
+              this.router.navigate(["/case-detail", this.case.caseOID])
+            );
+        }, 1000);
+      },
+      () => {
+        this.uploadPVis = false;
+      }
+    );
+    const oUploadResp = JSON.parse(event.xhr.response);
+    if (oUploadResp.success === 1) {
+      this.toastSvc.showSuccessMessage("File Uploaded");
+    } else {
+      this.toastSvc.showWarnMessage("File upload failed.");
+      console.log(oUploadResp.error);
+    }
   }
 
   onBeforeSendFile(event) {
-    event.xhr.setRequestHeader("caseOID", this.case.caseOID);
-    event.xhr.setRequestHeader("Authorization", "Bearer " + this.authToken);
-    event.xhr.setRequestHeader("token", this.authToken);
+    this.uploadPMsg = "please wait, uploading file ...";
+    this.uploadPVis = true;
+    if (
+      this.selDocTypeUpload === null ||
+      this.selDocTypeUpload === undefined ||
+      this.selCatDT === null ||
+      this.selCatDT === undefined
+    ) {
+      this.toastSvc.showWarnMessage(
+        "Please specify the document type being uploaded"
+      );
+      event.xhr.abort();
+      this.uploadPVis = false;
+    } else {
+      // console.log("onBeforeSendFile called!!");
+      // console.log(event);
+      event.xhr.setRequestHeader("caseOID", this.case.caseOID);
+      event.xhr.setRequestHeader("Authorization", "Bearer " + this.authToken);
+      event.xhr.setRequestHeader("token", this.authToken);
+      event.xhr.setRequestHeader("docType", this.selDocTypeUpload.name); // JSON.stringify(this.selDocTypeUpload));
+      // event.formData.append('test', 'A123'); // vb, note: send all params like this henceforth
+    }
   }
 
   ddOnChange(event): void {

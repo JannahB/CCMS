@@ -28,7 +28,7 @@ export class DashboardComponent implements OnInit {
   completedTaskCount: number;
   incompleteTaskCount: number;
   overdueTaskCount: number;
-  caseResults: Case[];
+  caseResults: Case[] = [];
   isJudicialOfficer: boolean;
 
   constructor(

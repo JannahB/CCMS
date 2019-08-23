@@ -1,14 +1,15 @@
 
 export class CaseDocument {
-  
-  caseOID: number; 
-  courtOID: number; 
-  docCode: number; 
+
+  caseOID: number;
+  courtOID: number;
+  docCode: number;
   docReceived: Date;
-  docSent: Date; 
+  docSent: Date;
   documentName: string;
-  documentOID: number; 
-  documentURL: string; 
-  lastUpdateDate: Date; 
-  
+  documentOID: number;
+  documentURL: string;
+  lastUpdateDate: Date;
+  documentType: string;
+
 }

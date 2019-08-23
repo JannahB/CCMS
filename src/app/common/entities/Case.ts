@@ -35,7 +35,7 @@ export class Case extends LookupEntity {
   caseParties: CaseParty[] = [];
   caseTasks: CaseTask[] = [];
   caseApplications: CaseApplication[] = []; // used to capture all applications for a case
-  caseApplicants: CaseApplicant [] = []; 
+  caseApplicants: CaseApplicant [] = []; //used to capture all applicants on a case
 
   caseWeight: number = 0;
   court: Court = null;

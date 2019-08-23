@@ -37,35 +37,29 @@
           <!-- column 1 -->
           <div class="ui-g-12 ui-md-4" *ngIf="!party.isOrganization">
 
-            <div class="ui-g-12 mb-20" >
+            <div class="ui-g-12 mb-20">
               <span class="md-inputfield">
-                 
-                <input pInputText type="text" 
-                [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                [(ngModel)]="party.firstName" name="firstName" >
-
+                <input pInputText type="text" [(ngModel)]="party.firstName" name="tiFirstName"
+                  (ngModelChange)="newFNameChanged($event)">
                 <label>Given Name</label>
               </span>
             </div>
             <div class="ui-g-12 mb-20">
               <span class="md-inputfield">
-                <input type="text" pInputText 
-                       [(ngModel)]="party.lastName"
-                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)" >
-                       
+                <input type="text" pInputText [(ngModel)]="party.lastName" name="tiLastName"
+                  (ngModelChange)="newLNameChanged($event)">
                 <label>Family Name</label>
               </span>
             </div>
-            <div class="ui-g-12 mb-20" >
+            <div class="ui-g-12 mb-20">
               <span class="md-inputfield">
-                <input type="text" pInputText required 
-                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                       [(ngModel)]="party.fullName" name="tiFullName" #tiFullName="ngModel" >
+                <input type="text" pInputText [required]="true" [(ngModel)]="party.fullName" name="tiFullName"
+                  #tiFullName="ngModel">
                 <label>Full Name</label>
               </span>
               <div class="ui-message ui-messages-error ui-corner-all"
-                   *ngIf="tiFullName.errors?.required && tiFullName.touched" >
-                   Please enter the Full Name
+                *ngIf="tiFullName.errors?.required && tiFullName.touched">
+                Please enter the Full Name
               </div>
             </div>
 

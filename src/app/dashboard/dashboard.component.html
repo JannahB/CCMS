@@ -79,7 +79,7 @@
 
   </div>
 
-  <div class="card">
+  <div class="card" *ngIf="caseResults.length > 0 || !caseResults">
     <h2>Your Docket</h2>
 
     <p-dataTable [value]="caseResults" selectionMode="single" (onRowSelect)="caseOnRowSelect($event)" scrollable="true"

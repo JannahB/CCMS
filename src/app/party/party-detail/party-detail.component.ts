@@ -109,7 +109,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     this.languageSubscription = this.languageSvc.get().subscribe(langs => {
       this.languages = langs;
       // this.projectCopy = { ...this.project }
-      console.log('languages', langs);
+      //console.log('languages', langs);
     });
 
     this.identifierSubscription = this.identifierSvc.get().subscribe(items => {
@@ -166,6 +166,27 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   /* -------------------
     General Details Methods
     --------------------  */
+
+  newFNameChanged(event) {
+    this.party.firstName = event;
+    if (this.party.lastName) {
+      this.party.fullName = this.party.firstName + " "
+        + this.party.lastName;
+    } else {
+      this.party.fullName = this.party.firstName;
+    }
+  }
+
+  newLNameChanged(event) {
+    this.party.lastName = event;
+    if (this.party.firstName) {
+      this.party.fullName = this.party.firstName + " "
+        + this.party.lastName;
+    } else {
+      this.party.fullName = this.party.lastName;
+    }
+  }
+
   hasPermission(pm) {
     if (!this.party) return false;
     return this.userSvc.hasPermission(pm);

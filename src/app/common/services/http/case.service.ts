@@ -39,12 +39,13 @@ import { LocalCharge } from '../../entities/LocalCharge';
 import { nullSafeIsEquivalent } from '@angular/compiler/src/output/output_ast';
 import { CaseApplication } from '../../entities/CaseApplication';
 import { CaseApplicant } from '../../entities/CaseApplicant';
+import { DocumentType } from '../../entities/DocumentType';
 
 
 @Injectable()
 export class CaseService extends HttpBaseService<Case> {
 
-  private mockFile: string = 'cases-b.json';
+  private mockFile = 'cases-b.json';
   private datePipe: DatePipe = new DatePipe("en");
 
   // Override Base URL's set in Super
@@ -65,18 +66,18 @@ export class CaseService extends HttpBaseService<Case> {
 
 
   public fetchAny(obj: any): Observable<Case[]> {
-    
-    let url: string = `${super.getBaseUrl()}/FetchCase`;
+
+    const url = `${super.getBaseUrl()}/FetchCase`;
 
     return this.http.post<Case[]>(url, obj)
       .map(res => {
-        let kases: Case[] = res;
+        const kases: Case[] = res;
         return this.convertDates(kases);
-      })     
+      });
   }
 
   public fetchOne(id: string): Observable<Case> {
-    let url: string = `${super.getBaseUrl()}/FetchCase`;
+    const url = `${super.getBaseUrl()}/FetchCase`;
 
     return this.http.post<Case>(url,
       { caseOID: id })
@@ -90,61 +91,61 @@ export class CaseService extends HttpBaseService<Case> {
           kase = this.convertDates([kase])[0];
           return kase;
         }
-      })
+      });
   }
 
 
   public fetch(body: any): Observable<Case[]> {
-    let url: string = `${super.getBaseUrl()}/FetchCase`;
+    const url = `${super.getBaseUrl()}/FetchCase`;
 
     return this.http.post<Case[]>(url, body,
     )
       .map(res => {
-        let kases: Case[] = res;
+        const kases: Case[] = res;
         return this.convertDates(kases);
-      })
+      });
   }
 
   public get(): Observable<Case[]> {
-    let url: string = `${super.getBaseUrl()}/FetchCase`;
+    const url = `${super.getBaseUrl()}/FetchCase`;
 
     return this.http.get<Case[]>(url)
       .map(res => {
-        let kases: Case[] = res;
+        const kases: Case[] = res;
 
         return this.convertDates(kases);
       });
   }
 
   public getMock(): Observable<Case[]> {
-    let url: string = this.getBaseMockUrl();
+    const url: string = this.getBaseMockUrl();
     return this.http.get<Case[]>(url)
       .map(res => {
-        let kases: Case[] = res;
+        const kases: Case[] = res;
         return this.convertDates(kases);
       });
   }
 
   public getOneMock(caseId: string): Observable<Case> {
-    let url: string = this.getBaseMockUrl();
+    const url: string = this.getBaseMockUrl();
     return this.http.get<Case[]>(url)
       .map(res => {
         let kases: Case[] = res;
         kases = this.convertDates(kases);
-        let kase: Case = kases[0];
+        const kase: Case = kases[0];
         return kase;
       });
   }
 
   createAssociatedCase(caseOID: number) {
-    let url: string = `${super.getBaseUrl()}/CreateAssociatedCase`;
-    let body: any = { caseOID: caseOID.toString() };
+    const url = `${super.getBaseUrl()}/CreateAssociatedCase`;
+    const body: any = { caseOID: caseOID.toString() };
 
     return this.http.post<Case>(url, body)
       .map(res => {
-        let kase: Case = res;
+        const kase: Case = res;
         return this.convertDates([kase]);
-      })
+      });
   }
 
   //This retrieves all case related information
@@ -157,70 +158,70 @@ export class CaseService extends HttpBaseService<Case> {
         kase.caseFilingDate = DateConverter.convertDate(kase.caseFilingDate);
       }
 
-      let caseDocs: CaseDocument[] = kase.caseDocs;
+      const caseDocs: CaseDocument[] = kase.caseDocs;
       if (caseDocs) {
         caseDocs.forEach(cd => {
           cd.docReceived = DateConverter.convertDate(cd.docReceived);
           cd.docSent = DateConverter.convertDate(cd.docSent);
           cd.lastUpdateDate = DateConverter.convertDate(cd.lastUpdateDate);
-        })
+        });
       }
 
-      let caseEvents: CaseEvent[] = kase.caseEvents;
+      const caseEvents: CaseEvent[] = kase.caseEvents;
       if (caseEvents) {
         caseEvents.forEach(ce => {
           ce.eventDate = DateConverter.convertDate(ce.eventDate);
-        })
+        });
       }
 
-      let caseParties: CaseParty[] = kase.caseParties;
+      const caseParties: CaseParty[] = kase.caseParties;
       if (caseParties) {
         caseParties.forEach(cp => {
 
           // Convert the Dates on the Root of the Object
-          let startDate = cp.startDate;
+          const startDate = cp.startDate;
           if (startDate) cp.startDate = DateConverter.convertDate(cp.startDate);
-          let endDate = cp.endDate;
+          const endDate = cp.endDate;
           if (endDate) cp.endDate = DateConverter.convertDate(cp.endDate);
 
           // Get at the Nested CaseParty --
-          let caseParty = cp.caseParty;
+          const caseParty = cp.caseParty;
 
           caseParty.dob = DateConverter.convertDate(caseParty.dob);
 
-          let idents: Identifier[] = caseParty.identifiers;
+          const idents: Identifier[] = caseParty.identifiers;
           if (idents) {
             idents.forEach(idf => {
               idf.startDate = DateConverter.convertDate(idf.startDate);
               idf.endDate = DateConverter.convertDate(idf.endDate);
-            })
+            });
           }
-          let addresses: Address[] = caseParty.addresses;
+          const addresses: Address[] = caseParty.addresses;
           if (addresses) {
             addresses.forEach(addr => {
               addr.startDate = DateConverter.convertDate(addr.startDate);
               addr.endDate = DateConverter.convertDate(addr.endDate);
-            })
+            });
           }
-          let emails: Email[] = caseParty.emails;
+          const emails: Email[] = caseParty.emails;
           if (emails) {
             emails.forEach(em => {
               em.startDate = DateConverter.convertDate(em.startDate);
               em.endDate = DateConverter.convertDate(em.endDate);
-            })
+            });
           }
-          let phones: PhoneNumber[] = caseParty.phoneNumbers;
+          const phones: PhoneNumber[] = caseParty.phoneNumbers;
           if (phones) {
             phones.forEach(ph => {
               ph.startDate = DateConverter.convertDate(ph.startDate);
               ph.endDate = DateConverter.convertDate(ph.endDate);
-            })
+            });
           }
 
-          let now: Date = new Date();
-          let age: number = 0;
+          const now: Date = new Date();
+          let age = 0;
 
-          let dob = caseParty.dob;
+          const dob = caseParty.dob;
           if (dob) {
             if (dob.getMonth() == now.getMonth()) {
               if (dob.getDate() > now.getDate()) {
@@ -240,21 +241,21 @@ export class CaseService extends HttpBaseService<Case> {
         });
       }
 
-      let caseTasks: CaseTask[] = kase.caseTasks;
+      const caseTasks: CaseTask[] = kase.caseTasks;
       if (caseTasks) {
         caseTasks.forEach(ct => {
           ct.assignedDate = DateConverter.convertDate(ct.assignedDate);
           ct.taskDueDate = DateConverter.convertDate(ct.taskDueDate);
           ct.taskDoneDate = DateConverter.convertDate(ct.taskDoneDate);
-        })
+        });
       }
 
-      let caseHearings: CaseHearingDeprecated[] = kase.caseHearings;
+      const caseHearings: CaseHearingDeprecated[] = kase.caseHearings;
       if (caseHearings) {
         caseHearings.forEach(ch => {
           ch.startDateTime = DateConverter.convertDate(ch.startDateTime);
           ch.endDateTime = DateConverter.convertDate(ch.endDateTime);
-        })
+        });
       }
 
       if (kase.judicialAssignments) {
@@ -262,12 +263,12 @@ export class CaseService extends HttpBaseService<Case> {
           .map(a => this.convertDatesForJudicialAssignment(a));
       }
 
-    })
+    });
     return kases;
   }
 
   public fetchICCSCategory(iccsCodeOID: number = null): Observable<IccsCode[]> {
-    let url: string = `${super.getBaseUrl()}/FetchICCSCategory`;
+    const url = `${super.getBaseUrl()}/FetchICCSCategory`;
 
     let params: Object = "";
 
@@ -279,27 +280,27 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public fetchChargeFactor(): Observable<ChargeFactor[]> {
-    let url: string = `${super.getBaseUrl()}/FetchChargeFactor`;
+    const url = `${super.getBaseUrl()}/FetchChargeFactor`;
 
     return this.http.post<ChargeFactor[]>(url, "");
   }
 
   //RS Implementing Charge Factor Variables ---- This needs to be implemented on the BackEnd of in the Service Folder
   public fetchChargeFactorVariables(): Observable<ChargeFactorVariable[]> {
-    let url: string = `${super.getBaseUrl()}/FetchChargeFactorVariables`;
+    const url = `${super.getBaseUrl()}/FetchChargeFactorVariables`;
 
     return this.http.post<ChargeFactorVariable[]>(url, "");
   }
 
   //RS Implementing Charge Factor Category ---- This needs to be implemented on the BackEnd of in the Service Folder
   public fetchChargeFactorCategory(): Observable<ChargeFactorCategory[]> {
-    let url: string = `${super.getBaseUrl()}/FetchChargeFactorCategory`;
+    const url = `${super.getBaseUrl()}/FetchChargeFactorCategory`;
 
     return this.http.post<ChargeFactorCategory[]>(url, "");
   }
 
   public fetchLocalCharge(): Observable<LocalCharge[]> {
-    let url: string = `${super.getBaseUrl()}/FetchLocalCharge`;
+    const url = `${super.getBaseUrl()}/FetchLocalCharge`;
 
     return this.http
       .post<LocalCharge[]>(url, "");
@@ -310,7 +311,7 @@ export class CaseService extends HttpBaseService<Case> {
 
     //Takes data from the UI, needs to parse to json string and pass it to server
 
-    var caseData: any = {
+    let caseData: any = {
       caseCaption: data.caseCaption || '',
       caseFilingDate: null,
       caseType: null,
@@ -321,7 +322,7 @@ export class CaseService extends HttpBaseService<Case> {
       caseParties: [],
       caseCharges: [],
       prevCaseNumber: null,
-      courtOfAppealNumber:null,
+      courtOfAppealNumber: null,
       caseNotes: null
     };
 
@@ -342,14 +343,14 @@ export class CaseService extends HttpBaseService<Case> {
     if (data.casePhase)
       caseData.casePhase = data.casePhase.casePhaseOID.toString();
     if (data.caseSubType)
-      caseData.caseSubType = data.caseSubType.caseSubTypeOID.toString();  
+      caseData.caseSubType = data.caseSubType.caseSubTypeOID.toString();
     if (data.caseWeight)
       caseData.caseWeight = data.caseWeight.toString();
 
     //Save Case Parties
     if (data.caseParties.length > 0) {
       data.caseParties.forEach(value => {
-        var party = {
+        let party = {
           partyRoleOID: value.role ? value.role.casePartyRoleOID.toString() : null,
           partyOID: value.caseParty.partyOID.toString(),
           startDate: this.datePipe.transform(value.startDate, "yyyy-MM-dd"),
@@ -368,38 +369,40 @@ export class CaseService extends HttpBaseService<Case> {
 
       data.caseCharges.forEach(value => {
 
-        var charge: any = {
+        let charge: any = {
           iccsCodeOID: value.iccsCode.iccsCodeOID.toString(),
           lea: value.leaChargingDetails,
           factors: [],
           factorCategory: [],
-          factorVariable:[]
+          factorVariable: []
         };
 
         if (value.localCharge)
           charge.localChargeOID = value.localCharge.localChargeOID.toString();
 
-          /*value.chargeFactors.forEach(factor => {
-          charge.chargeFactors.push(factor.chargeFactorOID.toString());
-          });
+        /*value.chargeFactors.forEach(factor => {
+        charge.chargeFactors.push(factor.chargeFactorOID.toString());
+        });
 
-          //RS
-          value.chargeFactorCategory.forEach(factorCategory => {
-          charge.chargeFactorCategory.push(factorCategory.chargeFactorCategoryId.toString());
+        //RS
+        value.chargeFactorCategory.forEach(factorCategory => {
+        charge.chargeFactorCategory.push(factorCategory.chargeFactorCategoryId.toString());
 
-          });
+        });
 
-          value.chargeFactorVariables.forEach(factorVariable => {
-          charge.chargeFactorVariables.push(factorVariable.chargeFactorVariableID.toString());
-          });
-          //RS*/
+        value.chargeFactorVariables.forEach(factorVariable => {
+        charge.chargeFactorVariables.push(factorVariable.chargeFactorVariableID.toString());
+        });
+        //RS*/
 
 
         caseData.caseCharges.push(charge);
       });
+
+
     }
 
-    let url: string = `${super.getBaseUrl()}/SaveCourtCase`;
+    const url = `${super.getBaseUrl()}/SaveCourtCase`;
 
     return this.http
       .post<Case[]>(url, caseData)
@@ -407,18 +410,18 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public saveCaseTask(data: CaseTaskDTO): Observable<CaseTask> {
-    let url: string = `${super.getBaseUrl()}/SaveCaseTask`;
+    const url = `${super.getBaseUrl()}/SaveCaseTask`;
     return this.http
       .post<CaseTask>(url, data)
-      .map(t => this.convertCaseTaskDates(t))
+      .map(t => this.convertCaseTaskDates(t));
   }
 
   //This calls the CaseApplicationResrouce in the BackEnd
   public saveCaseApplication(data: CaseApplication): Observable<CaseApplication> {
-    let url: string = `${super.getBaseUrl()}/SaveCaseApplication`;
+    const url = `${super.getBaseUrl()}/SaveCaseApplication`;
     return this.http
       .post<CaseApplication>(url, data)
-      .map(t => this.convertCaseTaskDates(t))
+      .map(t => this.convertCaseTaskDates(t));
   }
 
   convertCaseTaskDates(ct) {
@@ -429,7 +432,7 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public fetchCasePartyRole(): Observable<CasePartyRole[]> {
-    let url: string = `${super.getBaseUrl()}/FetchCasePartyRole`;
+    const url = `${super.getBaseUrl()}/FetchCasePartyRole`;
 
     return this.http
       .get<CasePartyRole[]>(url);
@@ -437,24 +440,24 @@ export class CaseService extends HttpBaseService<Case> {
 
   public fetchDocumentTemplate(): Observable<DocTemplate[]> {
 
-    let url: string = `${super.getBaseUrl()}/FetchDocumentTemplate`;
-      return this.http
+    const url = `${super.getBaseUrl()}/FetchDocumentTemplate`;
+    return this.http
       .get<DocTemplate[]>(url);
   }
 
   //RS
   public fetchCaseTasks(): Observable<CaseTask[]> {
 
-    let url: string = `${super.getBaseUrl()}/FetchCaseTasks`;
-      return this.http
+    const url = `${super.getBaseUrl()}/FetchCaseTasks`;
+    return this.http
       .get<CaseTask[]>(url);
   }
 
   public saveCaseHearing(data: CaseHearingDTO): Observable<CaseHearingDeprecated> {
-    let url: string = `${super.getBaseUrl()}/SaveCaseHearing`;
+    const url = `${super.getBaseUrl()}/SaveCaseHearing`;
     return this.http
       .post<CaseHearingDeprecated>(url, data)
-      .map(h => this.convertHearingDates(h))
+      .map(h => this.convertHearingDates(h));
   }
 
   convertHearingDates(item: CaseHearingDeprecated) {
@@ -463,37 +466,91 @@ export class CaseService extends HttpBaseService<Case> {
     return item;
   }
 
-  public downloadCourtDocument(caseOID: number, documentTemplateOID: number): Observable<ArrayBuffer> {
-    let url: string = `${super.getBaseUrl()}/GenerateCourtDocument`;
-    let params: object = {
+  // public downloadCourtDocument(caseOID: number, documentTemplateOID: number): Observable<ArrayBuffer> {
+  //   let url: string = `${super.getBaseUrl()}/GenerateCourtDocument`;
+  //   let params: object = {
+  //     caseOID: caseOID.toString(),
+  //     documentTemplateOID: documentTemplateOID.toString()
+  //   };
+
+  //   let options: RequestOptionsArgs = {}
+  //   let headers: Headers = new Headers();
+
+  //   headers.append("token", AuthorizationInterceptor.authToken);
+  //   headers.append("Authorization", `Bearer ${AuthorizationInterceptor.authToken}`);
+
+  //   options.headers = headers;
+  //   options.responseType = ResponseContentType.Blob;
+
+  //   return this.classicHttp
+  //     .post(url, params, options)
+  //     .map(response => {
+  //       let headers = response.headers;
+  //       let contentType = headers.get('content-type');
+  //       let fileName = headers.get('content-disposition').split('; ')[1].split('=')[1].replace(/"/g, '');
+  //       let result = response.arrayBuffer();
+  //       //let data = new Blob([result], { type: contentType });
+  //       let fileSaver: FileSaver = new FileSaver();
+
+  //       fileSaver.saveAs(response.blob(), fileName);
+
+  //       return result;
+  //     });
+
+  // }
+
+  public downloadCourtDocument(
+    caseOID: number,
+    docName: string
+  ): Observable<ArrayBuffer> {
+    const url = `${super.getBaseUrl()}/GenerateCourtDocument`;
+    const params: object = {
       caseOID: caseOID.toString(),
-      documentTemplateOID: documentTemplateOID.toString()
+      docName: docName
+      // documentTemplateOID: documentTemplateOID.toString()
+
     };
 
-    let options: RequestOptionsArgs = {}
-    let headers: Headers = new Headers();
+    const options: RequestOptionsArgs = {};
+    const headers: Headers = new Headers();
 
     headers.append("token", AuthorizationInterceptor.authToken);
-    headers.append("Authorization", `Bearer ${AuthorizationInterceptor.authToken}`);
+    headers.append(
+      "Authorization",
+      `Bearer ${AuthorizationInterceptor.authToken}`
+    );
 
     options.headers = headers;
     options.responseType = ResponseContentType.Blob;
 
-    return this.classicHttp
-      .post(url, params, options)
-      .map(response => {
-        let headers = response.headers;
-        let contentType = headers.get('content-type');
-        let fileName = headers.get('content-disposition').split('; ')[1].split('=')[1].replace(/"/g, '');
-        let result = response.arrayBuffer();
-        //let data = new Blob([result], { type: contentType });
-        let fileSaver: FileSaver = new FileSaver();
+    return this.classicHttp.post(url, params, options).map(response => {
+      const headers = response.headers;
+      const contentType = headers.get("content-type");
+      const fileName = headers
+        .get("content-disposition")
+        .split("; ")[1]
+        .split("=")[1]
+        .replace(/"/g, "");
+      const result = response.arrayBuffer();
+      // let data = new Blob([result], { type: contentType });
+      const fileSaver: FileSaver = new FileSaver();
 
-        fileSaver.saveAs(response.blob(), fileName);
+      fileSaver.saveAs(response.blob(), fileName);
 
-        return result;
-      });
+      return result;
+    });
+  }
 
+  public fetchNewDocTypesFull(): Observable<DocumentType[]> {
+    const url = `${super.getBaseUrl()}/api/new-doc-types-full`;
+
+    return this.http.get<DocumentType[]>(url);
+  }
+
+  public fetchNewDocTypes(category: String): Observable<String[]> {
+    const url = `${super.getBaseUrl()}/api/new-doc-types/${category}`;
+
+    return this.http.get<String[]>(url);
   }
 
   /* Deprecated
@@ -510,7 +567,7 @@ export class CaseService extends HttpBaseService<Case> {
   */
 
   public getJudicialOfficers(): Observable<JudicialOfficer[]> {
-    let url: string = `${super.getBaseUrl()}/api/judicial-officers`;
+    const url = `${super.getBaseUrl()}/api/judicial-officers`;
     return this.http
       .get<JudicialOfficer[]>(url)
       .map(judges => judges.map(this.mapToRealJudicialOfficer));
@@ -523,19 +580,21 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public saveJudicialAssignment(data: JudicialAssignment): Observable<JudicialAssignment> {
-    let url: string = `${super.getBaseUrl()}/SaveJudicialAssignment`;
+    const url = `${super.getBaseUrl()}/SaveJudicialAssignment`;
 
-    let assignment: any = {
+    const assignment: any = {
       caseOID: data.caseOID.toString(),
       partyOID: data.judicialOfficial.partyOID.toString(),
       startDate: this.datePipe.transform(data.startDate, "yyyy-MM-dd")
     };
 
-    if (data.endDate)
+    if (data.endDate) {
       assignment.endDate = this.datePipe.transform(data.endDate, "yyyy-MM-dd");
+    }
 
-    if (data.judicialAssignmentOID)
+    if (data.judicialAssignmentOID) {
       assignment.judicialAssignmentOID = data.judicialAssignmentOID.toString();
+    }
 
     return this.http
       .post<JudicialAssignment[]>(url, assignment)
@@ -543,7 +602,7 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   private convertDatesForJudicialAssignment(assignment: JudicialAssignment): JudicialAssignment {
-    let ref: any = assignment;
+    const ref: any = assignment;
     if (assignment.endDate) {
       assignment.endDate = DateConverter.convertDate(assignment.endDate);
     }
@@ -554,14 +613,14 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public fetchEventType(): Observable<EventType[]> {
-    let url: string = `${super.getBaseUrl()}/FetchEventType`;
+    const url = `${super.getBaseUrl()}/FetchEventType`;
 
     return this.http
       .get<EventType[]>(url);
   }
 
   public saveCaseEvent(data: CaseEvent): Observable<CaseEvent> {
-    var event = {
+    let event = {
       caseOID: '',
       initiatedByPartyOID: '',
       eventTypeOID: '',
@@ -586,7 +645,7 @@ export class CaseService extends HttpBaseService<Case> {
     if (data.docTemplate)
       event.documentTemplateOID = data.docTemplate.documentTemplateOID.toString();
 
-    let url: string = `${super.getBaseUrl()}/SaveCaseEvent`;
+    const url = `${super.getBaseUrl()}/SaveCaseEvent`;
 
     return this.http
       .post<CaseEvent[]>(url, event)
@@ -594,50 +653,50 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   public fetchCaseType(): Observable<CaseType[]> {
-    let url: string = `${super.getBaseUrl()}/FetchCaseType`;
+    const url = `${super.getBaseUrl()}/FetchCaseType`;
 
     return this.http
       .get<CaseType[]>(url);
   }
 
   public fetchCaseApplicationType(): Observable<CaseApplicationType[]> {
-    let url: string = `${super.getBaseUrl()}/FetchCaseApplicationType`;
+    const url = `${super.getBaseUrl()}/FetchCaseApplicationType`;
 
     return this.http
       .get<CaseApplicationType[]>(url);
   }
 
   public fetchCaseStatus(): Observable<CaseStatus[]> {
-    let url: string = `${super.getBaseUrl()}/FetchCaseStatus`;
+    const url = `${super.getBaseUrl()}/FetchCaseStatus`;
 
     return this.http
       .get<CaseStatus[]>(url);
   }
 
   public fetchPhaseByType(type: number): Observable<CasePhase[]> {
-    let url: string = `${super.getBaseUrl()}/FetchPhaseByType`;
+    const url = `${super.getBaseUrl()}/FetchPhaseByType`;
 
-    let params: object = {
+    const params: object = {
       typeOID: type.toString()
-    }
+    };
 
     return this.http
       .post<CasePhase[]>(url, params);
   }
 
   public fetchCaseSubType(type: number): Observable<CaseSubType[]> {
-    let url: string = `${super.getBaseUrl()}/FetchCaseSubType`;
+    const url = `${super.getBaseUrl()}/FetchCaseSubType`;
 
-    let params: object = {
+    const params: object = {
       typeOID: type.toString()
-    }
+    };
 
     return this.http
       .post<CaseSubType[]>(url, params);
   }
 
   public fetchHearing(data: any): Observable<CaseHearingDeprecated[]> {
-    let url: string = `${super.getBaseUrl()}/FetchHearing`;
+    const url = `${super.getBaseUrl()}/FetchHearing`;
 
     return this.http
       .post<CaseHearingDeprecated[]>(url, data);
@@ -645,24 +704,30 @@ export class CaseService extends HttpBaseService<Case> {
 
   //This fetches all the case applications for a specific case
   public fetchCaseApplication(caseNum: number): Observable<CaseApplication[]> {
-    let url: string = `${super.getBaseUrl()}/FetchCaseApplication`;
+    const url = `${super.getBaseUrl()}/FetchCaseApplication`;
 
-    let params: object = {
+    const params: object = {
       caseOID: caseNum.toString()
-    }
+    };
 
     return this.http.post<CaseApplication[]>(url, params);
   }
 
-  //This fetches all the applications for a specific case application
+  // This fetches all the applications for a specific case application
   public fetchCaseApplicants(applicationNum: number): Observable<CaseApplicant[]> {
-    let url: string = `${super.getBaseUrl()}/FetchCaseApplicant`;
+    const url = `${super.getBaseUrl()}/FetchCaseApplicant`;
 
-    let params: object = {
+    const params: object = {
       caseApplicationOID: applicationNum.toString()
-    }
+    };
 
     return this.http.post<CaseApplicant[]>(url, params);
+  }
+
+  public fetchDocket(): Observable<Case[]> {
+    const url = `${super.getBaseUrl()}/FetchDocket`;
+
+    return this.http.get<Case[]>(url);
   }
 
 }
