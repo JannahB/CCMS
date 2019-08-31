@@ -250,21 +250,7 @@ export class CaseService extends HttpBaseService<Case> {
         });
       }
 
-<<<<<<< HEAD
       const caseHearings: CaseHearingDeprecated[] = kase.caseHearings;
-=======
-      let caseApplications: CaseApplication[] = kase.caseApplications;
-      if (caseApplications) {
-        caseApplications.forEach(ct => {
-          ct.caseApplicationStartDate = DateConverter.convertDate(ct.caseApplicationStartDate);
-          ct.dateOfMarriage = DateConverter.convertDate(ct.dateOfMarriage);
-          ct.caseApplicationEndDate = DateConverter.convertDate(ct.caseApplicationEndDate);
-          
-        })
-      }
-
-      let caseHearings: CaseHearingDeprecated[] = kase.caseHearings;
->>>>>>> db2aa2503b0a9d97157d3808a7904038e6bee9f9
       if (caseHearings) {
         caseHearings.forEach(ch => {
           ch.startDateTime = DateConverter.convertDate(ch.startDateTime);
@@ -413,11 +399,8 @@ export class CaseService extends HttpBaseService<Case> {
         caseData.caseCharges.push(charge);
       });
 
-<<<<<<< HEAD
 
-=======
   
->>>>>>> db2aa2503b0a9d97157d3808a7904038e6bee9f9
     }
 
     const url = `${super.getBaseUrl()}/SaveCourtCase`;
@@ -439,9 +422,6 @@ export class CaseService extends HttpBaseService<Case> {
     const url = `${super.getBaseUrl()}/SaveCaseApplication`;
     return this.http
       .post<CaseApplication>(url, data)
-<<<<<<< HEAD
-      .map(t => this.convertCaseTaskDates(t));
-=======
       .map(ct => this.convertCaseApplicationDates(ct))
   }
 
@@ -450,7 +430,6 @@ export class CaseService extends HttpBaseService<Case> {
     ct.dateOfMarriage = DateConverter.convertDate(ct.dateOfMarriage);
     ct.caseApplicationEndDate = DateConverter.convertDate(ct.caseApplicationEndDate);
     return ct;
->>>>>>> db2aa2503b0a9d97157d3808a7904038e6bee9f9
   }
 
   convertCaseTaskDates(ct) {
