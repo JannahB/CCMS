@@ -39,6 +39,8 @@ import { LocalCharge } from '../../entities/LocalCharge';
 import { nullSafeIsEquivalent } from '@angular/compiler/src/output/output_ast';
 import { CaseApplication } from '../../entities/CaseApplication';
 import { CaseApplicant } from '../../entities/CaseApplicant';
+import { PaymentDisbursementDetails } from '../../entities//PaymentDisbursementDetails';
+import { CasePayment } from '../../entities//CasePayment';
 
 
 @Injectable()
@@ -259,6 +261,16 @@ export class CaseService extends HttpBaseService<Case> {
         })
       }
 
+      let casePayments: CasePayment[] = kase.casePayments;
+      if (casePayments) {
+        casePayments.forEach(ct => {
+          ct.dateOfPayment = DateConverter.convertDate(ct.dateOfPayment);
+          ct.disbursementDate = DateConverter.convertDate(ct.disbursementDate);
+          
+          
+        })
+      }
+
       let caseHearings: CaseHearingDeprecated[] = kase.caseHearings;
       if (caseHearings) {
         caseHearings.forEach(ch => {
@@ -437,6 +449,26 @@ export class CaseService extends HttpBaseService<Case> {
     ct.caseApplicationStartDate = DateConverter.convertDate(ct.caseApplicationStartDate);
     ct.dateOfMarriage = DateConverter.convertDate(ct.dateOfMarriage);
     ct.caseApplicationEndDate = DateConverter.convertDate(ct.caseApplicationEndDate);
+    return ct;
+  }
+
+  //This calls the CaseApplicationResrouce in the BackEnd
+  public saveCasePayment(data: CasePayment): Observable<CasePayment> {
+    let url: string = `${super.getBaseUrl()}/SaveCasePayment`;
+    return this.http
+      .post<CasePayment>(url, data)
+      .map(ct => this.convertCasePaymentDetailDates(ct))
+  }
+
+  convertCasePaymentDetailDates(ct){
+
+    ct.dateOfPayment = DateConverter.convertDate(ct.dateOfPayment);
+    ct.disbursementDate = DateConverter.convertDate(ct.disbursementDate);
+
+    for (let i = 0; i < ct.paymentsDisbursements.length; i++){        
+      ct.paymentsDisbursements[i].paymentPeriodStartDate = DateConverter.convertDate(ct.paymentsDisbursements[i].paymentPeriodStartDate);
+      ct.paymentsDisbursements[i].paymentPeriodEndDate = DateConverter.convertDate(ct.paymentsDisbursements[i].paymentPeriodEndDate);
+    }
     return ct;
   }
 
@@ -673,8 +705,19 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http.post<CaseApplication[]>(url, params);
   }
 
+  //This fetches all the case applications for a specific case
+  public fetchCasePayments(caseNum: number): Observable<CasePayment[]> {
+    let url: string = `${super.getBaseUrl()}/FetchCasePayments`;
+
+    let params: object = {
+      caseOID: caseNum.toString()
+    }
+
+    return this.http.post<CasePayment[]>(url, params);
+  }  
+
   //This fetches all the applications for a specific case application
-  public fetchCaseApplicants(applicationNum: number): Observable<CaseApplicant[]> {
+  /*public fetchCaseApplicants(applicationNum: number): Observable<CaseApplicant[]> {
     let url: string = `${super.getBaseUrl()}/FetchCaseApplicant`;
 
     let params: object = {
@@ -682,6 +725,6 @@ export class CaseService extends HttpBaseService<Case> {
     }
 
     return this.http.post<CaseApplicant[]>(url, params);
-  }
+  }*/
 
 }

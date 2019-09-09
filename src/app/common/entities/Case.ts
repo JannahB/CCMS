@@ -12,6 +12,8 @@ import { CaseParty } from './CaseParty';
 import { CaseHearingDeprecated } from './CaseHearingDeprecated';
 import { CaseApplication } from '../../common/entities/CaseApplication';
 import { CaseApplicant } from '../../common/entities/CaseApplicant';
+import { CasePayment } from '../../common/entities/CasePayment';
+import { PaymentDisbursementDetails } from '../../common/entities/PaymentDisbursementDetails';
 
 export class Case extends LookupEntity {
 
@@ -34,8 +36,12 @@ export class Case extends LookupEntity {
   caseOID: number = 0;
   caseParties: CaseParty[] = [];
   caseTasks: CaseTask[] = [];
+  
   caseApplications: CaseApplication[] = []; // used to capture all applications for a case
   caseApplicants: CaseApplicant [] = []; //used to capture all applicants on a case
+
+  casePayments: CasePayment[] = []; // used to capture all applications for a case
+  casePaymentsDetails: PaymentDisbursementDetails [] = []; //used to capture all applicants on a case
 
   caseWeight: number = 0;
   court: Court = null;

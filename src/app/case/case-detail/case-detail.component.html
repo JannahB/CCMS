@@ -790,6 +790,130 @@
             </div>
           </div>
         </p-tabPanel>
+
+
+        <!-- PAYMENT & DISBURSEMENTS TAB -->
+        <p-tabPanel header="Payments and Disbursements" leftIcon="ui-icon-list">
+          
+          <div class="ui-g">         
+            <div class="ui-g-12">
+              <h2>Payments & Disbursements</h2>
+            </div>
+
+            <div class="ui-g-12 ta-r mt-30">
+              <button type="button"
+                  
+                  (click)="resetAddCasePaymentModal()"
+                  label="Add Payment"
+                  icon="ui-icon-add"
+                  class="ui-button-secondary mr-15" pButton></button>
+            </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.casePayments"
+                          selectionMode="single"
+                          [(selection)]="selectedCasePayment"
+                          (onRowSelect)="ShowAddCasePayment($event)"
+                          scrollable="true"
+                          dataKey="paymentOID" #dtPayments>
+
+                <!--p-column field="dateOfPayment" header="Date of Payment" [style]="{'width':'10%'}" [sortable]="true"></p-column-->
+
+                <p-column field="dateOfPayment" header="Date of Payment" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.dateOfPayment | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>
+
+                <p-column field="receiptNumber" header="Receipt Number" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="paymentMethod" header="Payment Method" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="paymentType" header="Payment Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+
+                <!--p-column field="" header="Processing Fee" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngIf="item.processingFee">
+                        {{ '$'+ item.processingFee }}
+                      </div>
+                  </ng-template>
+                </p-column-->
+                             
+                
+
+                <p-column field="" header="Name of Payor" [style]="{'width':'10%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngIf="item.payorParty?.partyOID">
+                        {{ item.payorParty.fullName}}
+                      </div>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="" header="Name of Beneficiary" [style]="{'width':'10%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngIf="item.beneficiaryParty?.partyOID">
+                        {{ item.beneficiaryParty.firstName + ' ' + item.beneficiaryParty.lastName }}
+                      </div>
+                  </ng-template>
+                </p-column>   
+                
+                <p-column field="" header="Payment In by Payor" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngIf="item.totalPaymentIn">
+                        {{ '$'+ item.totalPaymentIn }}
+                      </div>
+                  </ng-template>
+                </p-column>    
+                
+
+                <p-column field="" header="Payment Recorded By" [style]="{'width':'10%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        <div *ngIf="item.staffPartyRecordingPayment?.partyOID">
+                          {{ item.staffPartyRecordingPayment.fullName}}
+                        </div>
+                    </ng-template>
+                  </p-column>  
+                  
+                  <p-column field="" header="Payment Disbursed By" [style]="{'width':'10%'}" >
+                      <ng-template pTemplate="body" let-item="rowData">
+                          <div *ngIf="item.staffPartyRecordingDisbursement?.partyOID">
+                            {{ item.staffPartyRecordingDisbursement.fullName}}
+                          </div>
+                      </ng-template>
+                    </p-column>                      
+
+                <p-column field="" header="Payment Disbursed to Beneficiary" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngIf="item.totalPaymentOut">
+                        {{ '$'+ item.totalPaymentOut }}
+                      </div>
+                  </ng-template>
+                </p-column> 
+
+                <!--p-column field="disbursementDate" header="Date of Disbursement" [style]="{'width':'10%'}" [sortable]="true"></p-column-->                
+                <p-column field="disbursementDate" header="Date of Disbursement" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.disbursementDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>                
+   
+            </p-dataTable>
+
+            </div>
+
+            <div class="ui-g-12 ta-r mt-30">
+              <button type="button"
+                  *ngIf="hasPermission(Permission.CREATE_CASE)"
+                  (click)="saveCase()"
+                  label="Save Case"
+                  icon="ui-icon-check"
+                  class="btn-big" pButton
+                  [disabled]="!caseForm.form.valid"></button>
+            </div>
+
+
+          </div>
+        </p-tabPanel>        
+
+
       </p-tabView>
 
     </div>
@@ -797,6 +921,9 @@
   <!-- //END SECOND CARD - TAB SECTION -->
 
 </div>
+
+
+
 
 
 <!--
@@ -1314,7 +1441,7 @@
 <!-- START: ADD CASE APPLICATION MODAL -->
 
 <p-dialog header="Case Application Details" styleClass="caseApplicationModal" width="850" [(visible)]="showModalAddCaseApplication" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-
+  
   <form #caseApplicationForm="ngForm" *ngIf="showModalAddCaseApplication">
     <div class="ui-g">
       <div class="form-group" >
@@ -1356,7 +1483,7 @@
                   (onChange)="applicationStatusOnChange($event)"
                   styleClass="width-full">
               </p-dropdown>
-           </div>   
+           </div>    
         </div>
 
         <div class="ui-g-12">
@@ -1533,7 +1660,7 @@
                 pButton>
         </button>
       </div>
-    </p-footer>
+    </p-footer>    
   </form>
 </p-dialog>
 
@@ -1875,6 +2002,308 @@
   </form>
 </p-dialog>
 
+
+<!-- ADD PAYMENTS & DISBURSEMENTS MODAL -->
+
+  <p-dialog header="Payment & Disbursement Details for Case Number {{case?.caseNumber}}" width="1200" [(visible)]="showModalAddCasePayment" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+
+  <form (ngSubmit)="addCasePayment()" #casePaymentForm="ngForm" *ngIf="showModalAddCasePayment">
+    <div class="ui-g">
+      <div class="form-group" >  
+        
+        
+        <div class="ui-g-12">
+
+          <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Date of Payment</label>
+            <p-calendar id="dateOfPayment" name="dateOfPayment" placeholder="Payment Date"
+                [ngModel]="selectedCasePayment.dateOfPayment"
+                (ngModelChange)="dateOfPaymentOnChange($event)"
+                [showIcon]="true"
+                appendTo="body"
+                [inline]="false"
+                [required]="true"                      
+                dateFormat="dd-M-yy"
+                [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                [monthNavigator]="true" 
+                [yearNavigator]="true" 
+                yearRange="2000:2030"
+                styleClass="width-full">
+            </p-calendar>
+          </div>
+        
+        <div class="ui-g-12 ui-md-3">
+          <label class="minimal primary block" for="receiptNumber">Receipt Number</label>
+            <textarea id="receiptNumber" name="receiptNumber"
+              placeholder="Please Enter the payment receipt number"
+              [ngModel]="selectedCasePayment.receiptNumber"
+              (ngModelChange)="receiptNumberOnChange($event)"
+              [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+              [rows]="1" 
+              [required]="true"
+              pInputTextarea
+              autoResize="autoResize"
+              styleClass="width-full"></textarea>
+        </div>
+
+
+
+        <div class="ui-g-12 ui-md-3">
+            <label class="minimal primary block">Payment Method</label>
+            <p-dropdown name="paymentMethod" id="paymentMethod" placeholder="Choose Payment Item"
+                      [required]="true"
+                      [options]="paymentMethod"
+                      filter = "true"
+                      [ngModel]="selectedCasePayment.paymentMethod"
+                      [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                      appendTo="body"
+                      (onChange)="paymentMethodOnChange($event)"
+                      styleClass="width-full">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="paymentMethod.errors?.required && paymentMethod.touched" >
+                  A payment Method is required
+            </div>
+        </div>
+
+        <div class="ui-g-12 ui-md-3">
+            <label class="minimal primary block">Payment Type</label>
+            <p-dropdown name="paymentType" id="paymentType" placeholder="Choose Payment Type"
+                      [required]="true"
+                      [options]="paymentTypes"
+                      filter = "true"
+                      [ngModel]="selectedCasePayment.paymentType"
+                      [disabled]="selectedCasePayment?.paymentOID != 0 && !hasPermission(Permission.CREATE_TASK)"
+                      appendTo="body"
+                      (onChange)="paymentTypeOnChange($event)"
+                      styleClass="width-full">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="paymentMethod.errors?.required && paymentMethod.touched" >
+                  A payment Type is required
+            </div>
+        </div>
+
+      </div>
+
+      <div class="ui-g-12">
+
+          <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block" for="tiTotalPaidIn">Payment by Customer</label>
+                  <input matInput type="number" name="tiTotalPaidIn" placeholder="Total Amount Paid In"
+                  [(ngModel)]="selectedCasePayment.totalPaymentIn"
+                  [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                  (ngModelChange)="totalAmountPainInOnChange($event)">     
+            </div>          
+
+              <div class="ui-g-12 ui-md-3">
+                <label class="minimal primary block" for="tiProcessingFee">Processing Fee</label>
+                    <input matInput type="number" name="tiProcessingFee" placeholder="Enter Processing Fees"
+                          [(ngModel)]="selectedCasePayment.processingFee"
+                          [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                          (ngModelChange)="processingFeeOnChange($event)">
+              </div>      
+              
+              <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment?.paymentOID != 0 && ((selectedCasePayment.paymentType != 'Filing Fees') && (selectedCasePayment.paymentType != 'Fines Payment'))">
+                <label class="minimal primary block" for="tiTotalPaidOut">Disbursement Amount to Beneficiary</label>
+                    <input matInput type="number" name="tiTotalPaidOut" placeholder="Total Amount Paid Out"
+                    [disabled]="selectedCasePayment.paymentDisbursedFlag == 1 && !hasPermission(Permission.CREATE_TASK)"  
+                    [(ngModel)]="selectedCasePayment.totalPaymentOut"
+                    (ngModelChange)="totalAmountPainOutOnChange($event)">
+              </div>              
+      </div>
+
+
+      <div class="ui-g-12">
+
+          <div class="ui-g-12 ui-md-6">
+              <label class="minimal primary block">Payor Party</label>
+              <p-dropdown name="ddPayorParty" id="ddPayorParty" #ddPayorParty="ngModel" placeholder="choose a Payor..."
+                  [required]="true"
+                  [options]="paymentCaseParties"
+                  optionLabel="fullName"
+                  [ngModel]="selectedCasePayment?.payorParty"
+                  [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                  [filter]="true"
+                  (onChange)="payorOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+          </div>
+   
+          <div class="ui-g-12 ui-md-6">
+              <label class="minimal primary block">Beneficiary Party</label>
+              <p-dropdown name="ddBeneficiaryParty" id="ddBeneficiaryParty"  #ddBeneficiaryParty="ngModel" placeholder="choose Beneficiary Party..."
+                    [required]="true"
+                    [options]="paymentCaseParties"
+                    optionLabel="fullName"
+                    [ngModel]="selectedCasePayment?.beneficiaryParty"
+                    [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                    [filter]="true"
+                    (onChange)="beneficiaryOnChange($event)"
+                    styleClass="width-full">
+              </p-dropdown>
+            </div>  
+      </div>   
+
+
+            <!-- ADD PAYMENT ITEMS, FREQUENCY, PAYMENT DATE, PAYMENT FREQUENCY, PAYMENT AMOUNT-->
+
+            <div class="ui-g-12 mt-0">
+              <div class="ui-g-12">
+                <header class="mb-10">Payment &amp; Disbursement Details</header>
+              </div>
+    
+              <div class="ui-g-12 mb-5 paymentDetails-th">
+                <div class="ui-g-2 pv-0">
+                  <label class="minimal primary block">Period Start Date</label>
+                </div>
+                <div class="ui-g-2 pv-0">
+                  <label class="minimal primary block">Period End Date</label>
+                </div>
+                <div class="ui-g-3 pv-0">
+                  <label class="minimal primary block">Payment Item</label>
+                </div>
+                <div class="ui-g-2 pv-0">
+                    <label class="minimal primary block">Payment Frequency</label>
+                  </div>
+                <div class="ui-g-1 pv-0">
+                      <label class="minimal primary block">Payment Ordered</label>
+                </div>
+                <div class="ui-g-1 pv-0">
+                  <label class="minimal primary block">Customer Payment</label>
+                </div>
+                <!--div class="ui-g-1 pv-0" *ngIf="selectedCasePayment?.paymentOID != 0">
+                  <label class="minimal primary block">Amount Paid Out</label>
+                </div-->
+              </div>
+
+    
+              <div class="ui-g-12 mb-5 paymentsDisbursements-row" *ngFor="let paymentsDisbursements of selectedCasePayment.paymentsDisbursements; let acIdx = index">
+                
+                <div class="ui-g-2 ph-0 pv-5">
+                    
+                  <p-calendar 
+                       placeholder="Period Start Date"
+                      (ngModelChange)="periodStartDateOnChange($event,acIdx)"
+                      [showIcon]="true"
+                      appendTo="body"
+                      [inline]="false"
+                      [required]="true"
+                      dateFormat="dd-M-yy"
+                      [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                      [monthNavigator]="true" 
+                      [yearNavigator]="true" 
+                      yearRange="2000:2030"
+                      id="paymentsDisbursements-paymentPeriodStartDate-{{acIdx}}"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentPeriodStartDate"
+                      name="paymentsDisbursements[{{acIdx}}].paymentPeriodStartDate">
+                  </p-calendar>   
+                  
+                  
+                </div>
+
+                <div class="ui-g-2 ph-10 pv-5">
+                  <p-calendar placeholder="Period End Date"
+                      (ngModelChange)="periodEndDateOnChange($event,acIdx)"
+                      [showIcon]="true"
+                      appendTo="body"
+                      [inline]="false"
+                      [required]="true"                      
+                      dateFormat="dd-M-yy"
+                      [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                      [monthNavigator]="true" 
+                      [yearNavigator]="true" 
+                      yearRange="2000:2030"
+                      id="paymentsDisbursements-paymentPeriodEndDate-{{acIdx}}"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentPeriodEndDate"
+                      name="paymentsDisbursements[{{acIdx}}].paymentPeriodEndDate">
+                  </p-calendar>
+                </div>
+
+                <div class="ui-g-3 ph-10 pv-5">
+                  <p-dropdown
+                       placeholder="Choose Payment Item"
+                      [required]="true"
+                      [options]="paymentItem"
+                      filter = "true"                      
+                      appendTo="body"
+                      [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                      (ngModelChange)="paymentItemOnChange($event,acIdx)"
+                      styleClass="width-full"
+                      id="paymentsDisbursements-paymentItem-{{acIdx}}"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentItem"
+                      name="paymentsDisbursements[{{acIdx}}].paymentItem">
+                  </p-dropdown>
+               </div>
+
+               <div class="ui-g-2 ph-10 pv-5">
+                  <p-dropdown
+                      placeholder="Choose Payment Frequency"
+                      [required]="true"
+                      [options]="paymentFrequency"
+                      filter = "true"
+                      appendTo="body"
+                      [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                      (ngModelChange)="paymentFrequencyOnChange($event,acIdx)"
+                      id="paymentsDisbursements-paymentFrequency-{{acIdx}}"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentFrequency"
+                      name="paymentsDisbursements[{{acIdx}}].paymentFrequency"                      
+                      styleClass="width-full">
+                  </p-dropdown>
+               </div>        
+               
+              <div class="ui-g-1 ph-10 pv-5">
+                      <input matInput type="number"  
+                        placeholder="Payment Ordered"
+                        id="paymentsDisbursements-paymentAmountOrdered-{{acIdx}}"
+                        [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                        [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountOrdered"
+                        name="paymentsDisbursements[{{acIdx}}].paymentAmountOrdered"  
+                        (ngModelChange)="paymentAmountOrderedOnChange($event,acIdx)">
+              </div>               
+
+              <div class="ui-g-1 ph-10 pv-5">
+                    <input matInput type="number"  
+                    placeholder="Payment Rendered"
+                    (ngModelChange)="paymentAmountInOnChange($event,acIdx)"
+                    [disabled]="selectedCasePayment.totalPaymentOut > 0 && !hasPermission(Permission.CREATE_TASK)"
+                    id="paymentsDisbursements-paymentAmountIn-{{acIdx}}"
+                    [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountIn"
+                    name="paymentsDisbursements[{{acIdx}}].paymentAmountIn">                    
+              </div>
+
+              <!--div class="ui-g-1 ph-10 pv-5" *ngIf="selectedCasePayment?.paymentOID != 0">
+                    <input matInput type="number" name="amountPaidOut" #amountPaidOut="ngModel" placeholder="Payment Disbursed"
+                    [(ngModel)]="casepaymentdisbursement.paymentAmountOut"
+                    (ngModelChange)="paymentAmountOutOnChange($event,acIdx)">                         
+              </div-->
+    
+                <div class="ui-g-1 ta-r mt-15 ph-10 pv-5">
+                  <i class="material-icons delete-icon" (click)="requestDeleteCasePaymentDetail(acIdx)">delete</i>
+                </div>
+            </div>
+         </div>
+    </div>
+    </div>
+
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="Save Payment" type="submit" pButton icon="fa-check" 
+                  [disabled]="!casePaymentForm.form.valid"
+                  (click)="addCasePayment()"></button>
+
+          <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
+                  (click)="onCancelCasePayment()">
+          </button>                  
+
+          <button type="button" (click)="addCasePaymentDisbursement();" label="Add Payment &amp; Disbursement"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+                pButton>
+        </button>
+        </div>
+    </p-footer>
+  </form>
+</p-dialog>
 
 
 
