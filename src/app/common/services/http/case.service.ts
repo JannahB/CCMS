@@ -250,17 +250,7 @@ export class CaseService extends HttpBaseService<Case> {
         });
       }
 
-      let caseApplications: CaseApplication[] = kase.caseApplications;
-      if (caseApplications) {
-        caseApplications.forEach(ct => {
-          ct.caseApplicationStartDate = DateConverter.convertDate(ct.caseApplicationStartDate);
-          ct.dateOfMarriage = DateConverter.convertDate(ct.dateOfMarriage);
-          ct.caseApplicationEndDate = DateConverter.convertDate(ct.caseApplicationEndDate);
-
-        })
-      }
-
-      let caseHearings: CaseHearingDeprecated[] = kase.caseHearings;
+      const caseHearings: CaseHearingDeprecated[] = kase.caseHearings;
       if (caseHearings) {
         caseHearings.forEach(ch => {
           ch.startDateTime = DateConverter.convertDate(ch.startDateTime);
@@ -410,6 +400,7 @@ export class CaseService extends HttpBaseService<Case> {
       });
 
 
+  
     }
 
     const url = `${super.getBaseUrl()}/SaveCourtCase`;
@@ -434,7 +425,7 @@ export class CaseService extends HttpBaseService<Case> {
       .map(ct => this.convertCaseApplicationDates(ct))
   }
 
-  convertCaseApplicationDates(ct) {
+  convertCaseApplicationDates(ct){
     ct.caseApplicationStartDate = DateConverter.convertDate(ct.caseApplicationStartDate);
     ct.dateOfMarriage = DateConverter.convertDate(ct.dateOfMarriage);
     ct.caseApplicationEndDate = DateConverter.convertDate(ct.caseApplicationEndDate);

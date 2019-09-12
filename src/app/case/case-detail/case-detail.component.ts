@@ -46,8 +46,8 @@ import { CaseApplication } from '../../common/entities/CaseApplication';
 import { componentRefresh } from '@angular/core/src/render3/instructions';
 import { CaseApplicant } from '../../common/entities/CaseApplicant';
 import { CaseApplicationType } from '../../common/entities/CaseApplicationType';
-import { DocumentType } from '../../common/entities/DocumentType';
 import { CountriesService } from '../../common/services/http/countries.service';
+import { DocumentType } from '../../common/entities/DocumentType';
 import { DropdownDataTransformService } from '../../common/services/utility/dropdown-data-transform.service';
 
 @Component({
@@ -121,9 +121,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   docTypesShown: DocumentType[] = [];
   docTypeNames: String[] = [];
+
   countries: SelectItem[];
   countriesSubscription: Subscription;
-
 
 
   public Permission: any = Permission;
@@ -137,9 +137,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     private toastSvc: ToastService,
     private lookupSvc: LookupService,
     private localStorageService: LocalStorageService,
+    private userSvc: UserService,
     private countriesSvc: CountriesService,
-    private dropdownSvc: DropdownDataTransformService,
-    private userSvc: UserService
+    private dropdownSvc: DropdownDataTransformService
   ) {
     this.breadCrumbSvc.setItems([
       { label: 'Case', routerLink: ['/case-detail'] }
@@ -238,9 +238,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .fetchCaseApplicationType()
       .subscribe(appTypes => this.caseApplicationTypes = appTypes);
+
     this.countriesSubscription = this.countriesSvc.get().subscribe(countries => {
       this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
-    });
+    })              
+
+
   }
 
   ngOnDestroy(): void {
@@ -253,9 +256,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }
-    if (this.countriesSubscription) {
-      this.countriesSubscription.unsubscribe();
-    }
+    if (this.countriesSubscription) this.countriesSubscription.unsubscribe();
   }
 
   hasPermission(pm) {
@@ -333,6 +334,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
           .subscribe(results => this.case.caseApplications = results);
 
         console.log('Case Applications Retrieved', this.case.caseApplications);
+
+
 
         this.eventTypeFilter = null;
         this.filterCaseEvents();
@@ -534,14 +537,18 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   applicationTypeOnChange(event) {
     this.selectedCaseApplication.caseApplicationType = event.value.caseApplicationTypeOID;
     this.selectedCaseApplication.caseApplicationTypeDisplay = event.value.shortName;
+
   }
 
   applicationStatusOnChange(event) {
     this.selectedCaseApplication.caseApplicationStatus = event.value;
   }
 
+
   applicantRoleTypeOnChange(event) {
+
     this.selectedCaseApplication.caseApplicationRole = event.value.casePartyRoleOID;
+
   }
 
   compareByCasePartyId(item1, item2) {
@@ -553,71 +560,78 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   addCaseApplicant() {
-    const newApplicant = new CaseApplicant();
-    const authPartyAppLen = this.selectedCaseApplication.caseApplicants.push(newApplicant);
+    let newApplicant = new CaseApplicant();
+    let authPartyAppLen = this.selectedCaseApplication.caseApplicants.push(newApplicant);
   }
 
   caseApplicantOnChange(event, authCourtIdx) {
-
-    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseApplicantPartyOID = event.value.partyOID;
+    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseApplicantPartyOID = event.value.partyOID; 
     this.selectedCaseApplication.caseApplicants[authCourtIdx].caseOID = this.case.caseOID;
   }
 
-  caseApplicantRoleOnChange(event, authCourtIdx) {
-    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseApplicantRoleOID = event.value.casePartyRoleOID;
+  caseApplicantRoleOnChange (event, authCourtIdx) {
+    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseApplicantRoleOID = event.value.casePartyRoleOID; 
   }
 
   requestDeleteCasePartyApplicant(authCourtIdx) {
     this.selectedCaseApplication.caseApplicants.splice(authCourtIdx, 1);
-
   }
 
-  editStreetAddressOnChange(event) {
+  editStreetAddressOnChange(event){
     this.selectedCaseApplication.aomStreetName = event;
   }
 
-  editCityAddressOnChange(event) {
+  editCityAddressOnChange(event){
     this.selectedCaseApplication.aomCityName = event;
   }
 
-  addCaseApplication() {
+  communityCodeOnChange(event){
+    this.selectedCaseApplication.communityCode = event;
+  }
+
+  administrativeAreaCodeOnChange(event){
+    this.selectedCaseApplication.administrativeAreaCode = event;
+  }  
+
+  addCaseApplication(){
 
     // The conversion of the data types is done on the server side.
-    // The JSON string on the server side is parsed according to the object structure.
-
+    // The JSON string on the server side is parsed according to the object structure.    
+    
     // Get the current list of case applicants.
     // A case application needs at least one applicant to be a valid case application
     // Applicants can be added as needed
+   
+    if(this.selectedCaseApplication.caseApplicants.length > 0){ 
 
-    if (this.selectedCaseApplication.caseApplicants.length > 0) {
+       //Store all case applications 
+        this.case.caseApplications.push(this.selectedCaseApplication);
 
-      // Store all case applications
-      this.case.caseApplications.push(this.selectedCaseApplication);
+        //Set the values to be used to generate an application number
+        //The application type code is set then the case type is selected upon the initial
+        //creation of the application.
+        this.selectedCaseApplication.numOfCaseApplications = this.case.caseApplications.length;
+        this.selectedCaseApplication.caseNumberDisplay = this.case.caseNumber;
+        this.selectedCaseApplication.caseOID = this.case.caseOID;
 
-      // Set the values to be used to generate an application number
-      // The application type code is set then the case type is selected upon the initial
-      // creation of the application.
-      this.selectedCaseApplication.numOfCaseApplications = this.case.caseApplications.length;
-      this.selectedCaseApplication.caseNumberDisplay = this.case.caseNumber;
-      this.selectedCaseApplication.caseOID = this.case.caseOID;
-
-      this.caseSvc.saveCaseApplication(this.selectedCaseApplication).subscribe(result => {
+        this.caseSvc.saveCaseApplication(this.selectedCaseApplication).subscribe(result => {
         this.selectedCaseApplication = result[0];
-      });
+        });
 
-      this.toastSvc.showSuccessMessage('Case Application Saved');
-
-    } else {
-      this.toastSvc.showWarnMessage('An application must contain one or more applicants', 'Case Application was not saved');
+        this.toastSvc.showSuccessMessage('Case Application Saved');
+   
     }
+    else this.toastSvc.showWarnMessage('An application must contain one or more applicants', 'Case Application was not saved');
+
 
     this.saveCase();
-
-    // After an application is saved, reset so fresh data can be reloaded
-    this.selectedCaseApplication = new CaseApplication();
+     
+    //After an application is saved, reset so fresh data can be reloaded
+    this.selectedCaseApplication = new CaseApplication ();
     this.selectedCaseApplication.caseApplicants = null;
     this.hideModals();
   }
+
 
   caseApplicationStartDateOnChange(event) {
     this.selectedCaseApplication.caseApplicationStartDate = event;
@@ -635,25 +649,25 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedCaseApplication.aomCountryName = event.value;
   }
 
-  resetAddCaseApplicationModal() {
+  resetAddCaseApplicationModal(){
     this.selectedCaseApplication = new CaseApplication();
     this.showAddCaseCaseApplication();
   }
 
-  showAddCaseCaseApplication() {
+  showAddCaseCaseApplication() { 
 
     this.showModalAddCaseApplication = true;
-
-    // Convert the dates for the selected applications
+  
+    //Convert the dates for the selected applications
     this.caseSvc.convertCaseApplicationDates(this.selectedCaseApplication);
-
-    // Load the current parties associated with this case
-    for (let i = 0; i < this.case.caseParties.length; i++) {
-      this.appCaseParties[i] = this.case.caseParties[i].caseParty;
-      this.appCaseParties[i].fullName = this.appCaseParties[i].firstName.concat(" ", this.appCaseParties[i].lastName);
+    
+    //Load the current parties associated with this case
+    for (let i = 0; i < this.case.caseParties.length; i++){
+      this.appCaseParties[i] = this.case.caseParties[i].caseParty;    
+      this.appCaseParties[i].fullName = this.appCaseParties[i].firstName.concat(" ",this.appCaseParties[i].lastName);   
     }
 
-    if (this.selectedCaseApplication.caseApplicationOID == 0) {
+    if(this.selectedCaseApplication.caseApplicationOID == 0){
       this.case.caseApplicants = [];
     }
 
@@ -684,6 +698,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .fetchCasePartyRole()
       .subscribe(roles => this.casePartyRoleTypes = roles);*/
   }
+
 
   searchForParty() {
     const obj = { "partyName": this.partySearchText };
