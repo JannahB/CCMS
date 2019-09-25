@@ -9,8 +9,11 @@ export class PaymentDisbursementDetails {
     paymentFrequency: string = "";
     paymentPeriodStartDate: Date = null;
     paymentPeriodEndDate: Date = null;
-    paymentAmountOrdered: number = 0;
-    paymentAmountIn: number = 0;
-    paymentAmountOut: number = 0; // This is hiddent if it's a new application
+    paymentAmountOrdered: number;
+    paymentAmountIn: number;
+    //paymentAmountOut: number = 0; // This is hiddent if it's a new application
+    paymentDate: Date = null;
+    paymentType: string = "";
+    receiptNumber: string = "";
    
  }

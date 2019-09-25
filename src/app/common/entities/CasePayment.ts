@@ -26,11 +26,11 @@ export class CasePayment {
 
   paymentMethod: string = "";
   paymentType: string = "";
-  processingFee: number = 0;
-  totalPaymentIn: number = 0;
-  totalPaymentOut: number = 0;
+  processingFee: number;
+  totalPaymentIn: number;
+  //totalPaymentOut: number = 0;
 
-  paymentDisbursedFlag = 0;
+  paymentDisbursedFlag:boolean = false;
 
   paymentsDisbursements: PaymentDisbursementDetails [] = [];
 

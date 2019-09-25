@@ -744,6 +744,16 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http.post<CasePayment[]>(url, params);
   }  
 
+ //This fetches all the case payment details
+ public fetchCasePaymentDetails(caseNum: number): Observable<PaymentDisbursementDetails[]> {
+  let url: string = `${super.getBaseUrl()}/FetchCasePaymentDetails`;
+
+  let params: object = {
+    caseOID: caseNum.toString()
+  }
+
+  return this.http.post<PaymentDisbursementDetails[]>(url, params);
+}    
   //This fetches all the applications for a specific case application
   /*public fetchCaseApplicants(applicationNum: number): Observable<CaseApplicant[]> {
     let url: string = `${super.getBaseUrl()}/FetchCaseApplicant`;

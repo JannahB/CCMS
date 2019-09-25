@@ -30,6 +30,7 @@
           <p-dropdown placeholder="-" name="ddRoleType" optionLabel="name" [options]="casePartyRoleTypes"
               [(ngModel)]="selectedCasePartyRoleType"
               (onChange)="casePartyTypeOnChange($event)"
+              [filter]="true"
               styleClass="width-full">
           </p-dropdown>
         </div>
@@ -39,6 +40,7 @@
           <p-dropdown placeholder="-" name="ddCaseType" optionLabel="name" [options]="caseTypes"
               [(ngModel)]="selectedCaseType"
               (onChange)="onCaseTypeSelect($event)"
+              [filter]="true"
               styleClass="width-full">
           </p-dropdown>
         </div>
@@ -47,6 +49,7 @@
           <label class="minimal primary block">Case Phase</label>
           <p-dropdown placeholder="-" name="ddCasePhase" optionLabel="name" [options]="casePhaseTypes"
               [(ngModel)]="selectedCasePhaseType"
+              [filter]="true"
               (onFocus)="casePhaseOnFocus()"
               styleClass="width-full">
           </p-dropdown>
@@ -56,6 +59,7 @@
           <label class="minimal primary block">Case Status</label>
           <p-dropdown placeholder="-" name="ddCaseStatus" optionLabel="name" [options]="caseStatusTypes"
               [(ngModel)]="selectedCaseStatusType"
+              [filter]="true"
               styleClass="width-full">
           </p-dropdown>
         </div>

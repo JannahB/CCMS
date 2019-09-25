@@ -98,10 +98,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   selectedCaseApplication: CaseApplication = new CaseApplication();
   selectedCasePayment: CasePayment = new CasePayment();
   newPaymentDisbursementDetail: PaymentDisbursementDetails = new PaymentDisbursementDetails();
-  //paymentDisbursementDetails: PaymentDisbursementDetails [] = [];
+  paymentDisbursementDetails: PaymentDisbursementDetails [] = [];
 
   countries: SelectItem[];
   countriesSubscription: Subscription;
+  permissionSupervisor: boolean = false; //used to lock payment records
+  disbursementToggle: boolean = false; //used to lock payment records
   
  
 
@@ -134,6 +136,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.baseURL = environment.apiUrl;
+    this.permissionSupervisor = this.userSvc.isSupervisor();
 
     this.routeSubscription = this.activatedRoute.params.subscribe(params => {
       const caseId = params['caseId'];
@@ -261,13 +264,18 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
           .fetchCasePayments(caseId)
           .subscribe(results => this.case.casePayments = results);  
 
-        console.log('Case Payments received for this case is', this.case.casePayments);
+        //console.log('Case Payments received for this case is', this.case.casePayments);
+
+        this.caseSvc
+        .fetchCasePaymentDetails(caseId)
+        .subscribe(results => this.case.casePaymentsDetails = results);  
          
         this.eventTypeFilter = null;
         this.filterCaseEvents();
       }
     });
   }
+
 
   addNewParty() {
     this.router.navigate(['/party-detail', 0]);
@@ -396,33 +404,46 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   ];
 
   paymentItem: any[] = [
-    { value: 'Maintenance: Food', label: 'Maintenance: Food' },
+    { value: 'Maintenance: General', label: 'Maintenance: General' },
     { value: 'Maintenance: Clothing', label: 'Maintenance: Clothing' },
     { value: 'Maintenance: Medical', label: 'Maintenance: Medical' },
+    { value: 'Maintenance: School Books & Uniform', label: 'Maintenance: School Books & Uniform' },
+    { value: 'Writs of Execution', label: 'Writs of Execution' },
+    { value: 'Writs of Possession', label: 'Writs of Possession' },
     { value: 'Fines Payment', label: 'Fines Payment' },
     { value: 'Filing Fees', label: 'Filing Fees' }
   ];
 
   paymentMethod: any[] = [
+    { value: 'ACH Credit transfer', label: 'ACH Credit transfer' },
     { value: 'Cash', label: 'Cash' },
-    { value: 'Credit Card', label: 'Credit Card' },
+    { value: 'Cheque', label: 'Cheque' },
     { value: 'Court Pay', label: 'Court Pay' },
-    { value: 'Linx', label: 'Linx' },
-    { value: 'TopUp Voucher', label: 'TopUp Voucher' }
+    { value: 'Credit Card', label: 'Credit Card' },   
+    { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
+    { value: 'Personal Cheque', label: 'Personal Cheque' }
+
   ];
 
   paymentTypes: any[] = [
     { value: 'Maintenance', label: 'Maintenance' },
     { value: 'Fines Payment', label: 'Fines Payment' },
-    { value: 'Filing Fees', label: 'Filing Fees' }
+    { value: 'Filing Fees', label: 'Filing Fees' },
+    { value: 'Revenue Fees', label: 'Revenue Fees' },
+    { value: 'Writs of Execution', label: 'Writs of Execution' },
+    { value: 'Writs of Possession', label: 'Writs of Possession' },
+    { value: 'Warrant', label: 'Warrant' }
   ];
 
   paymentFrequency: any[] = [
-    { value: 'Monthly', label: 'Monthly' },
+    { value: 'Daily', label: 'Daily' },
     { value: 'Weekly', label: 'Weekly' },
-    { value: 'Semi-Annually', label: 'Semi-Annually' },
+    { value: 'Monthly', label: 'Monthly' },
+    { value: 'Quarterly', label: 'Quarterly' },
+    { value: 'Yearly', label: 'Yearly' },
     { value: 'Fortnightly', label: 'Fortnightly' },
-    { value: 'One Time Payment', label: 'One Time Payment' }
+    { value: 'One Time Payment', label: 'One Time Payment' },
+    { value: 'Custom Days', label: 'Custom Days' }
   ];  
 
 
@@ -453,9 +474,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountOrdered = event;
   }  
 
-  paymentAmountOutOnChange(event,acIdx) {
+  /*paymentAmountOutOnChange(event,acIdx) {
     this.selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountOut = event;
-  }
+  }*/
 
   receiptNumberOnChange(event) {
     this.selectedCasePayment.receiptNumber = event;
@@ -470,9 +491,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     console.log('Total Amount Paid In',this.selectedCasePayment.totalPaymentIn);
   }   
 
-  totalAmountPainOutOnChange(event) {
+  /*totalAmountPainOutOnChange(event) {
     this.selectedCasePayment.totalPaymentOut = event;
-  } 
+  } */
 
   payorOnChange(event) {
     this.selectedCasePayment.payorParty = event.value;
@@ -590,10 +611,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     // payment details can be added as needed
     
   
-    
-    //if(!isNumber(this.selectedCasePayment.processingFee)) 
-    //  console.log('Enter a valid number for processing fee');
-
     if(this.selectedCasePayment.paymentsDisbursements.length > 0){ 
 
        //Store all case payments 
@@ -605,77 +622,31 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         //The application type code is set then the case type is selected upon the initial
         //creation of the application.
 
+        this.selectedCasePayment.caseNumber = this.case.caseNumber;
+        this.selectedCasePayment.caseOID = this.case.caseOID;
+        this.selectedCasePayment.payorOID = this.selectedCasePayment.payorParty.partyOID;
+        this.selectedCasePayment.beneficiaryOID = this.selectedCasePayment.beneficiaryParty.partyOID;
 
-        ///This is used when an update is being performed in the system
-        if(this.selectedCasePayment.paymentOID > 0){
+        this.caseSvc.saveCasePayment(this.selectedCasePayment).subscribe(result => {
+          this.selectedCasePayment = result[0];
+        });
 
-          if(this.selectedCasePayment.totalPaymentOut > 0){
-
-            //if(this.selectedCasePayment.totalPaymentOut != (this.selectedCasePayment.totalPaymentIn - this.selectedCasePayment.processingFee)){
-              if(this.selectedCasePayment.totalPaymentOut != this.selectedCasePayment.totalPaymentIn){  
-              this.toastSvc.showWarnMessage('Payment Out does not match payment in. Cannot Process payment');
-              this.saveCase();
-            }
-            else{
-              //Update the payment with the correct disbursed amount
-              this.selectedCasePayment.caseNumber = this.case.caseNumber;
-              this.selectedCasePayment.caseOID = this.case.caseOID;
-              this.selectedCasePayment.payorOID = this.selectedCasePayment.payorParty.partyOID;
-              this.selectedCasePayment.beneficiaryOID = this.selectedCasePayment.beneficiaryParty.partyOID;
-  
-              this.caseSvc.saveCasePayment(this.selectedCasePayment).subscribe(result => {
-              this.selectedCasePayment = result[0];
-              });
-
-              this.toastSvc.showSuccessMessage('Case Payment Saved');
-              this.saveCase();
-            }
-          }
-
-          if (this.selectedCasePayment.totalPaymentOut == 0){
-            //The amount paid out is not being updated, however other details are being updated
-            this.caseSvc.saveCasePayment(this.selectedCasePayment).subscribe(result => {
-              this.selectedCasePayment = result[0];
-              });
-  
-              this.toastSvc.showSuccessMessage('Case Payment Saved');
-              this.saveCase();
-
-          }
-
-        }
-
-        
-
-        else{
-            
-            //add a new payment record without any payout information attached
-            this.selectedCasePayment.caseNumber = this.case.caseNumber;
-            this.selectedCasePayment.caseOID = this.case.caseOID;
-            this.selectedCasePayment.payorOID = this.selectedCasePayment.payorParty.partyOID;
-            this.selectedCasePayment.beneficiaryOID = this.selectedCasePayment.beneficiaryParty.partyOID;
-
-            this.caseSvc.saveCasePayment(this.selectedCasePayment).subscribe(result => {
-            this.selectedCasePayment = result[0];
-            });
-
-            this.toastSvc.showSuccessMessage('Case Payment Saved');
-            this.saveCase();
-      }
-  
+        this.toastSvc.showSuccessMessage('Case Payment Saved');
+        this.saveCase();        
     }
     
-    else this.toastSvc.showWarnMessage('An payment must contain one or more payment detail', 'Case payment was not saved');
+    else this.toastSvc.showWarnMessage('An payment must contain one or more payment detail', 'Case payment was not saved');    
   
-
-
-    
-     
+    this.caseSvc
+    .fetchCasePaymentDetails(this.case.caseOID)
+    .subscribe(results => this.case.casePaymentsDetails = results);  
+ 
     //After a payment is saved, reset so fresh data can be reloaded
     this.selectedCasePayment = new CasePayment ();
     this.selectedCasePayment.paymentsDisbursements = null;
     this.hideModals();
   }
+
 
   caseApplicationStartDateOnChange(event) {
     this.selectedCaseApplication.caseApplicationStartDate = event;
@@ -700,6 +671,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   resetAddCasePaymentModal(){
     this.selectedCasePayment = new CasePayment();
+    //this.disbursementToggle = false;
     this.ShowAddCasePayment();
   }
 
@@ -725,18 +697,23 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   addCasePaymentDisbursement(){
     let newPaymentDisbursement = new PaymentDisbursementDetails();
     let authPaymentDisbursementLen = this.selectedCasePayment.paymentsDisbursements.push(newPaymentDisbursement);
-    //let authPaymentDisbursementLen = this.paymentDisbursementDetails.push(newPaymentDisbursement);
-
     console.log('Payment Details are ', this.selectedCasePayment.paymentsDisbursements);
   }
 
   ShowAddCasePayment() {
      
     this.showModalAddCasePayment = true;
-
     console.log('Case Payment Selected is ',this.selectedCasePayment);
-
     this.caseSvc.convertCasePaymentDetailDates(this.selectedCasePayment);
+    
+    if(this.selectedCasePayment.paymentOID == 0){
+      this.selectedCasePayment.paymentDisbursedFlag = false;
+      this.selectedCasePayment.disbursementDate = null;
+    }
+
+    if(this.selectedCasePayment.paymentDisbursedFlag == true){
+      this.disbursementToggle = true;
+    }
     
     //Populate the options for payor and beneficiary dropdown list
     for (let i = 0; i < this.case.caseParties.length; i++){
@@ -751,12 +728,19 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     //Initialize the modal with the Party that was retrieved from the server
     this.selectedCasePayment.payorParty = this.paymentCaseParties.find((party) => party.partyOID == this.selectedCasePayment.payorOID);
     this.selectedCasePayment.beneficiaryParty = this.paymentCaseParties.find((party) => party.partyOID == this.selectedCasePayment.beneficiaryOID);
+   
+  }
 
-
-    /*if(this.selectedCasePayment.paymentOID == 0){
-      this.case.casePaymentsDetails = [];
-    }  */
-    
+  disbursementCompletedOnChange(event){
+    this.selectedCasePayment.paymentDisbursedFlag = event;
+    if(this.selectedCasePayment.paymentDisbursedFlag){
+      //this.disbursementToggle = true;
+      this.toastSvc.showInfoMessage('You have marked this payment as disbursed');   
+    } 
+    else{
+      this.toastSvc.showInfoMessage('This payment was reimbursed to the court');   
+      this.selectedCasePayment.disbursementDate = null;
+    }  
   }
 
 
@@ -1590,6 +1574,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   dateOfPaymentOnChange(event) {
     this.selectedCasePayment.dateOfPayment = event;
   }
+
+  dateOfDisbursementOnChange(event) {
+    this.selectedCasePayment.disbursementDate = event;
+    if(this.selectedCasePayment.paymentDisbursedFlag != true) this.disbursementToggle = false;
+  }  
 
   periodStartDateOnChange(event,acIdx) {
 
