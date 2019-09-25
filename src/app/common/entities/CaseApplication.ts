@@ -16,6 +16,8 @@ export class CaseApplication {
     aomStreetName: string = ""; 
     aomCityName: string = ""; 
     aomCountryName: string = ""; 
+    communityCode: string = ""; 
+    administrativeAreaCode: string = ""; 
     caseApplicationRole: number = 0;
     caseApplicationObjType: CaseApplicationType = null;    
     caseApplicants: CaseApplicant [] = []; // This is populated when an application is created, fetched and saved.

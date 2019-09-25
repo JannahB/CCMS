@@ -7,6 +7,7 @@ export class CourtLocation {
   locationOID: number;
   locationName: string;
   description: string;
+  fullcourtroom: string;
 
   // these added to support correct court-location entity
   id: number;
