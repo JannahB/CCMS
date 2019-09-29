@@ -11,7 +11,6 @@ export class PaymentDisbursementDetails {
     paymentPeriodEndDate: Date = null;
     paymentAmountOrdered: number;
     paymentAmountIn: number;
-    //paymentAmountOut: number = 0; // This is hiddent if it's a new application
     paymentDate: Date = null;
     paymentType: string = "";
     receiptNumber: string = "";

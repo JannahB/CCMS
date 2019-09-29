@@ -105,7 +105,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   countriesSubscription: Subscription;
   permissionSupervisor: boolean = false; //used to lock payment records
   disbursementToggle: boolean = false; //used to lock payment records
-  // caseApplicants: CaseApplicant[] = []; //used to capture all the case applicants for any application
   selectedCaseApplicant: CaseApplicant = new CaseApplicant();
 
 
@@ -436,7 +435,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       .subscribe(results => this.caseDispositionTypes = results);
     }
   }
-  
+
   isCaseSubTypeSelected($event) {
     if (!this.case.caseType) {
       this.toastSvc.showWarnMessage('Please choose Case Type first');
@@ -588,7 +587,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   ];
 
   paymentMethod: any[] = [
-    { value: 'ACH Credit transfer', label: 'ACH Credit transfer' },
+    { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
     { value: 'Cash', label: 'Cash' },
     { value: 'Cheque', label: 'Cheque' },
     { value: 'Court Pay', label: 'Court Pay' },
@@ -602,7 +601,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     { value: 'Maintenance', label: 'Maintenance' },
     { value: 'Fines Payment', label: 'Fines Payment' },
     { value: 'Filing Fees', label: 'Filing Fees' },
-    { value: 'Revenue Fees', label: 'Revenue Fees' },
     { value: 'Writs of Execution', label: 'Writs of Execution' },
     { value: 'Writs of Possession', label: 'Writs of Possession' },
     { value: 'Warrant', label: 'Warrant' }
@@ -631,7 +629,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   paymentItemOnChange(event,acIdx) {
-    //console.log('paymentItemOnChange',event);
     this.selectedCasePayment.paymentsDisbursements[acIdx].paymentItem = event;
   }
 
@@ -648,10 +645,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountOrdered = event;
   }  
 
-  /*paymentAmountOutOnChange(event,acIdx) {
-    this.selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountOut = event;
-  }*/
-
   receiptNumberOnChange(event) {
     this.selectedCasePayment.receiptNumber = event;
   }
@@ -664,10 +657,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedCasePayment.totalPaymentIn = event;
     console.log('Total Amount Paid In',this.selectedCasePayment.totalPaymentIn);
   }   
-
-  /*totalAmountPainOutOnChange(event) {
-    this.selectedCasePayment.totalPaymentOut = event;
-  } */
 
   payorOnChange(event) {
     this.selectedCasePayment.payorParty = event.value;
@@ -944,8 +933,18 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   showAddCaseParty() {
     // this.newCaseParty.startDate =  this.datePipe.transform(new Date(), "MM/dd/yyyy");
-    this.newCaseParty.startDate = new Date();
-    this.selectedSearchPartyStartDate = new Date();
+    this.newCaseParty.caseParty.isOrganization = false;
+    this.newCaseParty.caseParty.firstName = "";
+    this.newCaseParty.caseParty.lastName = "";
+    this.newCaseParty.caseParty.fullName = "";
+    this.newCaseParty.caseParty.alternativeName = "";
+
+    this.newCaseParty.startDate = null;
+    this.newCaseParty.caseParty.dob = null;
+    this.newCaseParty.caseParty.sex = '';
+    this.newCaseParty.caseParty.role = null;
+
+    this.selectedSearchPartyStartDate = null;
     this.showModalAddCaseParty = true;
 
     /*this.caseSvc
@@ -1053,6 +1052,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       } else {
         this.showStaticMessage(true, 'warn', 'Please complete Case Details and click Save Case to complete.', 'Complete Case Details');
       }
+      caseForm.reset;
       this.hideModals();
 
     });
@@ -1129,7 +1129,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   doesCasePartyContainChild(): boolean {
-    return this.case.caseParties.findIndex(cp => cp.role.casePartyRoleOID == 1) > -1;
+    return this.case.caseParties.findIndex(cp => cp.role.casePartyRoleOID == 2) > -1;
   }
 
   doesCasePartyContainApplicant(): boolean {

@@ -68,7 +68,7 @@ export class UserService {
       return false;
     }
 
-    const idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID === 5);
+    const idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID === 2);
     console.log('Logged in user', this.loggedInUser.userName);
     console.log('Judicial Role', (idx > -1));
     return idx > -1;

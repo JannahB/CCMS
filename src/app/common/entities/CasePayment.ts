@@ -10,7 +10,7 @@ export class CasePayment {
   courtOID: number = 0;
 
   receiptNumber: string = "";
-  partyFullName: string = "Rhea Loni Fardey";
+  partyFullName: string = "";
   
   payorOID: number = 0;
   beneficiaryOID: number = 0;
@@ -28,10 +28,9 @@ export class CasePayment {
   paymentType: string = "";
   processingFee: number;
   totalPaymentIn: number;
-  //totalPaymentOut: number = 0;
+  paymentNotes: string = "";
 
   paymentDisbursedFlag:boolean = false;
-
   paymentsDisbursements: PaymentDisbursementDetails [] = [];
 
 

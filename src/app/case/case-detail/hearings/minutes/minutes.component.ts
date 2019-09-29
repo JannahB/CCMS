@@ -45,6 +45,7 @@ export class MinutesComponent implements OnInit, OnDestroy {
   caseSubscription: Subscription;
   hearingSubscription: Subscription;
   selectedMinute: Minute = new Minute();
+  permissionIsJudge: boolean = false; 
   selectedMinuteBak: Minute;
   selectedMinuteIdx: number;
   loadingDataFlag = false;
@@ -78,6 +79,9 @@ export class MinutesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.getLookups();
     this.minutes = [];
+
+    this.permissionIsJudge = this.userSvc.isJudicialOfficer();
+    console.log('User is a Judge',this.permissionIsJudge);
   }
 
   ngOnDestroy() {
@@ -112,7 +116,7 @@ export class MinutesComponent implements OnInit, OnDestroy {
     this.selectedMinute.minuteDate = new Date();
 
     this.copySelectedItem();
-    console.log("minute", this.minutes);
+    //console.log("minute", this.minutes);
   }
 
   createEvent() {
@@ -283,12 +287,9 @@ export class MinutesComponent implements OnInit, OnDestroy {
     const filtered: any[] = [];
     for (let i = 0; i < parties.length; i++) {
       const party = parties[i];
-      if (
-        party.caseParty.fullName.toLowerCase().indexOf(query.toLowerCase()) ===
-        0
-      ) {
-        filtered.push(party.caseParty.fullName);
-      }
+      //if (party.caseParty.fullName.toLowerCase().indexOf(query.toLowerCase()) === 0 ) {
+        filtered.push(party.caseParty.firstName + " "+party.caseParty.lastName);
+      //}
     }
     return filtered;
   }
@@ -380,7 +381,7 @@ export class MinutesComponent implements OnInit, OnDestroy {
       result => {
         this.getMinutes(result);
         this.toastSvc.showSuccessMessage("Minute Saved");
-        this.eventSvc.save(this.createEvent()).subscribe(
+        /*this.eventSvc.save(this.createEvent()).subscribe(
           event => {
             console.log(event);
             this.updateRegister();
@@ -391,7 +392,7 @@ export class MinutesComponent implements OnInit, OnDestroy {
               "There was an error while updating register."
             );
           }
-        );
+        );*/
       },
       error => {
         console.log(error);

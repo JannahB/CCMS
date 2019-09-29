@@ -72,7 +72,7 @@ export class DashboardComponent implements OnInit {
     this.taskCounts = new TaskCount();
 
     this.isJudicialOfficer = this.userSvc.isJudicialOfficer();
-    console.log(this.isJudicialOfficer);
+
     this._state.subscribe('userTasks.count', (counts: TaskCount) => {
       this.totalTaskCount = counts.totalTaskCount;
       this.completedTaskCount = counts.completedTaskCount;
@@ -85,9 +85,11 @@ export class DashboardComponent implements OnInit {
     this.incompleteTaskCount = this.taskCounts.incompleteTaskCount | 0;
     this.overdueTaskCount = this.taskCounts.overdueTaskCount | 0;
 
-    this.caseSvc
-      .fetchDocket()
-      .subscribe(results => this.caseResults = results);
+    if(this.isJudicialOfficer) {
+      this.caseSvc
+        .fetchDocket()
+        .subscribe(results => this.caseResults = results);
+    }
   }
 
   makeToast() {

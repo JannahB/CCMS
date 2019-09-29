@@ -302,7 +302,8 @@
                   <span class="md-inputfield">
                       <input [(ngModel)]="selectedOccupation.identifierValue"
                              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                              type="text" pInputText>
+                              type="text" pInputText
+                              [required]="true">
                       <label>Employment Status</label>
                   </span>
                 </div>
