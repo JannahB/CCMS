@@ -142,7 +142,7 @@
                   type="text">
                 </p-chips-->
 
-                <p-autoComplete id="tiWitnesses" [required]="true" name="tiWitnesses" [(ngModel)]="this.witnesses"
+                <p-autoComplete id="tiWitnesses" name="tiWitnesses" [(ngModel)]="this.witnesses"
                   [suggestions]="filteredCaseParties" (completeMethod)="search($event)" [multiple]="true"
                   [dropdown]="true" styleClass="width-full" [minLength]="1" appendTo="body" forceSelection="true">
                 </p-autoComplete>
