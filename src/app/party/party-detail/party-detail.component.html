@@ -203,7 +203,7 @@
               <label class="minimal primary block">Country of Residence</label>
               <span class="ui-fluid">
                 <p-dropdown
-                  placeholder="Choose Country of Birth"
+                  placeholder="Choose Country of Residence"
                   [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                   [(ngModel)]="party.countryOfResidence"
                   [filter] = "true"
@@ -288,7 +288,7 @@
               <div class="ui-g-12 mb-20">
                   <label class="minimal primary block">Occupation Title</label>
                   <p-dropdown
-                      placeholder="choose type"
+                      placeholder="Choose Occupation Title"
                       styleClass="width-full"
                       [options]="occupation"
                       [filter] = "true"

@@ -183,7 +183,7 @@
                       [disabled]="!hasPermission(Permission.CREATE_CASE)"
                       [(ngModel)]="case.caseDispositionDate"
                       dateFormat="mm/dd/yy"
-                      placeholder="Case Disposition Date"
+                      placeholder="Disposition Date"
                       [showIcon]="true"
                       yearRange="2000:2030"
                       [yearNavigator]="true"
@@ -196,7 +196,7 @@
   
               <div class="ui-g-12 ui-md-5" *ngIf="case.caseOID != 0">
                 <label class="minimal primary block">Disposition Type</label>
-                <p-dropdown name="ddCaseDispositionType" #ddCaseDispositionType placeholder="case disposition type..."
+                <p-dropdown name="ddCaseDispositionType" #ddCaseDispositionType placeholder="Disposition Type"
                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                     [required]="false"
                     [filter] = "true"
@@ -1511,8 +1511,7 @@
 
 <!-- START: ADD CASE APPLICATION MODAL -->
 
-<p-dialog header="
- Details" styleClass="caseApplicationModal" width="850" [(visible)]="showModalAddCaseApplication" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+<p-dialog header="Case Application Details" styleClass="caseApplicationModal" width="850" [(visible)]="showModalAddCaseApplication" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
   
   <form #caseApplicationForm="ngForm" *ngIf="showModalAddCaseApplication">
     <div class="ui-g">
@@ -1546,7 +1545,7 @@
             
             <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Application Status</label>
-              <p-dropdown name="ddApplicationStatus" id="ddApplicationStatus" placeholder="Choose Application Type"
+              <p-dropdown name="ddApplicationStatus" id="ddApplicationStatus" placeholder="Choose Application Status"
                   [required]="true"
                   [options]="applicationStatus"
                   filter = "true"
@@ -1607,7 +1606,7 @@
           <!-- CAPTURE THE PLACE OF MARRIAGE  -->
           <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">             
               <label class="minimal primary block">Date of Marriage</label>
-              <p-calendar id="dtOfMarriage" name="dtOfMarriage" placeholder="Application End Date"                      
+              <p-calendar id="dtOfMarriage" name="dtOfMarriage" placeholder="Date of Marriage"                      
                       (ngModelChange) ="dateOfMarriageOnChange($event)"
                       [ngModel]="selectedCaseApplication?.dateOfMarriage"
                       [required]="true"
@@ -2111,7 +2110,7 @@
         <div class="ui-g-12 ui-md-3">
           <label class="minimal primary block" for="receiptNumber">Receipt Number</label>
             <textarea id="receiptNumber" name="receiptNumber"
-              placeholder="Please Enter the payment receipt number"
+              placeholder="Enter the Payment Receipt Number"
               [ngModel]="selectedCasePayment.receiptNumber"
               (ngModelChange)="receiptNumberOnChange($event)"
               [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)))"
