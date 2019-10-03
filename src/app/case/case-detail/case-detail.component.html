@@ -2171,7 +2171,7 @@
                   (ngModelChange)="totalAmountPainInOnChange($event)">     
             </div>          
 
-            <div class="ui-g-12 ui-md-3">
+            <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment.paymentMethod == 'Court Pay'">
                <label class="minimal primary block" for="tiProcessingFee">Processing Fee</label>
                   <input matInput type="number" name="tiProcessingFee" placeholder="Enter Processing Fees"
                      [(ngModel)]="selectedCasePayment.processingFee"

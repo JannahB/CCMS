@@ -100,7 +100,7 @@
               <span class="md-inputfield">
                 <!-- <p-chips pInputText id="tiAppearances" [required]="true" name="tiAppearances" class="width-full"
                   [(ngModel)]="this.appearances" type="text"></p-chips> -->             
-                <p-autoComplete id="tiAppearances" [required]="true" name="tiAppearances" [(ngModel)]="this.appearances"
+                <p-autoComplete id="tiAppearances" name="tiAppearances" [(ngModel)]="this.appearances"
                   [suggestions]="filteredCaseParties" (completeMethod)="search($event)" [multiple]="true"
                   [dropdown]="true" styleClass="width-full" [minLength]="1" appendTo="body" forceSelection="true">
                 </p-autoComplete>

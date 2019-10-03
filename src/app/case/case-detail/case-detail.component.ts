@@ -53,6 +53,7 @@ import { CountriesService } from '../../common/services/http/countries.service';
 import { DocumentType } from '../../common/entities/DocumentType';
 import { DropdownDataTransformService } from '../../common/services/utility/dropdown-data-transform.service';
 import { isNumber } from 'util';
+import { throwMatDialogContentAlreadyAttachedError } from '@angular/material';
 
 @Component({
   selector: 'app-case-detail',
@@ -787,7 +788,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
        //Store all case payments 
        
         this.case.casePayments.push(this.selectedCasePayment); //not working for some reason
-        console.log('Case Payment Details to be saved are', this.selectedCasePayment);
+        if (this.selectedCasePayment.paymentMethod != "Court Pay") this.selectedCasePayment.processingFee = 0;
+        //console.log('Case Payment Details to be saved are', this.selectedCasePayment);
 
         //Set the values to be used to generate an application number
         //The application type code is set then the case type is selected upon the initial
@@ -874,7 +876,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   ShowAddCasePayment() {
      
     this.showModalAddCasePayment = true;
-    console.log('Case Payment Selected is ',this.selectedCasePayment);
     this.caseSvc.convertCasePaymentDetailDates(this.selectedCasePayment);
     
     if(this.selectedCasePayment.paymentOID == 0){
