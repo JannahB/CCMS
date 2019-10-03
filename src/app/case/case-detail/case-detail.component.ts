@@ -786,6 +786,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     if(this.selectedCasePayment.paymentsDisbursements.length > 0){ 
 
        //Store all case payments 
+       let total = 0;
+       for (let i = 0; i < this.selectedCasePayment.paymentsDisbursements.length; i++){
+          total = total + this.selectedCasePayment.paymentsDisbursements[i].paymentAmountIn;         
+        }
+
+        if(this.selectedCasePayment.totalPaymentIn !=  total){ 
+          this.toastSvc.showWarnMessage('Total Payment Amount must MATCH Payment Details Amount', 'Case payment was not saved');    
+          return;
+        }
+
+
        
         this.case.casePayments.push(this.selectedCasePayment); //not working for some reason
         if (this.selectedCasePayment.paymentMethod != "Court Pay") this.selectedCasePayment.processingFee = 0;
