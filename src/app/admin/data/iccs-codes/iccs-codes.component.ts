@@ -82,14 +82,14 @@ export class ICCSCodesComponent implements OnInit, OnDestroy, AfterViewInit {
       // If items in list, default to first item
       setTimeout(() => {
         if (this.itemsList.options.first) {
-            this.itemsList.options.first.selected = true;
-          }
+          this.itemsList.options.first.selected = true;
+        }
       }, 100);
 
     });
   }
 
-  onSelectionChange() {
+  onSelectionChange(event) {
     // Handling selection change with MatSelectionListChange observable above
     // this.selectedItem = event.option.value[0];
   }
@@ -117,13 +117,13 @@ export class ICCSCodesComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.toastSvc.showSuccessMessage('Item Saved');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error saving the item.');
-    },
-    () => {
-      // final
-    });
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error saving the item.');
+      },
+      () => {
+        // final
+      });
 
   }
 
@@ -134,7 +134,7 @@ export class ICCSCodesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   cancelDataItemEdit() {
-    this.selectedItem = Object.assign( new IccsCode(), this.selectedItemBak );
+    this.selectedItem = Object.assign(new IccsCode(), this.selectedItemBak);
     this.typeItems[this.selectedItemIdx] = this.selectedItem;
   }
 
@@ -147,18 +147,18 @@ export class ICCSCodesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   deleteDataItem() {
-    this.adminSvc.deleteLookupItem('CaseType', this.selectedItem.iccsCodeOID).subscribe( () => {
+    this.adminSvc.deleteLookupItem('CaseType', this.selectedItem.iccsCodeOID).subscribe(() => {
       this.typeItems.splice(this.getIndexOfItem(), 1);
       this.selectedItem = this.typeItems[0];
       this.toastSvc.showSuccessMessage('The item has been deleted.');
     },
-    (error) => {
-      console.log(error);
-      this.toastSvc.showErrorMessage('There was an error deleting the item.');
-    },
-    () => {
-      // final
-    });
+      (error) => {
+        console.log(error);
+        this.toastSvc.showErrorMessage('There was an error deleting the item.');
+      },
+      () => {
+        // final
+      });
   }
 
   hideModals() {
@@ -167,7 +167,7 @@ export class ICCSCodesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private getIndexOfItem(item = this.selectedItem): number {
     return this.typeItems
-        .findIndex(itm => itm.iccsCodeOID === item.iccsCodeOID);
+      .findIndex(itm => itm.iccsCodeOID === item.iccsCodeOID);
   }
 
 

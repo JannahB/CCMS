@@ -53,7 +53,7 @@
   <p-dialog header="Add New Hearing" [width]="800" [(visible)]="showModalAddHearing" [responsive]="true"
     showEffect="fade" [modal]="true" [closable]="false">
 
-    <form (ngSubmit)="saveHearing()" #hearingForm="ngForm" novalidate>
+    <form (ngSubmit)="saveHearing(hearingForm)" #hearingForm="ngForm" novalidate>
       <div class="ui-g">
         <div class="form-group">
           <div class="ui-g-6">
