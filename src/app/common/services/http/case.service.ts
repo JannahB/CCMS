@@ -562,12 +562,14 @@ export class CaseService extends HttpBaseService<Case> {
 
   public downloadCourtDocument(
     caseOID: number,
-    docName: string
+    docName: string,
+    docFileName: string
   ): Observable<ArrayBuffer> {
     const url = `${super.getBaseUrl()}/GenerateCourtDocument`;
     const params: object = {
       caseOID: caseOID.toString(),
-      docName: docName
+      name: docName,
+      filename: docFileName
       // documentTemplateOID: documentTemplateOID.toString()
 
     };

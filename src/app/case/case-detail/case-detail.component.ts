@@ -369,6 +369,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
         this.eventTypeFilter = null;
         this.filterCaseEvents();
+        this.filterDocs = this.case.caseDocs;
       }
     });
   }
@@ -2017,7 +2018,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.caseSvc
       .downloadCourtDocument(
         this.case.caseOID,
-        // this.selectedDocumentTemplateType.documentTemplateOID
+        this.selectedDocumentTemplateType.name,
         this.selectedDocumentTemplateType.filename
       )
       .subscribe();
@@ -2053,7 +2054,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       }
     );
     const oUploadResp = JSON.parse(event.xhr.response);
-    if (oUploadResp.success === 1) {
+    if (oUploadResp==="success") {
       this.toastSvc.showSuccessMessage("File Uploaded");
     } else {
       this.toastSvc.showWarnMessage("File upload failed.");
