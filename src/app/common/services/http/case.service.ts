@@ -560,6 +560,10 @@ export class CaseService extends HttpBaseService<Case> {
 
   // }
 
+
+  // NOTE: for downloadedDocuments (e.g. generated documents)
+  //  docCategory is always court_filing
+  //  documentType is the same as docName
   public downloadCourtDocument(
     caseOID: number,
     docName: string,

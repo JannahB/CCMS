@@ -489,6 +489,24 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     return "unknown category";
   }
 
+   dtNameCat(item: CaseDocument): string {
+      let catStr = "Undefined";
+      let typeStr = "undefined";
+      if (item.docCategory === 1 ) {
+        catStr="Court Document";
+        }
+      else {
+        catStr= "Filing";
+      }
+      if (item.documentType == null || item.documentType==="") {
+        typeStr="undefined";
+        }
+      else {
+        typeStr= item.documentType;
+      return catStr + ": " + typeStr;
+      }
+    }
+
   ddOnFilterDTChange($event) {
     /*if (this.filterDT.name==this.docTypesFilter[0].name){
       this.filterDocs=this.case.caseDocs;
@@ -2082,8 +2100,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       event.xhr.setRequestHeader("caseOID", this.case.caseOID);
       event.xhr.setRequestHeader("Authorization", "Bearer " + this.authToken);
       event.xhr.setRequestHeader("token", this.authToken);
-      event.xhr.setRequestHeader("docType", this.selDocTypeUpload.name); // JSON.stringify(this.selDocTypeUpload));
-      // event.formData.append('test', 'A123'); // vb, note: send all params like this henceforth
+      event.xhr.setRequestHeader("docCat", (this.selDocTypeUpload.is_court_doc===1?"1":"0")); // JSON.stringify(this.selDocTypeUpload));
+      event.xhr.setRequestHeader("docType", this.selDocTypeUpload.name);       // event.formData.append('test', 'A123'); // vb, note: send all params like this henceforth
     }
   }
 

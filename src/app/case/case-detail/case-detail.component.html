@@ -816,8 +816,7 @@
                 </p-column>
                 <p-column field="docType" header="Document Type" [style]="{'width':'25%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                    <div style="font-size:10px">{{dtNameToCat(item.documentType)}}&nbsp;&gt;</div>
-                    <div>{{item.documentType}}</div>
+                    <div style="font-size:10px">{{dtNameCat(item)}}</div>
                   </ng-template>
                 </p-column>
                 <p-column field="" header="Document Name" [style]="{'width':'75%'}">
