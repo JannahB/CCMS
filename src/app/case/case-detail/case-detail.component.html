@@ -822,8 +822,10 @@
                 <p-column field="" header="Document Name" [style]="{'width':'75%'}">
                   <ng-template pTemplate="body" let-item="rowData" styleClass="text-break">
                     <span>
-                      <a href="documents/{{item.documentName}}" (click)="doDocReq(item)">
-                        {{item.documentName}}</a>
+                        <a href="{{baseURL + '/GetDocument?' + item.documentURL}}" target="_blank">{{item.documentName}}</a>
+
+                      <!-- <a href="documents/{{item.documentName}}" (click)="doDocReq(item)">
+                        {{item.documentName}}</a> -->
                     </span>
                     <div style="font-size:10px">{{baseURL + '/GetDocument?' + item.documentURL}}</div>
                   </ng-template>
