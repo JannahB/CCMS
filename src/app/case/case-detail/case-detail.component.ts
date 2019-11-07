@@ -591,8 +591,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
   applicationStatus: any[] = [
     { value: 'Active', label: 'Active' },
-    { value: 'Inactive', label: 'Inactive' },
-    { value: 'Closed', label: 'Closed' }
+    { value: 'Listed for Hearing', label: 'Listed for Hearing' },
+    { value: 'Determined: Dismissed', label: 'Determined: Dismissed' },
+    { value: 'Determined: Withdrawn', label: 'Determined: Withdrawn' },
+    { value: 'Determined: Final Order Made', label: 'Determined: Final Order Made' },
+    { value: 'Determined: Struck Out', label: 'Determined: Struck Out' },
+    { value: 'Determined: Cancelled', label: 'Determined: Cancelled' },
+    { value: 'Determined: Forthwith Payment Ordered', label: 'Determined: Forthwith Payment Ordered' },
+    { value: 'Determined: Time Allowed', label: 'Determined: Time Allowed' },
+    { value: 'Determined: Time Allowed and Forthwith Payments Ordered', label: 'Determined: Time Allowed and Forthwith Payments Ordered' }
   ];
 
   paymentItem: any[] = [
@@ -618,12 +625,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   ];
 
   paymentTypes: any[] = [
-    { value: 'Maintenance', label: 'Maintenance' },
+    { value: 'Maintenance: Child', label: 'Maintenance: Child'},
+    { value: 'Maintenance: Adult', label: 'Maintenance: Adult' },
+    { value: 'Maintenance: Adult & Child', label: 'Maintenance: Adult & Child'},
     { value: 'Fines Payment', label: 'Fines Payment' },
     { value: 'Filing Fees', label: 'Filing Fees' },
     { value: 'Writs of Execution', label: 'Writs of Execution' },
     { value: 'Writs of Possession', label: 'Writs of Possession' },
-    { value: 'Warrant', label: 'Warrant' }
+    { value: 'Warrant of Apprehension', label: 'Warrant of Apprehension' },
+    { value: 'Warrant of Commitment', label: 'Warrant of Commitment' }
   ];
 
   paymentFrequency: any[] = [
