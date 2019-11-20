@@ -2108,21 +2108,6 @@
             </p-calendar>
           </div>
         
-        <div class="ui-g-12 ui-md-3">
-          <label class="minimal primary block" for="receiptNumber">Receipt Number</label>
-            <textarea id="receiptNumber" name="receiptNumber"
-              placeholder="Enter the Payment Receipt Number"
-              [ngModel]="selectedCasePayment.receiptNumber"
-              (ngModelChange)="receiptNumberOnChange($event)"
-              [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)))"
-              [rows]="1" 
-              [required]="true"
-              pInputTextarea
-              autoResize="autoResize"
-              styleClass="width-full"></textarea>
-        </div>
-
-
 
         <div class="ui-g-12 ui-md-3">
             <label class="minimal primary block">Payment Method</label>
@@ -2159,6 +2144,22 @@
                   A payment Type is required
             </div>
         </div>
+
+        <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment.paymentMethod == 'Court Pay' || selectedCasePayment.receiptNumber != ''">
+          <label class="minimal primary block" for="receiptNumber">Receipt Number</label>
+            <textarea id="receiptNumber" name="receiptNumber"
+              placeholder="Enter the Payment Receipt Number"
+              [ngModel]="selectedCasePayment.receiptNumber"
+              (ngModelChange)="receiptNumberOnChange($event)"
+              [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) 
+                          || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))
+                          || selectedCasePayment.paymentMethod != 'Court Pay')"
+              [rows]="1" 
+              [required]="true"
+              pInputTextarea
+              autoResize="autoResize"
+              styleClass="width-full"></textarea>
+        </div>        
 
       </div>
 

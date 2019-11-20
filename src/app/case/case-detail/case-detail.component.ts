@@ -834,7 +834,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         //Set the values to be used to generate an application number
         //The application type code is set then the case type is selected upon the initial
         //creation of the application.
-
+        if(this.selectedCasePayment.paymentMethod != "Court Pay" && this.selectedCasePayment.receiptNumber == "")
+          this.selectedCasePayment.receiptNumber = this.case.caseNumber + "-"+  this.case.casePayments.length++; 
+          
         this.selectedCasePayment.caseNumber = this.case.caseNumber;
         this.selectedCasePayment.caseOID = this.case.caseOID;
         this.selectedCasePayment.payorOID = this.selectedCasePayment.payorParty.partyOID;
