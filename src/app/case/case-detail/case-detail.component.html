@@ -296,29 +296,27 @@
                 (onRowSelect)="partyOnRowSelect($event)" scrollable="true" scrollHeight="200px"
                 dataKey="caseParty.partyOID" #dtParties>
 
-                <p-column field="caseParty.isOrganization" header="Is Org?" [style]="{'width':'8%'}">
+                <p-column field="caseParty.isOrganization" header="Is Org?" [style]="{'width':'8%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
                     <i class="fa ui-icon-check task-done" *ngIf="item.caseParty.isOrganization"></i>
                   </ng-template>
                 </p-column>
 
-                <p-column field="role.name" header="Role" [style]="{'width':'10%'}"></p-column>
+                <p-column field="role.name" header="Role" [style]="{'width':'10%'}" [sortable]="true"></p-column>
 
-                <p-column header="Party Info" [style]="{'width':'30%'}">
-                  <ng-template pTemplate="body" let-item="rowData">
-                    <div>
-                      {{item.caseParty.fullName?item.caseParty.fullName:item.caseParty.firstName+" "+item.caseParty.lastName}}
-                    </div>
-                    <!-- Christian : turned this on with fullName support on Server -->
-                    <div></div>
-                    <div *ngIf="!item.caseParty.isOrganization">
-                      <span class="smaller">
-                        DOB: {{ item.caseParty.dob | date:'dd-MMM-yyyy' }}
-                        Sex: {{ item.caseParty.sex }}
-                        Age: {{ item.caseParty.age }}
-                      </span>
-                    </div>
-                  </ng-template>
+                <p-column header="Party Info" [style]="{'width':'30%'}" >
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <div>{{item.caseParty.fullName?item.caseParty.fullName:item.caseParty.firstName+" "+item.caseParty.lastName}}</div>
+                      <!-- Christian : turned this on with fullName support on Server -->
+                      <div></div>
+                      <div *ngIf="!item.caseParty.isOrganization" >
+                          <span class="smaller">
+                          DOB: {{ item.caseParty.dob | date:'dd-MMM-yyyy' }}
+                          Sex: {{ item.caseParty.sex }}
+                          Age: {{ item.caseParty.age }}
+                        </span>
+                      </div>
+                    </ng-template>
                 </p-column>
 
                 <!-- <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
@@ -331,16 +329,16 @@
                 </p-column>
                 <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column> -->
 
-                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
-                  <ng-template pTemplate="body" let-item="rowData">
-                    {{item.startDate | date:'dd-MMM-yyyy'}}
-
-                  </ng-template>
+                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}" [sortable]="true">                  
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.startDate | date:'dd-MMM-yyyy'}}
+                        
+                    </ng-template>
                 </p-column>
-                <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
-                  <ng-template pTemplate="body" let-item="rowData">
-                    {{item.endDate | date:'dd-MMM-yyyy'}}
-                  </ng-template>
+                <p-column field="endDate" header="End Date" [style]="{'width':'13%'}" [sortable]="true">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.endDate | date:'dd-MMM-yyyy'}}
+                    </ng-template>
                 </p-column>
                 <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                     <ng-template let-item="rowData" pTemplate="body">
