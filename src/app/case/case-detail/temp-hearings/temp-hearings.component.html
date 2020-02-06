@@ -16,38 +16,42 @@
     <!-- scrollHeight="360px" -->
     <p-dataTable [value]="hearings" selectionMode="single" [(selection)]="selectedHearing"
       (onRowSelect)="hearingOnRowSelect($event)" scrollable="true" dataKey="id" #dtHearings styleClass="lite-header">
-      <p-column field="" header="Hearing Date">
+
+      <p-column field="hearingDate" header="Hearing Date" [style]="{'width':'10%'}" [sortable]="true">                  
         <ng-template pTemplate="body" let-item="rowData">
-          <p class=" mv-0 smaller center-td">&emsp;{{ item.hearingDate |date:'longDate'}}</p>
+            {{item.hearingDate | date:'dd-MMM-yyyy'}}            
         </ng-template>
       </p-column>
-      <p-column field="" header="Hearing">
+
+      <p-column field="hearingTypeId" header="Hearing Type" [style]="{'width':'10%'}" [sortable]="true">
         <ng-template pTemplate="body" let-item="rowData">
-          <p class=" mv-0 smaller">{{ item.hearingType?.name }}</p>
+          {{ item.hearingType?.name }}
         </ng-template>
       </p-column>
 
       <p-column field="description" header="Description" [style]="{'width':'20%'}" [sortable]="true"> </p-column>
       
-      <p-column field="judicialOfficerId" header="Sitting Judicial Officer" [style]="{'width':'14%'}" [sortable]="true">
+      <p-column field="judicialOfficerId" header="Judicial Officer" [style]="{'width':'14%'}" [sortable]="true">
         <ng-template pTemplate="body" let-item="rowData">
-          <p class=" mv-0 smaller center-td">{{ item.judicialOfficer?.firstName }} {{ item.judicialOfficer?.lastName }}
-          </p>
+          {{ item.judicialOfficer?.firstName }} {{ item.judicialOfficer?.lastName }}
         </ng-template>
       </p-column>
-      <p-column field="" header="Start" [style]="{'width':'8%'}">
+
+      <p-column field="" header="Start Time" [style]="{'width':'8%'}">                  
         <ng-template pTemplate="body" let-item="rowData">
-          <p class=" mv-0 smaller center-td">&emsp;{{ item.startDateTime | date: 'shortTime'}} </p>
+            {{item.startDateTime | date: 'shortTime'}}            
         </ng-template>
-      </p-column>
-      <p-column field="" header="End" [style]="{'width':'8%'}">
-        <ng-template pTemplate="body" let-item="rowData">
-          <p class=" mv-0 smaller center-td">&emsp;{{ item.endDateTime | date: 'shortTime'}}</p>
-        </ng-template>
-      </p-column>
-      <p-column field="" header="CourtRoom" [style]="{'width':'30%'}">
-        <ng-template pTemplate="body" let-item="rowData">
-          <p class=" mv-0 smaller">{{ item.hearingLocation?.fullcourtroom }}</p>
+    </p-column>
+
+    <p-column field="" header="End Time" [style]="{'width':'8%'}">                  
+      <ng-template pTemplate="body" let-item="rowData">
+          {{item.endDateTime | date: 'shortTime'}}       
+      </ng-template>
+    </p-column>
+
+    <p-column field="courtLocationId" header="CourtRoom" [style]="{'width':'30%'}" [sortable]="true">
+      <ng-template pTemplate="body" let-item="rowData">
+           {{ item.hearingLocation?.fullcourtroom }}
         </ng-template>
       </p-column>
     </p-dataTable>
