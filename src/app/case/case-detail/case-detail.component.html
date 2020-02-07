@@ -747,12 +747,12 @@
                             (onRowSelect)="docOnRowSelect($event)"
                             scrollable="true"
                             dataKey="documentOID" #dtDocs>
-                    <p-column field="lastUpdateDate" header="Document Date" [style]="{'width':'25%'}">
+                    <p-column field="docReceived" header="Document Received" [style]="{'width':'25%'}" [sortable]="true">
                         <ng-template pTemplate="body" let-item="rowData">
-                            {{item.lastUpdateDate | date:'medium'}}
+                            {{item.docReceived | date:'medium'}}
                         </ng-template>
                     </p-column>
-                    <p-column field="" header="Document Name" [style]="{'width':'75%'}">
+                    <p-column field="documentName" header="Document Name" [style]="{'width':'75%'}" [sortable]="true">
                         <ng-template pTemplate="body" let-item="rowData" styleClass="text-break">
                             <span>
                                 <a href="{{baseURL + '/GetDocument?' + item.documentURL}}" target="_blank">{{item.documentName}}</a>
