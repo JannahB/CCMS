@@ -319,15 +319,19 @@
                     </ng-template>
                 </p-column>
 
-                <!-- <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
-                <p-column field="caseParty.lastName" header="Last Name" [style]="{'width':'15%'}"></p-column>
-                <p-column field="caseParty.sex" header="Sex" [style]="{'width':'7%'}"></p-column>
-                <p-column header="Date of Birth" [style]="{'width':'13%'}">
-                    <ng-template pTemplate="body" let-item="rowData">
-                        {{ item.caseParty.dob | date:'M/d/yyyy' }}
-                    </ng-template>
-                </p-column>
-                <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column> -->
+                <p-column header="Party Address" [style]="{'width':'30%'}" >
+                   <ng-template pTemplate="body" let-item="rowData" >
+                    <div *ngIf = "item.caseParty.addresses.length >= 1">
+                      <span class="smaller">
+                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].addressType + ":" }}        
+                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].address1 + "," }}
+                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].municipalityName + "," }}
+                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].countryName }}                          
+                      </span>
+                    </div>
+                  </ng-template>
+              </p-column>
+          
 
                 <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}" [sortable]="true">                  
                     <ng-template pTemplate="body" let-item="rowData">
@@ -1427,10 +1431,9 @@
 <!-- DIALOG CASE PARTY
   ------------ EDIT PARTY ----------------
 -->
-<p-dialog header="Edit Party" width="450" [(visible)]="showModalEditCaseParty" [responsive]="true" showEffect="fade"
-  [modal]="true" [closable]="false">
-  <form #editCasePartyForm="ngForm" novalidate>
-    <div class="ui-g form-group" novalidate>
+<p-dialog header="Case Party Information" width="950" [(visible)]="showModalEditCaseParty" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <form #editCasePartyForm="ngForm" novalidate>
+      <div class="ui-g form-group" novalidate>
 
 
       <!--div *ngIf="selectedCaseParty.isOrganization">
@@ -1760,6 +1763,30 @@
             <div class="ui-g-6 pv-0">
               <label class="minimal primary block">Party Role</label>
             </div>
+
+            <div class="ui-g-12 ui-md-0 mb-0">
+              <label class="minimal primary block">Party Address Information</label>
+              <p-dataTable [value]="selectedCaseParty.caseParty.addresses"
+                          scrollable="true" scrollHeight="200px"
+                          dataKey="addresses.addressOID" #dtAddress>
+      
+                <p-column field="addressType" header="Address Type" [style]="{'width':'10%'}" [sortable]="true"> </p-column>
+                <p-column field="startDate" header="Start Date" [style]="{'width':'8%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.startDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>  
+                <p-column field="endDate" header="End Date" [style]="{'width':'8%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>  
+
+                <p-column field="address1" header="Street Name" [style]="{'width':'20%'}" [sortable]="true"> </p-column>
+                <p-column field="municipalityName"  header="City / Town"[style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="countryName"  header="Country" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+                </p-dataTable>
+          </div> 
           </div>
 
           <div class="ui-g-12 mb-5 caseapplicant-row" *ngFor="let caseapplicant of selectedCaseApplication.caseApplicants; let acIdx = index">

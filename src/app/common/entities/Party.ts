@@ -42,5 +42,5 @@ export class Party extends LookupEntity {
   age: number = 0;
   isOrganization: boolean = false;
   fullName: string = "";
-
+  primaryAddressLoc: number = 0;
 }
