@@ -876,13 +876,12 @@
             </span>
           </div>
 
-          <div class="ui-g-12 ui-md-6 mb-20" >
-            
+          <div class="ui-g-12 ui-md-6 mb-20 mt-n-20">
+            <label class="minimal primary block">City / Town</label>
             <span class="md-inputfield" *ngIf="selectedAddress.countryName != 'Trinidad and Tobago'">
               <input [(ngModel)]="selectedAddress.municipalityName"  type="text" 
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                     pInputText>
-              <label>City / Town </label>
+                     pInputText>              
             </span>
 
             <p-dropdown
@@ -893,7 +892,7 @@
               [filter] = "true"
               [options]="countriesAddressCityTown"
               [style]="{'width':'100%'}"
-              (onChange)="cityTownOnChange($event)">
+              (onChange)="cityTownOnChange($event)">              
             </p-dropdown>
           </div>
 
