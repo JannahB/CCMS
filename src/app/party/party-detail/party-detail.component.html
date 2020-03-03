@@ -768,7 +768,7 @@
     <p-fieldset legend="Addresses" toggleable="true" collapsed="true">
 
       <div class="ui-g form-group" *ngIf="party">
-        <div class="ui-g-12">
+        <div class="ui-g-12" >
           <p-dataTable [value]="party?.addresses"
               selectionMode="single"              
               [(selection)]="selectedAddress"
@@ -776,25 +776,22 @@
               scrollable="true" scrollHeight="100%"
               [responsive]="true"
               dataKey="addressOID">
-              <p-column field="addressType" header="Type" [style]="{'width':'20%'}"></p-column>
-              <p-column field="address1" header="Address1" [style]="{'width':'20%'}"></p-column>
-              <p-column field="municipalityName" header="City" [style]="{'width':'20%'}"></p-column>
-              <p-column field="postalCode" header="Postal Code" [style]="{'width':'20%'}"></p-column>
-              <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+              <p-column field="addressType" header="Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+              <p-column field="address1" header="Street Address" [style]="{'width':'12%'}"></p-column>                                                   
+              <p-column field="communityCode" header="community / city" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+              <p-column field="administrativeArea" header="Admin Code" [style]="{'width':'8%'}" [sortable]="true"></p-column>
+              <p-column field="postalCode" header="Postal Code" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+              <p-column field="countryName" header="Country" [style]="{'width':'10%'}" [sortable]="true"></p-column>     
+              <p-column field="startDate" header="Start Date" [style]="{'width':'10%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
                       {{item.startDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
-              <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+              <p-column field="endDate" header="End Date" [style]="{'width':'10%'}">
                   <ng-template pTemplate="body" let-item="rowData">
                       {{item.endDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
-              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
-                  <ng-template let-item="rowData" pTemplate="body">
-                      <i class="material-icons delete-icon" (click)="requestDeleteAddress(item)">delete</i>
-                  </ng-template>
-              </p-column> -->
           </p-dataTable>
         </div>
         <div class="ui-g-12" *ngIf="!newAddressMode">
@@ -844,7 +841,7 @@
           </div>
 
           <div class="ui-g-12 ui-md-4 mb-20">
-            <span class="md-inputfield">
+            <span class="md-inputfield" >
               <input [(ngModel)]="selectedAddress.address3" type="text" 
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                      pInputText>
@@ -870,8 +867,8 @@
             </span>
           </div>
 
-          <div class="ui-g-12 ui-md-4 mb-20">
-            <span class="md-inputfield">
+          <div class="ui-g-12 ui-md-4 mb-20" >
+            <span class="md-inputfield" >
               <input [(ngModel)]="selectedAddress.postalCode"  type="text" 
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                      pInputText>
@@ -879,13 +876,25 @@
             </span>
           </div>
 
-          <div class="ui-g-12 ui-md-6 mb-20">
-            <span class="md-inputfield">
+          <div class="ui-g-12 ui-md-6 mb-20" >
+            
+            <span class="md-inputfield" *ngIf="selectedAddress.countryName != 'Trinidad and Tobago'">
               <input [(ngModel)]="selectedAddress.municipalityName"  type="text" 
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                      pInputText>
               <label>City / Town </label>
             </span>
+
+            <p-dropdown
+              *ngIf="selectedAddress.countryName == 'Trinidad and Tobago'"
+              placeholder="City / Town"
+              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+              [(ngModel)]="selectedAddress.municipalityName"
+              [filter] = "true"
+              [options]="countriesAddressCityTown"
+              [style]="{'width':'100%'}"
+              (onChange)="cityTownOnChange($event)">
+            </p-dropdown>
           </div>
 
           <div class="ui-g-12 ui-md-6 mb-20 mt-n-20">

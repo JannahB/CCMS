@@ -20,6 +20,7 @@ import { Party } from '../../common/entities/Party';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { Email } from '../../common/entities/Email';
 import { CountriesService } from '../../common/services/http/countries.service';
+import { CountriesAddressService } from '../../common/services/http/countriesAddress.service';
 import { OccupationService } from '../../common/services/http/occupation.service';
 import { CollectionUtil } from '../../common/utils/collection-util';
 import { Permission } from '../../common/entities/Permission';
@@ -39,7 +40,12 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
   addressToDelete: Address;
   selectedAddressCopy: Address;
   countries: SelectItem[];
+  countriesAddressCityTown: SelectItem[];
+  countriesAddressCommunityCode: SelectItem[];
+  countriesAddressAdminCode: SelectItem[];
+  countriesAddressPostalCode: SelectItem[];
   countriesSubscription: Subscription;
+  countriesAddressSubscription: Subscription;
   occupation: SelectItem[];
   occupationSubscription: Subscription;
   emailTypes: SelectItem[];
@@ -91,6 +97,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     private partySvc: PartyService,
     private genericTypeSvc: GenericTypesService,
     private countriesSvc: CountriesService,
+    private countriesAddressDetailsSvc: CountriesAddressService,
     private occupationSvc: OccupationService,
     private router: Router,
     private userSvc: UserService
@@ -138,6 +145,13 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
       this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
     })
 
+    this.countriesAddressSubscription = this.countriesAddressDetailsSvc.get().subscribe(countriesAddressDetails => {
+      this.countriesAddressCityTown = this.dropdownSvc.transform(countriesAddressDetails, 'cityTown','id');
+      this.countriesAddressCommunityCode = this.dropdownSvc.transform(countriesAddressDetails, 'communityCode','id');
+      this.countriesAddressAdminCode = this.dropdownSvc.transform(countriesAddressDetails, 'adminCode','id');
+      this.countriesAddressPostalCode = this.dropdownSvc.transform(countriesAddressDetails, 'postalCode','id');
+    })
+
     this.occupationSubscription = this.occupationSvc.get().subscribe(occupation => {
       this.occupation = this.dropdownSvc.transformSameLabelAndValue(occupation, 'name');
     })
@@ -175,6 +189,7 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
     if (this.partySubscription) this.partySubscription.unsubscribe();
     if (this.genericSubsciption) this.genericSubsciption.unsubscribe();
     if (this.countriesSubscription) this.countriesSubscription.unsubscribe();
+    if (this.countriesAddressSubscription) this.countriesAddressSubscription.unsubscribe();
   }
 
 
@@ -512,6 +527,14 @@ export class PartyDetailComponent implements OnInit, OnDestroy {
 
   countryOnChange(event) {
     this.selectedAddress.countryName = event.value;
+  }
+
+  cityTownOnChange(event) {
+
+    this.selectedAddress.communityCode = this.countriesAddressCommunityCode[event.value-1].label;
+    this.selectedAddress.administrativeArea = this.countriesAddressAdminCode[event.value-1].label; 
+    this.selectedAddress.postalCode = this.countriesAddressPostalCode[event.value-1].label;
+    this.selectedAddress.municipalityName = event.value;    
   }
 
   requestDeleteAddress(address: Address) {

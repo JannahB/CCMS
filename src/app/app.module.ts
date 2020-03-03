@@ -108,6 +108,7 @@ import { CalResourceService } from "./common/services/http/calResource.service";
 import { CalTemplateService } from "./common/services/http/calTemplate.service";
 import { CaseService } from "./common/services/http/case.service";
 import { CountriesService } from "./common/services/http/countries.service";
+import { CountriesAddressService } from './common/services/http/countriesAddress.service';
 import { OccupationService } from "./common/services/http/occupation.service";
 import { CourtService } from "./common/services/http/court.service";
 import { GenericTypesService } from "./common/services/http/generic.types.service";
@@ -259,6 +260,7 @@ import { CaseSealService } from './common/services/http/caseSeal.service';
     PartyService,
     GenericTypesService,
     CountriesService,
+    CountriesAddressService,
     OccupationService,
     CaseService,
     LookupService,
