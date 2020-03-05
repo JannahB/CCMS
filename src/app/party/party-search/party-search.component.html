@@ -14,7 +14,7 @@
           <div class="ui-g-12 ph-30 big-search">
             <span class="md-inputfield">
               <input [(ngModel)]="partyNameText" name="tiName" type="text" class="width-full"  pInputText>
-              <label>Full Name</label>
+              <label>Full Name / Partial Name / Alias</label>
             </span>
             <div>
               <p-message severity="info" text="{{recordsFoundMessage}}" *ngIf="showRecordsFoundMessage"></p-message>
@@ -51,6 +51,7 @@
                   {{item.fullName?item.fullName:item.firstName+" "+item.lastName}}
               </ng-template>
           </p-column>
+          <p-column field="alternativeName" header="Alias" styleClass="ta-c" [style]="{'width':'15%'}" [sortable]="true"></p-column>
           <p-column field="dob" header="DOB" styleClass="ta-c" [style]="{'width':'15%'}" [sortable]="true">
               <ng-template pTemplate="body" let-item="rowData">
                   {{item.dob | date:'dd-MMM-yyyy'}}
