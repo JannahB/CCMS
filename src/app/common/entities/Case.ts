@@ -45,6 +45,7 @@ export class Case extends LookupEntity {
   casePaymentsDetails: PaymentDisbursementDetails [] = []; //used to capture all applicants on a case
 
   caseWeight: number = 0;
+  sequenceNumber: number = 0;
   court: Court = null;
   judicialAssignments: any[] = [];        // Entity NEEDED //
   searchCasePartyRoleOID: number = 0;

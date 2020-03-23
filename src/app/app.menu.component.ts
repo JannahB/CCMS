@@ -132,8 +132,8 @@ export class AppMenuComponent implements OnInit {
 
 
     //Only an IT admin or the court manager should be able to edit the workflow for the courts.
-    if (this.allowAdminWorkflowFeature && this.isCourtManager) {
-    //  if (this.allowAdminWorkflowFeature) {  
+    //if (this.allowAdminWorkflowFeature && this.isCourtManager || this.allowAdminWorkflowFeature && this.isAdmin) {
+      if (this.allowAdminWorkflowFeature) {  
       this.courtManagerMenuItems.push(
         { label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
       );

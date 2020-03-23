@@ -1171,6 +1171,47 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         });
   }
 
+  fetchCase(next_previous,shouldShowSuccessMessage: boolean = true) {
+  
+    this.loadingMessage = 'Case Found...';
+    this.loadingCase = true; 
+    let currentCase: number = this.case.caseOID;
+    let shouldRefreshURL: boolean = this.case.caseOID == 0;
+
+    var recordData: any = {
+      seqNumber: 0,
+      recFlag: 0
+    };
+
+    recordData.seqNumber = this.case.sequenceNumber;
+    recordData.recFlag = next_previous;
+
+    this.caseSvc
+      .fetchNextPreviousCase(recordData)
+      .subscribe(c => {
+        this.loadingCase = false;
+        this.showStaticMessage(false);
+        this.case = c;
+        if (shouldShowSuccessMessage) {
+          this.toastSvc.showSuccessMessage("Case Retrieved");
+        }
+
+        if (this.case == null) {
+          this.router.navigate(['/case-detail', currentCase])
+        }
+        else this.router.navigate(['/case-detail', this.case.caseOID])
+      },
+        (error) => {
+          console.log(error);
+          this.loadingCase = false;
+          this.toastSvc.showErrorMessage('You have already selected the First / Last case')
+        },
+        () => {
+          this.loadingCase = false;
+        });
+  }
+
+
   doesCasePartyContainChild(): boolean {
     return this.case.caseParties.findIndex(cp => cp.role.casePartyRoleOID == 2) > -1;
   }

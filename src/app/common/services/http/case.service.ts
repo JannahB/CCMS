@@ -485,6 +485,13 @@ export class CaseService extends HttpBaseService<Case> {
     return ct;
   }
 
+  public fetchNextPreviousCase(data: any): Observable<Case> {
+    let url: string = `${super.getBaseUrl()}/FetchNextPreviousCase`;
+    return this.http
+      .post<Case>(url,data)
+      .map(t => this.convertCaseTaskDates(t))
+  }  
+
   convertCaseTaskDates(ct) {
     ct.assignedDate = DateConverter.convertDate(ct.assignedDate);
     ct.dueDate = DateConverter.convertDate(ct.dueDate);
