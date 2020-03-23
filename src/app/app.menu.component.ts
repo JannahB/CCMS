@@ -50,7 +50,7 @@ export class AppMenuComponent implements OnInit {
   ngOnInit() {
 
     this.allowAdminWorkflowFeature = environment.allowAdminWorkflowFeature;
-    this.allowAdminCalendarFeature = environment.allowAdminCalendarFeature;
+    //this.allowAdminCalendarFeature = environment.allowAdminCalendarFeature;
     this.allowJudgeAssignMgmtFeature = environment.allowJudgeAssignMgmtFeature;
 
     this._state.subscribe('theme.change', (theme) => {
@@ -131,9 +131,9 @@ export class AppMenuComponent implements OnInit {
     ];
 
 
-    //Only an IT admin or the court manager should be able to edit the workflow for the courts.
-    //if (this.allowAdminWorkflowFeature && this.isCourtManager || this.allowAdminWorkflowFeature && this.isAdmin) {
-      if (this.allowAdminWorkflowFeature) {  
+    //An IT admin or the court manager should be able to edit the workflow for the courts.
+    if (this.allowAdminWorkflowFeature && this.isCourtManager || this.allowAdminWorkflowFeature && this.isAdmin) {
+    //  if (this.allowAdminWorkflowFeature) {  
       this.courtManagerMenuItems.push(
         { label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
       );
