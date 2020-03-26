@@ -15,5 +15,6 @@ export class CaseHearingDeprecated {
   hearingType: HearingType;
   judicialOfficer: Party;
   startDateTime: Date;
+  hearingDateTime: Date;
 
 }
