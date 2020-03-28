@@ -1820,7 +1820,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       }
 
       // Refresh the grid --------
-      // this.case.caseTasks = this.case.caseTasks.slice();
+      //this.case.caseTasks = this.case.caseTasks.slice();
+      this.saveCase();
 
       this.toastSvc.showSuccessMessage('Your case task has been saved.', 'Task Saved');
       this.saveCase();
