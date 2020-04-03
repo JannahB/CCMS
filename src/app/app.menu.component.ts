@@ -33,6 +33,7 @@ export class AppMenuComponent implements OnInit {
   isAdmin: boolean = false;
   isCourtManager: boolean = false;
   isSupervisor: boolean = false;
+  isReadOnly: boolean = false;
 
   constructor(
     public app: AppComponent,
@@ -105,39 +106,14 @@ export class AppMenuComponent implements OnInit {
     ];
 
     //These are the court manager menu items
-    this.courtManagerMenuItems = [
-      {
-        label: 'Lookup Tables', icon: 'chrome_reader_mode', routerLink: ['/admin/data/casetypes'],
-        // items:
-        //   [
-        //     { label: 'Case Types', icon: 'chevron_right', routerLink: ['/admin/data/casetypes'] },
-        //     { label: 'Case Phases', icon: 'chevron_right', routerLink: ['/admin/data/casephases'] },
-        //     { label: 'Case Statuses', icon: 'chevron_right', routerLink: ['/admin/data/casestatuses'] },
-        //     { label: 'Court Locations', icon: 'chevron_right', routerLink: ['/admin/data/courtlocations'] },
-        //     { label: 'Case Party Roles', icon: 'chevron_right', routerLink: ['/admin/data/casepartyroles'] },
-        //     { label: 'Event Types', icon: 'chevron_right', routerLink: ['/admin/data/eventtypes'] },
-        //     { label: 'Hearing Types', icon: 'chevron_right', routerLink: ['/admin/data/hearingtypes'] },
-        //     { label: 'ICCS Codes', icon: 'chevron_right', routerLink: ['/admin/data/iccscodes'] },
-        //     // { label: 'Local Charges', icon: 'chevron_right', routerLink: ['/admin/data/iccscodeslocalcharges']},
-        //     { label: 'Staff Pools', icon: 'chevron_right', routerLink: ['/admin/data/staffpools'] },
-        //     { label: 'Task Types', icon: 'chevron_right', routerLink: ['/admin/data/tasktypes'] },
-        //     { label: 'Personal ID Types', icon: 'chevron_right', routerLink: ['/admin/data/personalidtypes'] }
-        //   ]
-      }
+    this.courtManagerMenuItems = [              
+      {label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
     ];
 
     this.supervisorMenuItems = [
-      { label: 'Staff Pool Management', icon: 'account_box', routerLink: ['/admin/staffpools']},
+      {label: 'Lookup Tables', icon: 'chrome_reader_mode', routerLink: ['/admin/data/casetypes']},
+      { label: 'Staff Pool Management', icon: 'account_box', routerLink: ['/admin/staffpools']}
     ];
-
-
-    //An IT admin or the court manager should be able to edit the workflow for the courts.
-    if (this.allowAdminWorkflowFeature && this.isCourtManager || this.allowAdminWorkflowFeature && this.isAdmin) {
-    //  if (this.allowAdminWorkflowFeature) {  
-      this.courtManagerMenuItems.push(
-        { label: 'Event Workflow', icon: 'rotate_90_degrees_ccw', routerLink: ['/admin/workflow'] }
-      );
-    }
 
     if (this.allowAdminCalendarFeature) {
       this.courtManagerMenuItems.push(
@@ -159,19 +135,54 @@ export class AppMenuComponent implements OnInit {
     }*/
   }
 
+  buildReadOnlyBaseMenu(){
+
+        //These are the basic menu items for a Read Only Profile
+        this.baseMenuItems = [
+          { label: 'Dashboard', icon: 'dashboard', routerLink: ['/'] },
+          {
+            label: 'Case', icon: 'gavel',
+            items: [
+              { label: 'Search Case', icon: 'search', routerLink: ['/case-search'] },
+              //{ label: 'New Case', icon: 'gavel', routerLink: ['/case-detail/0'] },
+            ]
+          },
+          {
+            label: 'Party', icon: 'folder_shared',
+            items: [
+              { label: 'Search Party', icon: 'search', routerLink: ['/party-search'] },
+              //{ label: 'New Party', icon: 'folder_shared', routerLink: ['/party-detail/0'] },
+            ]
+          },
+          /*{
+            label: 'Reports', icon: 'view_day',
+            items: [
+              { label: 'Case Counts', icon: 'filter_1', routerLink: ['/reports/case-count'] },
+            ]
+          },*/
+        ];
+
+  }
+
   buildMenu() {
 
     this.buildMenuItems();
 
     this.isAdmin = (this.userSvc.loggedInUser && this.userSvc.isAdminUser());
     this.isSupervisor = (this.userSvc.loggedInUser && this.userSvc.isSupervisor());
-    this.isCourtManager = (this.userSvc.loggedInUser && (this.userSvc.isCourtManager() || this.userSvc.isAdminUser()));
-    console.log("isAdmin", this.isAdmin);
+    //this.isCourtManager = (this.userSvc.loggedInUser && (this.userSvc.isCourtManager() || this.userSvc.isAdminUser()));
+    this.isCourtManager = (this.userSvc.loggedInUser && (this.userSvc.isCourtManager()));
+    this.isReadOnly = (this.userSvc.loggedInUser && this.userSvc.isReadOnlyUser());
 
     if (this.userSvc.loggedInUser) {
       this.model = this.baseMenuItems;
     } else {
       return;
+    }
+
+    if((this.isReadOnly == true) || this.isCourtManager == true){
+      this.buildReadOnlyBaseMenu();
+      this.model = this.baseMenuItems;
     }
 
     if (this.isAdmin) {
@@ -182,7 +193,8 @@ export class AppMenuComponent implements OnInit {
 
         }
       );
-    } else if (this.isCourtManager) {
+    } 
+    if (this.isCourtManager) {
       this.model.push(
         {
           label: 'Manage', icon: 'security',
@@ -191,7 +203,8 @@ export class AppMenuComponent implements OnInit {
         }
       )
     }
-    /*else if (this.isSupervisor) {
+
+    if (this.isSupervisor) {
       this.model.push(
         {
           label: 'Manage', icon: 'security',
@@ -199,7 +212,7 @@ export class AppMenuComponent implements OnInit {
 
         }
       );
-    }*/
+    }
 
     this.model = this.model.slice();
     //console.log("*** BUILD MENU CALLED ***", this.model);

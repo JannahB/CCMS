@@ -72,6 +72,20 @@ export class UserService {
     console.log('Logged in user', this.loggedInUser.userName);
     console.log('Judicial Role', (idx > -1));
     return idx > -1;
+
+  }
+
+  public isReadOnlyUser(): boolean {
+       
+     if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 2)) > -1)
+      return true;
+    else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 4)) > -1)
+      return true;
+    else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 7)) > -1)
+      return true;
+    else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 8)) > -1)
+      return true;  
+    else return false;    
   }
 
   public isRegistrar(): boolean {
