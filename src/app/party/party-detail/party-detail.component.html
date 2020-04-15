@@ -289,6 +289,8 @@
                   <label class="minimal primary block">Occupation Title</label>
                   <p-dropdown
                       placeholder="choose type"
+                      id="occTitle" name="occTitle" #occTitle="ngModel"
+                      [required] = "true"
                       styleClass="width-full"
                       [options]="occupation"
                       [filter] = "true"
@@ -301,6 +303,8 @@
                 <div class="ui-g-12 mb-20">
                   <span class="md-inputfield">
                       <input [(ngModel)]="selectedOccupation.identifierValue"
+                             id="empStatus" name="empStatus" #empStatus="ngModel"
+                             [required] = "true"
                              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                               type="text" pInputText
                               [required]="true">
@@ -322,7 +326,8 @@
 
             <div class="ui-g-12 mb-0">
               <label class="minimal primary block">Start Date</label>
-              <p-calendar id="occupationStartDate"
+              <p-calendar id="occupationStartDate" name="occupationStartDate" #occupationStartDate="ngModel"
+              [required] = "true"
                 placeholder="Start Date"
                 dateFormat="dd-M-yy"
                 [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
@@ -357,6 +362,7 @@
                     pButton></button>
             <button type="button"
                     label="Save"
+                    [disabled] = "(!occupationStartDate.valid) || (!occTitle.valid) || (!empStatus.valid)"
                     class=""
                     (click)="saveOccupation()"
                     icon="ui-icon-check"
@@ -409,15 +415,16 @@
 
         <div class="ui-g-12" *ngIf="selectedIdentifier">
           <h3 class="mt-0">{{ newIdentifierMode ? 'New' : 'Edit'}} Identifier</h3>
-
           <div class="ui-g-12 ui-md-6">
               <div class="ui-g-12 mb-20">
                   <label class="minimal primary block">Identifier Type</label>
                   <p-dropdown
+                      id="idenType" name="idenType" #idenType="ngModel"
                       placeholder="choose type"
                       styleClass="width-full"
                       [options]="identifierTypeOptions"
                       [filter] = "true"
+                      [required] = "true"
                       [(ngModel)]="selectedIdentifier.identifierType"
                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                       (onChange)="identifierTypeOnChange($event)">
@@ -431,6 +438,8 @@
                 <div class="ui-g-12 mb-20">
                   <span class="md-inputfield">
                       <input [(ngModel)]="selectedIdentifier.identifierValue"
+                              id="idenValue" name="idenValue" #idenValue="ngModel"
+                              [required] = "true"
                              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                               type="text" pInputText>
                       <label>Identifier Value</label>
@@ -452,6 +461,8 @@
             <div class="ui-g-12 mb-0">
               <label class="minimal primary block">Start Date</label>
               <p-calendar id="identifierStartDate"
+                id="idenStartDate" name="idenStartDate" #idenStartDate="ngModel"
+                [required] = "true"
                 placeholder="Start Date"
                 dateFormat="dd-M-yy"
                 [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
@@ -488,10 +499,10 @@
                     label="Save"
                     class=""
                     (click)="saveIdentifier()"
+                    [disabled]="(!idenType.valid) || (!idenValue.valid) || (!idenStartDate.valid)"
                     icon="ui-icon-check"
                     pButton></button>
           </div>
-
         </div>
       </div>
     </p-fieldset>
@@ -680,6 +691,8 @@
             <div class="ui-g-12 mb-20">
               <label class="minimal primary block">Phone Type</label>
               <p-dropdown
+                  id="phType" name="phType" #phType="ngModel"
+                  [required] = "true"
                   placeholder="choose type"
                   styleClass="width-full"
                   [options]="phoneTypes"
@@ -693,6 +706,8 @@
               <span class="md-inputfield">
                   <input [(ngModel)]="selectedPhone.phoneNumber"
                         type="text" 
+                        id="phNumber" name="phNumber" #phNumber="ngModel"
+                        [required] = "true"
                         [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                         pInputText>
                   <label>Phone Number</label>
@@ -740,6 +755,7 @@
                     label="Save"
                     class=""
                     (click)="savePhone()"
+                    [disabled] = "(!phType.valid) || (!phNumber.valid)"
                     icon="ui-icon-check"
                     pButton></button>
           </div>
@@ -798,6 +814,8 @@
               <label class="minimal primary block">Address Type</label>
               <p-dropdown
                   placeholder="choose type"
+                  id="addType" name="addType" #addType="ngModel"
+                  [required] = "true"
                   styleClass="width-full"
                   [options]="addressTypes"
                   [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
@@ -934,6 +952,7 @@
                     label="Save"
                     class=""
                     (click)="saveAddress()"
+                    [disabled] = "!addType.valid"
                     icon="ui-icon-check"
                     pButton></button>
           </div>
