@@ -13,6 +13,8 @@ import { CasePartyRole } from '../../common/entities/CasePartyRole';
 import { LookupService } from '../../common/services/http/lookup.service';
 import { Subscription } from 'rxjs/Subscription';
 import { ToastService } from '../../common/services/utility/toast.service';
+import { AuthenticationService } from '../../common/services/http/authentication.service';
+import { UserService } from '../../common/services/utility/user.service';
 
 @Component({
   selector: 'app-case-search',
@@ -48,13 +50,19 @@ export class CaseSearchComponent implements OnInit {
   casePartyRoleTypesSubscription: Subscription;
 
   isSearcing:boolean = false;
+  showModalPasswordPrompt = false;
+  public password: string = '';
+  public hasLoginFailed: boolean = false;
+  
 
   constructor(
     private caseSvc: CaseService,
+    private authenticationService: AuthenticationService,
     private lookupSvc: LookupService,
     private dropdownSvc: DropdownDataTransformService,
     private toastSvc: ToastService,
-    private router:Router
+    private router:Router,
+    private userSvc: UserService
   ) { }
 
   ngOnInit() {
@@ -85,6 +93,13 @@ export class CaseSearchComponent implements OnInit {
     });
 
   }
+
+  hideModals(){
+
+    this.showModalPasswordPrompt = false;
+
+  }
+
 
   casePhaseOnFocus(){
     if(!this.selectedCaseType){
@@ -149,11 +164,57 @@ export class CaseSearchComponent implements OnInit {
   preventNavToCase:boolean = false;
 
   caseOnRowSelect(event) {
+
+    
     console.log(event)
     if(this.preventNavToCase) return;
+    
+    //If it's a sealed file, prompt the user to re-enter the password
+    if (event.data.sealIndicator == 1){
+      this.showModalPasswordPrompt  = true;
 
-    let caseId = event.data.caseOID;
-    this.router.navigate(['/case-detail', caseId ]);
+    }
+    
+   else{
+      let caseId = event.data.caseOID;
+      this.router.navigate(['/case-detail', caseId ]);
+    }
+    
+
+    
+  }
+
+  validatePassword(caseId: number){
+
+    this.hasLoginFailed = false;
+    this.authenticationService
+    .FetchLoginCredentials(this.userSvc.loggedInUser.userName,this.password)
+    .subscribe((loginResult) => {
+      loginResult;
+      console.log('Login result', loginResult);
+    }
+    ,
+      (error) => {
+        console.log('Login Service Error is ', error);
+        if(error != null){
+          this.hasLoginFailed = true;
+          this.toastSvc.showErrorMessage('Incorrect Credentials User for File Access');
+        }
+      }
+      ,
+      () => {
+        this.hasLoginFailed = false;
+      }
+    );
+
+
+
+    if (!this.hasLoginFailed){
+      this.router.navigate(['/case-detail', caseId ]);
+    }   
+    
+    this.showModalPasswordPrompt  = false;
+
   }
 
 

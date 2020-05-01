@@ -81,12 +81,71 @@
       <p-dataTable [value]="caseResults" selectionMode="single" [(selection)]="selectedCase" (onRowSelect)="caseOnRowSelect($event)"
         scrollable="true" scrollHeight="280px"
         dataKey="caseOID" #dtCaseResults>
-        <p-column field="caseNumber" header="Case Number" [style]="{'width':'13%'}"></p-column>
-        <p-column field="caseCaption" header="Caption" [style]="{'width':'25%'}"></p-column>
-        <p-column field="caseType.name" header="Case Type" [style]="{'width':'15%'}"></p-column>
-        <p-column field="caseStatus.name" header="Case Status" [style]="{'width':'15%'}"></p-column>
-        <p-column field="casePhase.name" header="Case Phase" [style]="{'width':'15%'}"></p-column>
-        <!--p-column styleClass="col-button" header="Create Assoc Case" [style]="{'width':'8%'}">
+        <p-column field="caseNumber" header="Case Number" [style]="{'width':'13%'}" [sortable]="true"></p-column>
+                
+        <p-column header="Caption" [style]="{'width':'23%'}" [sortable]="true">
+          <ng-template pTemplate="body" let-item="rowData">
+            <div *ngIf="item.sealIndicator == 1" >
+                <span style="color:red">              
+                 Case Sealed
+              </span>
+            </div>
+
+            <div *ngIf="item.sealIndicator == 0" >
+              <span>              
+                {{ item.caseCaption }}
+            </span>
+          </div>
+          </ng-template>
+        </p-column> 
+
+        <p-column header="Case Type" [style]="{'width':'15%'}" [sortable]="true">
+          <ng-template pTemplate="body" let-item="rowData">
+            <div *ngIf="item.sealIndicator == 1" >
+                <span style="color:red">              
+                 Case Sealed
+              </span>
+            </div>
+
+            <div *ngIf="item.sealIndicator == 0" >
+              <span>              
+                {{ item.caseType.name }}
+            </span>
+          </div>
+          </ng-template>
+        </p-column>
+
+        <p-column header="Case Status" [style]="{'width':'15%'}" [sortable]="true">
+          <ng-template pTemplate="body" let-item="rowData">
+            <div *ngIf="item.sealIndicator == 1" >
+                <span style="color:red">              
+                 Case Sealed
+              </span>
+            </div>
+            <div *ngIf="item.sealIndicator == 0" >
+              <span>              
+                {{ item.caseStatus.name }}
+            </span>
+          </div>
+          </ng-template>
+        </p-column>
+
+        <p-column header="Case Phase" [style]="{'width':'15%'}" [sortable]="true">
+          <ng-template pTemplate="body" let-item="rowData">
+            <div *ngIf="item.sealIndicator == 1" >
+                <span style="color:red">              
+                 Case Sealed
+              </span>
+            </div>
+            <div *ngIf="item.sealIndicator == 0" >
+              <span>              
+                {{ item.casePhase.name }}
+            </span>
+          </div>
+          </ng-template>        
+        </p-column>
+
+        <p-column styleClass="col-button" header="Create Assoc Case" [style]="{'width':'8%'}">
           <ng-template let-item="rowData" pTemplate="body">
             <i class="material-icons" 
               (click)="createAssocatedCase($event, item)"
@@ -98,3 +157,52 @@
   </div>
   <!-- //END FISRT CARD -->
 </div>
+
+
+<!-- ADD PASSWORD PROMPT FOR A SEALED CASE -->
+
+<p-dialog header="Please re-enter your password to access this file" styleClass="passwordPromptModal" width="650" [(visible)]="showModalPasswordPrompt" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+  
+  <form #passwordForm="ngForm" *ngIf="showModalPasswordPrompt">
+    <div class="ui-g">
+      <div class="form-group" >
+
+        <div class="ui-g-12">
+          
+        <div class="ui-g-12 mt-0">
+          
+          <!-- PASSWORD RE-ENTRY -->
+          <div class="ui-g-12 mv-20">
+            <span class="md-inputfield ui-float-label">
+              <input pInputText id="password" name="password" #tiPassword="ngModel" type="password" class=""
+                      placeholder="re-enter password..."
+                      required
+                      [(ngModel)]="password"/>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="tiPassword.errors?.required && tiPassword.touched" >
+                  Please enter a Password
+            </div>
+          </div>
+
+     </div>
+     </div>
+    </div>
+  </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">          
+        
+        <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
+                (click)="hideModals()" >
+        </button>
+        
+        <button type="button" (click)="validatePassword(selectedCase.caseOID);" label="Submit Password"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+                pButton>
+        </button>
+      </div>
+    </p-footer>    
+  </form>
+</p-dialog>
+

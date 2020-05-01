@@ -60,7 +60,7 @@ import { throwMatDialogContentAlreadyAttachedError } from '@angular/material';
   templateUrl: './case-detail.component.html',
   styleUrls: ['./case-detail.component.scss']
 })
-export class CaseDetailComponent implements OnInit, OnDestroy {
+export class CaseDetailComponent implements OnInit, OnDestroy{
 
 
   @ViewChild('caseForm') caseForm: any;
@@ -136,6 +136,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   docTypesShown: DocumentType[] = [];
   docTypeNames: String[] = [];
 
+  //actualCompletionDate: Date = null; //Used to capture the actual cask task completion date from the DB.
+  //selChargeFactor: string = ""; 
+  isRegistrar: boolean = false;
+  sealIndicator: number = 0; // 
+  courtUsers: Party[] = [];
+  authUsers: Party[] = [];
+  
   public Permission: any = Permission;
 
   constructor(
@@ -170,7 +177,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     console.log(dts);
     return dts;
   }
-
 
   ngOnInit() {
 
@@ -225,10 +231,25 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       });
     });
 
+    this.isRegistrar = (this.userSvc.loggedInUser && this.userSvc.isRegistrar());
+    let caseOID: number = 0;
+    
+    this.routeSubscription = this.activatedRoute.params.subscribe(params => {
+      const caseId = params['caseId'];
+      caseOID = caseId;
+      this.getCase(caseId);  
+    });
+
+    if(caseOID == 0){
+      this.getCaseLookupValues();
+    }
+  }
+
+  getCaseLookupValues(){
 
     this.caseSvc
-      .fetchDocumentTemplate()
-      .subscribe(results => this.documentTemplateTypes = results);
+    .fetchDocumentTemplate()
+    .subscribe(results => this.documentTemplateTypes = results);
 
     this.caseSvc
       .fetchCaseType()
@@ -258,6 +279,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
 
       })    
+    this.partySvc.getAllCourtUsers().subscribe(results => this.courtUsers = results);
 
   }
 
@@ -299,25 +321,51 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   }
 
   getCase(caseId) {
+    
     this.caseForm.reset();
+    
     if (caseId == 0) {
       this.case = new Case();
       this.loadingCase = false;
       return;
     }
+
+    //Check if the user is authorized to view the case
+   
     this.loadingMessage = 'loading case...';
     this.loadingCase = true;
+    
 
+    var recordData: any = {
+      case_id: 0,
+      loginUserPartyOID: 0,
+    };
 
+    recordData.case_id = caseId;
+    recordData.loginUserPartyOID = this.userSvc.loggedInUser.partyOID;
 
+    this.caseSubscription = this.caseSvc.authorizedAccessToCourtCase(recordData).subscribe(kase => {
+      this.loadingCase = false;
 
-    this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe(kase => {
+      if (kase == null) {
+        this.toastSvc.showWarnMessage('This case has restricted access, you are not authorized to view this case');
+      }     
+                
+      else {
+
+        //NEED TO KEEP TRACK OF THE CASE NUMBER
+        this.caseSubscription = this.caseSvc.fetchOne(caseId).subscribe(kase => {
       this.loadingCase = false;
       if (!kase.caseOID) {
         this.toastSvc.showWarnMessage('There is no case with caseOID of ' + caseId + '.', 'No Case Found');
-      } else {
+      }
+    
+      else {
         this.case = kase;
-        // console.log("Loading Current Case", kase);
+        console.log("Loading Current Case",kase);
+
+        this.getCaseLookupValues();
+        
         // Remove all files with a '^' in the docName - they are orphans
         this.case.caseDocs = this.case.caseDocs.filter(cd => {
           return cd.documentName.indexOf('^') == -1;
@@ -370,6 +418,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
         this.eventTypeFilter = null;
         this.filterCaseEvents();
         this.filterDocs = this.case.caseDocs;
+      }
+    });
       }
     });
   }
@@ -561,6 +611,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.showDeleteChargeModal = false;
     this.showDeletePartyModal = false;
     this.showModalEditCaseParty = false;
+    this.showModalAuthorizedUsers = false;
   }
 
   // -------------------------
@@ -580,6 +631,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   selectedCaseParty: CaseParty = null;
   newCaseParty: CaseParty = new CaseParty();
   genderTypes: any = [{ label: 'M', value: 'M' }, { label: 'F', value: 'F' },];
+  showModalAuthorizedUsers = false;
 
   // -------------------------
   //  START: ADD CASE APPLICATION
@@ -1019,6 +1071,102 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
     this.selectedSearchPartyEndDate = null;
   }
 
+
+  compareByPartyId(item1, item2) {
+    return item1.id == item2.partyOID;
+  }
+
+  authorizedUsersOnChange(event, authCourtIdx) {
+
+    this.case.authorizedAccessCaseParties[authCourtIdx].partyOID = event.value.id; 
+
+    //Pass the names of the authorized users to be recorded in the even register
+    this.case.authorizedAccessCaseParties[authCourtIdx].firstName = event.value.firstName; 
+    this.case.authorizedAccessCaseParties[authCourtIdx].lastName = event.value.lastName; 
+
+  }
+
+  saveSealCaseParties(seal_unseal){
+    this.saveAuthorizedUsers(seal_unseal);
+  }
+
+
+  saveAuthorizedUsers(seal_unseal,shouldShowSuccessMessage: boolean = true){
+
+    var recordData: any = {
+      case_id: 0,
+      seqNumber: 0,
+      seal_unseal_ind: 0,
+      authorized_parties: [],
+      case_seal_ind: 0,
+      authorized_party_names: ''
+    };
+
+    recordData.seqNumber = this.case.sequenceNumber;
+    recordData.seal_unseal_ind = seal_unseal;
+    recordData.case_id = this.case.caseOID;    
+    recordData.case_seal_ind = this.case.sealIndicator;
+    
+    //extract the party ids and names for sealing a case.
+    for(let i = 0; i < this.case.authorizedAccessCaseParties.length; i++){
+      recordData.authorized_parties[i] = this.case.authorizedAccessCaseParties[i].partyOID;
+      recordData.authorized_party_names += this.case.authorizedAccessCaseParties[i].firstName +' '+this.case.authorizedAccessCaseParties[i].lastName + ', ';
+       
+    }
+
+    //If its an unsealed case, add the register and the active judicial officer for the existing case
+    //Make sure to pass the names for the event register in the BE
+    if (this.case.sealIndicator == 0){
+      
+      //This is safe to perform since only a registrar case seal a case
+      recordData.authorized_parties[this.case.authorizedAccessCaseParties.length] = this.userSvc.loggedInUser.partyOID;
+      recordData.authorized_party_names += this.userSvc.loggedInUser.firstName +' '+this.userSvc.loggedInUser.lastName + ', ';
+
+      //add active judges
+      for(let i = 0; i < this.case.judicialAssignments.length; i++){
+        if(this.case.judicialAssignments[i].endDate == null){
+          recordData.authorized_parties.push(this.case.judicialAssignments[i].judicialOfficial.partyOID);
+          recordData.authorized_party_names += this.case.judicialAssignments[i].judicialOfficial.firstName +' '+this.case.judicialAssignments[i].judicialOfficial.lastName + ', ';
+        }        
+      }
+    }
+
+
+    this.caseSvc
+      .SealUnsealCourtCase(recordData)
+      .subscribe(c => {
+        this.loadingCase = false;
+        this.showStaticMessage(false);
+        this.case = c;
+        if (shouldShowSuccessMessage && (recordData.seal_unseal_ind == 0)) {
+          this.toastSvc.showSuccessMessage("Case Unsealed");
+        }
+        if (shouldShowSuccessMessage && (recordData.seal_unseal_ind == 1)) {
+          this.toastSvc.showSuccessMessage("Case Sealed");
+        }
+      },
+        (error) => {
+          console.log(error);
+          this.loadingCase = false;
+          this.toastSvc.showErrorMessage('Unable to Seal / Unseal this case file')
+        },
+        () => {
+          this.loadingCase = false;
+        });
+
+
+    this.hideModals();
+  }
+
+  addAuthorizedUser() {
+    let newAuthorizedUser = new Party();
+    let authPartyAppLen = this.case.authorizedAccessCaseParties.push(newAuthorizedUser);
+  }
+
+  requestDeleteAuthorizedUser(authCourtIdx) {
+    this.case.authorizedAccessCaseParties.splice(authCourtIdx, 1);
+  }
+
   addPartyToCase(caseForm) {
     if (!this.selectedSearchParty) return;
 
@@ -1175,16 +1323,25 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
   
     this.loadingMessage = 'Case Found...';
     this.loadingCase = true; 
-    let currentCase: number = this.case.caseOID;
-    let shouldRefreshURL: boolean = this.case.caseOID == 0;
+    //let currentCase: number = this.case.caseOID;
+    //let seal_case:number = this.case.sealIndicator;
+    //let shouldRefreshURL: boolean = this.case.caseOID == 0;
 
     var recordData: any = {
       seqNumber: 0,
-      recFlag: 0
+      recFlag: 0,
+      isAuthorized: false,
+      loginUserPartyOID: 0,
+      case_id: 0
     };
 
     recordData.seqNumber = this.case.sequenceNumber;
     recordData.recFlag = next_previous;
+    recordData.loginUserPartyOID = this.userSvc.loggedInUser.partyOID;
+    recordData.case_id = this.case.caseOID;
+
+    if(this.isRegistrar)
+    recordData.isAuthorized = true;
 
     this.caseSvc
       .fetchNextPreviousCase(recordData)
@@ -1196,20 +1353,29 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
           this.toastSvc.showSuccessMessage("Case Retrieved");
         }
 
-        if (this.case == null) {
-          this.router.navigate(['/case-detail', currentCase])
+        if (this.case == null ) {  
+          this.toastSvc.showWarnMessage('You have already selected the First / Last case')
         }
         else this.router.navigate(['/case-detail', this.case.caseOID])
       },
         (error) => {
           console.log(error);
           this.loadingCase = false;
-          this.toastSvc.showErrorMessage('You have already selected the First / Last case')
+          this.toastSvc.showWarnMessage('You have already selected the First / Last case')
         },
         () => {
           this.loadingCase = false;
         });
   }
+
+  sealCase(seal_unseal,shouldShowSuccessMessage: boolean = true) {
+
+    if (seal_unseal == 1) this.showModalAuthorizedUsers = true;
+    else {
+      this.showModalAuthorizedUsers = false;
+      this.saveAuthorizedUsers(seal_unseal);
+    }
+  }  
 
 
   doesCasePartyContainChild(): boolean {
@@ -1970,6 +2136,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
 
     this.judge.caseOID = this.case.caseOID;
 
+    //Passing these parameters will allow the automatic addition and removel of
+    //JO from sealed cases. The event register will also be updated
+    this.judge.caseSeqNumber = this.case.sequenceNumber;
+    this.judge.case_seal_indicator = this.case.sealIndicator;
+    this.judge.partyOID = this.judge.judicialOfficial.partyOID;
+
     this.caseSvc
       .saveJudicialAssignment(this.judge)
       .subscribe(assignment => {
@@ -1988,6 +2160,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy {
       });
 
     this.showModalAddJudge = false;
+    this.saveCase();
   }
 
 

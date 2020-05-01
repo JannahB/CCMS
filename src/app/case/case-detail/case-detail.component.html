@@ -4,9 +4,17 @@
 <div class="ui-g">
   <!-- HEADER -->
   <div class="ui-g-12 pv-0 pl-0">
-    <div class="ui-g-12 ui-md-8">
+    <div class="ui-g-12 ui-md-4">
       <label class="minimal block mb-0">Case:</label>
       <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>     
+    </div>
+
+    <div class="ui-g-12 ui-md-4" *ngIf="case?.sealIndicator == 1">
+      <h1 style="color:red">This is a Sealed Case</h1>        
+    </div>
+
+    <div class="ui-g-12 ui-md-4" *ngIf="case?.sealIndicator == 0">
+      <h1>                      </h1>        
     </div>
 
     <div class="ui-g-12 ui-md-4 ta-r pb-0">
@@ -34,15 +42,38 @@
     <loading-bar [visible]="loadingCase" [message]="loadingMessage"></loading-bar>
 
     <div class="ui-g-12 ph-10">
-      <div class="ui-g-12 ui-md-8">
-        <h2 class="mb-0">Case Details</h2>
+      <div class="ui-g-12 ui-md-2">
+          <h2 class="mb-0">Case Details</h2>
       </div>
-      <div class="ui-g-12 ui-md-4 ta-r pb-0">
+      <div class="ui-g-12 ui-md-10 ta-r pb-0">
 
         <!-- <p-progressSpinner strokeWidth="4" [style]="{width: '30px', height: '30px'}"></p-progressSpinner> -->
+        <button type="button"
+            (click)="sealCase(1)"
+            label="Update Access"
+            icon="ui-icon-check"
+            class="btn-big" pButton
+            [disabled]="!caseForm.form.valid"
+            *ngIf="isRegistrar == true">
+        </button>
 
-        <button type="button" (click)="saveCase()" label="Save Case" icon="ui-icon-check" class="btn-big" pButton
-          [disabled]="!caseForm.form.valid" *ngIf="hasPermission(Permission.CREATE_CASE)"></button>
+        <button type="button"
+            (click)="sealCase(0)"
+            label="Unseal Case"
+            icon="ui-icon-check"
+            class="btn-big" pButton
+            [disabled]="!caseForm.form.valid"
+            *ngIf="isRegistrar == true">
+        </button>
+
+        <button type="button"
+                (click)="saveCase()"
+                label="Save Case"
+                icon="ui-icon-check"
+                class="btn-big" pButton
+                [disabled]="!caseForm.form.valid"
+                *ngIf="hasPermission(Permission.CREATE_CASE)">
+        </button>
       </div>
     </div>
 
@@ -1797,6 +1828,75 @@
 </p-dialog>
 
 <!-- END: ADD CASE APPLICATION MODAL -->
+
+
+<!-- ADD SEAL CASE : AUTHORIZED USERS MODAL -->
+
+<p-dialog header="Seal Case File" styleClass="authorizedUserModal" width="650" [(visible)]="showModalAuthorizedUsers" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+  
+  <form #authorizedUsersForm="ngForm" *ngIf="showModalAuthorizedUsers">
+    <div class="ui-g">
+      <div class="form-group" >
+
+        <div class="ui-g-12">
+          
+        <div class="ui-g-12 mt-0">
+          <div class="ui-g-12">
+            <header class="mb-10">Sealing Case Number {{case.caseNumber}}: The Registrar and active JO's will have access if the case is sealed</header>
+          </div>
+
+          <div class="ui-g-12 mb-5 authorizedAccessCaseParties-row" *ngFor="let authorizedAccessCaseParties of case.authorizedAccessCaseParties; let acIdx = index">
+            
+            <div class="ui-g-8 ph-20 pv-5">
+           
+              <mat-form-field class="width-full"  >
+                
+                  <mat-select name="ddAuName"
+                    
+                    [value]="authorizedAccessCaseParties"
+                    [compareWith]="compareByPartyId"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    (selectionChange)="authorizedUsersOnChange($event, acIdx)">
+                   
+                             
+                    <mat-option *ngFor="let auName of courtUsers" [value]="auName" >
+                      {{auName.lastName + ", "+ auName.firstName }}
+                    </mat-option>   
+                     
+                </mat-select>
+                </mat-form-field>
+           
+            </div>
+            <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
+              <i class="material-icons delete-icon" (click)="requestDeleteAuthorizedUser(acIdx)">delete</i>
+            </div>
+        </div>
+     </div>
+     </div>
+    </div>
+  </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">          
+        <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
+                (click)="hideModals()" >
+        </button>
+        <button *ngIf = "case.authorizedAccessCaseParties.length == 0" label="Seal Case" type="submit" pButton icon="fa-check"
+                (click)="saveSealCaseParties(1)"
+                [disabled]="!authorizedUsersForm.form.valid">
+        </button> 
+        <button *ngIf = "case.authorizedAccessCaseParties.length > 0" label="Save Authorized Users" type="submit" pButton icon="fa-check"
+                (click)="saveSealCaseParties(1)"
+                [disabled]="!authorizedUsersForm.form.valid">
+        </button>
+        <button type="button" (click)="addAuthorizedUser();" label="Add Authorized User"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+                pButton>
+        </button>
+      </div>
+    </p-footer>    
+  </form>
+</p-dialog>
 
 
 <!-- ADD CASE CHARGE MODAL -->

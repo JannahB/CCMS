@@ -6,4 +6,7 @@ export class JudicialAssignment {
     public judicialOfficial:JudicialOfficer;
     public startDate:Date;
     public endDate:Date;
+    public caseSeqNumber:number;
+    public case_seal_indicator:number;
+    public partyOID:number;
 }

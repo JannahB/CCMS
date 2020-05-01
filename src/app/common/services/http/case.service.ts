@@ -485,12 +485,26 @@ export class CaseService extends HttpBaseService<Case> {
     return ct;
   }
 
+
+  public authorizedAccessToCourtCase(data: any): Observable<Case> {
+    let url: string = `${super.getBaseUrl()}/AuthorizedAccessToCourtCase`;
+    return this.http
+      .post<Case>(url,data)
+  }
+
   public fetchNextPreviousCase(data: any): Observable<Case> {
     let url: string = `${super.getBaseUrl()}/FetchNextPreviousCase`;
     return this.http
       .post<Case>(url,data)
       .map(t => this.convertCaseTaskDates(t))
-  }  
+  }
+  
+  public SealUnsealCourtCase(data: any): Observable<Case> {
+    let url: string = `${super.getBaseUrl()}/SealUnsealCourtCase`;
+    return this.http
+      .post<Case>(url,data)
+      .map(t => this.convertCaseTaskDates(t))
+  }    
 
   convertCaseTaskDates(ct) {
     ct.assignedDate = DateConverter.convertDate(ct.assignedDate);
@@ -656,9 +670,12 @@ export class CaseService extends HttpBaseService<Case> {
   public saveJudicialAssignment(data: JudicialAssignment): Observable<JudicialAssignment> {
     const url = `${super.getBaseUrl()}/SaveJudicialAssignment`;
 
-    const assignment: any = {
+    let assignment: any = {   
       caseOID: data.caseOID.toString(),
       partyOID: data.judicialOfficial.partyOID.toString(),
+      judOfficerName: data.judicialOfficial.firstName + ' '+ data.judicialOfficial.lastName,
+      caseSeqNum: data.caseSeqNumber,
+      sealIndicator: data.case_seal_indicator,
       startDate: this.datePipe.transform(data.startDate, "yyyy-MM-dd")
     };
 

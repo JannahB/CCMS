@@ -40,9 +40,9 @@ export class UserService {
   public isAdminUser(): boolean {
 
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
-    const idx = this.loggedInUser.roles.findIndex(itm => itm.ccmsAdmin == true);
-    console.log('Logged in user', this.loggedInUser.userName);
-    console.log('Admin Role', (idx > -1));
+    let idx = this.loggedInUser.roles.findIndex(itm => itm.ccmsAdmin == true);
+    //console.log('Logged in user', this.loggedInUser.userName);
+    //console.log('Admin Role', (idx > -1));
     return idx > -1;
 
   }
@@ -53,9 +53,9 @@ export class UserService {
     if (this.loggedInUser.roles[0].staffRoleOID == 5) this.loggedInUser.roles[0].ccmsAdmin = true;
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
 
-    const idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 5);
-    console.log('Logged in user', this.loggedInUser.userName);
-    console.log('Admin Role', (idx > -1));
+    let idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 5);
+    //console.log('Logged in user', this.loggedInUser.userName);
+    //console.log('Admin Role', (idx > -1));
     return idx > -1;
   }
 
@@ -74,6 +74,12 @@ export class UserService {
     return idx > -1;
   }
 
+  public isRegistrar(): boolean {
+       
+    if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 9)) > -1)
+     return true; 
+   else return false;    
+ }
 
   //This function prevents a supervisor from access the workflow
   public isSupervisor(): boolean {
@@ -85,9 +91,9 @@ export class UserService {
     }
 
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) return false;
-    const idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 6);
-    console.log('Logged in user', this.loggedInUser.userName);
-    console.log('Admin Role', (idx > -1));
+    let idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID == 6);
+    //console.log('Logged in user', this.loggedInUser.userName);
+    //console.log('Admin Role', (idx > -1));
     return idx > -1;
   }
 

@@ -141,6 +141,8 @@ import { MinuteService } from './common/services/http/minute.service';
 import { TempHearingsComponent } from './case/case-detail/temp-hearings/temp-hearings.component';
 import { CaseRegisterService } from './common/services/http/case-register.service';
 import { EventService } from "./common/services/http/event.service";
+
+
 @NgModule({
   imports: [
     BrowserModule,
