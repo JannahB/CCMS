@@ -15,6 +15,9 @@ import { Subscription } from 'rxjs/Subscription';
 import { ToastService } from '../../common/services/utility/toast.service';
 import { AuthenticationService } from '../../common/services/http/authentication.service';
 import { UserService } from '../../common/services/utility/user.service';
+import { CaseSealService } from '../../common/services/http/caseSeal.service';
+import { AuthorizationInterceptor } from '../../common/interceptors/authorization.interceptor';
+import { GlobalState } from '../../common/services/state/global.state';
 
 @Component({
   selector: 'app-case-search',
@@ -52,7 +55,9 @@ export class CaseSearchComponent implements OnInit {
   isSearcing:boolean = false;
   showModalPasswordPrompt = false;
   public password: string = '';
-  public hasLoginFailed: boolean = false;
+  public loginCounter: number = 0;
+  public hasValidPassword: boolean = false;
+
   
 
   constructor(
@@ -62,7 +67,9 @@ export class CaseSearchComponent implements OnInit {
     private dropdownSvc: DropdownDataTransformService,
     private toastSvc: ToastService,
     private router:Router,
-    private userSvc: UserService
+    private userSvc: UserService,
+    private caseSealService: CaseSealService,
+    public _state: GlobalState,
   ) { }
 
   ngOnInit() {
@@ -186,34 +193,41 @@ export class CaseSearchComponent implements OnInit {
 
   validatePassword(caseId: number){
 
-    this.hasLoginFailed = false;
-    this.authenticationService
-    .FetchLoginCredentials(this.userSvc.loggedInUser.userName,this.password)
+    this.hasValidPassword = false;
+    this.loginCounter = this.loginCounter + 1;  // only allow 3 times
+    this.caseSealService
+    .validateCaseSealCredentials(this.userSvc.loggedInUser.userName,this.password, caseId.toString())
     .subscribe((loginResult) => {
-      loginResult;
-      console.log('Login result', loginResult);
-    }
+      if(!loginResult) {
+        console.log('Login Service Error is');
+        this.toastSvc.showErrorMessage('Incorrect Credentials User for File Access');
+      }
+      this.hasValidPassword = loginResult;
+      if (this.hasValidPassword){
+        this.router.navigate(['/case-detail', caseId ]);
+        this.showModalPasswordPrompt  = false;
+      }   
+  
+      if (!this.hasValidPassword && (this.loginCounter >1)) {
+        this.userSvc.loggedInUser = null;
+          AuthorizationInterceptor.authToken = null;
+          this._state.notifyDataChanged('app.loggedOut', null, true);
+          this.router.navigate(['/login']);
+
+          this.showModalPasswordPrompt  = false;
+      }
+          }
     ,
       (error) => {
-        console.log('Login Service Error is ', error);
+        console.log('Incorrect Credentials ', error);
         if(error != null){
-          this.hasLoginFailed = true;
-          this.toastSvc.showErrorMessage('Incorrect Credentials User for File Access');
+          this.hasValidPassword = false;
+          this.toastSvc.showErrorMessage('Error');
+          this.showModalPasswordPrompt  = false;
         }
       }
-      ,
-      () => {
-        this.hasLoginFailed = false;
-      }
     );
-
-
-
-    if (!this.hasLoginFailed){
-      this.router.navigate(['/case-detail', caseId ]);
-    }   
     
-    this.showModalPasswordPrompt  = false;
 
   }
 

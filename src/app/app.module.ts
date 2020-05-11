@@ -139,9 +139,13 @@ import { CalFacilitiesComponent } from './admin/calendar/cal-facilities/cal-faci
 import { MinutesComponent } from './case/case-detail/hearings/minutes/minutes.component';
 import { MinuteService } from './common/services/http/minute.service';
 import { TempHearingsComponent } from './case/case-detail/temp-hearings/temp-hearings.component';
+<<<<<<< HEAD
 import { CaseRegisterService } from './common/services/http/case-register.service';
 import { EventService } from "./common/services/http/event.service";
 
+=======
+import { CaseSealService } from './common/services/http/caseSeal.service';
+>>>>>>> 96e64f5... feat(Case Seal): front end changes for Case Seal. New Endpoint
 
 @NgModule({
   imports: [
@@ -266,6 +270,7 @@ import { EventService } from "./common/services/http/event.service";
     CanActivateIsCourtUserGuard,
     CanActivateIsCourtMgrGuard,
     AuthenticationService,
+    CaseSealService,
     LocalStorageService,
     UserService,
     DropdownPipe,
