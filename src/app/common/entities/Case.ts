@@ -15,6 +15,7 @@ import { CaseApplication } from '../../common/entities/CaseApplication';
 import { CaseApplicant } from '../../common/entities/CaseApplicant';
 import { CasePayment } from '../../common/entities/CasePayment';
 import { PaymentDisbursementDetails } from '../../common/entities/PaymentDisbursementDetails';
+import { Party } from '../../common/entities/Party';
 
 export class Case extends LookupEntity {
 
@@ -45,6 +46,9 @@ export class Case extends LookupEntity {
   casePaymentsDetails: PaymentDisbursementDetails [] = []; //used to capture all applicants on a case
 
   caseWeight: number = 0;
+  sequenceNumber: number = 0;
+  sealIndicator: number = 0;
+  unsealRestriction : number = 0;
   court: Court = null;
   judicialAssignments: any[] = [];        // Entity NEEDED //
   searchCasePartyRoleOID: number = 0;
@@ -55,5 +59,6 @@ export class Case extends LookupEntity {
 
   caseDispositionType: CaseDispositionType = null;
   caseDispositionDate: Date = null;
+  authorizedAccessCaseParties: Party[] = []; 
 
   }

@@ -90,8 +90,8 @@ export class AdminStaffPoolComponent implements OnInit {
       });
 
 
-      let partyObservable: Observable<Party[]> = this.partySvc
-      .getAllSlim();
+      //let partyObservable: Observable<Party[]> = this.partySvc.getAllSlim();
+      let partyObservable: Observable<Party[]> = this.partySvc.getAllCourtUsers();
   
       Observable.forkJoin(
       partyObservable

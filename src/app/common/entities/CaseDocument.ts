@@ -10,6 +10,7 @@ export class CaseDocument {
   documentOID: number;
   documentURL: string;
   lastUpdateDate: Date;
+  docCategory: number;
   documentType: string;
 
 }

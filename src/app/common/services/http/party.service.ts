@@ -38,6 +38,16 @@ export class PartyService extends HttpBaseService<Party> {
       });
   }
 
+  public getAllCourtUsers(): Observable<Party[]> {
+    let url: string = `${super.getBaseUrl()}/api/courtUsers`;
+
+    return this.http.get<Party[]>(url)
+      .map(res => {
+        let parties: Party[] = res;
+        return parties;
+      });
+  }
+
   //This returns all the staff pools in the DB for a specific court
   public getAllStaffPoolSlim(): Observable<Pool[]> {
 

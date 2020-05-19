@@ -4,9 +4,34 @@
 <div class="ui-g">
   <!-- HEADER -->
   <div class="ui-g-12 pv-0 pl-0">
-    <div class="ui-g-12 ui-md-8">
+    <div class="ui-g-12 ui-md-4">
       <label class="minimal block mb-0">Case:</label>
-      <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>
+      <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>     
+    </div>
+
+    <div class="ui-g-12 ui-md-4" *ngIf="case?.sealIndicator == 1">
+      <h1 style="color:red">This is a Sealed Case</h1>        
+    </div>
+
+    <div class="ui-g-12 ui-md-4" *ngIf="case?.sealIndicator == 0">
+      <h1>                      </h1>        
+    </div>
+
+    <div class="ui-g-12 ui-md-4 ta-r pb-0">
+        
+        <button type="button"
+          (click)="fetchCase(0)"
+          label="Previous Case"
+          class="btn-big" pButton
+          [disabled]="!caseForm.form.valid"
+        ></button>
+
+        <button type="button"
+        (click)="fetchCase(1)"
+        label="Next Case"
+        class="btn-big" pButton
+        [disabled]="!caseForm.form.valid"
+        ></button>
     </div>
 
   </div>
@@ -17,15 +42,38 @@
     <loading-bar [visible]="loadingCase" [message]="loadingMessage"></loading-bar>
 
     <div class="ui-g-12 ph-10">
-      <div class="ui-g-12 ui-md-8">
-        <h2 class="mb-0">Case Details</h2>
+      <div class="ui-g-12 ui-md-2">
+          <h2 class="mb-0">Case Details</h2>
       </div>
-      <div class="ui-g-12 ui-md-4 ta-r pb-0">
+      <div class="ui-g-12 ui-md-10 ta-r pb-0">
 
         <!-- <p-progressSpinner strokeWidth="4" [style]="{width: '30px', height: '30px'}"></p-progressSpinner> -->
+        <button type="button"
+            (click)="sealCase(1)"
+            label="Update Access"
+            icon="ui-icon-check"
+            class="btn-big" pButton
+            [disabled]="!caseForm.form.valid"
+            *ngIf="isRegistrar == true">
+        </button>
 
-        <button type="button" (click)="saveCase()" label="Save Case" icon="ui-icon-check" class="btn-big" pButton
-          [disabled]="!caseForm.form.valid" *ngIf="hasPermission(Permission.CREATE_CASE)"></button>
+        <button type="button"
+            (click)="sealCase(0)"
+            label="Unseal Case"
+            icon="ui-icon-check"
+            class="btn-big" pButton
+            [disabled]="!caseForm.form.valid"
+            *ngIf="isRegistrar == true">
+        </button>
+
+        <button type="button"
+                (click)="saveCase()"
+                label="Save Case"
+                icon="ui-icon-check"
+                class="btn-big" pButton
+                [disabled]="!caseForm.form.valid"
+                *ngIf="hasPermission(Permission.CREATE_CASE)">
+        </button>
       </div>
     </div>
 
@@ -66,7 +114,7 @@
                 <input pInputText type="text" #tiprevCaseNumber="ngModel" required name="tiprevCaseNumber"
                   [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                   [required]="false" [(ngModel)]="case.prevCaseNumber" class="width-full">
-                <label>Previous Case Number</label>
+                <label>Originating Case Number</label>
               </span>
             </div>
 
@@ -248,29 +296,27 @@
                 (onRowSelect)="partyOnRowSelect($event)" scrollable="true" scrollHeight="200px"
                 dataKey="caseParty.partyOID" #dtParties>
 
-                <p-column field="caseParty.isOrganization" header="Is Org?" [style]="{'width':'8%'}">
+                <p-column field="caseParty.isOrganization" header="Is Org?" [style]="{'width':'8%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
                     <i class="fa ui-icon-check task-done" *ngIf="item.caseParty.isOrganization"></i>
                   </ng-template>
                 </p-column>
 
-                <p-column field="role.name" header="Role" [style]="{'width':'10%'}"></p-column>
+                <p-column field="role.name" header="Role" [style]="{'width':'10%'}" [sortable]="true"></p-column>
 
-                <p-column header="Party Info" [style]="{'width':'30%'}">
-                  <ng-template pTemplate="body" let-item="rowData">
-                    <div>
-                      {{item.caseParty.fullName?item.caseParty.fullName:item.caseParty.firstName+" "+item.caseParty.lastName}}
-                    </div>
-                    <!-- Christian : turned this on with fullName support on Server -->
-                    <div></div>
-                    <div *ngIf="!item.caseParty.isOrganization">
-                      <span class="smaller">
-                        DOB: {{ item.caseParty.dob | date:'dd-MMM-yyyy' }}
-                        Sex: {{ item.caseParty.sex }}
-                        Age: {{ item.caseParty.age }}
-                      </span>
-                    </div>
-                  </ng-template>
+                <p-column header="Party Info" [style]="{'width':'30%'}" >
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <div>{{item.caseParty.fullName?item.caseParty.fullName:item.caseParty.firstName+" "+item.caseParty.lastName}}</div>
+                      <!-- Christian : turned this on with fullName support on Server -->
+                      <div></div>
+                      <div *ngIf="!item.caseParty.isOrganization" >
+                          <span class="smaller">
+                          DOB: {{ item.caseParty.dob | date:'dd-MMM-yyyy' }}
+                          Sex: {{ item.caseParty.sex }}
+                          Age: {{ item.caseParty.age }}
+                        </span>
+                      </div>
+                    </ng-template>
                 </p-column>
 
                 <!-- <p-column field="caseParty.firstName" header="First Name" [style]="{'width':'15%'}"></p-column>
@@ -283,16 +329,16 @@
                 </p-column>
                 <p-column field="caseParty.age" header="Age" [style]="{'width':'7%'}"></p-column> -->
 
-                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
-                  <ng-template pTemplate="body" let-item="rowData">
-                    {{item.startDate | date:'dd-MMM-yyyy'}}
-
-                  </ng-template>
+                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}" [sortable]="true">                  
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.startDate | date:'dd-MMM-yyyy'}}
+                        
+                    </ng-template>
                 </p-column>
-                <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
-                  <ng-template pTemplate="body" let-item="rowData">
-                    {{item.endDate | date:'dd-MMM-yyyy'}}
-                  </ng-template>
+                <p-column field="endDate" header="End Date" [style]="{'width':'13%'}" [sortable]="true">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.endDate | date:'dd-MMM-yyyy'}}
+                    </ng-template>
                 </p-column>
                 <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
                     <ng-template let-item="rowData" pTemplate="body">
@@ -701,12 +747,12 @@
                             (onRowSelect)="docOnRowSelect($event)"
                             scrollable="true"
                             dataKey="documentOID" #dtDocs>
-                    <p-column field="lastUpdateDate" header="Document Date" [style]="{'width':'25%'}">
+                    <p-column field="docReceived" header="Document Received" [style]="{'width':'25%'}" [sortable]="true">
                         <ng-template pTemplate="body" let-item="rowData">
-                            {{item.lastUpdateDate | date:'medium'}}
+                            {{item.docReceived | date:'medium'}}
                         </ng-template>
                     </p-column>
-                    <p-column field="" header="Document Name" [style]="{'width':'75%'}">
+                    <p-column field="documentName" header="Document Name" [style]="{'width':'75%'}" [sortable]="true">
                         <ng-template pTemplate="body" let-item="rowData" styleClass="text-break">
                             <span>
                                 <a href="{{baseURL + '/GetDocument?' + item.documentURL}}" target="_blank">{{item.documentName}}</a>
@@ -816,21 +862,23 @@
                 </p-column>
                 <p-column field="docType" header="Document Type" [style]="{'width':'25%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                    <div style="font-size:10px">{{dtNameToCat(item.documentType)}}&nbsp;&gt;</div>
-                    <div>{{item.documentType}}</div>
+                    <div style="font-size:10px">{{dtNameCat(item)}}</div>
                   </ng-template>
                 </p-column>
                 <p-column field="" header="Document Name" [style]="{'width':'75%'}">
                   <ng-template pTemplate="body" let-item="rowData" styleClass="text-break">
                     <span>
-                      <a href="documents/{{item.documentName}}" (click)="doDocReq(item)">
-                        {{item.documentName}}</a>
+                        <a href="{{baseURL + '/GetDocument?' + item.documentURL}}" target="_blank">{{item.documentName}}</a>
+
+                      <!-- <a href="documents/{{item.documentName}}" (click)="doDocReq(item)">
+                        {{item.documentName}}</a> -->
                     </span>
                     <div style="font-size:10px">{{baseURL + '/GetDocument?' + item.documentURL}}</div>
                   </ng-template>
                 </p-column>
               </p-dataTable>
             </div>
+            <app-temp-hearings [case]="case"></app-temp-hearings>
           </div>
         </p-tabPanel>
 
@@ -856,10 +904,10 @@
                     {{item.endDate | date:'dd-MMM-yyyy hh:mm a'}}
                   </ng-template>
                 </p-column>
-                <p-column field="" header="Assigned" [style]="{'width':'17%'}">
-                  <ng-template pTemplate="body" let-item="rowData">
-                    {{ item.judicialOfficial?.firstName + ' ' + item.judicialOfficial?.lastName }}
-                  </ng-template>
+                <p-column field="" header="Sitting Judicial Officer" [style]="{'width':'17%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{ item.judicialOfficial?.firstName + ' ' + item.judicialOfficial?.lastName }}
+                    </ng-template>
                 </p-column>
                 <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
                     <ng-template let-item="rowData" pTemplate="body">
@@ -1511,7 +1559,7 @@
 
 <!-- START: ADD CASE APPLICATION MODAL -->
 
-<p-dialog header="Case Application Details" styleClass="caseApplicationModal" width="850" [(visible)]="showModalAddCaseApplication" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+<p-dialog header="Case Application Details" styleClass="caseApplicationModal" width="1200" [(visible)]="showModalAddCaseApplication" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
   
   <form #caseApplicationForm="ngForm" *ngIf="showModalAddCaseApplication">
     <div class="ui-g">
@@ -1778,6 +1826,75 @@
 </p-dialog>
 
 <!-- END: ADD CASE APPLICATION MODAL -->
+
+
+<!-- ADD SEAL CASE : AUTHORIZED USERS MODAL -->
+
+<p-dialog header="Seal Case File" styleClass="authorizedUserModal" width="650" [(visible)]="showModalAuthorizedUsers" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+  
+  <form #authorizedUsersForm="ngForm" *ngIf="showModalAuthorizedUsers">
+    <div class="ui-g">
+      <div class="form-group" >
+
+        <div class="ui-g-12">
+          
+        <div class="ui-g-12 mt-0">
+          <div class="ui-g-12">
+            <header class="mb-10">Sealing Case Number {{case.caseNumber}}: The Registrar and active JO's will have access if the case is sealed</header>
+          </div>
+
+          <div class="ui-g-12 mb-5 authorizedAccessCaseParties-row" *ngFor="let authorizedAccessCaseParties of case.authorizedAccessCaseParties; let acIdx = index">
+            
+            <div class="ui-g-8 ph-20 pv-5">
+           
+              <mat-form-field class="width-full"  >
+                
+                  <mat-select name="ddAuName"
+                    
+                    [value]="authorizedAccessCaseParties"
+                    [compareWith]="compareByPartyId"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    (selectionChange)="authorizedUsersOnChange($event, acIdx)">
+                   
+                             
+                    <mat-option *ngFor="let auName of courtUsers" [value]="auName" >
+                      {{auName.lastName + ", "+ auName.firstName }}
+                    </mat-option>   
+                     
+                </mat-select>
+                </mat-form-field>
+           
+            </div>
+            <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
+              <i class="material-icons delete-icon" (click)="requestDeleteAuthorizedUser(acIdx)">delete</i>
+            </div>
+        </div>
+     </div>
+     </div>
+    </div>
+  </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">          
+        <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
+                (click)="hideModals()" >
+        </button>
+        <button *ngIf = "case.authorizedAccessCaseParties.length == 0" label="Seal Case" type="submit" pButton icon="fa-check"
+                (click)="saveSealCaseParties(1)"
+                [disabled]="!authorizedUsersForm.form.valid">
+        </button> 
+        <button *ngIf = "case.authorizedAccessCaseParties.length > 0" label="Save Authorized Users" type="submit" pButton icon="fa-check"
+                (click)="saveSealCaseParties(1)"
+                [disabled]="!authorizedUsersForm.form.valid">
+        </button>
+        <button type="button" (click)="addAuthorizedUser();" label="Add Authorized User"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+                pButton>
+        </button>
+      </div>
+    </p-footer>    
+  </form>
+</p-dialog>
 
 
 <!-- ADD CASE CHARGE MODAL -->
@@ -2107,21 +2224,6 @@
             </p-calendar>
           </div>
         
-        <div class="ui-g-12 ui-md-3">
-          <label class="minimal primary block" for="receiptNumber">Receipt Number</label>
-            <textarea id="receiptNumber" name="receiptNumber"
-              placeholder="Enter the Payment Receipt Number"
-              [ngModel]="selectedCasePayment.receiptNumber"
-              (ngModelChange)="receiptNumberOnChange($event)"
-              [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)))"
-              [rows]="1" 
-              [required]="true"
-              pInputTextarea
-              autoResize="autoResize"
-              styleClass="width-full"></textarea>
-        </div>
-
-
 
         <div class="ui-g-12 ui-md-3">
             <label class="minimal primary block">Payment Method</label>
@@ -2159,6 +2261,22 @@
             </div>
         </div>
 
+        <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment.paymentMethod == 'Court Pay' || selectedCasePayment.receiptNumber != ''">
+          <label class="minimal primary block" for="receiptNumber">Receipt Number</label>
+            <textarea id="receiptNumber" name="receiptNumber"
+              placeholder="Enter the Payment Receipt Number"
+              [ngModel]="selectedCasePayment.receiptNumber"
+              (ngModelChange)="receiptNumberOnChange($event)"
+              [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) 
+                          || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))
+                          || selectedCasePayment.paymentMethod != 'Court Pay')"
+              [rows]="1" 
+              [required]="true"
+              pInputTextarea
+              autoResize="autoResize"
+              styleClass="width-full"></textarea>
+        </div>        
+
       </div>
 
       <div class="ui-g-12">
@@ -2179,8 +2297,14 @@
                      (ngModelChange)="processingFeeOnChange($event)">
             </div>      
               
-            <div class="ui-g-12 ui-md-3" *ngIf="((selectedCasePayment.paymentType == 'Maintenance' || selectedCasePayment.paymentType == 'Warrant' || selectedCasePayment.paymentType == 'Writs of Execution') && (selectedCasePayment.paymentOID > 0))">
-               <label class="minimal primary block">Date of Disbursement</label>
+            <div class="ui-g-12 ui-md-3" *ngIf="((selectedCasePayment.paymentType == 'Maintenance: Child' || 
+            selectedCasePayment.paymentType == 'Maintenance: Adult'|| 
+            selectedCasePayment.paymentType == 'Maintenance: Adult & Child'  || 
+            selectedCasePayment.paymentType == 'Warrant of Commitment' || 
+            selectedCasePayment.paymentType == 'Warrant of Apprehension' || 
+            selectedCasePayment.paymentType == 'Writs of Execution') && (selectedCasePayment.paymentOID > 0))">  
+
+            <label class="minimal primary block">Date of Disbursement</label>
                   <p-calendar id="dateOfDisbursement" name="dateOfDisbursement" placeholder="Disbursement Date"
                       [ngModel]="selectedCasePayment.disbursementDate"
                       (ngModelChange)="dateOfDisbursementOnChange($event)"

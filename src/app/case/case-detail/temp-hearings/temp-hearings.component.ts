@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, OnDestroy, EventEmitter, Output } from "@angular/core";
+import { Component, OnInit, Input, OnDestroy, EventEmitter, Output, OnChanges } from "@angular/core";
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
 
@@ -7,7 +8,6 @@ import { CourtLocation } from "../../../common/entities/CourtLocation";
 import { HearingType } from "../../../common/entities/HearingType";
 import { JudicialOfficer } from "../../../common/entities/JudicialOfficer";
 import { Permission } from "../../../common/entities/Permission";
-
 import { CalendarUtils } from "../../../common/utils/calendar-utils";
 import { CollectionUtil } from "../../../common/utils/collection-util";
 import { BreadcrumbService } from "../../../breadcrumb.service";
@@ -75,8 +75,12 @@ export class TempHearingsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.getLookups();
     this.hearings = [];
+    this.getLookups();
+  }
+
+  ngOnChanges() {
+    this.ngOnInit();
   }
 
   ngOnDestroy() {
