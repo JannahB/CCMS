@@ -850,35 +850,31 @@
 
             <div class="ui-g-12">
               <p-dataTable [value]="filterDocs" selectionMode="single" [(selection)]="selectedDoc"
-                (onRowSelect)="docOnRowSelect($event)" scrollable="false" scrollHeight="280px" dataKey="documentOID"
-                #dtDocs>
-                <p-column field="lastUpdateDate" header="Document Date" [style]="{'width':'25%'}">
+                (onRowSelect)="docOnRowSelect($event)" scrollable="true" dataKey="documentOID" #dtDocs>
+                <p-column field="docReceived" header="Document Date" [style]="{'width':'25%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
 
-                    {{item.lastUpdateDate | date:'medium'}}
-
-                    <!-- {{item.lastUpdateDate | date:'d/M/yy'}} -->
+                    {{item.docReceived | date:'medium'}}
                   </ng-template>
                 </p-column>
+
                 <p-column field="docType" header="Document Type" [style]="{'width':'25%'}">
                   <ng-template pTemplate="body" let-item="rowData">
                     <div style="font-size:10px">{{dtNameCat(item)}}</div>
                   </ng-template>
                 </p-column>
-                <p-column field="" header="Document Name" [style]="{'width':'75%'}">
-                  <ng-template pTemplate="body" let-item="rowData" styleClass="text-break">
-                    <span>
-                        <a href="{{baseURL + '/GetDocument?' + item.documentURL}}" target="_blank">{{item.documentName}}</a>
 
-                      <!-- <a href="documents/{{item.documentName}}" (click)="doDocReq(item)">
-                        {{item.documentName}}</a> -->
-                    </span>
-                    <div style="font-size:10px">{{baseURL + '/GetDocument?' + item.documentURL}}</div>
+                <p-column field="documentName" header="Document Name" [style]="{'width':'75%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData" styleClass="text-break">
+                      <span>
+                          <a href="{{baseURL + '/GetDocument?' + item.documentURL}}" target="_blank">{{item.documentName}}</a>
+                      </span>
+                      <div style="font-size:10px">{{baseURL + '/GetDocument?' + item.documentURL}}</div>
                   </ng-template>
-                </p-column>
+              </p-column>
               </p-dataTable>
             </div>
-            <app-temp-hearings [case]="case"></app-temp-hearings>
+            
           </div>
         </p-tabPanel>
 
