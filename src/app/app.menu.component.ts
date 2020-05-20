@@ -152,11 +152,11 @@ export class AppMenuComponent implements OnInit {
       );
     }
 
-    if (this.allowJudgeAssignMgmtFeature) {
+    /*if (this.allowJudgeAssignMgmtFeature) {
       this.courtManagerMenuItems.push(
         { label: 'Assignment Manager', icon: 'perm_contact_calendar', routerLink: ['/admin/assignment-mgr'] },
       );
-    }
+    }*/
   }
 
   buildMenu() {
@@ -166,7 +166,7 @@ export class AppMenuComponent implements OnInit {
     this.isAdmin = (this.userSvc.loggedInUser && this.userSvc.isAdminUser());
     this.isSupervisor = (this.userSvc.loggedInUser && this.userSvc.isSupervisor());
     this.isCourtManager = (this.userSvc.loggedInUser && (this.userSvc.isCourtManager() || this.userSvc.isAdminUser()));
-    console.log("isCourtManager", this.isCourtManager);
+    console.log("isAdmin", this.isAdmin);
 
     if (this.userSvc.loggedInUser) {
       this.model = this.baseMenuItems;
