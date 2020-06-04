@@ -945,10 +945,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   showAddCaseCaseApplication() { 
 
     this.showModalAddCaseApplication = true;
-  
     //Convert the dates for the selected applications
     this.caseSvc.convertCaseApplicationDates(this.selectedCaseApplication);
-    
     //Load the current parties associated with this case
     for (let i = 0; i < this.case.caseParties.length; i++){
       this.appCaseParties[i] = this.case.caseParties[i].caseParty;    
