@@ -662,7 +662,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     { value: 'Writs of Execution', label: 'Writs of Execution' },
     { value: 'Writs of Possession', label: 'Writs of Possession' },
     { value: 'Fines Payment', label: 'Fines Payment' },
-    { value: 'Filing Fees', label: 'Filing Fees' }
+    { value: 'Filing Fees', label: 'Filing Fees' },
+    { value: 'Marshal Service fees', label: 'Marshal Service fees' },
+    { value: 'Commissioner of Affidavit fees', label: 'Commissioner of Affidavit fees' },
+    { value: 'Office Copy fees', label: 'Office Copy fees' },
+    { value: 'Certified Copy fees', label: 'Certified Copy fees' },
+    { value: 'Divorce Package fees', label: 'Divorce Package fees' }
   ];
 
   paymentMethod: any[] = [
@@ -672,7 +677,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     { value: 'Court Pay', label: 'Court Pay' },
     { value: 'Credit Card', label: 'Credit Card' },   
     { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
-    { value: 'Personal Cheque', label: 'Personal Cheque' }
+    { value: 'Personal Cheque', label: 'Personal Cheque' },
+    { value: 'Deferred Payment', label: 'Deferred Payment' }
+
 
   ];
 
@@ -682,6 +689,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     { value: 'Maintenance: Adult & Child', label: 'Maintenance: Adult & Child'},
     { value: 'Fines Payment', label: 'Fines Payment' },
     { value: 'Filing Fees', label: 'Filing Fees' },
+    { value: 'Revenue', label: 'Revenue' },
     { value: 'Writs of Execution', label: 'Writs of Execution' },
     { value: 'Writs of Possession', label: 'Writs of Possession' },
     { value: 'Warrant of Apprehension', label: 'Warrant of Apprehension' },
@@ -696,7 +704,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     { value: 'Yearly', label: 'Yearly' },
     { value: 'Fortnightly', label: 'Fortnightly' },
     { value: 'One Time Payment', label: 'One Time Payment' },
-    { value: 'Custom Days', label: 'Custom Days' }
+    { value: 'Custom Days', label: 'Custom Days' },
+    { value: 'Suspended', label: 'Suspended' }
   ];  
 
 
