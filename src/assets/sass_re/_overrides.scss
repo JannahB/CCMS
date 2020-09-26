@@ -203,6 +203,8 @@ body {
   border-radius: 0;
   box-shadow: none;
 
+
+
   .ui-button-text, .ui-button-icon-left {
     font-weight: 300;
     font-size: 1.25em;
@@ -213,7 +215,18 @@ body {
     text-transform: uppercase;
   }
 
+  &.btn-md {
+    font-size: 0.7em;
+    font-weight: 700;
+    height: auto;
+    padding: 0.8rem;
+
+    .ui-button-text{
+      font-weight: 400;
+    }
+  }
 }
+
 
 // COLOR BOX ------------------------
 .dashboard {

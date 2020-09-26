@@ -6,31 +6,31 @@
   <div class="ui-g-12 pv-0 pl-0">
     <div class="ui-g-12 ui-md-4">
       <label class="minimal block mb-0">Case:</label>
-      <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>     
+      <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>
     </div>
 
     <div class="ui-g-12 ui-md-4" *ngIf="case?.sealIndicator == 1">
-      <h1 style="color:red">This is a Sealed Case</h1>        
+      <h1 style="color:red">This is a Sealed Case</h1>
     </div>
 
     <div class="ui-g-12 ui-md-4" *ngIf="case?.sealIndicator == 0">
-      <h1>                      </h1>        
+      <h1>                      </h1>
     </div>
 
     <div class="ui-g-12 ui-md-4 ta-r pb-0">
-        
+
         <button type="button"
           (click)="fetchCase(0)"
           label="Previous Case"
-          class="btn-big" pButton
+          class="btn-big btn-med" pButton
           [disabled]="!caseForm.form.valid"
         ></button>
 
         <button type="button"
-        (click)="fetchCase(1)"
-        label="Next Case"
-        class="btn-big" pButton
-        [disabled]="!caseForm.form.valid"
+          (click)="fetchCase(1)"
+          label="Next Case"
+          class="btn-big btn-med" pButton
+          [disabled]="!caseForm.form.valid"
         ></button>
     </div>
 
@@ -220,13 +220,13 @@
 
           </div>
 
-  
+
             <div class="ui-g-12 ui">
-  
+
               <div class="ui-g-12 ui-md-3" *ngIf="case.caseOID != 0">
                 <label class="minimal primary block">Disposition Date</label>
                 <p-calendar id="DispositionDate" name="DispositionDate" #finalDispositionDate
-                      
+
                       [required]="false"
                       [disabled]="!hasPermission(Permission.CREATE_CASE)"
                       [(ngModel)]="case.caseDispositionDate"
@@ -241,7 +241,7 @@
                       Please choose a Dispisition Date
                 </div>
               </div>
-  
+
               <div class="ui-g-12 ui-md-5" *ngIf="case.caseOID != 0">
                 <label class="minimal primary block">Disposition Type</label>
                 <p-dropdown name="ddCaseDispositionType" #ddCaseDispositionType placeholder="Disposition Type"
@@ -260,8 +260,8 @@
                       Please choose a Disposition Type
                 </div>
               </div>
-            </div>  
-            
+            </div>
+
                       <!-- Adding Case Notes Field  -->
             <div class="ui-g-12 mb-20" *ngIf="case.caseOID > 0">
                 <label class="minimal primary block">Case Notes</label>
@@ -323,10 +323,10 @@
                    <ng-template pTemplate="body" let-item="rowData" >
                     <div *ngIf = "item.caseParty.addresses.length >= 1">
                       <span class="smaller">
-                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].addressType + ":" }}        
+                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].addressType + ":" }}
                           {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].address1 + "," }}
                           {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].communityCode + "," }}
-                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].countryName }}                          
+                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].countryName }}
                       </span>
                     </div>
                   </ng-template>
@@ -336,18 +336,18 @@
                   <ng-template pTemplate="body" let-item="rowData" >
                    <div *ngIf = "item.caseParty.phoneNumbers.length >= 1">
                      <span class="smaller">
-                         {{ item.caseParty.phoneNumbers[item.caseParty.primaryContactLoc].phoneType + ":" }}        
-                         {{ item.caseParty.phoneNumbers[item.caseParty.primaryContactLoc].phoneNumber }}                      
+                         {{ item.caseParty.phoneNumbers[item.caseParty.primaryContactLoc].phoneType + ":" }}
+                         {{ item.caseParty.phoneNumbers[item.caseParty.primaryContactLoc].phoneNumber }}
                      </span>
                    </div>
                  </ng-template>
                </p-column>
-          
 
-                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}" [sortable]="true">                  
+
+                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}" [sortable]="true">
                     <ng-template pTemplate="body" let-item="rowData">
                         {{item.startDate | date:'dd-MMM-yyyy'}}
-                        
+
                     </ng-template>
                 </p-column>
                 <p-column field="endDate" header="End Date" [style]="{'width':'13%'}" [sortable]="true">
@@ -402,10 +402,10 @@
                       {{item.caseApplicationEndDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
-              
+
             </p-dataTable>
           </div>
-        </div>           
+        </div>
 
 
 
@@ -883,7 +883,7 @@
               </p-column>
               </p-dataTable>
             </div>
-            
+
           </div>
         </p-tabPanel>
 
@@ -927,7 +927,7 @@
             </div>
           </div>
         </p-tabPanel>
-        
+
         <!-- HEARINGS TAB -->
 
         <p-tabPanel header="Hearings" leftIcon="ui-icon-gavel">
@@ -956,8 +956,8 @@
 
         <!-- PAYMENT & DISBURSEMENTS TAB -->
         <p-tabPanel header="Payments and Disbursements" leftIcon="ui-icon-list">
-          
-          <div class="ui-g">         
+
+          <div class="ui-g">
             <div class="ui-g-12">
               <h2>Payments & Disbursements</h2>
             </div>
@@ -1004,16 +1004,16 @@
                         {{ item.beneficiaryParty.firstName + ' ' + item.beneficiaryParty.lastName }}
                       </div>
                   </ng-template>
-                </p-column>   
-                
+                </p-column>
+
                 <p-column field="" header="Payment In by Payor" [style]="{'width':'10%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
                       <div *ngIf="item.totalPaymentIn">
                         {{ '$'+ item.totalPaymentIn }}
                       </div>
                   </ng-template>
-                </p-column>    
-                
+                </p-column>
+
 
                 <p-column field="" header="Payment Recorded By" [style]="{'width':'10%'}">
                     <ng-template pTemplate="body" let-item="rowData">
@@ -1021,22 +1021,22 @@
                           {{ item.staffPartyRecordingPayment.fullName}}
                         </div>
                     </ng-template>
-                  </p-column>  
-                  
+                  </p-column>
+
                   <p-column field="" header="Payment Disbursed By" [style]="{'width':'10%'}" >
                       <ng-template pTemplate="body" let-item="rowData">
                           <div *ngIf="item.staffPartyRecordingDisbursement?.partyOID">
                             {{ item.staffPartyRecordingDisbursement.fullName}}
                           </div>
                       </ng-template>
-                    </p-column>                      
-              
+                    </p-column>
+
                 <p-column field="disbursementDate" header="Date of Disbursement" [style]="{'width':'8%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
                       {{item.disbursementDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
-                </p-column>                
-   
+                </p-column>
+
             </p-dataTable>
 
             </div>
@@ -1053,13 +1053,13 @@
 
 
           </div>
-        </p-tabPanel>      
-        
-    
+        </p-tabPanel>
+
+
         <!-- PAYMENT HISTORY -->
         <p-tabPanel header="Payment History" leftIcon="ui-icon-list">
-          
-          <div class="ui-g">         
+
+          <div class="ui-g">
             <div class="ui-g-12">
               <h2>Payment History</h2>
             </div>
@@ -1092,15 +1092,15 @@
                 <p-column field="paymentItem" header="Payment Item" [style]="{'width':'10%'}" [sortable]="true"></p-column>
                 <p-column field="paymentFrequency" header="Payment Frequency" [style]="{'width':'10%'}" [sortable]="true"></p-column>
                 <p-column field="paymentAmountOrdered" header="Payment Amount Ordered" [style]="{'width':'10%'}" [sortable]="true"></p-column>
-                <p-column field="paymentAmountIn" header="Customer Payment" [style]="{'width':'10%'}" [sortable]="true"></p-column>              
-   
+                <p-column field="paymentAmountIn" header="Customer Payment" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+
             </p-dataTable>
 
           </div>
 
 
           </div>
-        </p-tabPanel>          
+        </p-tabPanel>
 
 
       </p-tabView>
@@ -1551,47 +1551,47 @@
             <p-dataTable [value]="selectedCaseParty.caseParty.phoneNumbers"
                         scrollable="true" scrollHeight="200px"
                         dataKey="phoneNumbers.partyPhoneOID" #dtContact>
-    
+
               <p-column field="phoneType" header="Contact Type" [style]="{'width':'10%'}" [sortable]="true"> </p-column>
               <p-column field="phoneNumber" header="Phone Number" [style]="{'width':'20%'}" [sortable]="true"> </p-column>
-              
+
               <p-column field="startDate" header="Start Date" [style]="{'width':'10%'}" [sortable]="true">
                 <ng-template pTemplate="body" let-item="rowData">
                     {{item.startDate | date:'dd-MMM-yyyy'}}
                 </ng-template>
-              </p-column>  
+              </p-column>
 
               <p-column field="endDate" header="End Date" [style]="{'width':'10%'}" [sortable]="true">
                 <ng-template pTemplate="body" let-item="rowData">
                     {{item.endDate | date:'dd-MMM-yyyy'}}
                 </ng-template>
-              </p-column>  
+              </p-column>
               </p-dataTable>
-          </div>             
+          </div>
 
           <div class="ui-g-12 ui-md-0 mb-0">
             <label class="minimal primary block">Party Address Information</label>
             <p-dataTable [value]="selectedCaseParty.caseParty.addresses"
                         scrollable="true" scrollHeight="200px"
                         dataKey="addresses.addressOID" #dtAddress>
-    
+
               <p-column field="addressType" header="Address Type" [style]="{'width':'10%'}" [sortable]="true"> </p-column>
               <p-column field="startDate" header="Start Date" [style]="{'width':'8%'}" [sortable]="true">
                 <ng-template pTemplate="body" let-item="rowData">
                     {{item.startDate | date:'dd-MMM-yyyy'}}
                 </ng-template>
-              </p-column>  
+              </p-column>
               <p-column field="endDate" header="End Date" [style]="{'width':'8%'}" [sortable]="true">
                 <ng-template pTemplate="body" let-item="rowData">
                     {{item.endDate | date:'dd-MMM-yyyy'}}
                 </ng-template>
-              </p-column>  
+              </p-column>
 
               <p-column field="address1" header="Street Name" [style]="{'width':'20%'}" [sortable]="true"> </p-column>
               <p-column field="communityCode"  header="City / Town"[style]="{'width':'10%'}" [sortable]="true"></p-column>
               <p-column field="countryName"  header="Country" [style]="{'width':'15%'}" [sortable]="true"></p-column>
               </p-dataTable>
-        </div>           
+        </div>
 
         </div>
       </div>
@@ -1612,13 +1612,13 @@
 <!-- START: ADD CASE APPLICATION MODAL -->
 
 <p-dialog header="Case Application Details" styleClass="caseApplicationModal" width="1200" [(visible)]="showModalAddCaseApplication" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-  
+
   <form #caseApplicationForm="ngForm" *ngIf="showModalAddCaseApplication">
     <div class="ui-g">
       <div class="form-group" >
 
         <div class="ui-g-12">
-          
+
           <div class="ui-g-12 ui-md-3" *ngIf="case.caseNumber != 0">
             <label class="minimal primary block">Case Number</label>
             <div class="mar-0">{{case.caseNumber}}</div>
@@ -1628,7 +1628,7 @@
               <label class="minimal primary block">Application Number</label>
               <div class="mar-0">{{selectedCaseApplication.caseApplicationNumber}}</div>
            </div>
-            
+
             <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Application Type</label>
               <p-dropdown name="ddApplicationType" id="ddApplicationType"  placeholder="Choose Application Type"
@@ -1640,9 +1640,9 @@
                   [(ngModel)]="selectedCaseApplication.caseApplicationObjType"
                   (onChange)="applicationTypeOnChange($event)"
                   styleClass="width-full">
-              </p-dropdown>             
-            </div>  
-            
+              </p-dropdown>
+            </div>
+
             <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Application Status</label>
               <p-dropdown name="ddApplicationStatus" id="ddApplicationStatus" placeholder="Choose Application Status"
@@ -1655,152 +1655,152 @@
                   (onChange)="applicationStatusOnChange($event)"
                   styleClass="width-full">
               </p-dropdown>
-           </div>    
+           </div>
         </div>
 
         <div class="ui-g-12">
            <div class="ui-g-12 ui-md-4">
               <label class="minimal primary block">Start Date</label>
-              <p-calendar id="dtAppStartDate" name="dtAppStartDate" placeholder="Start Date"                      
+              <p-calendar id="dtAppStartDate" name="dtAppStartDate" placeholder="Start Date"
                     (ngModelChange) ="caseApplicationStartDateOnChange($event)"
                     [ngModel]="selectedCaseApplication?.caseApplicationStartDate"
                     [required]="true"
                     appendTo="body"
                     [inline] = "false"
-                    dateFormat="dd-M-yy"  
-                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"                  
+                    dateFormat="dd-M-yy"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                     [showIcon]="true"
-                    [monthNavigator]="true" 
+                    [monthNavigator]="true"
                     [yearNavigator]="true"
                     yearRange="2000:2030"
                     appendTo="body">
               </p-calendar>
            </div>
-    
+
           <div class="ui-g-12 ui-md-4">
             <label class="minimal primary block">End Date</label>
-            <p-calendar id="dtAppEndDate" name="dtAppEndDate" placeholder="Application End Date"                      
+            <p-calendar id="dtAppEndDate" name="dtAppEndDate" placeholder="Application End Date"
                     (ngModelChange) ="caseApplicationEndDateOnChange($event)"
                     [ngModel]="selectedCaseApplication?.caseApplicationEndDate"
                     [required]="false"
                     appendTo="body"
                     [inline] = "false"
-                    dateFormat="dd-M-yy"  
-                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"                  
+                    dateFormat="dd-M-yy"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                     [showIcon]="true"
-                    [monthNavigator]="true" 
+                    [monthNavigator]="true"
                     [yearNavigator]="true"
                     yearRange="2000:2030"
                     appendTo="body">
               </p-calendar>
-          </div>   
+          </div>
 
        </div>
 
-       <div class="ui-g-12">     
-         
+       <div class="ui-g-12">
+
           <div class="ui-g-12">
               <header class="mb-10" *ngIf="selectedCaseApplication.caseApplicationType == 1">Marriage Details</header>
           </div>
 
           <!-- CAPTURE THE PLACE OF MARRIAGE  -->
-          <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">             
+          <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">
               <label class="minimal primary block">Date of Marriage</label>
-              <p-calendar id="dtOfMarriage" name="dtOfMarriage" placeholder="Date of Marriage"                      
+              <p-calendar id="dtOfMarriage" name="dtOfMarriage" placeholder="Date of Marriage"
                       (ngModelChange) ="dateOfMarriageOnChange($event)"
                       [ngModel]="selectedCaseApplication?.dateOfMarriage"
                       [required]="true"
                       appendTo="body"
                       [inline] = "false"
-                      dateFormat="dd-M-yy"   
-                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"                  
+                      dateFormat="dd-M-yy"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                       [showIcon]="true"
-                      [monthNavigator]="true" 
+                      [monthNavigator]="true"
                       [yearNavigator]="true"
                       yearRange="2000:2030"
                       appendTo="body">
                 </p-calendar>
-           </div>          
-                        
-            <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">                    
+           </div>
+
+            <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">
                   <label class="minimal primary block">Country of Marriage</label>
-                  <p-dropdown name="ddAomCountry" id="ddAomCountry" #ddAomCountry="ngModel" 
+                  <p-dropdown name="ddAomCountry" id="ddAomCountry" #ddAomCountry="ngModel"
                     placeholder="Choose Country of Marriage"
                     [required] = "true"
                     [filter] = "true"
                     [(ngModel)]="selectedCaseApplication.aomCountryName"
-                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)" 
-                    [options]="countries"                    
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [options]="countries"
                     [style]="{'width':'100%'}"
                     (onChange)="countryOfMarriageOnChange($event)">
                   </p-dropdown>
               </div>
 
-              <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">     
-                  <label class="minimal primary block">Street Address</label>   
+              <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">
+                  <label class="minimal primary block">Street Address</label>
                   <span class="md-inputfield">
-                    <input type="text" pInputText #martialStreetAddress="ngModel" name="martialStreetAddress" 
-                            [required] = "true"                            
-                            [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)" 
-                            [ngModel]="selectedCaseApplication.aomStreetName"  
+                    <input type="text" pInputText #martialStreetAddress="ngModel" name="martialStreetAddress"
+                            [required] = "true"
+                            [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                            [ngModel]="selectedCaseApplication.aomStreetName"
                             (ngModelChange)="editStreetAddressOnChange($event)">
                   </span>
                     <div class="ui-message ui-messages-error ui-corner-all"
                           *ngIf="martialStreetAddress.errors?.required && martialStreetAddress.touched" >
                           Please enter the street address for place of marriage
                     </div>
-                    </div>              
+                    </div>
         </div>
 
-        <div class="ui-g-12"> 
+        <div class="ui-g-12">
 
-            <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">  
-                <label class="minimal primary block">City</label>        
+            <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">
+                <label class="minimal primary block">City</label>
                 <span class="md-inputfield">
-                <input type="text" pInputText #martialCityAddress="ngModel" name="martialCityAddress" 
+                <input type="text" pInputText #martialCityAddress="ngModel" name="martialCityAddress"
                       [required] = "true"
-                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)" 
-                      [ngModel]="selectedCaseApplication.aomCityName"  
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      [ngModel]="selectedCaseApplication.aomCityName"
                       (ngModelChange)="editCityAddressOnChange($event)">
                 </span>
                     <div class="ui-message ui-messages-error ui-corner-all"
                       *ngIf="martialCityAddress.errors?.required && martialCityAddress.touched" >
                       Please enter the city / towm for place of marriage
                     </div>
-              </div>   
-              
-              <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">  
-                  <label class="minimal primary block">Community Code</label>        
+              </div>
+
+              <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">
+                  <label class="minimal primary block">Community Code</label>
                   <span class="md-inputfield">
-                  <input type="text" pInputText #communityCode="ngModel" name="communityCode" 
+                  <input type="text" pInputText #communityCode="ngModel" name="communityCode"
                         [required] = "false"
-                        [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)" 
-                        [ngModel]="selectedCaseApplication.communityCode"  
+                        [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                        [ngModel]="selectedCaseApplication.communityCode"
                         (ngModelChange)="communityCodeOnChange($event)">
                   </span>
                       <div class="ui-message ui-messages-error ui-corner-all"
                         *ngIf="communityCode.errors?.required && communityCode.touched" >
                         Please enter the Community Code
                       </div>
-                </div>  
+                </div>
 
-                <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">  
-                    <label class="minimal primary block">Administrative Area Code</label>        
+                <div class="ui-g-12 ui-md-4" *ngIf="selectedCaseApplication.caseApplicationType == 1">
+                    <label class="minimal primary block">Administrative Area Code</label>
                     <span class="md-inputfield">
-                    <input type="text" pInputText #administrativeAreaCode="ngModel" name="administrativeAreaCode" 
+                    <input type="text" pInputText #administrativeAreaCode="ngModel" name="administrativeAreaCode"
                           [required] = "false"
-                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)" 
-                          [ngModel]="selectedCaseApplication.administrativeAreaCode"  
+                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                          [ngModel]="selectedCaseApplication.administrativeAreaCode"
                           (ngModelChange)="administrativeAreaCodeOnChange($event)">
                     </span>
                         <div class="ui-message ui-messages-error ui-corner-all"
                           *ngIf="administrativeAreaCode.errors?.required && administrativeAreaCode.touched" >
                           Please enter the Administrative Area Code
                         </div>
-                  </div>  
+                  </div>
         </div>
 
-       
+
 
         <!-- ADD PARTY APPLICANT & PARTY ROLES SECTION  -->
 
@@ -1819,7 +1819,7 @@
           </div>
 
           <div class="ui-g-12 mb-5 caseapplicant-row" *ngFor="let caseapplicant of selectedCaseApplication.caseApplicants; let acIdx = index">
-            
+
             <div class="ui-g-5 ph-20 pv-5">
               <mat-form-field class="width-full" >
                   <mat-select name="ddCPName"
@@ -1830,7 +1830,7 @@
                  <mat-option *ngFor="let caName of appCaseParties" [value]="caName">
                     {{caName.fullName}}
                   </mat-option>
-             
+
                 </mat-select>
               </mat-form-field>
             </div>
@@ -1841,7 +1841,7 @@
                       [value]="caseapplicant"
                       [compareWith]="compareByCasePartyRoleId"
                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                      (selectionChange)="caseApplicantRoleOnChange($event, acIdx)" >                 
+                      (selectionChange)="caseApplicantRoleOnChange($event, acIdx)" >
                     <mat-option *ngFor="let roleTypes of casePartyRoleTypes" [value]="roleTypes">
                       {{roleTypes.name}}
                     </mat-option>
@@ -1859,21 +1859,21 @@
 
     <p-footer>
       <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
-        
-               
+
+
         <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
                 (click)="hideModals()" >
         </button>
         <button label="Save Application Details" type="submit" pButton icon="fa-check"
                 (click)="addCaseApplication()"
                 [disabled]="!caseApplicationForm.form.valid">
-        </button> 
+        </button>
         <button type="button" (click)="addCaseApplicant();" label="Add Applicant &amp; Role"
                 icon="ui-icon-add" class="ui-button-secondary mr-15"
                 pButton>
         </button>
       </div>
-    </p-footer>    
+    </p-footer>
   </form>
 </p-dialog>
 
@@ -1883,39 +1883,39 @@
 <!-- ADD SEAL CASE : AUTHORIZED USERS MODAL -->
 
 <p-dialog header="Seal Case File" styleClass="authorizedUserModal" width="650" [(visible)]="showModalAuthorizedUsers" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-  
+
   <form #authorizedUsersForm="ngForm" *ngIf="showModalAuthorizedUsers">
     <div class="ui-g">
       <div class="form-group" >
 
         <div class="ui-g-12">
-          
+
         <div class="ui-g-12 mt-0">
           <div class="ui-g-12">
             <header class="mb-10">Sealing Case Number {{case.caseNumber}}: The Registrar and active JO's will have access if the case is sealed</header>
           </div>
 
           <div class="ui-g-12 mb-5 authorizedAccessCaseParties-row" *ngFor="let authorizedAccessCaseParties of case.authorizedAccessCaseParties; let acIdx = index">
-            
+
             <div class="ui-g-8 ph-20 pv-5">
-           
+
               <mat-form-field class="width-full"  >
-                
+
                   <mat-select name="ddAuName"
-                    
+
                     [value]="authorizedAccessCaseParties"
                     [compareWith]="compareByPartyId"
                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                     (selectionChange)="authorizedUsersOnChange($event, acIdx)">
-                   
-                             
+
+
                     <mat-option *ngFor="let auName of courtUsers" [value]="auName" >
                       {{auName.lastName + ", "+ auName.firstName }}
-                    </mat-option>   
-                     
+                    </mat-option>
+
                 </mat-select>
                 </mat-form-field>
-           
+
             </div>
             <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
               <i class="material-icons delete-icon" (click)="requestDeleteAuthorizedUser(acIdx)">delete</i>
@@ -1927,14 +1927,14 @@
   </div>
 
     <p-footer>
-      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">          
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
         <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
                 (click)="hideModals()" >
         </button>
         <button *ngIf = "case.authorizedAccessCaseParties.length == 0" label="Seal Case" type="submit" pButton icon="fa-check"
                 (click)="saveSealCaseParties(1)"
                 [disabled]="!authorizedUsersForm.form.valid">
-        </button> 
+        </button>
         <button *ngIf = "case.authorizedAccessCaseParties.length > 0" label="Save Authorized Users" type="submit" pButton icon="fa-check"
                 (click)="saveSealCaseParties(1)"
                 [disabled]="!authorizedUsersForm.form.valid">
@@ -1944,7 +1944,7 @@
                 pButton>
         </button>
       </div>
-    </p-footer>    
+    </p-footer>
   </form>
 </p-dialog>
 
@@ -2196,7 +2196,7 @@
                   styleClass="width-full">
               </p-dropdown>
             </div>
-    
+
             <div class="ui-g-12 mb-0">
                <label class="minimal primary block">Due Date and Expected Completion Time</label>
                <p-calendar id="ExpectedCompletionTime" name="ExpectedCompletionTime" placeholder="Enter Date and Time"
@@ -2206,14 +2206,14 @@
                    appendTo="body"
                    [inline]="false"
                    [showTime]="true"
-                   [hourFormat]="12" 
+                   [hourFormat]="12"
                    [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
                    dateTimeFormat="dd-M-yy HH-mm a"
-                   [monthNavigator]="true" 
-                   [yearNavigator]="true" 
+                   [monthNavigator]="true"
+                   [yearNavigator]="true"
                    yearRange="2000:2030">
                </p-calendar>
-            </div>     
+            </div>
 
         <div class="ui-g-12 mb-0" *ngIf="selectedCaseTask?.taskOID != 0">
           <label class="minimal primary block">Task Checked Out?</label>
@@ -2253,9 +2253,9 @@
 
   <form (ngSubmit)="addCasePayment()" #casePaymentForm="ngForm" *ngIf="showModalAddCasePayment">
     <div class="ui-g">
-      <div class="form-group" >  
-        
-        
+      <div class="form-group" >
+
+
         <div class="ui-g-12">
 
           <div class="ui-g-12 ui-md-3">
@@ -2266,16 +2266,16 @@
                 [showIcon]="true"
                 appendTo="body"
                 [inline]="false"
-                [required]="true"                      
+                [required]="true"
                 dateFormat="dd-M-yy"
                 [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)))"
-                [monthNavigator]="true" 
-                [yearNavigator]="true" 
+                [monthNavigator]="true"
+                [yearNavigator]="true"
                 yearRange="2000:2030"
                 styleClass="width-full">
             </p-calendar>
           </div>
-        
+
 
         <div class="ui-g-12 ui-md-3">
             <label class="minimal primary block">Payment Method</label>
@@ -2319,15 +2319,15 @@
               placeholder="Enter the Payment Receipt Number"
               [ngModel]="selectedCasePayment.receiptNumber"
               (ngModelChange)="receiptNumberOnChange($event)"
-              [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) 
+              [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK))
                           || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))
                           || selectedCasePayment.paymentMethod != 'Court Pay')"
-              [rows]="1" 
+              [rows]="1"
               [required]="true"
               pInputTextarea
               autoResize="autoResize"
               styleClass="width-full"></textarea>
-        </div>        
+        </div>
 
       </div>
 
@@ -2338,8 +2338,8 @@
                   <input matInput type="number" name="tiTotalPaidIn" placeholder="Total Amount Paid In"
                   [(ngModel)]="selectedCasePayment.totalPaymentIn"
                   [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
-                  (ngModelChange)="totalAmountPainInOnChange($event)">     
-            </div>          
+                  (ngModelChange)="totalAmountPainInOnChange($event)">
+            </div>
 
             <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment.paymentMethod == 'Court Pay'">
                <label class="minimal primary block" for="tiProcessingFee">Processing Fee</label>
@@ -2347,14 +2347,14 @@
                      [(ngModel)]="selectedCasePayment.processingFee"
                      [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
                      (ngModelChange)="processingFeeOnChange($event)">
-            </div>      
-              
-            <div class="ui-g-12 ui-md-3" *ngIf="((selectedCasePayment.paymentType == 'Maintenance: Child' || 
-            selectedCasePayment.paymentType == 'Maintenance: Adult'|| 
-            selectedCasePayment.paymentType == 'Maintenance: Adult & Child'  || 
-            selectedCasePayment.paymentType == 'Warrant of Commitment' || 
-            selectedCasePayment.paymentType == 'Warrant of Apprehension' || 
-            selectedCasePayment.paymentType == 'Writs of Execution') && (selectedCasePayment.paymentOID > 0))">  
+            </div>
+
+            <div class="ui-g-12 ui-md-3" *ngIf="((selectedCasePayment.paymentType == 'Maintenance: Child' ||
+            selectedCasePayment.paymentType == 'Maintenance: Adult'||
+            selectedCasePayment.paymentType == 'Maintenance: Adult & Child'  ||
+            selectedCasePayment.paymentType == 'Warrant of Commitment' ||
+            selectedCasePayment.paymentType == 'Warrant of Apprehension' ||
+            selectedCasePayment.paymentType == 'Writs of Execution') && (selectedCasePayment.paymentOID > 0))">
 
             <label class="minimal primary block">Date of Disbursement</label>
                   <p-calendar id="dateOfDisbursement" name="dateOfDisbursement" placeholder="Disbursement Date"
@@ -2363,26 +2363,26 @@
                       [showIcon]="true"
                       appendTo="body"
                       [inline]="false"
-                      [required]="false"  
-                      [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || !hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"                  
+                      [required]="false"
+                      [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || !hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                       dateFormat="dd-M-yy"
-                      [monthNavigator]="true" 
-                      [yearNavigator]="true" 
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
                       yearRange="2000:2030"
                       [disabled]="selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)"
                       styleClass="width-full">
                   </p-calendar>
-            </div>              
-              
+            </div>
+
               <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment?.disbursementDate != null">
-                <label class="minimal primary block">Payment Disbursed?</label>  
+                <label class="minimal primary block">Payment Disbursed?</label>
                 <p-checkbox
                     [ngModel]="selectedCasePayment?.paymentDisbursedFlag" binary="true" name="disbursementCompleted"
-                    [required]="false"        
-                     
+                    [required]="false"
+
                     [disabled]="permissionSupervisor == false && disbursementToggle == true"
                     (onChange)="disbursementCompletedOnChange($event)"
-                    >            
+                    >
                   </p-checkbox>
               </div>
 
@@ -2419,7 +2419,7 @@
                   styleClass="width-full">
               </p-dropdown>
           </div>
-   
+
           <div class="ui-g-12 ui-md-6">
               <label class="minimal primary block">Beneficiary Party</label>
               <p-dropdown name="ddBeneficiaryParty" id="ddBeneficiaryParty"  #ddBeneficiaryParty="ngModel" placeholder="choose Beneficiary Party..."
@@ -2432,8 +2432,8 @@
                     (onChange)="beneficiaryOnChange($event)"
                     styleClass="width-full">
               </p-dropdown>
-            </div>  
-      </div>   
+            </div>
+      </div>
 
 
             <!-- ADD PAYMENT ITEMS, FREQUENCY, PAYMENT DATE, PAYMENT FREQUENCY, PAYMENT AMOUNT-->
@@ -2442,7 +2442,7 @@
               <div class="ui-g-12">
                 <header class="mb-10">Payment &amp; Disbursement Details</header>
               </div>
-    
+
               <div class="ui-g-12 mb-5 paymentDetails-th">
                 <div class="ui-g-2 pv-0">
                   <label class="minimal primary block">Period Start Date</label>
@@ -2467,12 +2467,12 @@
                 </div-->
               </div>
 
-    
+
               <div class="ui-g-12 mb-5 paymentsDisbursements-row" *ngFor="let paymentsDisbursements of selectedCasePayment.paymentsDisbursements; let acIdx = index">
-                
+
                 <div class="ui-g-2 ph-0 pv-5">
-                    
-                  <p-calendar 
+
+                  <p-calendar
                        placeholder="Period Start Date"
                       (ngModelChange)="periodStartDateOnChange($event,acIdx)"
                       [showIcon]="true"
@@ -2481,15 +2481,15 @@
                       [required]="true"
                       dateFormat="dd-M-yy"
                       [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
-                      [monthNavigator]="true" 
-                      [yearNavigator]="true" 
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
                       yearRange="2000:2030"
                       id="paymentsDisbursements-paymentPeriodStartDate-{{acIdx}}"
                       [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentPeriodStartDate"
                       name="paymentsDisbursements[{{acIdx}}].paymentPeriodStartDate">
-                  </p-calendar>   
-                  
-                  
+                  </p-calendar>
+
+
                 </div>
 
                 <div class="ui-g-2 ph-10 pv-5">
@@ -2498,11 +2498,11 @@
                       [showIcon]="true"
                       appendTo="body"
                       [inline]="false"
-                      [required]="true"                      
+                      [required]="true"
                       dateFormat="dd-M-yy"
                       [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
-                      [monthNavigator]="true" 
-                      [yearNavigator]="true" 
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
                       yearRange="2000:2030"
                       id="paymentsDisbursements-paymentPeriodEndDate-{{acIdx}}"
                       [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentPeriodEndDate"
@@ -2515,7 +2515,7 @@
                        placeholder="Choose Payment Item"
                       [required]="true"
                       [options]="paymentItem"
-                      filter = "true"                      
+                      filter = "true"
                       appendTo="body"
                       [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
                       (ngModelChange)="paymentItemOnChange($event,acIdx)"
@@ -2537,31 +2537,31 @@
                       (ngModelChange)="paymentFrequencyOnChange($event,acIdx)"
                       id="paymentsDisbursements-paymentFrequency-{{acIdx}}"
                       [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentFrequency"
-                      name="paymentsDisbursements[{{acIdx}}].paymentFrequency"                      
+                      name="paymentsDisbursements[{{acIdx}}].paymentFrequency"
                       styleClass="width-full">
                   </p-dropdown>
-               </div>        
-               
+               </div>
+
               <div class="ui-g-1 ph-10 pv-5">
-                      <input matInput type="number"  
+                      <input matInput type="number"
                         placeholder="Payment Ordered"
                         id="paymentsDisbursements-paymentAmountOrdered-{{acIdx}}"
                         [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
                         [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountOrdered"
-                        name="paymentsDisbursements[{{acIdx}}].paymentAmountOrdered"  
+                        name="paymentsDisbursements[{{acIdx}}].paymentAmountOrdered"
                         (ngModelChange)="paymentAmountOrderedOnChange($event,acIdx)">
-              </div>               
+              </div>
 
               <div class="ui-g-1 ph-10 pv-5">
-                    <input matInput type="number"  
+                    <input matInput type="number"
                     placeholder="Payment Rendered"
                     (ngModelChange)="paymentAmountInOnChange($event,acIdx)"
                     [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
                     id="paymentsDisbursements-paymentAmountIn-{{acIdx}}"
                     [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountIn"
-                    name="paymentsDisbursements[{{acIdx}}].paymentAmountIn">                    
+                    name="paymentsDisbursements[{{acIdx}}].paymentAmountIn">
               </div>
-  
+
                 <div class="ui-g-1 ta-r mt-15 ph-10 pv-5">
                   <i class="material-icons delete-icon" (click)="requestDeleteCasePaymentDetail(acIdx)">delete</i>
                 </div>
@@ -2572,17 +2572,17 @@
 
     <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
-          <button label="Save Payment" type="submit" pButton icon="fa-check" 
+          <button label="Save Payment" type="submit" pButton icon="fa-check"
                   [disabled]="!casePaymentForm.form.valid"
                   (click)="addCasePayment()"></button>
 
           <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
                   (click)="onCancelCasePayment()">
-          </button>                  
+          </button>
 
           <button type="button" (click)="addCasePaymentDisbursement();" label="Add Payment &amp; Disbursement"
                 icon="ui-icon-add" class="ui-button-secondary mr-15"
-                
+
                 pButton>
         </button>
         </div>
