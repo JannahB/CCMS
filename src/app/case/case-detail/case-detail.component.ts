@@ -137,12 +137,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   docTypeNames: String[] = [];
 
   //actualCompletionDate: Date = null; //Used to capture the actual cask task completion date from the DB.
-  //selChargeFactor: string = ""; 
+  //selChargeFactor: string = "";
   isRegistrar: boolean = false;
-  sealIndicator: number = 0; // 
+  sealIndicator: number = 0; //
   courtUsers: Party[] = [];
   authUsers: Party[] = [];
-  
+
   public Permission: any = Permission;
 
   constructor(
@@ -233,11 +233,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.isRegistrar = (this.userSvc.loggedInUser && this.userSvc.isRegistrar());
     let caseOID: number = 0;
-    
+
     this.routeSubscription = this.activatedRoute.params.subscribe(params => {
       const caseId = params['caseId'];
       caseOID = caseId;
-      this.getCase(caseId);  
+      this.getCase(caseId);
     });
 
     if(caseOID == 0){
@@ -261,7 +261,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
       .fetchCaseDispositionType()
-      .subscribe(results => this.caseDispositionTypes = results);   
+      .subscribe(results => this.caseDispositionTypes = results);
 
     this.caseSvc
       .fetchEventType()
@@ -278,13 +278,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       this.countriesSubscription = this.countriesSvc.get().subscribe(countries => {
         this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
 
-      })    
+      })
     this.partySvc.getAllCourtUsers().subscribe(results => this.courtUsers = results);
 
   }
 
 
-  
+
 
   ngOnDestroy(){
     if (this.caseSubscription) {
@@ -321,9 +321,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   }
 
   getCase(caseId) {
-    
+
     this.caseForm.reset();
-    
+
     if (caseId == 0) {
       this.case = new Case();
       this.loadingCase = false;
@@ -331,10 +331,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     }
 
     //Check if the user is authorized to view the case
-   
+
     this.loadingMessage = 'loading case...';
     this.loadingCase = true;
-    
+
 
     var recordData: any = {
       case_id: 0,
@@ -349,8 +349,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
       if (kase == null) {
         this.toastSvc.showWarnMessage('This case has restricted access, you are not authorized to view this case');
-      }     
-                
+      }
+
       else {
 
         //NEED TO KEEP TRACK OF THE CASE NUMBER
@@ -359,13 +359,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       if (!kase.caseOID) {
         this.toastSvc.showWarnMessage('There is no case with caseOID of ' + caseId + '.', 'No Case Found');
       }
-    
+
       else {
         this.case = kase;
         console.log("Loading Current Case",kase);
 
         this.getCaseLookupValues();
-        
+
         // Remove all files with a '^' in the docName - they are orphans
         this.case.caseDocs = this.case.caseDocs.filter(cd => {
           return cd.documentName.indexOf('^') == -1;
@@ -398,18 +398,18 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.caseSvc
           .fetchCaseApplication(caseId)
           .subscribe(results => this.case.caseApplications = results);
-          
-        //This returns all the case payments for that particular application  
+
+        //This returns all the case payments for that particular application
         this.caseSvc
           .fetchCasePayments(caseId)
-          .subscribe(results => this.case.casePayments = results);  
+          .subscribe(results => this.case.casePayments = results);
 
         //console.log('Case Payments received for this case is', this.case.casePayments);
 
         this.caseSvc
         .fetchCasePaymentDetails(caseId)
-        .subscribe(results => this.case.casePaymentsDetails = results);  
-         
+        .subscribe(results => this.case.casePaymentsDetails = results);
+
 
         console.log('Case Applications Retrieved', this.case.caseApplications);
 
@@ -479,7 +479,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     }
   }
 
- 
+
   caseDispositionTypeChange(event): void {
     if (this.case.caseDispositionType) {
       this.caseSvc
@@ -675,7 +675,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     { value: 'Cash', label: 'Cash' },
     { value: 'Cheque', label: 'Cheque' },
     { value: 'Court Pay', label: 'Court Pay' },
-    { value: 'Credit Card', label: 'Credit Card' },   
+    { value: 'Credit Card', label: 'Credit Card' },
     { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
     { value: 'Personal Cheque', label: 'Personal Cheque' },
     { value: 'Deferred Payment', label: 'Deferred Payment' }
@@ -706,7 +706,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     { value: 'One Time Payment', label: 'One Time Payment' },
     { value: 'Custom Days', label: 'Custom Days' },
     { value: 'Suspended', label: 'Suspended' }
-  ];  
+  ];
 
 
   applicationTypeOnChange(event) {
@@ -734,7 +734,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   paymentAmountOrderedOnChange(event,acIdx) {
     this.selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountOrdered = event;
-  }  
+  }
 
   receiptNumberOnChange(event) {
     this.selectedCasePayment.receiptNumber = event;
@@ -742,28 +742,28 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   processingFeeOnChange(event) {
     this.selectedCasePayment.processingFee = event;
-  }  
+  }
 
   totalAmountPainInOnChange(event) {
     this.selectedCasePayment.totalPaymentIn = event;
     console.log('Total Amount Paid In',this.selectedCasePayment.totalPaymentIn);
-  }   
+  }
 
   payorOnChange(event) {
     this.selectedCasePayment.payorParty = event.value;
-  }  
+  }
 
   beneficiaryOnChange(event) {
     this.selectedCasePayment.beneficiaryParty = event.value;
-  } 
+  }
 
   paymentMethodOnChange(event) {
     this.selectedCasePayment.paymentMethod = event.value;
-  }  
-  
+  }
+
   paymentTypeOnChange(event) {
     this.selectedCasePayment.paymentType = event.value;
-  }   
+  }
 
   applicantRoleTypeOnChange(event){
     this.selectedCaseApplication.caseApplicationRole = event.value.casePartyRoleOID;
@@ -790,12 +790,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
 
   caseApplicantOnChange(event, authCourtIdx) {
-    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseApplicantPartyOID = event.value.partyOID; 
+    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseApplicantPartyOID = event.value.partyOID;
     this.selectedCaseApplication.caseApplicants[authCourtIdx].caseOID = this.case.caseOID;
   }
 
   caseApplicantRoleOnChange (event, authCourtIdx) {
-    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseApplicantRoleOID = event.value.casePartyRoleOID; 
+    this.selectedCaseApplication.caseApplicants[authCourtIdx].caseApplicantRoleOID = event.value.casePartyRoleOID;
   }
 
   requestDeleteCasePartyApplicant(authCourtIdx) {
@@ -820,20 +820,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   administrativeAreaCodeOnChange(event){
     this.selectedCaseApplication.administrativeAreaCode = event;
-  }  
+  }
 
   addCaseApplication(){
 
     // The conversion of the data types is done on the server side.
-    // The JSON string on the server side is parsed according to the object structure.    
-    
+    // The JSON string on the server side is parsed according to the object structure.
+
     // Get the current list of case applicants.
     // A case application needs at least one applicant to be a valid case application
     // Applicants can be added as needed
-   
-    if(this.selectedCaseApplication.caseApplicants.length > 0){ 
 
-       //Store all case applications 
+    if(this.selectedCaseApplication.caseApplicants.length > 0){
+
+       //Store all case applications
         this.case.caseApplications.push(this.selectedCaseApplication);
 
         //Set the values to be used to generate an application number
@@ -848,13 +848,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         });
 
         this.toastSvc.showSuccessMessage('Case Application Saved');
-   
+
     }
     else this.toastSvc.showWarnMessage('An application must contain one or more applicants', 'Case Application was not saved');
 
 
     this.saveCase();
-     
+
     //After an application is saved, reset so fresh data can be reloaded
     this.selectedCaseApplication = new CaseApplication ();
     this.selectedCaseApplication.caseApplicants = null;
@@ -863,31 +863,31 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   addCasePayment(){
 
-    
+
 
     // The conversion of the data types is done on the server side.
-    // The JSON string on the server side is parsed according to the object structure.    
-    
+    // The JSON string on the server side is parsed according to the object structure.
+
     // Get the current list of case payments.
     // A case payment needs at least one payment detail to be a valid case payment
     // payment details can be added as needed
-    
-  
-    if(this.selectedCasePayment.paymentsDisbursements.length > 0){ 
 
-       //Store all case payments 
+
+    if(this.selectedCasePayment.paymentsDisbursements.length > 0){
+
+       //Store all case payments
        let total = 0;
        for (let i = 0; i < this.selectedCasePayment.paymentsDisbursements.length; i++){
-          total = total + this.selectedCasePayment.paymentsDisbursements[i].paymentAmountIn;         
+          total = total + this.selectedCasePayment.paymentsDisbursements[i].paymentAmountIn;
         }
 
-        if(this.selectedCasePayment.totalPaymentIn !=  total){ 
-          this.toastSvc.showWarnMessage('Total Payment Amount must MATCH Payment Details Amount', 'Case payment was not saved');    
+        if(this.selectedCasePayment.totalPaymentIn !=  total){
+          this.toastSvc.showWarnMessage('Total Payment Amount must MATCH Payment Details Amount', 'Case payment was not saved');
           return;
         }
 
 
-       
+
         this.case.casePayments.push(this.selectedCasePayment); //not working for some reason
         if (this.selectedCasePayment.paymentMethod != "Court Pay") this.selectedCasePayment.processingFee = 0;
         //console.log('Case Payment Details to be saved are', this.selectedCasePayment);
@@ -896,8 +896,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         //The application type code is set then the case type is selected upon the initial
         //creation of the application.
         if(this.selectedCasePayment.paymentMethod != "Court Pay" && this.selectedCasePayment.receiptNumber == "")
-          this.selectedCasePayment.receiptNumber = this.case.caseNumber + "-"+  this.case.casePayments.length++; 
-          
+          this.selectedCasePayment.receiptNumber = this.case.caseNumber + "-"+  this.case.casePayments.length++;
+
         this.selectedCasePayment.caseNumber = this.case.caseNumber;
         this.selectedCasePayment.caseOID = this.case.caseOID;
         this.selectedCasePayment.payorOID = this.selectedCasePayment.payorParty.partyOID;
@@ -908,15 +908,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         });
 
         this.toastSvc.showSuccessMessage('Case Payment Saved');
-        this.saveCase();        
+        this.saveCase();
     }
-    
-    else this.toastSvc.showWarnMessage('An payment must contain one or more payment detail', 'Case payment was not saved');    
-  
+
+    else this.toastSvc.showWarnMessage('An payment must contain one or more payment detail', 'Case payment was not saved');
+
     this.caseSvc
     .fetchCasePaymentDetails(this.case.caseOID)
-    .subscribe(results => this.case.casePaymentsDetails = results);  
- 
+    .subscribe(results => this.case.casePaymentsDetails = results);
+
     //After a payment is saved, reset so fresh data can be reloaded
     this.selectedCasePayment = new CasePayment ();
     this.selectedCasePayment.paymentsDisbursements = null;
@@ -951,15 +951,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.ShowAddCasePayment();
   }
 
-  showAddCaseCaseApplication() { 
+  showAddCaseCaseApplication() {
 
     this.showModalAddCaseApplication = true;
     //Convert the dates for the selected applications
     this.caseSvc.convertCaseApplicationDates(this.selectedCaseApplication);
     //Load the current parties associated with this case
     for (let i = 0; i < this.case.caseParties.length; i++){
-      this.appCaseParties[i] = this.case.caseParties[i].caseParty;    
-      this.appCaseParties[i].fullName = this.appCaseParties[i].firstName.concat(" ",this.appCaseParties[i].lastName);   
+      this.appCaseParties[i] = this.case.caseParties[i].caseParty;
+      this.appCaseParties[i].fullName = this.appCaseParties[i].firstName.concat(" ",this.appCaseParties[i].lastName);
     }
 
     if(this.selectedCaseApplication.caseApplicationOID == 0){
@@ -975,10 +975,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   }
 
   ShowAddCasePayment() {
-     
+
     this.showModalAddCasePayment = true;
     this.caseSvc.convertCasePaymentDetailDates(this.selectedCasePayment);
-    
+
     if(this.selectedCasePayment.paymentOID == 0){
       this.selectedCasePayment.paymentDisbursedFlag = false;
       this.selectedCasePayment.disbursementDate = null;
@@ -987,33 +987,33 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     if(this.selectedCasePayment.paymentDisbursedFlag == true){
       this.disbursementToggle = true;
     }
-    
+
     //Populate the options for payor and beneficiary dropdown list
     for (let i = 0; i < this.case.caseParties.length; i++){
 
       this.paymentCaseParties[i] = new Party();
-      this.paymentCaseParties[i].partyOID = this.case.caseParties[i].caseParty.partyOID;   
-      this.paymentCaseParties[i].firstName = this.case.caseParties[i].caseParty.firstName;   
-      this.paymentCaseParties[i].lastName = this.case.caseParties[i].caseParty.lastName;    
-      this.paymentCaseParties[i].fullName = this.case.caseParties[i].caseParty.firstName.concat(" ",this.case.caseParties[i].caseParty.lastName);   
+      this.paymentCaseParties[i].partyOID = this.case.caseParties[i].caseParty.partyOID;
+      this.paymentCaseParties[i].firstName = this.case.caseParties[i].caseParty.firstName;
+      this.paymentCaseParties[i].lastName = this.case.caseParties[i].caseParty.lastName;
+      this.paymentCaseParties[i].fullName = this.case.caseParties[i].caseParty.firstName.concat(" ",this.case.caseParties[i].caseParty.lastName);
     }
 
     //Initialize the modal with the Party that was retrieved from the server
     this.selectedCasePayment.payorParty = this.paymentCaseParties.find((party) => party.partyOID == this.selectedCasePayment.payorOID);
     this.selectedCasePayment.beneficiaryParty = this.paymentCaseParties.find((party) => party.partyOID == this.selectedCasePayment.beneficiaryOID);
-   
+
   }
 
   disbursementCompletedOnChange(event){
     this.selectedCasePayment.paymentDisbursedFlag = event;
     if(this.selectedCasePayment.paymentDisbursedFlag){
       //this.disbursementToggle = true;
-      this.toastSvc.showInfoMessage('You have marked this payment as disbursed');   
-    } 
+      this.toastSvc.showInfoMessage('You have marked this payment as disbursed');
+    }
     else{
-      this.toastSvc.showInfoMessage('This payment was reimbursed to the court');   
+      this.toastSvc.showInfoMessage('This payment was reimbursed to the court');
       this.selectedCasePayment.disbursementDate = null;
-    }  
+    }
   }
 
 
@@ -1085,11 +1085,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   authorizedUsersOnChange(event, authCourtIdx) {
 
-    this.case.authorizedAccessCaseParties[authCourtIdx].partyOID = event.value.id; 
+    this.case.authorizedAccessCaseParties[authCourtIdx].partyOID = event.value.id;
 
     //Pass the names of the authorized users to be recorded in the even register
-    this.case.authorizedAccessCaseParties[authCourtIdx].firstName = event.value.firstName; 
-    this.case.authorizedAccessCaseParties[authCourtIdx].lastName = event.value.lastName; 
+    this.case.authorizedAccessCaseParties[authCourtIdx].firstName = event.value.firstName;
+    this.case.authorizedAccessCaseParties[authCourtIdx].lastName = event.value.lastName;
 
   }
 
@@ -1111,20 +1111,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     recordData.seqNumber = this.case.sequenceNumber;
     recordData.seal_unseal_ind = seal_unseal;
-    recordData.case_id = this.case.caseOID;    
+    recordData.case_id = this.case.caseOID;
     recordData.case_seal_ind = this.case.sealIndicator;
-    
+
     //extract the party ids and names for sealing a case.
     for(let i = 0; i < this.case.authorizedAccessCaseParties.length; i++){
       recordData.authorized_parties[i] = this.case.authorizedAccessCaseParties[i].partyOID;
       recordData.authorized_party_names += this.case.authorizedAccessCaseParties[i].firstName +' '+this.case.authorizedAccessCaseParties[i].lastName + ', ';
-       
+
     }
 
     //If its an unsealed case, add the register and the active judicial officer for the existing case
     //Make sure to pass the names for the event register in the BE
     if (this.case.sealIndicator == 0){
-      
+
       //This is safe to perform since only a registrar case seal a case
       recordData.authorized_parties[this.case.authorizedAccessCaseParties.length] = this.userSvc.loggedInUser.partyOID;
       recordData.authorized_party_names += this.userSvc.loggedInUser.firstName +' '+this.userSvc.loggedInUser.lastName + ', ';
@@ -1134,7 +1134,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         if(this.case.judicialAssignments[i].endDate == null){
           recordData.authorized_parties.push(this.case.judicialAssignments[i].judicialOfficial.partyOID);
           recordData.authorized_party_names += this.case.judicialAssignments[i].judicialOfficial.firstName +' '+this.case.judicialAssignments[i].judicialOfficial.lastName + ', ';
-        }        
+        }
       }
     }
 
@@ -1327,9 +1327,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   }
 
   fetchCase(next_previous,shouldShowSuccessMessage: boolean = true) {
-  
+
     this.loadingMessage = 'Case Found...';
-    this.loadingCase = true; 
+    this.loadingCase = true;
     //let currentCase: number = this.case.caseOID;
     //let seal_case:number = this.case.sealIndicator;
     //let shouldRefreshURL: boolean = this.case.caseOID == 0;
@@ -1360,7 +1360,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
           this.toastSvc.showSuccessMessage("Case Retrieved");
         }
 
-        if (this.case == null ) {  
+        if (this.case == null ) {
           this.toastSvc.showWarnMessage('You have already selected the First / Last case')
         }
         else this.router.navigate(['/case-detail', this.case.caseOID])
@@ -1382,7 +1382,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       this.showModalAuthorizedUsers = false;
       this.saveAuthorizedUsers(seal_unseal);
     }
-  }  
+  }
 
 
   doesCasePartyContainChild(): boolean {
@@ -1835,7 +1835,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     if (event.data.taskCheckedOutBy == 1) this.selectedCaseTask.taskCheckedOut = true;
   }
 
-  
+
   onShowCaseTaskModal(taskTypeId?) {
     this.showModalAddCaseTask = true;
     if (this.caseTaskSubscription) {
@@ -1912,7 +1912,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.hideModals();
     //form.reset();  // this is deleting the selectedItem from the grid!!??~
     this.selectedCasePayment = null;
-  }  
+  }
 
   taskdocumentSelectedOnChange(event){
     this.selectedCaseTask.taskDocumentTemplateOID = event.value.documentTemplateOID;
@@ -1922,7 +1922,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   taskCompletedOnChange(event){
     this.selectedCaseTask.taskCompleted = event;
     if(this.selectedCaseTask.taskCompleted)
-      this.toastSvc.showInfoMessage('You have marked this task as completed. Please ensure all the relavent information is completed before saving this task');      
+      this.toastSvc.showInfoMessage('You have marked this task as completed. Please ensure all the relavent information is completed before saving this task');
   }
 
   //This records if task was checked out or not
@@ -1954,7 +1954,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     task.taskDocumentTemplateOID = this.selectedCaseTask.taskDocumentTemplateOID.toString();
     task.taskDueDate = this.datePipe.transform(this.selectedCaseTask.taskDueDate, "yyyy-MM-dd HH:mm"); // taskDueDate:"2018-01-31"
 
-    
+
     if (this.selectedCaseTask.taskCompleted) {
       task.taskCompleted = 'true';
       //this.toastSvc.showInfoMessage('You have marked this task as completed. Please ensure all relavent information is completed before saving this task');
@@ -2031,7 +2031,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   dateOfDisbursementOnChange(event) {
     this.selectedCasePayment.disbursementDate = event;
     if(this.selectedCasePayment.paymentDisbursedFlag != true) this.disbursementToggle = false;
-  }  
+  }
 
   periodStartDateOnChange(event,acIdx) {
 
@@ -2305,8 +2305,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.uploadPVis = false;
       }
     );
-    const oUploadResp = JSON.parse(event.xhr.response);
-    if (oUploadResp==="success") {
+    const oUploadResp = JSON.parse(event.xhr.status);
+    if (oUploadResp == "200") {
       this.toastSvc.showSuccessMessage("File Uploaded");
     } else {
       this.toastSvc.showWarnMessage("File upload failed.");
