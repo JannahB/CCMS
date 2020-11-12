@@ -21,16 +21,17 @@ export class Case extends LookupEntity {
 
   // Following 5 properties are not no an "AssociatedCase"
   caseCaption: string = "";
+  initDocumentType: string = "";
   caseFilingDate: Date = null;
   casePhase: CasePhase = null;
-  caseSubType: CaseSubType = null;
+  //caseSubType: CaseSubType = null;
   caseStatus: CaseStatus = null;
   caseType: CaseType = null;
   
   caseCharges: CaseCharge[] = [];
   caseDocs: CaseDocument[] = [];
   caseEvents: CaseEvent[] = [];
-  caseSubTypes: CaseSubType[] = [];
+  //caseSubTypes: CaseSubType[] = [];
 
   caseHearings: CaseHearingDeprecated[] = [];      // Needs modifications on server side to work properly //
 

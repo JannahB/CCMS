@@ -151,6 +151,14 @@
           <div class="ui-g-12">
 
             <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Initiating Document</label>
+              <p-dropdown name="ddidt" #ddidt placeholder="initiating doc type..." [required]="true"
+                [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                [(ngModel)]="case.initDocumentType" optionLabel="name" [options]="initDocumentTypes"
+                styleClass="width-full" (onChange)="ddOnChange($event)"></p-dropdown>
+            </div>
+
+            <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Case Status</label>
               <p-dropdown name="ddCaseStaus" #ddCaseStaus placeholder="case status..."
                 [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
@@ -202,9 +210,9 @@
               </div>
             </div>
 
-            <div class="ui-g-12 ui-md-3">
+            <!--div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Case Sub Type</label>
-              <!-- [disabled]="!casePhases || !case.caseType || case.caseOID != 0" -->
+              < [disabled]="!casePhases || !case.caseType || case.caseOID != 0" >
               <p-dropdown name="ddCaseSubPhase" #ddCasePhase placeholder="case subtype..."
                 [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                 [required]="true" (click)="isCaseTypeSelected($event)" optionLabel="name" [options]="caseSubTypes"
@@ -215,7 +223,7 @@
                 *ngIf="ddCasePhase.errors?.required && ddCasePhase.touched">
                 Please choose a Case Sub Type
               </div>
-            </div>
+            </div-->
 
 
           </div>

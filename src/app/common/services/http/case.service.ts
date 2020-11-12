@@ -350,13 +350,18 @@ export class CaseService extends HttpBaseService<Case> {
       caseCharges: [],
       prevCaseNumber: null,
       courtOfAppealNumber: null,
-      caseNotes: null
+      caseNotes: null,
+      initDocumentType: null
     };
 
     if (data.prevCaseNumber)
       caseData.prevCaseNumber = data.prevCaseNumber.toString();
     if (data.caseNotes)
       caseData.caseNotes = data.caseNotes.toString();
+    
+      if (data.initDocumentType)
+      caseData.initDocumentType = data.initDocumentType.toString();      
+      
     if (data.courtOfAppealNumber)
       caseData.courtOfAppealNumber = data.courtOfAppealNumber.toString();
     if (data.caseOID)
@@ -375,8 +380,8 @@ export class CaseService extends HttpBaseService<Case> {
       caseData.caseStatus = data.caseStatus.statusOID.toString();
     if (data.casePhase)
       caseData.casePhase = data.casePhase.casePhaseOID.toString();
-    if (data.caseSubType)
-      caseData.caseSubType = data.caseSubType.caseSubTypeOID.toString();
+    //if (data.caseSubType)
+    //  caseData.caseSubType = data.caseSubType.caseSubTypeOID.toString();
     if (data.caseWeight)
       caseData.caseWeight = data.caseWeight.toString();
 
@@ -631,6 +636,7 @@ export class CaseService extends HttpBaseService<Case> {
 
   public fetchNewDocTypesFull(): Observable<DocumentType[]> {
     const url = `${super.getBaseUrl()}/api/new-doc-types-full`;
+    //const url = `${super.getBaseUrl()}/api/new-doc-types`;
 
     return this.http.get<DocumentType[]>(url);
   }

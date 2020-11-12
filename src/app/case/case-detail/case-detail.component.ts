@@ -46,14 +46,18 @@ import { IccsCodeCategory } from '../../common/entities/IccsCodeCategory';
 import { CaseApplication } from '../../common/entities/CaseApplication';
 import { componentRefresh } from '@angular/core/src/render3/instructions';
 import { CaseApplicant } from '../../common/entities/CaseApplicant';
+import { ResponseObject } from "../../common/entities/ResponseObject";
 import { PaymentDisbursementDetails } from '../../common/entities/PaymentDisbursementDetails';
 import { CasePayment } from '../../common/entities/CasePayment';
 import { CaseApplicationType } from '../../common/entities/CaseApplicationType';
 import { CountriesService } from '../../common/services/http/countries.service';
 import { DocumentType } from '../../common/entities/DocumentType';
 import { DropdownDataTransformService } from '../../common/services/utility/dropdown-data-transform.service';
+import { AuthorizedCourt } from "../../common/entities/AuthorizedCourt";
+import { AppStateService } from "../../common/services/state/app.state.sevice";
 import { isNumber } from 'util';
 import { throwMatDialogContentAlreadyAttachedError } from '@angular/material';
+import { CloseScrollStrategy } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-case-detail',
@@ -107,6 +111,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   permissionSupervisor: boolean = false; //used to lock payment records
   disbursementToggle: boolean = false; //used to lock payment records
   selectedCaseApplicant: CaseApplicant = new CaseApplicant();
+  selectedCourt: AuthorizedCourt;
+  loggedInUser: Party;
+  courts: AuthorizedCourt[];
 
 
   initDocumentTypes: DocumentType[] = [];
@@ -155,6 +162,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     private lookupSvc: LookupService,
     private localStorageService: LocalStorageService,
     private userSvc: UserService,
+    private appState: AppStateService,
     private countriesSvc: CountriesService,
     private dropdownSvc: DropdownDataTransformService
   ) {
@@ -207,11 +215,19 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
       this.initDocType.name = "onload";
 
+      //if (this.userSvc.appState.selectedCourt.courtOID >= 1000 && this.userSvc.appState.selectedCourt.courtOID <= 1024){
       this.caseSvc.fetchNewDocTypesFull().subscribe(results => {
-        this.allTypesFull = results;
+        this.allTypesFull = results;        
         this.initDocumentTypes = results.filter(fDocTypes => {
-          return fDocTypes.can_start === 1;
-        });
+        return (fDocTypes.can_start === 1);  
+        }
+        );
+
+        
+
+        //console.log('Court', this.userSvc.appState.selectedCourt.courtOID);
+        console.log('All Documents',this.allTypesFull);
+        console.log('Initiating DC Documents',this.initDocumentTypes);       
 
         this.caseSvc
           .fetchNewDocTypes("court_docs")
@@ -229,6 +245,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         // console.log(this.courtDocs);
         this.getCase(caseId);
       });
+    //}
     });
 
     this.isRegistrar = (this.userSvc.loggedInUser && this.userSvc.isRegistrar());
@@ -243,7 +260,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     if(caseOID == 0){
       this.getCaseLookupValues();
     }
+
+    this.setSelectedCourt();
+
   }
+
+  setSelectedCourt() {
+
+    this.loggedInUser = this.userSvc.loggedInUser;
+    this.courts = this.loggedInUser.authorizedCourts;
+    this.selectedCourt =
+    this.appState.selectedCourt || this.loggedInUser.authorizedCourts[0];
+  }
+  
+  
 
   getCaseLookupValues(){
 
@@ -298,6 +328,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     }
     if (this.countriesSubscription) this.countriesSubscription.unsubscribe();
   }
+
+  
 
   hasPermission(pm) {
     if (!this.case) { return false; }
@@ -463,7 +495,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     }
   }
 
-  caseSubTypeChange(event): void {
+  /*caseSubTypeChange(event): void {
     if (this.case.caseSubType) {
       this.caseSvc
         .fetchCaseSubType(this.case.caseType.caseTypeOID)
@@ -471,7 +503,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     } else {
       this.caseSubTypes = [];
     }
-  }
+  }*/
 
   isCaseTypeSelected($event) {
     if (!this.case.caseType) {
@@ -1312,8 +1344,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       this.toastSvc.showWarnMessage('The Case Weight must be greater than 0', 'Case Weight Needed');
       return;
     }
-    if (!this.doesCasePartyContainPetitioner() && !this.doesCasePartyContainApplicant()) {
-      this.toastSvc.showWarnMessage('The case must have a Petitioner / Applicant Case Party assigned.', 'Applicant/Petitioner Needed');
+    
+    if (!this.doesCaseContainRelevantParties().result) {
+      this.toastSvc.showWarnMessage(
+        this.doesCaseContainRelevantParties().errorMessage,
+        this.doesCaseContainRelevantParties().title
+      );
       return;
     }
 
@@ -1807,6 +1843,109 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     // console.log('this.user.authorizedCourts', this.user.authorizedCourts);
   }
 
+  doesCasePartyContainDefendant(): boolean {
+    return (
+      this.case.caseParties.findIndex(cp => cp.role.name === "Defendant") > -1
+    );
+  }
+
+  doesCasePartyContainComplainant(): boolean {
+    return (
+      this.case.caseParties.findIndex(cp => cp.role.name === "Complainant") > -1
+    );
+  }
+
+  doesCasePartyContainAccused(): boolean {
+    return (
+      this.case.caseParties.findIndex(cp => cp.role.name === "Accused") > -1
+    );
+  }
+
+  doesCaseContainRelevantParties(): ResponseObject {
+
+    const response = new ResponseObject();
+
+    if (this.case.caseType.name.contains("Tickets")) {
+        response.result = this.doesCasePartyContainApplicant() && this.doesCasePartyContainDefendant();
+
+      if (!response.result && !this.doesCasePartyContainApplicant() && !this.doesCasePartyContainDefendant()) {
+        
+        response.title = "Required Parties Missing";
+        response.errorMessage = "This case needs a Defendant party and an Applicant Party to be added before it can be saved";
+      } 
+      else if (!response.result && !this.doesCasePartyContainDefendant()) {
+        response.title = "Defendant Party Missing";
+        response.errorMessage =
+        "This case needs a Defendant party to be added before it can be saved";
+      } 
+      else if (!response.result && !this.doesCasePartyContainComplainant()) {
+        response.title = "Applicant Party Missing";
+        response.errorMessage =
+        "This case needs an Applicant Party to be added before it can be saved";
+      }
+    } 
+    
+    else if (this.case.caseType.name.contains("Health")) {
+      
+      response.result = (this.doesCasePartyContainDefendant()) && this.doesCasePartyContainComplainant();
+
+      if (!response.result && !this.doesCasePartyContainComplainant() && !this.doesCasePartyContainDefendant()) {
+          response.title = "Required Parties Missing";
+          response.errorMessage =
+          "This case needs a Defendant party and a Complainant Party to be added before it can be saved";
+      } 
+      
+       
+        else if (!this.doesCasePartyContainDefendant()) {
+          response.title = "Defendant Party Missing";
+          response.errorMessage =
+          "This case needs an Defendant party to be added before it can be saved";
+        } 
+        else if (!this.doesCasePartyContainComplainant()) {
+          response.title = "Complainant Party Missing";
+          response.errorMessage =
+          "This case needs a Complainant Party to be added before it can be saved";
+        }
+      
+    } 
+
+    //Only an Accused is needed for Case Types for High Courts
+    else if (this.case.caseType.name.contains("Bail Application") 
+            || this.case.caseType.name.contains("Indictable Offence") 
+            || this.case.caseType.name.contains("Triable either way")){
+
+            response.result = this.doesCasePartyContainAccused();
+            if (!response.result) {
+                response.title = "Required Party Missing";
+                response.errorMessage = "This case needs an Accused party to be added before it can be saved";
+            }
+    }
+    
+    else{ // All other Case Types for District Courts.
+
+      response.result = (this.doesCasePartyContainAccused()) && this.doesCasePartyContainComplainant();
+
+      if (!response.result && !this.doesCasePartyContainComplainant() && !this.doesCasePartyContainAccused()) {
+        response.title = "Required Parties Missing";
+        response.errorMessage =
+        "This case needs an Accused party and a Complainant Party to be added before it can be saved";
+      } 
+      
+      else if (!this.doesCasePartyContainAccused()) {
+        response.title = "Accused Party Missing";
+        response.errorMessage =
+        "This case needs an Accused party to be added before it can be saved";
+      } 
+      else if (!this.doesCasePartyContainComplainant()) {
+        response.title = "Complainant Party Missing";
+        response.errorMessage =
+        "This case needs a Complainant Party to be added before it can be saved";
+      }
+    
+    }
+    return response;
+  }
+
 
 
   // ------------------------------------------------
@@ -2294,7 +2433,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .downloadCourtDocument(
         this.case.caseOID,
         this.selectedDocumentTemplateType.name,
-        this.selectedDocumentTemplateType.filename
+        //this.selectedDocumentTemplateType.filename
+        this.selectedDocumentTemplateType.fname
       )
       .subscribe();
   }
