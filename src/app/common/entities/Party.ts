@@ -44,4 +44,6 @@ export class Party extends LookupEntity {
   fullName: string = "";
   primaryAddressLoc: number = 0;
   primaryContactLoc: number = 0;
+  policeRegimentalNumber: string = ""; //Used to send PRG to BE if creating a Police Officer via the Add Case Party Modal.
 }
+

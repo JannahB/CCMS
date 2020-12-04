@@ -622,6 +622,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   showDeletePartyModal = false;
   showModalEditCaseParty = false;
   partySearchText: string;
+  partySearchPoliceRegNum: string;
+
   searchPartyResults: Party[];
 
   selectedSearchParty: Party;
@@ -1040,11 +1042,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.newCaseParty.caseParty.lastName = "";
     this.newCaseParty.caseParty.fullName = "";
     this.newCaseParty.caseParty.alternativeName = "";
-
+    
     this.newCaseParty.startDate = null;
     this.newCaseParty.caseParty.dob = null;
     this.newCaseParty.caseParty.sex = '';
     this.newCaseParty.caseParty.role = null;
+    this.newCaseParty.caseParty.policeRegimentalNumber = "";
 
     this.selectedSearchPartyStartDate = null;
     this.showModalAddCaseParty = true;
@@ -1059,6 +1062,22 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     const obj = { "partyName": this.partySearchText };
     this.partySvc
       .fetchAny(obj)
+      .subscribe(results => {
+        this.searchPartyResults = results;
+
+        if (results.length) {
+          this.selectedSearchParty = results[0];
+        }
+        this.searchPartyResults.map(cp => {
+          cp.age = this.calculateAge(cp.dob);
+        });
+      });
+  }
+
+  searchForPartyByPoliceRegNumber() {
+    const obj = { "policeRegNum": this.partySearchPoliceRegNum };
+    this.partySvc
+      .fetchPartyByPoliceRegNum(obj)
       .subscribe(results => {
         this.searchPartyResults = results;
 
@@ -1433,6 +1452,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   newCPsexChange(event) {
     this.newCaseParty.caseParty.sex = event;
+  }
+
+  newCPoliceRegNumOnChange(event) {
+    this.newCaseParty.caseParty.policeRegimentalNumber = event;
   }
 
   newCasePartyRoleTypeOnChange(event) {

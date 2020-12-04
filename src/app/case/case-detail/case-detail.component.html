@@ -1183,6 +1183,16 @@
               </div>
             </div>
 
+            <div class="ui-g-12 ui-md-6">
+              <div class="ui-inputgroup">
+                <span class="md-inputfield">
+                  <input type="text" [(ngModel)]="partySearchPoliceRegNum" name="tiPartySearchbyPoliceRegNum" pInputText>
+                  <label>Search Police Regimental Num</label>
+                </span>
+                <button pButton type="button" (click)="searchForPartyByPoliceRegNumber()" icon="ui-icon-search"></button>
+              </div>
+            </div>
+
             <div class="ui-g-12">
               <p-dataTable [value]="searchPartyResults" selectionMode="single" [(selection)]="selectedSearchParty"
                 scrollHeight="200px" [scrollable]="true" (onRowSelect)="searchPartyOnRowSelect($event)"
@@ -1360,7 +1370,7 @@
               </div>
 
               <div class="ui-g-12 mb-0 pl-0">
-                <div class="ui-g-12 ui-md-6 mb-0">
+                <div class="ui-g-12 ui-md-4 mb-0">
                   <label class="minimal primary block">Date of Birth</label>
                   <p-calendar id="newCPdob" name="newCPdob" #newCPdob="ngModel" [required]="true"
                     inputStyleClass="width-full" [ngModel]="newCaseParty.caseParty?.dob"
@@ -1372,7 +1382,7 @@
                   </div>
                 </div>
 
-                <div class="ui-g-12 ui-md-6 mb-0">
+                <div class="ui-g-12 ui-md-4 mb-0">
                   <label class="minimal primary block">Sex</label>
                   <p-dropdown name="newCPsex" #newCPsex="ngModel" placeholder="choose gender" [required]="true"
                     [options]="genderTypes" [ngModel]="newCaseParty.caseParty?.sex"
@@ -1383,6 +1393,16 @@
                     Please enter a gender
                   </div>
                 </div>
+
+                <div class="ui-g-12 ui-md-4 mb-0" *ngIf = "newCaseParty.role.name === 'Police Officer'" >
+                  <label class="minimal primary block" >Police Regimental Number</label>
+                  <span class="md-inputfield" >
+                    <input type="text" pInputText name="newCPoliceRegNum" [ngModel]="newCaseParty.caseParty?.policeRegimentalNumber"
+                      (ngModelChange)="newCPoliceRegNumOnChange($event)"
+                      [required]="true">                
+                  </span>
+                </div>
+
               </div>
             </div>
 

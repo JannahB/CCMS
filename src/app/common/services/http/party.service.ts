@@ -104,6 +104,19 @@ export class PartyService extends HttpBaseService<Party> {
       })
   }
 
+  public fetchPartyByPoliceRegNum(obj: any): Observable<Party[]> {
+    let url: string = `${super.getBaseUrl()}/FetchPartyByPoliceRegNum`;
+
+    return this.http.post<Party[]>(url, obj,
+      {
+        headers: { uiVersion: "2" }
+      })
+      .map(res => {
+        let parties: Party[] = res;
+        return this.convertDates(parties);
+      })
+  }
+
   public fetchOne(id: string): Observable<Party> {
     let url: string = `${super.getBaseUrl()}/FetchParty`;
 
@@ -137,7 +150,8 @@ export class PartyService extends HttpBaseService<Party> {
       sex: '',
       maritalStatus: '',
       dob: '',
-      notes: '',    
+      notes: '',
+      policeRegimentalNumber: ''  
     };
     if (data.partyOID) {
       party.partyOID = data.partyOID ? data.partyOID.toString() : "0";
@@ -155,6 +169,7 @@ export class PartyService extends HttpBaseService<Party> {
     party.alternativeName = data.alternativeName;
     party.countryOfBirth = data.countryOfBirth;
     party.countryOfResidence = data.countryOfResidence;
+    party.policeRegimentalNumber = data.policeRegimentalNumber;
     //party.alternativeName2 = data.alternativeName2;
     //party.alternativeName3 = data.alternativeName3;
     party.sex = data.sex;
