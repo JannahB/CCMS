@@ -1,0 +1,1065 @@
+<div class="ui-g-12 pos-relative">
+  <loading-bar [visible]="loadingDataFlag" [message]="'loading order data...'"></loading-bar>
+  <!--  -->
+  <div class="ui-g">
+    <div class="ui-g-12 pad-0">
+      <div class="ui-g-6 pad-0">
+        <h2 class="mb-0">Orders</h2>
+      </div>
+      <div class="ui-g-6 pad-0 ta-r">
+        <button type="button" *ngIf="hasPermission(Permission.CREATE_CASE_HEARING)" (click)="showOrderModal()"
+          label="New Order" icon="ui-icon-add" class="ui-button-secondary mt-10" pButton></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="ui-g-12 ui-sm-12 pl-0 pr-30">
+    <p-dataTable [value]="orders" selectionMode="single" [(selection)]="selectedOrder"
+      (onRowSelect)="orderOnRowSelect($event)" scrollable="true" scrollHeight="360px" dataKey="id" #dtOrders
+      styleClass="lite-header">
+      <p-column field="" header="Orders">
+        <ng-template pTemplate="body" let-item="rowData">
+          <ng-container *ngIf="item.orderType === 'Forthwith Payment'; else oneOther">
+            <p>
+              You are hereby found liable to a fine of ${{item.fwFineAmount}}.00 to be paid forthwith in default
+              {{item.fwTimePeriod}} {{item.fwDefaultTerms}}.
+            </p>
+          </ng-container>
+          <ng-template #oneOther>
+            <ng-container *ngIf="item.orderType === 'Time Allowed'">
+              <p>
+                You are hereby found liable to a fine of ${{item.taFineAmount}}.00 to be paid on or before
+                {{item.taDueDate}} in
+                default {{item.taTimePeriod}} {{item.taDefaultTerms}}.
+              </p>
+            </ng-container>
+
+            <ng-container *ngIf="item.orderType === 'Time Allowed (alternate)'">
+              <p>
+                You are hereby found liable to a fine of ${{item.taFineAmount}}.00. Time allowed: {{item.taTimePeriod}}
+                in
+                default
+                {{item.taDefaultTerms}}.
+              </p>
+            </ng-container>
+
+            <ng-container *ngIf="item.orderType === 'Community Service'">
+              <p>
+                You are hereby found liable. You are hereby ordered to serve {{item.csHours}} hours of community
+                service at
+                {{item.csLocation}} with effect from {{item.csStartDate}}.
+              </p>
+            </ng-container>
+
+            <ng-container *ngIf="item.orderType === 'Bonded'">
+              <p>
+                You are hereby found liable. You are hereby placed on a bond in the sum of ${{item.bondAmount}}.00 to
+                keep
+                the peace and be of good behaviour for a period of {{item.bdTimePeriod}} in default conviction and
+                sentence.
+              </p>
+            </ng-container>
+
+            <ng-container *ngIf="item.outcome === 'Not Liable' && item.orderType === 'Dismissed'">
+              <p>
+                You have not been found liable. Dismissed. No demerit points
+              </p>
+            </ng-container>
+
+            <ng-container *ngIf="item.outcome === 'Liable' && item.orderType === 'Dismissed'">
+              <p> You are hereby found liable, however, Dismissed under s. 71(1)(a) of the Summary Courts Act.
+              </p>
+            </ng-container>
+
+            <ng-container *ngIf="item.orderType === 'Reprimanded and Discharged'">
+              <p>
+                You are hereby found liable. Reprimanded and Discharged. Found liable, demerit points applied
+              </p>
+            </ng-container>
+            <ng-container *ngIf="item.orderType === 'Probation'">
+              <p>
+                You are hereby found liable. You are hereby placed on probation for a period of {{item.pbTimePeriod}}.
+                You
+                shall report to the
+                Probation Officer {{item.pbFrequency}} time(s) weekly for the first {{item.pbTimes}} weeks and
+                thereafter as
+                directed by the said Probation
+                Officer.
+              </p>
+            </ng-container>
+            <ng-container *ngIf="item.orderType === 'Compensation'">
+              <p>
+                Compensation in the form of ${{item.compAmount}}.00 in default {{item.compTimePeriod}}
+                {{item.compDefaultTerms}}
+              </p>
+            </ng-container>
+            <ng-container *ngIf="item.orderType === 'License Suspended'">
+              <p>
+                You are hereby found liable. You are hereby disqualified from driving for {{item.dqTimePeriod}}
+                effective {{item.dqStartDate}}
+              </p>
+            </ng-container>
+            <ng-container *ngIf="item.orderType === 'License Revoked'">
+              <p>
+                You are hereby found liable. You are hereby banned from driving. Your license will be revoked effective
+                {{item.rvStartDate}}
+              </p>
+            </ng-container>
+          </ng-template>
+        </ng-template>
+      </p-column>
+      <p-column field="orderDate" header="Order Date" [style]="{'width':'13%'}">
+
+      </p-column>
+    </p-dataTable>
+  </div>
+
+  <p-dialog header="Add Order Component" width="800" appendTo="body" [(visible)]="showModalAddOrder" [responsive]="true"
+    showEffect="fade" [contentStyle]="{'overflow':'visible'}" [modal]="true" [closable]="false" scrollable="true">
+    <div class="ui-g">
+      <ng-container *ngIf="this.case.caseType?.name === 'Tickets/Notice to Contest'; then traffic; else crim">
+      </ng-container>
+      <ng-template #traffic>
+        <div class="ui-g-12" *ngFor="let ctc of caseTrafficCharges">
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <label class="minimal primary block"> Outcome</label>
+              <p-dropdown name="ddOrderOutcome" #ddOrderOutcome placeholder="Please select an Order Outcome"
+                [required]="true" optionLabel="value.name" [options]="orderOutcomes" [style]="{ width: '250px' }"
+                (onChange)="ddOutcomeOnChange($event)" [(ngModel)]="this.selectedOutcome">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddOrderOutcome.errors?.required && ddOrderOutcome.touched">
+                Please choose an OrderTemplate
+              </div>
+            </div>
+            <div class="ui-g-6">
+              <label class="minimal primary block">Order Templates</label>
+              <p-dropdown name="ddOrderTemplate" #ddOrderTemplate placeholder="Please select an Order Template"
+                [required]="true" optionLabel="name" [style]="{ width: '250px' }" [options]="filteredTemplates"
+                (onChange)="ddTemplateOnChange($event)" [(ngModel)]="this.selectedTemplate" [filter]="true"
+                filterBy="label,value.name">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddOrderTemplate.errors?.required && ddOrderTemplate.touched">
+                Please choose an Order Template
+              </div>
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <form (ngSubmit)="saveOrder(orderForm)" #orderForm="ngForm" novalidate>
+              <ng-container *ngIf="!selectedTemplate || !selectedOutcome; else oneOff">
+                <div class="ui-g-12 ui-g-nopad">
+                  <label class="minimal primary block">Order</label>
+                  <div class="ui-g-12">
+                    <div class="ui-g-12">No Order selected</div>
+                  </div>
+                </div>
+              </ng-container>
+
+              <ng-template #oneOff>
+                <ng-container *ngIf="selectedTemplate?.name === 'Forthwith Payment'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-5">
+                          You are hereby found liable to a fine of
+                        </div>
+                        <div class="ui-inputgroup ui-g-3">
+                          <span class="ui-inputgroup-addon">$</span>
+                          <input type="text" name="txtFineAmount" [(ngModel)]="
+                          this.caseTrafficCharges[0].trafficCharge.penalty
+                        " class="mar-0" pInputText placeholder="Fine Amount" />
+                          <span class="ui-inputgroup-addon">.00</span>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-4">
+                          to be paid forthwith in default
+                        </div>
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="fwValue" [(ngModel)]="this.fwValue" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-6">
+                          <p-dropdown style="display:inline;" name="ddTPUnitsFW" id="ddTPUnitsFW" #ddTPUnitsFW="ngModel"
+                            [options]="timeUnits" [style]="{ width: '250px' }" autoDisplayFirst="true"
+                            placeholder="Please select Time Unit" [(ngModel)]="this.selectedUnit"
+                            (onChange)="timeUnitOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+
+                      <div class="ui-g-12">
+                        <div class="ui-g-6">
+                          <p-dropdown style="display:inline;" name="ddDefaultTermsFW" id="ddDefaultTermsFW"
+                            #ddDefaultTermsFW="ngModel" [options]="defaultTerms" [style]="{ width: '250px' }"
+                            autoDisplayFirst="true" placeholder="Please select Default Term"
+                            [(ngModel)]="this.defaultTerm" (onChange)="defaultTermOnChange($event)" [required]="true"
+                            optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+
+                      <div class="ui-g-12">
+                        Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Time Allowed'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-5">
+                          You are hereby found liable to a fine of
+                        </div>
+
+                        <div class="ui-inputgroup ui-g-3">
+                          <span class="ui-inputgroup-addon">$</span>
+                          <input type="text" class="mar-0" pInputText name="txtFineAmount" [(ngModel)]="
+                          this.caseTrafficCharges[0].trafficCharge.penalty
+                        " placeholder="Fine Amount" />
+                          <span class="ui-inputgroup-addon">.00</span>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-5">to be paid on or before</div>
+                        <div class="ui-g-5">
+                          <p-calendar [(ngModel)]="this.taDueDate" name="dueDate" placeholder="Due Date"
+                            [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:2500">
+                          </p-calendar>
+                        </div>
+                        <div class="ui-g-2"></div>
+
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">in default</div>
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="taValue" [(ngModel)]="this.taValue" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-3">
+                          <p-dropdown style="display:inline;" name="ddTPUnitsTA" id="ddTPUnitsTA" #ddTPUnitsTA="ngModel"
+                            [options]="timeUnits" [style]="{ width: '250px' }" autoDisplayFirst="true"
+                            placeholder="Please select Time Unit" [(ngModel)]="this.selectedUnit"
+                            (onChange)="timeUnitOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">
+                          <p-dropdown name="ddDefaultTermsTA" id="ddDefaultTermsTA" #ddDefaultTermsTA="ngModel"
+                            [options]="defaultTerms" [style]="{ width: '300px' }" autoDisplayFirst="true"
+                            placeholder="Please select Default Term" [(ngModel)]="this.defaultTerm"
+                            (onChange)="defaultTermOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ui-g-12">
+                      Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Time Allowed (alternate)'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-5">
+                          You are hereby found liable to a fine of
+                        </div>
+
+                        <div class="ui-inputgroup ui-g-3">
+                          <span class="ui-inputgroup-addon">$</span>
+                          <input type="text" class="mar-0" pInputText name="txtFineAmount" [(ngModel)]="
+                          this.caseTrafficCharges[0].trafficCharge.penalty
+                        " placeholder="Fine Amount" />
+                          <span class="ui-inputgroup-addon">.00</span>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-3">Time allowed: </div>
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="taValue" [(ngModel)]="this.taValue" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-3">
+                          <p-dropdown style="display:inline;" name="ddTPUnitsTAA" id="ddTPUnitsTAA"
+                            #ddTPUnitsTAA="ngModel" [options]="timeUnits" [style]="{ width: '250px' }"
+                            autoDisplayFirst="true" placeholder="Please select Time Unit"
+                            [(ngModel)]="this.selectedUnit" (onChange)="timeUnitOnChange($event)" [required]="true"
+                            optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">in default</div>
+                        <div class="ui-g-3">
+                          <p-dropdown name="ddDefaultTermsTAA" id="ddDefaultTermsTAA" #ddDefaultTermsTAA="ngModel"
+                            [options]="defaultTerms" [style]="{ width: '300px' }" autoDisplayFirst="true"
+                            placeholder="Please select Default Term" [(ngModel)]="this.defaultTerm"
+                            (onChange)="defaultTermOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Community Service'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-8">
+                          You are hereby found liable. You are hereby ordered to
+                          serve
+                        </div>
+
+                        <div class="ui-g-3">
+                          <input type="number" class="mar-0" name="csHours" [(ngModel)]="this.csHours" pInputText
+                            placeholder="number of hours" />
+                        </div>
+                        <div class="ui-g-1">
+                          hours
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-4">of community service at</div>
+                        <div class="ui-g-8">
+                          <input class="mar-0" id="communityService" name="communityService"
+                            [(ngModel)]="this.csLocation" pInputText type="text"
+                            placeholder="Community Service Location" />
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-3">with effect from</div>
+                        <div class="ui-g-4">
+                          <p-calendar [(ngModel)]="this.csStartDate" name="csStartDate" placeholder="Start Date"
+                            [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:2500">
+                          </p-calendar>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Bonded'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        You are hereby found liable. You are hereby placed on a bond
+                        in the sum of
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-inputgroup ui-g-3">
+                          <span class="ui-inputgroup-addon">$</span>
+                          <input type="text" class="mar-0" name="bondAmount" [(ngModel)]="this.bondAmount" pInputText
+                            placeholder="Bond Amount" />
+                          <span class="ui-inputgroup-addon">.00</span>
+                        </div>
+                        <div class="ui-g-9">
+                          to keep the peace and be of good behaviour for a period of
+                        </div>
+                      </div>
+
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="bdValue" [(ngModel)]="this.bdValue" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-4 mar-0">
+                          <p-dropdown style="display:inline;" name="ddTPUnitsBD" id="ddTPUnitsBD" #ddTPUnitsBD="ngModel"
+                            [options]="timeUnits" [style]="{ width: '200px' }" autoDisplayFirst="true"
+                            placeholder="Please select Time Unit" [(ngModel)]="this.selectedUnit"
+                            (onChange)="timeUnitOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                        <div class="ui-g-6">
+                          in default conviction and sentence.
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container
+                  *ngIf="selectedTemplate?.outcome === 'Not Liable' && selectedTemplate?.name === 'Dismissed'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        You have not been found liable. Dismissed. No demerit points applied
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.outcome === 'Liable' && selectedTemplate?.name === 'Dismissed'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        You are hereby found liable, however, Dismissed under s.
+                        71(1)(a) of the Summary Courts Act.
+                      </div>
+                    </div>
+                    <div class="ui-g-12">
+                      Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                    </div>
+                  </div>
+                </ng-container>
+
+
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Reprimanded and Discharged'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        You are hereby found liable. Reprimanded and Discharged.
+                        Demerit points applied
+                      </div>
+                    </div>
+                    <div class="ui-g-12">
+                      Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Probation'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-5">
+                          You are hereby found liable.
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-7">
+                          You are hereby placed on probation for a period of
+                        </div>
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="pbValue" [(ngModel)]="this.pbValue" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-3 mar-0">
+                          <p-dropdown style="display:inline;" name="ddTPUnitsPB" id="ddTPUnitsPB" #ddTPUnitsPB="ngModel"
+                            [options]="timeUnits" [style]="{ width: '150px' }" autoDisplayFirst="true"
+                            placeholder="Time Unit" [(ngModel)]="this.selectedUnit"
+                            (onChange)="timeUnitOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-6">
+                          You shall report to the Probation Officer
+                        </div>
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="pbFrequency" [(ngModel)]="this.pbFrequency"
+                            pInputText placeholder="frequency" />
+                        </div>
+                        <div class="ui-g-4">
+                          time(s) weekly for the first
+                        </div>
+                      </div>
+
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="pbTimes" [(ngModel)]="this.pbTimes" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-10">
+                          weeks and thereafter as directed by the said Probation
+                          Officer.
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Compensation'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-4">Compensation in the form of</div>
+                        <div class="ui-inputgroup ui-g-3">
+                          <span class="ui-inputgroup-addon">$</span>
+                          <input type="text" name="txtFineAmount" [(ngModel)]="this.compAmount" class="mar-0" pInputText
+                            placeholder="Compensation Amount" />
+                          <span class="ui-inputgroup-addon">.00</span>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">
+                          in default
+                        </div>
+                        <div class="ui-g-5">
+                          <input class="mar-0" name="compTimePeriod" [(ngModel)]="this.compTimePeriod" pInputText
+                            type="text" placeholder="Time period in years, month, day etc" />
+                        </div>
+                        <div class="ui-g-5">
+                          <p-dropdown style="display:inline;" name="ddDefaultTermsComp" id="ddDefaultTermsComp"
+                            #ddDefaultTermsComp="ngModel" [options]="defaultTerms" [style]="{ width: '250px' }"
+                            autoDisplayFirst="true" placeholder="Please select Default Term"
+                            [(ngModel)]="this.defaultTerm" (onChange)="defaultTermOnChange($event)" [required]="true"
+                            optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'License Suspended'">
+                  <div class="ui-g-12">
+                    <div class="ui-g-12">
+                      You are hereby found liable. You are hereby disqualified from
+                      driving for
+                    </div>
+                  </div>
+                  <div class="ui-g-12">
+                    <div class="ui-g-2">
+                      <input type="number" class="mar-0" name="dqValue" [(ngModel)]="this.dqValue" pInputText
+                        placeholder="number" />
+                    </div>
+                    <div class="ui-g-3 mar-0">
+                      <p-dropdown style="display:inline;" name="ddTPUnitsDQ" id="ddTPUnitsDQ" #ddTPUnitsDQ="ngModel"
+                        [options]="timeUnits" [style]="{ width: '150px' }" autoDisplayFirst="true"
+                        placeholder="Time Unit" [(ngModel)]="this.selectedUnit" (onChange)="timeUnitOnChange($event)"
+                        [required]="true" optionLabel="value.name">
+                      </p-dropdown>
+                    </div>
+                    <div class="ui-g-2"> effective</div>
+                    <div class="ui-g-5">
+                      <p-calendar [(ngModel)]="this.dqStartDate" name="dqStartDate" placeholder="Start Date"
+                        [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:2500">
+                      </p-calendar>
+                    </div>
+                  </div>
+                  <div class="ui-g-12">
+                    Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'License Revoked'">
+                  <div class="ui-g-12">
+                    You are hereby found liable.
+                  </div>
+                  <div class="ui-g-12">
+                    You are now banned from driving.
+                  </div>
+                  <div class="ui-g-12">
+                    <div class="ui-g-5">Your license will be revoked effective</div>
+                    <div class="ui-g-5">
+                      <p-calendar [(ngModel)]="this.rvStartDate" name="rvStartDate" placeholder="Start Date"
+                        [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:2500">
+                      </p-calendar>
+                    </div>
+                    <div class="ui-g-2"></div>
+                  </div>
+                  <div class="ui-g-12">
+                    Applicable Demerit Point: {{ ctc.trafficCharge.demeritPoints }}
+                  </div>
+                </ng-container>
+              </ng-template>
+              <p-footer>
+                <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                  <button label="Save Order" type="submit" pButton icon="fa-check"
+                    [disabled]="!orderForm.form.valid"></button>
+                  <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+                    (click)="hideModal()"></button>
+                </div>
+              </p-footer>
+            </form>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #crim>
+        <div class="ui-g-12">
+
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <label class="minimal primary block">Outcome</label>
+              <p-dropdown name="ddOrderOutcome" #ddOrderOutcome placeholder="Please select an Order Outcome"
+                [required]="true" optionLabel="value.name" [options]="orderOutcomes" [style]="{ width: '250px' }"
+                (onChange)="ddOutcomeOnChange($event)" [(ngModel)]="this.selectedOutcome">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddOrderOutcome.errors?.required && ddOrderOutcome.touched">
+                Please choose an OrderTemplate
+              </div>
+            </div>
+            <div class="ui-g-6">
+              <label class="minimal primary block">Order Templates</label>
+              <p-dropdown name="ddOrderTemplate" #ddOrderTemplate placeholder="Please select an Order Template"
+                [required]="true" optionLabel="name" [style]="{ width: '250px' }" [options]="filteredTemplates"
+                (onChange)="ddTemplateOnChange($event)" [(ngModel)]="this.selectedTemplate" [filter]="true"
+                filterBy="label,value.name">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddOrderTemplate.errors?.required && ddOrderTemplate.touched">
+                Please choose an Order Template
+              </div>
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <form (ngSubmit)="saveOrder(orderForm)" #orderForm="ngForm" novalidate>
+              <ng-container *ngIf="!selectedTemplate || !selectedOutcome; else oneOff">
+                <div class="ui-g-12 ui-g-nopad">
+                  <label class="minimal primary block">Order</label>
+                  <div class="ui-g-12">
+                    <div class="ui-g-12">No Order selected</div>
+                  </div>
+                </div>
+              </ng-container>
+
+              <ng-template #oneOff>
+                <ng-container *ngIf="selectedTemplate?.name === 'Forthwith Payment'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-5">
+                          You are hereby found liable to a fine of
+                        </div>
+                        <div class="ui-inputgroup ui-g-3">
+                          <span class="ui-inputgroup-addon">$</span>
+                          <input type="text" name="txtFineAmount" [(ngModel)]="this.penalty" class="mar-0" pInputText
+                            placeholder="Fine Amount" />
+                          <span class="ui-inputgroup-addon">.00</span>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-4">
+                          to be paid forthwith in default
+                        </div>
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="fwValue" [(ngModel)]="this.fwValue" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-6">
+                          <p-dropdown style="display:inline;" name="ddTPUnitsFW" id="ddTPUnitsFW" #ddTPUnitsFW="ngModel"
+                            [options]="timeUnits" [style]="{ width: '250px' }" autoDisplayFirst="true"
+                            placeholder="Please select Time Unit" [(ngModel)]="this.selectedUnit"
+                            (onChange)="timeUnitOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+
+                      <div class="ui-g-12">
+                        <div class="ui-g-6">
+                          <p-dropdown style="display:inline;" name="ddDefaultTermsFW" id="ddDefaultTermsFW"
+                            #ddDefaultTermsFW="ngModel" [options]="defaultTerms" [style]="{ width: '250px' }"
+                            autoDisplayFirst="true" placeholder="Please select Default Term"
+                            [(ngModel)]="this.defaultTerm" (onChange)="defaultTermOnChange($event)" [required]="true"
+                            optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Time Allowed'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-5">
+                          You are hereby found liable to a fine of
+                        </div>
+
+                        <div class="ui-inputgroup ui-g-3">
+                          <span class="ui-inputgroup-addon">$</span>
+                          <input type="text" class="mar-0" pInputText name="txtFineAmount" [(ngModel)]="
+                                            this.penalty
+                                          " placeholder="Fine Amount" />
+                          <span class="ui-inputgroup-addon">.00</span>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-5">to be paid on or before</div>
+                        <div class="ui-g-5">
+                          <p-calendar [(ngModel)]="this.taDueDate" name="dueDate" placeholder="Due Date"
+                            [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:2500">
+                          </p-calendar>
+                        </div>
+                        <div class="ui-g-2"></div>
+
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">in default</div>
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="taValue" [(ngModel)]="this.taValue" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-3">
+                          <p-dropdown style="display:inline;" name="ddTPUnitsTA" id="ddTPUnitsTA" #ddTPUnitsTA="ngModel"
+                            [options]="timeUnits" [style]="{ width: '250px' }" autoDisplayFirst="true"
+                            placeholder="Please select Time Unit" [(ngModel)]="this.selectedUnit"
+                            (onChange)="timeUnitOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">
+                          <p-dropdown name="ddDefaultTermsTA" id="ddDefaultTermsTA" #ddDefaultTermsTA="ngModel"
+                            [options]="defaultTerms" [style]="{ width: '300px' }" autoDisplayFirst="true"
+                            placeholder="Please select Default Term" [(ngModel)]="this.defaultTerm"
+                            (onChange)="defaultTermOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Time Allowed (alternate)'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-5">
+                          You are hereby found liable to a fine of
+                        </div>
+
+                        <div class="ui-inputgroup ui-g-3">
+                          <span class="ui-inputgroup-addon">$</span>
+                          <input type="text" class="mar-0" pInputText name="txtFineAmount" [(ngModel)]="
+                                            this.penalty
+                                          " placeholder="Fine Amount" />
+                          <span class="ui-inputgroup-addon">.00</span>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-3">Time allowed: </div>
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="taValue" [(ngModel)]="this.taValue" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-3">
+                          <p-dropdown style="display:inline;" name="ddTPUnitsTAA" id="ddTPUnitsTAA"
+                            #ddTPUnitsTAA="ngModel" [options]="timeUnits" [style]="{ width: '250px' }"
+                            autoDisplayFirst="true" placeholder="Please select Time Unit"
+                            [(ngModel)]="this.selectedUnit" (onChange)="timeUnitOnChange($event)" [required]="true"
+                            optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">in default</div>
+                        <div class="ui-g-3">
+                          <p-dropdown name="ddDefaultTermsTAA" id="ddDefaultTermsTAA" #ddDefaultTermsTAA="ngModel"
+                            [options]="defaultTerms" [style]="{ width: '300px' }" autoDisplayFirst="true"
+                            placeholder="Please select Default Term" [(ngModel)]="this.defaultTerm"
+                            (onChange)="defaultTermOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Community Service'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-8">
+                          You are hereby found liable. You are hereby ordered to
+                          serve
+                        </div>
+
+                        <div class="ui-g-3">
+                          <input type="number" class="mar-0" name="csHours" [(ngModel)]="this.csHours" pInputText
+                            placeholder="number of hours" />
+                        </div>
+                        <div class="ui-g-1">
+                          hours
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-4">of community service at</div>
+                        <div class="ui-g-8">
+                          <input class="mar-0" id="communityService" name="communityService"
+                            [(ngModel)]="this.csLocation" pInputText type="text"
+                            placeholder="Community Service Location" />
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-3">with effect from</div>
+                        <div class="ui-g-4">
+                          <p-calendar [(ngModel)]="this.csStartDate" name="csStartDate" placeholder="Start Date"
+                            [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:2500">
+                          </p-calendar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Bonded'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        You are hereby found liable. You are hereby placed on a bond
+                        in the sum of
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-inputgroup ui-g-3">
+                          <span class="ui-inputgroup-addon">$</span>
+                          <input type="text" class="mar-0" name="bondAmount" [(ngModel)]="this.bondAmount" pInputText
+                            placeholder="Bond Amount" />
+                          <span class="ui-inputgroup-addon">.00</span>
+                        </div>
+                        <div class="ui-g-9">
+                          to keep the peace and be of good behaviour for a period of
+                        </div>
+                      </div>
+
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="bdValue" [(ngModel)]="this.bdValue" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-4 mar-0">
+                          <p-dropdown style="display:inline;" name="ddTPUnitsBD" id="ddTPUnitsBD" #ddTPUnitsBD="ngModel"
+                            [options]="timeUnits" [style]="{ width: '200px' }" autoDisplayFirst="true"
+                            placeholder="Please select Time Unit" [(ngModel)]="this.selectedUnit"
+                            (onChange)="timeUnitOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                        <div class="ui-g-6">
+                          in default conviction and sentence.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container
+                  *ngIf="selectedTemplate?.outcome === 'Not Liable' && selectedTemplate?.name === 'Dismissed'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        You have not been found liable. Dismissed. No demerit points applied
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.outcome === 'Liable' && selectedTemplate?.name === 'Dismissed'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        You are hereby found liable, however, Dismissed under s.
+                        71(1)(a) of the Summary Courts Act.
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Reprimanded and Discharged'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        You are hereby found liable. Reprimanded and Discharged.
+                        Demerit points applied
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Probation'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-5">
+                          You are hereby found liable.
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-7">
+                          You are hereby placed on probation for a period of
+                        </div>
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="pbValue" [(ngModel)]="this.pbValue" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-3 mar-0">
+                          <p-dropdown style="display:inline;" name="ddTPUnitsPB" id="ddTPUnitsPB" #ddTPUnitsPB="ngModel"
+                            [options]="timeUnits" [style]="{ width: '150px' }" autoDisplayFirst="true"
+                            placeholder="Time Unit" [(ngModel)]="this.selectedUnit"
+                            (onChange)="timeUnitOnChange($event)" [required]="true" optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-6">
+                          You shall report to the Probation Officer
+                        </div>
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="pbFrequency" [(ngModel)]="this.pbFrequency"
+                            pInputText placeholder="frequency" />
+                        </div>
+                        <div class="ui-g-4">
+                          time(s) weekly for the first
+                        </div>
+                      </div>
+
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">
+                          <input type="number" class="mar-0" name="pbTimes" [(ngModel)]="this.pbTimes" pInputText
+                            placeholder="number" />
+                        </div>
+                        <div class="ui-g-10">
+                          weeks and thereafter as directed by the said Probation
+                          Officer.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'Compensation'">
+                  <div class="ui-g-12 ui-g-nopad">
+                    <label class="minimal primary block">Order</label>
+                    <div class="ui-g-12">
+                      <div class="ui-g-12">
+                        <div class="ui-g-4">Compensation in the form of</div>
+                        <div class="ui-inputgroup ui-g-3">
+                          <span class="ui-inputgroup-addon">$</span>
+                          <input type="text" name="txtCompAmount" [(ngModel)]="this.compAmount" class="mar-0" pInputText
+                            placeholder="Compensation Amount" />
+                          <span class="ui-inputgroup-addon">.00</span>
+                        </div>
+                      </div>
+                      <div class="ui-g-12">
+                        <div class="ui-g-2">
+                          in default
+                        </div>
+                        <div class="ui-g-5">
+                          <input class="mar-0" name="compTimePeriod" [(ngModel)]="this.compTimePeriod" pInputText
+                            type="text" placeholder="Time period in years, month, day etc" />
+                        </div>
+                        <div class="ui-g-5">
+                          <p-dropdown style="display:inline;" name="ddDefaultTermsComp" id="ddDefaultTermsComp"
+                            #ddDefaultTermsComp="ngModel" [options]="defaultTerms" [style]="{ width: '250px' }"
+                            autoDisplayFirst="true" placeholder="Please select Default Term"
+                            [(ngModel)]="this.defaultTerm" (onChange)="defaultTermOnChange($event)" [required]="true"
+                            optionLabel="value.name">
+                          </p-dropdown>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'License Suspended'">
+                  <div class="ui-g-12">
+                    <div class="ui-g-12">
+                      You are hereby found liable. You are hereby disqualified from
+                      driving for
+                    </div>
+                  </div>
+                  <div class="ui-g-12">
+                    <div class="ui-g-2">
+                      <input type="number" class="mar-0" name="dqValue" [(ngModel)]="this.dqValue" pInputText
+                        placeholder="number" />
+                    </div>
+                    <div class="ui-g-3 mar-0">
+                      <p-dropdown style="display:inline;" name="ddTPUnitsDQ" id="ddTPUnitsDQ" #ddTPUnitsDQ="ngModel"
+                        [options]="timeUnits" [style]="{ width: '150px' }" autoDisplayFirst="true"
+                        placeholder="Time Unit" [(ngModel)]="this.selectedUnit" (onChange)="timeUnitOnChange($event)"
+                        [required]="true" optionLabel="value.name">
+                      </p-dropdown>
+                    </div>
+                    <div class="ui-g-2"> effective</div>
+                    <div class="ui-g-5">
+                      <p-calendar [(ngModel)]="this.dqStartDate" name="dqStartDate" placeholder="Start Date"
+                        [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:2500">
+                      </p-calendar>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="selectedTemplate?.name === 'License Revoked'">
+                  <div class="ui-g-12">
+                    You are hereby found liable.
+                  </div>
+                  <div class="ui-g-12">
+                    You are now banned from driving.
+                  </div>
+                  <div class="ui-g-12">
+                    <div class="ui-g-5">Your license will be revoked effective</div>
+                    <div class="ui-g-5">
+                      <p-calendar [(ngModel)]="this.rvStartDate" name="rvStartDate" placeholder="Start Date"
+                        [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:2500">
+                      </p-calendar>
+                    </div>
+                    <div class="ui-g-2"></div>
+                  </div>
+                </ng-container>
+              </ng-template>
+              <p-footer>
+                <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                  <button label="Save Order" type="submit" pButton icon="fa-check"
+                    [disabled]="!orderForm.form.valid"></button>
+                  <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+                    (click)="hideModal()"></button>
+                </div>
+              </p-footer>
+            </form>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </p-dialog>
+
+  <p-growl [value]="msgs"></p-growl>
+
+  <p-confirmDialog></p-confirmDialog>
+
+  <div class="ui-g-12">
+    <div class="ui-g-offset-11">
+      <button *ngIf="this.orders?.length > 0 && this.case.caseStatus?.name !== 'Delisted' " type="button"
+        (click)="confirm1()" pButton icon="fa-check" label="Send"></button>
+    </div>
+  </div>
+</div>
