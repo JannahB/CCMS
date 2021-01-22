@@ -61,6 +61,8 @@ import { SentencingType } from '../../common/entities/SentencingType';
 import { SentencingService } from '../../common/services/http/sentencing.service';
 import {CriminalCharge} from '../../common/entities/CriminalCharge';
 import { SelectItem } from 'primeng/primeng';
+import { TrafficCharge } from "../../common/entities/TrafficCharge";
+import { CaseTrafficCharge } from "../../common/entities/CaseTrafficCharge";
 
 @Component({
   selector: 'app-case-detail',
@@ -71,6 +73,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
 
   @ViewChild('caseForm') caseForm: any;
+  @ViewChild("caseTrafficChargeForm") caseTrafficChargeForm: NgForm;
 
   authToken: string;
   activeTabIndex = 1;
