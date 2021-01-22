@@ -678,14 +678,25 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   applicationStatus: any[] = [
     { value: 'Active', label: 'Active' },
     { value: 'Listed for Hearing', label: 'Listed for Hearing' },
-    { value: 'Determined: Dismissed', label: 'Determined: Dismissed' },
-    { value: 'Determined: Withdrawn', label: 'Determined: Withdrawn' },
-    { value: 'Determined: Final Order Made', label: 'Determined: Final Order Made' },
-    { value: 'Determined: Struck Out', label: 'Determined: Struck Out' },
-    { value: 'Determined: Cancelled', label: 'Determined: Cancelled' },
-    { value: 'Determined: Forthwith Payment Ordered', label: 'Determined: Forthwith Payment Ordered' },
-    { value: 'Determined: Time Allowed', label: 'Determined: Time Allowed' },
-    { value: 'Determined: Time Allowed and Forthwith Payments Ordered', label: 'Determined: Time Allowed and Forthwith Payments Ordered' }
+    { value: 'Adjourned – Applicant Attorney unavailable', label: 'Adjourned – Applicant Attorney unavailable' },
+    { value: 'Adjourned – Accused Attorney unavailable', label: 'Adjourned – Accused Attorney unavailable' },
+    { value: 'Adjourned – Respondent Attorney unavailable', label: 'Adjourned – Respondent Attorney unavailable' },
+    { value: 'Adjourned – State Attorney unavailable', label: 'Adjourned – State Attorney unavailable' },
+    { value: 'Adjourned – Police Prosecutor unavailable', label: 'Adjourned – Police Prosecutor unavailable' },
+    { value: 'Adjourned – Judicial Officer unavailable', label: 'Adjourned – Judicial Officer unavailable' },
+    { value: 'Adjourned for service of documents', label: 'Adjourned for service of documents' },
+    { value: 'Adjourned for compliance with directions', label: 'Adjourned for compliance with directions' },
+    { value: 'Adjourned to produce documents', label: 'Adjourned to produce documents' },
+    { value: 'Adjourned – part heard', label: 'Adjourned – part heard' },
+    { value: 'Adjourned for decision', label: 'Adjourned for decision' },
+    { value: 'Determined – Application dismissed', label: 'Determined – Application dismissed' },
+    { value: 'Determined – Application withdrawn', label: 'Determined – Application withdrawn' },
+    { value: 'Determined – Application/Bail refused', label: 'Determined – Application/Bail refused' },
+    { value: 'Determined – Application/Bail granted', label: 'Determined – Application/Bail granted' },
+    { value: 'Determined – Application/Bail granted with electronic monitoring', label: 'Determined – Application/Bail granted with electronic monitoring' },
+    { value: 'Determined – Application/Bail granted on Committal to stand trial', label: 'Determined – Application/Bail granted on Committal to stand trial' },
+    { value: 'Determined – Application/Bail granted on Appeal', label: 'Determined – Application/Bail granted on Appeal' }
+
   ];
 
   paymentItem: any[] = [
