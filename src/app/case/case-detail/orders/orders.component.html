@@ -1,7 +1,10 @@
-<div class="ui-g-12 pos-relative">
+<button type="button" *ngIf="hasPermission(Permission.CREATE_CASE_HEARING) && onlyAddOrder" (click)="showOrderModal()"
+          label="New Order" icon="ui-icon-add" class="ui-button-secondary mt-10" pButton></button>
+
+<div class="ui-g-12 pos-relative" >
   <loading-bar [visible]="loadingDataFlag" [message]="'loading order data...'"></loading-bar>
   <!--  -->
-  <div class="ui-g">
+  <div class="ui-g" *ngIf="!onlyAddOrder">
     <div class="ui-g-12 pad-0">
       <div class="ui-g-6 pad-0">
         <h2 class="mb-0">Orders</h2>
@@ -14,7 +17,7 @@
   </div>
 
   <!-- Table -->
-  <div class="ui-g-12 ui-sm-12 pl-0 pr-30">
+  <div class="ui-g-12 ui-sm-12 pl-0 pr-30" *ngIf="!onlyAddOrder">
     <p-dataTable [value]="orders" selectionMode="single" [(selection)]="selectedOrder"
       (onRowSelect)="orderOnRowSelect($event)" scrollable="true" scrollHeight="360px" dataKey="id" #dtOrders
       styleClass="lite-header">
@@ -111,6 +114,15 @@
       </p-column>
       <p-column field="orderDate" header="Order Date" [style]="{'width':'13%'}">
 
+      </p-column>
+      <p-column field="" header="Status" [style]="{'width':'13%'}">
+        <ng-template pTemplate="body" let-item="rowData" let-col>
+          <span *ngIf="(item.uturnStatus=='SENT')"> {{item.uturnStatus}} </span>
+          <button *ngIf="(item.uturnStatus!='SENT') && (this.case.caseStatus?.name !== 'Delisted')" type="button"
+            (click)="confirm1(item.id); item.uturnStatus = 'SENT'" pButton icon="fa-check" label="Send"></button>
+        </ng-template>
+
+       
       </p-column>
     </p-dataTable>
   </div>
@@ -1056,10 +1068,10 @@
 
   <p-confirmDialog></p-confirmDialog>
 
-  <div class="ui-g-12">
+  <!-- <div class="ui-g-12" *ngIf="!onlyAddOrder">
     <div class="ui-g-offset-11">
       <button *ngIf="this.orders?.length > 0 && this.case.caseStatus?.name !== 'Delisted' " type="button"
         (click)="confirm1()" pButton icon="fa-check" label="Send"></button>
     </div>
-  </div>
+  </div> -->
 </div>

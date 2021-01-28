@@ -38,6 +38,7 @@ import { Subscription } from "rxjs/Subscription";
 })
 export class OrdersComponent implements OnInit, OnDestroy {
   @Input() case: Case;
+  @Input() onlyAddOrder: boolean;
   @Output() caseChange = new EventEmitter<Case>();
 
   @Input() filteredEvents: CaseEvent[];
@@ -450,7 +451,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
     );
   }
 
-  confirm1() {
+  confirm1(id) {
     this.confirmationService.confirm({
       message: "Are you sure that you want to send this order to UTURN?",
       header: "Confirmation",
@@ -466,7 +467,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
           }
         ]; */
 
-        const order = this.compileOrder();
+        const order = this.compileOrder(id);
         this.sendOrder(order);
       },
       reject: () => {
@@ -481,7 +482,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
     });
   }
 
-  compileOrder(): any {
+  compileOrder(id): any {
     const order: any = new Object();
 
     // console.log(this.case.caseParties);
@@ -564,10 +565,13 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
         //#endregion
 
-        order.driverPermit =
-          this.case.caseType.name === "Tickets/Notice to Contest"
-            ? this.applicantDP.identifierValue
-            : null;
+// TODO: Remove
+order.driverPermit = "123123"
+
+        // order.driverPermit =
+        //   this.case.caseType.name === "Tickets/Notice to Contest"
+        //     ? this.applicantDP.identifierValue
+        //     : null;
       });
 
     this.orders.forEach((element) => {
@@ -587,6 +591,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
         : null;
     // console.log(order);
 
+    order.id = id;
     return order;
   }
 
