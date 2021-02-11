@@ -150,6 +150,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   courtUsers: Party[] = [];
   authUsers: Party[] = [];
 
+  selectedCourtJD: string;
+  docTypeFilter: number = 1;
+  
   public Permission: any = Permission;
 
   constructor(
@@ -192,7 +195,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     const dta: DocumentType = new DocumentType();
     dta.name = "Filings";
-
+    
     const dtb: DocumentType = new DocumentType();
     dtb.name = "Court Documents";
 
@@ -215,19 +218,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
       this.initDocType.name = "onload";
 
-      //if (this.userSvc.appState.selectedCourt.courtOID >= 1000 && this.userSvc.appState.selectedCourt.courtOID <= 1024){
-      this.caseSvc.fetchNewDocTypesFull().subscribe(results => {
-        this.allTypesFull = results;        
-        this.initDocumentTypes = results.filter(fDocTypes => {
-        return (fDocTypes.can_start === 1);  
-        }
+      this.selectedCourtJD = this.userSvc.appState.selectedCourt.courtJD;
+
+      //The can start filter for High Court documents was changed from 1 to 2
+      // This allows the correct set of documents to be displayed for DCs vs HCs
+      if (this.selectedCourtJD == 'HC') this.docTypeFilter = 2
+      else this.docTypeFilter = 1;
+
+
+       this.caseSvc.fetchNewDocTypesFull().subscribe(results => {
+          this.allTypesFull = results;        
+          this.initDocumentTypes = results.filter(fDocTypes => {
+            return (fDocTypes.can_start === this.docTypeFilter);  
+          }
         );
-
-        
-
-        //console.log('Court', this.userSvc.appState.selectedCourt.courtOID);
-        console.log('All Documents',this.allTypesFull);
-        console.log('Initiating DC Documents',this.initDocumentTypes);       
 
         this.caseSvc
           .fetchNewDocTypes("court_docs")
@@ -245,7 +249,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         // console.log(this.courtDocs);
         this.getCase(caseId);
       });
-    //}
+    
     });
 
     this.isRegistrar = (this.userSvc.loggedInUser && this.userSvc.isRegistrar());

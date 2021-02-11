@@ -634,7 +634,7 @@ export class CaseService extends HttpBaseService<Case> {
     });
   }
 
-  public fetchNewDocTypesFull(): Observable<DocumentType[]> {
+  public fetchNewDocTypesFull(): Observable<DocumentType[]> {    
     const url = `${super.getBaseUrl()}/api/new-doc-types-full`;
     //const url = `${super.getBaseUrl()}/api/new-doc-types`;
 
