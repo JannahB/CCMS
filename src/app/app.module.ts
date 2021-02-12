@@ -143,6 +143,11 @@ import { TempHearingsComponent } from './case/case-detail/temp-hearings/temp-hea
 import { CaseRegisterService } from './common/services/http/case-register.service';
 import { EventService } from "./common/services/http/event.service";
 import { CaseSealService } from './common/services/http/caseSeal.service';
+import { OrderService } from './common/services/http/order.service';
+import { OrdersComponent } from './case/case-detail/orders/orders.component';
+import { CriminalChargeService } from './common/services/http/criminal-charges.service';
+import { CriminalChargeModificationService } from './common/services/http/criminal-charges-modification.service';
+import { SentencingService } from './common/services/http/sentencing.service';
 
 @NgModule({
   imports: [
@@ -287,6 +292,10 @@ import { CaseSealService } from './common/services/http/caseSeal.service';
     ConfigService,
     HearingsService,
     MinuteService,
+    OrderService,
+    CriminalChargeService,
+    CriminalChargeModificationService,
+    SentencingService,
     CaseRegisterService,
     EventService,
     {
