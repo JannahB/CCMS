@@ -114,9 +114,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedCourt: AuthorizedCourt;
   loggedInUser: Party;
   courts: AuthorizedCourt[];
-<<<<<<< HEAD
-=======
-  trafficSubscription: Subscription;
+  /*trafficSubscription: Subscription;
   trafficCharges: TrafficCharge[];
   selectedCaseTrafficCharge = new CaseTrafficCharge();
   caseTrafficCharges: CaseTrafficCharge[];
@@ -129,9 +127,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedCTCIdx: Number;
   preventNavToCase = false;
   msgs: Message[] = [];
-  showDeleteTrafficChargeConfirmation = false;
+  showDeleteTrafficChargeConfirmation = false;*/
   initDocTypeTemp: DocumentType = new DocumentType();
->>>>>>> dffdffe... fix(initDocType): refresh issue
 
 
   initDocumentTypes: DocumentType[] = [];
@@ -331,9 +328,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
 
       })
-    this.partySvc.getAllCourtUsers().subscribe(results => this.courtUsers = results);
+ 
+    this.partySvc.getAllCourtUsers().subscribe(results => this.courtUsers = results);    
 
-  }
+    }
 
 
 
@@ -418,8 +416,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.case = kase;
         console.log("Loading Current Case",kase);
 
-        this.getCaseLookupValues();
-
+        this.getCaseLookupValues();     
         // Remove all files with a '^' in the docName - they are orphans
         this.case.caseDocs = this.case.caseDocs.filter(cd => {
           return cd.documentName.indexOf('^') == -1;
@@ -437,6 +434,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
             .fetchCaseSubType(this.case.caseType.caseTypeOID)
             .subscribe(results => this.caseSubTypes = results);
         }
+
+        this.case.initDocType = this.allTypesFull.filter(fDocTypes => {
+          return fDocTypes.name == this.case.initDocType.name;
+        })[0];        
 
         if (this.case.caseParties.length > 0) {
           this.case.caseParties.map(cp => {
@@ -1413,7 +1414,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         },
         () => {
           this.loadingCase = false;
-        });
+        });    
   }
 
   fetchCase(next_previous,shouldShowSuccessMessage: boolean = true) {

@@ -152,10 +152,20 @@
 
             <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Initiating Document</label>
-              <p-dropdown name="ddidt" #ddidt placeholder="initiating doc type..." [required]="true"
+              <p-dropdown name="ddCid" #ddCid placeholder="initiating doc type..." 
+                [required]="true"
                 [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                [(ngModel)]="case.initDocumentType" optionLabel="name" [options]="initDocumentTypes"
-                styleClass="width-full" (onChange)="ddOnChange($event)"></p-dropdown>
+                [(ngModel)]="case.initDocType" 
+                optionLabel="name" 
+                [options]="initDocumentTypes" 
+                [filter]="true"
+                styleClass="width-full" 
+                (onChange)="ddOnChange($event)">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddCid.errors?.required && ddCid.touched">
+                Please choose an Initiating Document
+              </div>
             </div>
 
             <div class="ui-g-12 ui-md-3">

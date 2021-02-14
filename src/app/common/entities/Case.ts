@@ -8,6 +8,7 @@ import { CaseDispositionType } from './CaseDispositionType';
 import { Court } from './Court';
 import { CaseStatus } from './CaseStatus';
 import { CaseTask } from './CaseTask';
+import { DocumentType } from './DocumentType';
 import { CaseCharge } from './CaseCharge';
 import { CaseParty } from './CaseParty';
 import { CaseHearingDeprecated } from './CaseHearingDeprecated';
@@ -22,6 +23,7 @@ export class Case extends LookupEntity {
   // Following 5 properties are not no an "AssociatedCase"
   caseCaption: string = "";
   initDocumentType: string = "";
+  initDocType: DocumentType = null;
   caseFilingDate: Date = null;
   casePhase: CasePhase = null;
   //caseSubType: CaseSubType = null;

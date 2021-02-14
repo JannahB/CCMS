@@ -351,7 +351,7 @@ export class CaseService extends HttpBaseService<Case> {
       prevCaseNumber: null,
       courtOfAppealNumber: null,
       caseNotes: null,
-      initDocumentType: null
+      caseInititingDoc: null
     };
 
     if (data.prevCaseNumber)
@@ -359,8 +359,8 @@ export class CaseService extends HttpBaseService<Case> {
     if (data.caseNotes)
       caseData.caseNotes = data.caseNotes.toString();
     
-      if (data.initDocumentType)
-      caseData.initDocumentType = data.initDocumentType.toString();      
+      if (data.initDocType)
+      caseData.caseInititingDoc = data.initDocType.name.toString();      
       
     if (data.courtOfAppealNumber)
       caseData.courtOfAppealNumber = data.courtOfAppealNumber.toString();
