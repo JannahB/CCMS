@@ -327,12 +327,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       this.countriesSubscription = this.countriesSvc.get().subscribe(countries => {
         this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
 
-      })
- 
+      })    
     this.partySvc.getAllCourtUsers().subscribe(results => this.courtUsers = results);    
 
     }
-
 
 
 
