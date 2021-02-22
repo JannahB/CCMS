@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from "@angular/core";
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter,OnChanges } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Subscription } from "rxjs/Subscription";
 import { Minute } from "../../../../common/entities/Minute";
@@ -82,6 +82,10 @@ export class MinutesComponent implements OnInit, OnDestroy {
 
     this.permissionIsJudge = this.userSvc.isJudicialOfficer();
     console.log('User is a Judge',this.permissionIsJudge);
+  }
+
+  ngOnChanges() {
+    this.ngOnInit();
   }
 
   ngOnDestroy() {
