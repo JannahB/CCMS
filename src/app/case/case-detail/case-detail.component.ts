@@ -114,6 +114,24 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedCourt: AuthorizedCourt;
   loggedInUser: Party;
   courts: AuthorizedCourt[];
+<<<<<<< HEAD
+=======
+  trafficSubscription: Subscription;
+  trafficCharges: TrafficCharge[];
+  selectedCaseTrafficCharge = new CaseTrafficCharge();
+  caseTrafficCharges: CaseTrafficCharge[];
+  allCaseTrafficCharges: CaseTrafficCharge[];
+  isTraffic = false;
+  isEdit = false;
+  showModalAddTrafficCaseCharge = false;
+  selectedTrafficCharge: TrafficCharge;
+  selectedCTCBak: CaseTrafficCharge;
+  selectedCTCIdx: Number;
+  preventNavToCase = false;
+  msgs: Message[] = [];
+  showDeleteTrafficChargeConfirmation = false;
+  initDocTypeTemp: DocumentType = new DocumentType();
+>>>>>>> dffdffe... fix(initDocType): refresh issue
 
 
   initDocumentTypes: DocumentType[] = [];
@@ -1370,6 +1388,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.loadingMessage = 'saving case...';
     this.loadingCase = true;
+    this.initDocTypeTemp = this.case.initDocType;
 
     const shouldRefreshURL: boolean = this.case.caseOID == 0;
 
@@ -1379,6 +1398,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.loadingCase = false;
         this.showStaticMessage(false);
         this.case = c;
+        this.case.initDocType = this.initDocTypeTemp;
         if (shouldShowSuccessMessage) {
           this.toastSvc.showSuccessMessage("Case Saved");
         }
