@@ -721,27 +721,18 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   ];
 
   paymentItem: any[] = [
-    { value: 'Maintenance: General', label: 'Maintenance: General' },
-    { value: 'Maintenance: Clothing', label: 'Maintenance: Clothing' },
-    { value: 'Maintenance: Medical', label: 'Maintenance: Medical' },
-    { value: 'Maintenance: School Books & Uniform', label: 'Maintenance: School Books & Uniform' },
-    { value: 'Writs of Execution', label: 'Writs of Execution' },
-    { value: 'Writs of Possession', label: 'Writs of Possession' },
-    { value: 'Fines Payment', label: 'Fines Payment' },
-    { value: 'Filing Fees', label: 'Filing Fees' },
-    { value: 'Marshal Service fees', label: 'Marshal Service fees' },
-    { value: 'Commissioner of Affidavit fees', label: 'Commissioner of Affidavit fees' },
-    { value: 'Office Copy fees', label: 'Office Copy fees' },
-    { value: 'Certified Copy fees', label: 'Certified Copy fees' },
-    { value: 'Divorce Package fees', label: 'Divorce Package fees' }
+    { value: 'Fines', label: 'Fines' },
+    { value: 'Fees', label: 'Fees' },
+    { value: 'Compensation', label: 'Compensation' }
+
   ];
 
   paymentMethod: any[] = [
     { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
     { value: 'Cash', label: 'Cash' },
     { value: 'Cheque', label: 'Cheque' },
-    { value: 'Court Pay', label: 'Court Pay' },
-    { value: 'Credit Card', label: 'Credit Card' },
+    { value: 'CourtPay', label: 'CourtPay' },
+    { value: 'Credit Card', label: 'Credit Card' },   
     { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
     { value: 'Personal Cheque', label: 'Personal Cheque' },
     { value: 'Deferred Payment', label: 'Deferred Payment' }
@@ -750,16 +741,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   ];
 
   paymentTypes: any[] = [
-    { value: 'Maintenance: Child', label: 'Maintenance: Child'},
-    { value: 'Maintenance: Adult', label: 'Maintenance: Adult' },
-    { value: 'Maintenance: Adult & Child', label: 'Maintenance: Adult & Child'},
-    { value: 'Fines Payment', label: 'Fines Payment' },
-    { value: 'Filing Fees', label: 'Filing Fees' },
-    { value: 'Revenue', label: 'Revenue' },
-    { value: 'Writs of Execution', label: 'Writs of Execution' },
-    { value: 'Writs of Possession', label: 'Writs of Possession' },
-    { value: 'Warrant of Apprehension', label: 'Warrant of Apprehension' },
-    { value: 'Warrant of Commitment', label: 'Warrant of Commitment' }
+    { value: 'Fines', label: 'Fines' },
+    { value: 'Fees', label: 'Fees' },
+    { value: 'Compensation', label: 'Compensation' }
   ];
 
   paymentFrequency: any[] = [
@@ -955,15 +939,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
 
         this.case.casePayments.push(this.selectedCasePayment); //not working for some reason
-        if (this.selectedCasePayment.paymentMethod != "Court Pay") this.selectedCasePayment.processingFee = 0;
+        if (this.selectedCasePayment.paymentMethod != "CourtPay") this.selectedCasePayment.processingFee = 0;
         //console.log('Case Payment Details to be saved are', this.selectedCasePayment);
 
         //Set the values to be used to generate an application number
         //The application type code is set then the case type is selected upon the initial
         //creation of the application.
-        if(this.selectedCasePayment.paymentMethod != "Court Pay" && this.selectedCasePayment.receiptNumber == "")
-          this.selectedCasePayment.receiptNumber = this.case.caseNumber + "-"+  this.case.casePayments.length++;
-
+        if(this.selectedCasePayment.paymentMethod != "CourtPay" && this.selectedCasePayment.receiptNumber == "")
+          this.selectedCasePayment.receiptNumber = this.case.caseNumber + "-"+  this.case.casePayments.length++; 
+          
         this.selectedCasePayment.caseNumber = this.case.caseNumber;
         this.selectedCasePayment.caseOID = this.case.caseOID;
         this.selectedCasePayment.payorOID = this.selectedCasePayment.payorParty.partyOID;

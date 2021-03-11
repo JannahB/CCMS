@@ -2247,7 +2247,7 @@
             </div>
         </div>
 
-        <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment.paymentMethod == 'Court Pay' || selectedCasePayment.receiptNumber != ''">
+        <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment.paymentMethod == 'CourtPay' || selectedCasePayment.receiptNumber != ''">
           <label class="minimal primary block" for="receiptNumber">Receipt Number</label>
             <textarea id="receiptNumber" name="receiptNumber"
               placeholder="Enter the Payment Receipt Number"
@@ -2255,8 +2255,8 @@
               (ngModelChange)="receiptNumberOnChange($event)"
               [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK))
                           || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))
-                          || selectedCasePayment.paymentMethod != 'Court Pay')"
-              [rows]="1"
+                          || selectedCasePayment.paymentMethod != 'CourtPay')"
+              [rows]="1" 
               [required]="true"
               pInputTextarea
               autoResize="autoResize"
@@ -2275,20 +2275,15 @@
                   (ngModelChange)="totalAmountPainInOnChange($event)">
             </div>
 
-            <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment.paymentMethod == 'Court Pay'">
+            <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment.paymentMethod == 'CourtPay'">
                <label class="minimal primary block" for="tiProcessingFee">Processing Fee</label>
                   <input matInput type="number" name="tiProcessingFee" placeholder="Enter Processing Fees"
                      [(ngModel)]="selectedCasePayment.processingFee"
                      [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
                      (ngModelChange)="processingFeeOnChange($event)">
-            </div>
-
-            <div class="ui-g-12 ui-md-3" *ngIf="((selectedCasePayment.paymentType == 'Maintenance: Child' ||
-            selectedCasePayment.paymentType == 'Maintenance: Adult'||
-            selectedCasePayment.paymentType == 'Maintenance: Adult & Child'  ||
-            selectedCasePayment.paymentType == 'Warrant of Commitment' ||
-            selectedCasePayment.paymentType == 'Warrant of Apprehension' ||
-            selectedCasePayment.paymentType == 'Writs of Execution') && (selectedCasePayment.paymentOID > 0))">
+            </div>      
+              
+            <div class="ui-g-12 ui-md-3" *ngIf="((selectedCasePayment.paymentType == 'Compensation' || selectedCasePayment.paymentType == 'Fines') && (selectedCasePayment.paymentOID > 0))">  
 
             <label class="minimal primary block">Date of Disbursement</label>
                   <p-calendar id="dateOfDisbursement" name="dateOfDisbursement" placeholder="Disbursement Date"

@@ -82,7 +82,7 @@
         scrollable="true" scrollHeight="280px"
         dataKey="caseOID" #dtCaseResults>
         <p-column field="caseNumber" header="Case Number" [style]="{'width':'13%'}" [sortable]="true"></p-column>
-                
+             
         <p-column header="Caption" [style]="{'width':'23%'}" [sortable]="true">
           <ng-template pTemplate="body" let-item="rowData">
             <div *ngIf="item.sealIndicator == 1" >
