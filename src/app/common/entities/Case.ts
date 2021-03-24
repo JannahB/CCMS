@@ -58,6 +58,8 @@ export class Case extends LookupEntity {
 
   prevCaseNumber: string = "";
   caseNotes: string = "";
+  charges: string = "";
+
   courtOfAppealNumber: string = "";
 
   caseDispositionType: CaseDispositionType = null;
