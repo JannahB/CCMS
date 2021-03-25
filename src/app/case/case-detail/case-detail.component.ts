@@ -1946,6 +1946,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     //Only an Accused is needed for Case Types for High Courts
     else if (this.case.caseType.name.contains("Bail Application") 
             || this.case.caseType.name.contains("Indictable Offence") 
+            || this.case.caseType.name.contains("Proceeds of Crime Act") 
+            || this.case.caseType.name.contains("Anti-Gang Act") 
+            || this.case.caseType.name.contains("Interception of Communications Act") 
             || this.case.caseType.name.contains("Triable either way")){
 
             response.result = this.doesCasePartyContainAccused();
