@@ -7,4 +7,5 @@ export class DocumentType {
   template_exists = 0;
   jdcode = "";
   fname = "";
+  filename = "";  // kludge: to avoid an error message.
 }
