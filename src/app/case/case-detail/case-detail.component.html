@@ -2564,7 +2564,7 @@
 
         <!-- START DATE -->
         <div class="ui-g-12 mb-15">
-          <p-calendar id="dtStartDate" name="dtStartDate" placeholder="Start Date" #dtStartDate="ngModel"
+          <p-calendar id="dtStartDate" name="dtStartDate" placeholder="Start Date" #dtStartDate="ngModel" required="true"
             [(ngModel)]="judge.startDate" [showIcon]="true" dateFormat="dd-M-yy" appendTo="body"></p-calendar>
           <div class="ui-message ui-messages-error ui-corner-all"
             *ngIf="dtStartDate.errors?.required && dtStartDate.touched">
