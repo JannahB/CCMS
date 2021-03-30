@@ -2456,8 +2456,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .downloadCourtDocument(
         this.case.caseOID,
         this.selectedDocumentTemplateType.name,
-        //this.selectedDocumentTemplateType.filename
-        this.selectedDocumentTemplateType.fname
+        this.selectedDocumentTemplateType.filename
+        // this.selectedDocumentTemplateType.fname
       )
       .subscribe();
   }
