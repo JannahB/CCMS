@@ -10,11 +10,11 @@
         <div  *ngIf="party">
 
           <div class="ui-g-12 mb-20 ml-10">
-            
+
             <p-checkbox [(ngModel)]="party.isOrganization" binary="true" name="cb_isOrganization">
               [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
             </p-checkbox>
-          
+
             <span class="task-name">Is Organization?</span>
           </div>
 
@@ -22,7 +22,7 @@
           <div class="ui-g-12 ui-md-6" *ngIf="party.isOrganization">
             <div class="ui-g-12 mb-20 pl-0" >
               <span class="md-inputfield">
-                <input type="text" pInputText required 
+                <input type="text" pInputText required
                         [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                         [(ngModel)]="party.fullName" name="tiOrgName" #tiOrgName="ngModel" >
                 <label>Organization Name</label>
@@ -65,10 +65,10 @@
 
             <div class="ui-g-12 mb-20">
               <span class="md-inputfield">
-                <input type="text" pInputText 
+                <input type="text" pInputText
                       [(ngModel)]="party.alternativeName"
                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
-                      
+
                 <label>Alias</label>
               </span>
             </div>
@@ -121,7 +121,7 @@
                     (onChange)="genderTypesOnChange($event)">
                 </p-dropdown>
 
-                
+
 
             </div>
 
@@ -143,7 +143,7 @@
           <div class="ui-g-12 ui-md-5" *ngIf="!party.isOrganization">
             <div class="ui-g-12 ">
               <label class="minimal primary mr-10">Foreign Language Interpreter Required</label>
-              <p-inputSwitch [(ngModel)]="party.interpreterRequiredIndicator" 
+              <p-inputSwitch [(ngModel)]="party.interpreterRequiredIndicator"
                              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
               </p-inputSwitch>
 
@@ -151,7 +151,7 @@
 
             <div class="ui-g-12 ">
               <label class="minimal primary mr-10">Hearing Impaired / Sign Language Interpreter Required</label>
-              <p-inputSwitch [(ngModel)]="party.signLanguageInterpreterRequiredIndicator" 
+              <p-inputSwitch [(ngModel)]="party.signLanguageInterpreterRequiredIndicator"
                              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
               </p-inputSwitch>
 
@@ -159,7 +159,7 @@
 
             <div class="ui-g-12 ">
               <label class="minimal primary mr-10">Visually Impaired</label>
-              <p-inputSwitch [(ngModel)]="party.visuallyImpairedIndicator" 
+              <p-inputSwitch [(ngModel)]="party.visuallyImpairedIndicator"
                              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
               </p-inputSwitch>
 
@@ -217,14 +217,14 @@
 
           <div class="ui-g-12 pt-0">
             <label class="minimal block primary">Notes</label>
-            <textarea [rows]="3" [cols]="30" 
+            <textarea [rows]="3" [cols]="30"
                       [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                      [(ngModel)]="party.notes" 
-                      pInputTextarea placeholder="Notes" 
-                      styleClass="width-full" 
+                      [(ngModel)]="party.notes"
+                      pInputTextarea placeholder="Notes"
+                      styleClass="width-full"
                       autoResize ="autoResize"></textarea>
           </div>
-          
+
           <div class="ui-g-12 ta-r" *ngIf="hasPermission(Permission.UPDATE_PARTY)">
               <button type="button"
                       label="Cancel"
@@ -234,6 +234,7 @@
                       pButton></button>
               <button type="button"
                       label="Save"
+                      [disabled] = "(!party.firstName) || (!party.lastName)"
                       class=""
                       (click)="savePartyDetails()"
                       icon="ui-icon-check"
@@ -269,9 +270,9 @@
                       {{item.endDate | date:'dd-MMM-yyyy'}}
                   </ng-template>
               </p-column>
-          </p-dataTable>       
+          </p-dataTable>
         </div>
-        
+
         <div class="ui-g-12" *ngIf="!newOccupationMode">
           <button type="button"
               *ngIf="hasPermission(Permission.UPDATE_PARTY)"
@@ -315,7 +316,7 @@
                 <div class="ui-g-12 mb-20">
                   <span class="md-inputfield">
                     <input type="text"
-                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)" 
+                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                           [(ngModel)]="selectedOccupation.notes" pInputText>
                     <label>Notes</label>
                   </span>
@@ -449,7 +450,7 @@
                 <div class="ui-g-12 mb-20">
                   <span class="md-inputfield">
                     <input type="text"
-                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)" 
+                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                           [(ngModel)]="selectedIdentifier.notes" pInputText>
                     <label>Notes</label>
                   </span>
@@ -513,7 +514,7 @@
         <div class="ui-g-12">
           <p-dataTable [value]="party?.emails"
                         selectionMode="single"
-                        
+
                         [(selection)]="selectedEmail"
                         (onRowSelect)="emailOnRowSelect($event)"
                         scrollable="true" scrollHeight="200px"
@@ -705,7 +706,7 @@
             <div class="ui-g-12 mb-20">
               <span class="md-inputfield">
                   <input [(ngModel)]="selectedPhone.phoneNumber"
-                        type="text" 
+                        type="text"
                         id="phNumber" name="phNumber" #phNumber="ngModel"
                         [required] = "true"
                         [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
@@ -755,7 +756,7 @@
                     label="Save"
                     class=""
                     (click)="savePhone()"
-                    [disabled] = "(!phType.valid) || (!phNumber.valid)"
+                    [disabled] = "(!phType.valid) || (!phNumber.valid) || (!selectedPhone.startDate)"
                     icon="ui-icon-check"
                     pButton></button>
           </div>
@@ -770,18 +771,18 @@
       <div class="ui-g form-group" *ngIf="party">
         <div class="ui-g-12" >
           <p-dataTable [value]="party?.addresses"
-              selectionMode="single"              
+              selectionMode="single"
               [(selection)]="selectedAddress"
               (onRowSelect)="addressOnRowSelect($event)"
               scrollable="true" scrollHeight="100%"
               [responsive]="true"
               dataKey="addressOID">
               <p-column field="addressType" header="Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
-              <p-column field="address1" header="Street Address" [style]="{'width':'12%'}"></p-column>                                                   
+              <p-column field="address1" header="Street Address" [style]="{'width':'12%'}"></p-column>
               <p-column field="communityCode" header="community / city" [style]="{'width':'15%'}" [sortable]="true"></p-column>
               <p-column field="administrativeArea" header="Admin Code" [style]="{'width':'8%'}" [sortable]="true"></p-column>
               <p-column field="postalCode" header="Postal Code" [style]="{'width':'10%'}" [sortable]="true"></p-column>
-              <p-column field="countryName" header="Country" [style]="{'width':'10%'}" [sortable]="true"></p-column>     
+              <p-column field="countryName" header="Country" [style]="{'width':'10%'}" [sortable]="true"></p-column>
               <p-column field="startDate" header="Start Date" [style]="{'width':'10%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
                       {{item.startDate | date:'dd-MMM-yyyy'}}
@@ -825,7 +826,7 @@
           <div class="ui-g-12 ui-md-4 mb-20">
             <span class="md-inputfield">
               <input [(ngModel)]="selectedAddress.address1"  type="text"
-                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)" 
+                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                       pInputText>
               <label>LP# / House Number</label>
             </span>
@@ -833,7 +834,7 @@
 
           <div class="ui-g-12 ui-md-4 mb-20">
             <span class="md-inputfield">
-              <input [(ngModel)]="selectedAddress.address2"  type="text" 
+              <input [(ngModel)]="selectedAddress.address2"  type="text"
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                      pInputText>
               <label>Street Name 1</label>
@@ -842,7 +843,7 @@
 
           <div class="ui-g-12 ui-md-4 mb-20">
             <span class="md-inputfield" >
-              <input [(ngModel)]="selectedAddress.address3" type="text" 
+              <input [(ngModel)]="selectedAddress.address3" type="text"
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                      pInputText>
               <label>Street Name 2</label>
@@ -851,7 +852,7 @@
 
           <div class="ui-g-12 ui-md-4 mb-20">
             <span class="md-inputfield">
-              <input [(ngModel)]="selectedAddress.communityCode"  type="text" 
+              <input [(ngModel)]="selectedAddress.communityCode"  type="text"
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                       pInputText>
               <label>Community Code</label>
@@ -860,7 +861,7 @@
 
           <div class="ui-g-12 ui-md-4 mb-20">
             <span class="md-inputfield">
-              <input [(ngModel)]="selectedAddress.administrativeArea"  type="text" 
+              <input [(ngModel)]="selectedAddress.administrativeArea"  type="text"
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                      pInputText>
               <label>Administrative Area</label>
@@ -869,7 +870,7 @@
 
           <div class="ui-g-12 ui-md-4 mb-20" >
             <span class="md-inputfield" >
-              <input [(ngModel)]="selectedAddress.postalCode"  type="text" 
+              <input [(ngModel)]="selectedAddress.postalCode"  type="text"
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                      pInputText>
               <label>Postal Code</label>
@@ -879,9 +880,9 @@
           <div class="ui-g-12 ui-md-6 mb-20 mt-n-20">
             <label class="minimal primary block">City / Town</label>
             <span class="md-inputfield" *ngIf="selectedAddress.countryName != 'Trinidad and Tobago'">
-              <input [(ngModel)]="selectedAddress.municipalityName"  type="text" 
+              <input [(ngModel)]="selectedAddress.municipalityName"  type="text"
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                     pInputText>              
+                     pInputText>
             </span>
 
             <p-dropdown
@@ -892,7 +893,7 @@
               [filter] = "true"
               [options]="countriesAddressCityTown"
               [style]="{'width':'100%'}"
-              (onChange)="cityTownOnChange($event)">              
+              (onChange)="cityTownOnChange($event)">
             </p-dropdown>
           </div>
 
@@ -960,7 +961,7 @@
                     label="Save"
                     class=""
                     (click)="saveAddress()"
-                    [disabled] = "!addType.valid"
+                    [disabled] = "(!addType.valid) || (!selectedAddress.startDate)"
                     icon="ui-icon-check"
                     pButton></button>
           </div>
