@@ -6,6 +6,5 @@ export class DocumentType {
   is_court_doc = 0;
   template_exists = 0;
   jdcode = "";
-  fname = "";
-  filename = "";  // kludge: to avoid an error message.
+  filename = "";
 }
