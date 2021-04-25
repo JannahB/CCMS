@@ -1938,12 +1938,20 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
                 response.errorMessage = "This case needs an 'Applicant' party to be added before it can be saved";
             }
     }
-    //Only an Accused is needed for Case Types for High Courts
-    else if (this.case.caseType.name.contains("Indictable Offence")
-            || this.case.caseType.name.contains("Proceeds of Crime Act")
-            || this.case.caseType.name.contains("Anti-Gang Act")
+    // Only an Accused is needed for Case Types for High Courts
+    else if (this.case.caseType.name.contains("Anti-Gang Act")
+            || this.case.caseType.name.contains("Application")
+            || this.case.caseType.name.contains("Application for Re-Arrest")
+            || this.case.caseType.name.contains("Bail review application")
+            || this.case.caseType.name.contains("Complaint on oath")
+            || this.case.caseType.name.contains("Complaint without oath")
+            || this.case.caseType.name.contains("Indictable Offence")
+            || this.case.caseType.name.contains("Indictment")
             || this.case.caseType.name.contains("Interception of Communications Act")
-            || this.case.caseType.name.contains("Triable either way")){
+            || this.case.caseType.name.contains("Notice of Intention to Plead Guilty")
+            || this.case.caseType.name.contains("Plea Agreement")
+            || this.case.caseType.name.contains("Proceeds of Crime Act")
+            || this.case.caseType.name.contains("Triable either way")) {
 
             response.result = this.doesCasePartyContainAccused();
             if (!response.result) {
