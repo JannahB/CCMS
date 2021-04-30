@@ -1358,10 +1358,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   saveCase(shouldShowSuccessMessage: boolean = true) {
 
-    if (this.case.caseWeight == 0) {
+    /*if (this.case.caseWeight == 0) {
       this.toastSvc.showWarnMessage('The Case Weight must be greater than 0', 'Case Weight Needed');
       return;
-    }
+    }*/
 
     if (!this.doesCaseContainRelevantParties().result) {
       this.toastSvc.showWarnMessage(
@@ -1537,6 +1537,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   chargeLawTypes: any[];
   selectedChargeLawType: any;
   leaLeadChargeText: string;
+  policeChargeDesc: string;
 
   chargeFactorTypes: ChargeFactor[];        // FetchChargeFactor GET
   selectedChargeFactors: ChargeFactor[];
@@ -1795,7 +1796,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     charge.caseOID = this.case.caseOID;
     charge.courtOID = this.case.court.courtOID;
     charge.iccsCode = iccsCode;
-
+   
     charge.chargeFactorCategory = this.selectedChargeFactorCategory;
     charge.chargeFactors = this.selectedChargeFactors;
     charge.chargeFactorVariables = this.selectedChargeFactorVariables;
@@ -1806,8 +1807,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     }
 
     charge.leaChargingDetails = this.leaLeadChargeText;
+    charge.chargeDetails = this.policeChargeDesc;
     charge.localCharge = this.selectedChargeLawType;
-
+    charge.iccsCode = this.selectedCharge.iccsCode;
+    
     if (!charge.caseChargeOID) {
       this.case.caseCharges.push(charge);
     }

@@ -101,7 +101,7 @@
               <label class="minimal block primary">Case Weight</label>
               <div class="mar-0">{{ case.caseWeight }}</div>
               <p-slider name="slCaseWeight" #slCaseWeight="ngModel" [disabled]="!hasPermission(Permission.CREATE_CASE)"
-                [required]="true" min="1" [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10"
+                [required]="true" min="0" [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10"
                 [animate]="true"></p-slider>
               <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="slCaseWeight.errors?.min && slCaseWeight.touched">
@@ -441,89 +441,46 @@
 
 
 
-          <!-- CHARGES TABLE -->
+         <!-- CHARGES TABLE -->
 
-          <!--div class="ui-g-12 mt-30">
+         <div class="ui-g-12 mt-30">
 
-            <div class="ui-g-12 ui-md-6">
-              <h2 class="mb-10">Charges</h2>
-            </div>
-            <div class="ui-g-12 ui-md-6 ta-r pos-relative">
-              <button type="button"
-                  *ngIf="hasPermission(Permission.UPDATE_CASE)"
-                  (click)="onAddCaseCharge(caseChargeForm)"
-                  label="Add Case Charge"
-                  icon="ui-icon-add"
-                  class="ui-button-secondary mr-15 abs-btn" pButton></button>
-            </div>
+          <div class="ui-g-12 ui-md-6">
+            <h2 class="mb-10">Charges</h2>
+          </div>
+          <div class="ui-g-12 ui-md-6 ta-r pos-relative">
+            <button type="button"
+                *ngIf="hasPermission(Permission.UPDATE_CASE)"
+                (click)="onAddCaseCharge(caseChargeForm)"
+                label="Add Case Charge"
+                icon="ui-icon-add"
+                class="ui-button-secondary mr-15 abs-btn" pButton></button>
+          </div>
 
-            <div class="ui-g-12">
+          <div class="ui-g-12">
 
-              <
-                ******** NEW TABLE ***********
-                Waiting for Aaron to add the
-                dependency tree in case data
-                ******************************
-              -->
-          <!-- <p-dataTable [value]="case.caseCharges"
-                          selectionMode="single"
-                          [(selection)]="selectedCharge"
-                          (onRowSelect)="caseOnRowSelect($event)"
-                          dataKey="caseChargeOID" #dtCharges>
-                <p-column header="#" field="" [style]="{'width':'12%'}">
-                  <ng-template pTemplate="body" let-n="rowIndex">
-                    {{n+1}}
+            <p-dataTable [value]="case.caseCharges"
+                        selectionMode="single"
+                        [(selection)]="selectedCharge"
+                        (onRowSelect)="caseOnRowSelect($event)"
+                        scrollable="true" scrollHeight="200px"
+                        dataKey="caseChargeOID" #dtCharges>
+              <p-column field="localCharge.categoryIdentifier" header="UNODC Code" [style]="{'width':'7%'}"></p-column>
+              <p-column field="localCharge.localCharge" header="Local Charge" [style]="{'width':'15%'}"></p-column>
+              <p-column field="leaChargingDetails" header="Lead Charge Description" [style]="{'width':'15%'}"></p-column>
+              <p-column field="chargeDetails" header="Police Description" [style]="{'width':'15%'}"></p-column>
+              <p-column field="localCharge.charge_weight" header="Charge Weight" [sortable]="true" [style]="{'width':'7%'}"></p-column>
+              
+              <!-- <p-column field="iccsCode.categoryName" header="Charge Factors" [style]="{'width':'25%'}"></p-column> -->
+              <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
+              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
                   </ng-template>
-                </p-column>
-                <p-column header="Section" field="iccsCode.categoryIdentifier" [style]="{'width':'12%'}"></p-column>
-                <p-column header="Division" field="" [style]="{'width':'12%'}"></p-column>
-                <p-column header="Group" field="" [style]="{'width':'12%'}"></p-column>
-                <p-column header="Class" field="" [style]="{'width':'12%'}"></p-column>
-                <p-column header="Charge/Law" field="localCharge.localCharge" [style]="{'width':'30%'}"></p-column>
-                <p-column header="Lead Charge Description" field="leaChargingDetails" [style]="{'width':'15%'}"></p-column>
-                <p-column header="Charge Factors" field="" [style]="{'width':'25%'}">
-                    <ng-template pTemplate="body" let-item="rowData">
-                      <div *ngFor="let factor of item.chargeFactors; let i = index">
-                        {{i+1}}) {{factor.description}}
-                      </div>
-                    </ng-template>
-                </p-column>
-                <p-column header="Start Date" field="" [style]="{'width':'12%'}"></p-column>
-                <p-column header="End Date"   field="" [style]="{'width':'12%'}"></p-column>
-
-                <p-column header="Delete" styleClass="col-button" [style]="{'width':'8%'}">
-                    <ng-template let-item="rowData" pTemplate="body">
-                        <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
-                    </ng-template>
-                </p-column>
-              </p-dataTable> -->
-
-          <!--ng-template pTemplate="body" let-item="rowData">
-                <div *ngFor="let factor of item.chargeFactors; let i = index">
-                "Testing"
-                </div>
-              </ng-template>
-
-
-              <p-dataTable [value]="case.caseCharges"
-                          selectionMode="single"
-                          [(selection)]="selectedCharge"
-                          (onRowSelect)="caseOnRowSelect($event)"
-                          scrollable="true" scrollHeight="200px"
-                          dataKey="caseChargeOID" #dtCharges>
-                <p-column field="iccsCode.categoryIdentifier" header="UN Code" [style]="{'width':'7%'}"></p-column>
-                <p-column field="iccsCode.categoryName" header="UNODC Charge Description" [style]="{'width':'15%'}"></p-column>
-                <p-column field="leaChargingDetails" header="Police Description" [style]="{'width':'15%'}"></p-column>
-                <p-column field="iccsCode.categoryName" header="Charge Factors" [style]="{'width':'25%'}"></p-column>
-                <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
-                <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
-                    <ng-template let-item="rowData" pTemplate="body">
-                        <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
-                    </ng-template>
-                </p-column>
-              </p-dataTable>
-            </div>
-          </div-->
+              </p-column> -->
+            </p-dataTable>
+          </div>
+        </div>
 
           <p-message *ngIf="staticMessage.visible" severity="{{staticMessage.severity}}"
             text="{{staticMessage.message}}"></p-message>
@@ -1906,40 +1863,40 @@
     <div class="ui-g">
       <div class="form-group">
 
-        <div class="ui-g-12 mb-0">
+        <!-- <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Section</label>
           <span *ngIf="selectedChargeLawType && selectedSectionType">{{selectedSectionType.categoryName}}</span>
           <span *ngIf="selectedChargeLawType && !selectedSectionType">Not Applicable</span>
           <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
-        </div>
+        </div> -->
 
-        <div class="ui-g-12 mb-0">
+        <!-- <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Division</label>
           <span *ngIf="selectedChargeLawType && selectedDivisionType">{{selectedDivisionType.categoryName}}</span>
           <span *ngIf="selectedChargeLawType && !selectedDivisionType">Not Applicable</span>
           <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
-        </div>
+        </div> -->
 
-        <div class="ui-g-12 mb-0">
+        <!-- <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Group</label>
           <span *ngIf="selectedChargeLawType && selectedGroupType">{{selectedGroupType.categoryName}}</span>
           <span *ngIf="selectedChargeLawType && !selectedGroupType">Not Applicable</span>
           <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
-        </div>
+        </div> -->
 
-        <div class="ui-g-12 mb-0">
+        <!-- <div class="ui-g-12 mb-0">
           <label class="minimal primary block">Class</label>
           <span *ngIf="selectedChargeLawType && selectedClassType">{{selectedClassType.categoryName}}</span>
           <span *ngIf="selectedChargeLawType && !selectedClassType">Not Applicable</span>
           <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
-        </div>
+        </div> -->
 
         <div class="ui-g-12 mb-0 feature-box">
-          <p>Enter Charge</p>
+          <p>Enter Local Charge</p>
           <div class="feature-box-inner">
-            <label class="minimal primary block">Charge</label>
+            <label class="minimal primary block">Local Charge</label>
             <custom-autocomplete name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel"
-              placeholder="choose Charge..." [required]="true" [options]="chargeLawTypes" labelField="localCharge"
+              placeholder="Choose Local Charge..." [required]="true" [options]="chargeLawTypes" labelField="localCharge"
               dataField="localChargeOID" [ngModel]="selectedChargeLawType?.localChargeOID"
               (ngModelChange)="chargeLawTypeOnChange($event)" [filterFunction]="localChargeFilterFunction"
               [labelFunction]="localChargeLabelFunction" styleClass="width-full">
@@ -1963,13 +1920,24 @@
         </div>
 
         <div class="ui-g-12">
-          <label class="minimal primary block" for="tiLea">Police Description</label>
-          <textarea id="tiLea" name="tiLea" #tiLea="ngModel" [required]="true" [(ngModel)]="leaLeadChargeText"
+          <label class="minimal primary block" for="tiLea">Lead Charge Description</label>
+          <textarea id="tiLea" name="tiLea" #tiLea="ngModel" [(ngModel)]="leaLeadChargeText"
+            [rows]="2" pInputTextarea autoResize="autoResize" class="width-full"></textarea>
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiLea.errors?.required && tiLea.touched">
+            Enter the Lead Charge Description
+          </div>
+        </div>
+
+        <div class="ui-g-12">
+          <label class="minimal primary block" for="tiPolDesc">Police Description</label>
+          <textarea id="tiPolDesc" name="tiPolDesc" #tiPolDesc="ngModel" [required]="true" [(ngModel)]="policeChargeDesc"
             [rows]="2" pInputTextarea autoResize="autoResize" class="width-full"></textarea>
           <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiLea.errors?.required && tiLea.touched">
             Police Description is required
           </div>
         </div>
+
+
 
         <!--Rhea Seegobin Implemented 3 tier filtering without constant server calls-->
 

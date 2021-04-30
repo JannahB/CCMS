@@ -411,15 +411,22 @@ export class CaseService extends HttpBaseService<Case> {
       data.caseCharges.forEach(value => {
 
         let charge: any = {
-          iccsCodeOID: value.iccsCode.iccsCodeOID.toString(),
+
+          
+          iccsCodeOID: value.localCharge.parentOID.toString(),
           lea: value.leaChargingDetails,
+          polDesc: value.chargeDetails,
           factors: [],
           factorCategory: [],
           factorVariable: []
         };
 
-        if (value.localCharge)
+        if (value.localCharge){
+
           charge.localChargeOID = value.localCharge.localChargeOID.toString();
+          charge.iccsCode = value.localCharge.parentOID.toString();
+        
+        }
 
         /*value.chargeFactors.forEach(factor => {
         charge.chargeFactors.push(factor.chargeFactorOID.toString());

@@ -126,7 +126,7 @@ export class CaseSearchComponent implements OnInit {
     this.caseResults = null;
 
     let obj = {};
-    if(this.caseNumberText && this.caseNumberText != '') obj = {...obj, caseNumber: this.caseNumberText };
+    if(this.caseNumberText && this.caseNumberText != '') obj = {...obj, caseNumber: this.caseNumberText }; 
     if(this.casePartyNameText && this.casePartyNameText != '') obj = {...obj, casePartyName: this.casePartyNameText};
     if(this.selectedCaseType) obj = {...obj, caseType: this.selectedCaseType.caseTypeOID.toString() };
     if(this.selectedCasePhaseType) obj = {...obj, casePhase: this.selectedCasePhaseType.casePhaseOID.toString()};

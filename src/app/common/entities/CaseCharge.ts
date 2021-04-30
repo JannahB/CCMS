@@ -12,6 +12,8 @@ export class CaseCharge {
   iccsChargeCategoryOID: number = 0; 
   iccsCode: IccsCode = null;
   leaChargingDetails: string = ""; 
+  chargeDetails: string = ""; 
+  
   localCharge: LocalCharge = null;
 
   chargeFactors: ChargeFactor[];

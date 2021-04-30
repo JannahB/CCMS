@@ -7,6 +7,9 @@ export class LocalCharge {
   localCharge: string; 
   localChargeOID: number; 
   localLaw: string; 
+  parentOID: number; 
+  charge_weight: number;
+
   parentICCSCode: IccsCode;
   
 }
