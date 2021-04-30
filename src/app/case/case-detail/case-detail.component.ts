@@ -1465,7 +1465,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   }
 
   doesCasePartyContainApplicant(): boolean {
-    return this.case.caseParties.findIndex(cp => cp.role.casePartyRoleOID == 16) > -1;
+    return this.case.caseParties.findIndex(cp => cp.role.name === "Applicant") > -1;
   }
 
   doesCasePartyContainPetitioner(): boolean {
@@ -1932,13 +1932,29 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     }
 
-    //Only an Accused is needed for Case Types for High Courts
-    else if (this.case.caseType.name.contains("Bail Application")
+    // Only an Applicant is needed for Case Types of Bail Applications for High Courts
+    else if (this.case.caseType.name.contains("Bail Application")) {
+
+            response.result = this.doesCasePartyContainApplicant();
+            if (!response.result) {
+                response.title = "Required Party Missing";
+                response.errorMessage = "This case needs an 'Applicant' party to be added before it can be saved";
+            }
+    }
+    // Only an Accused is needed for Case Types for High Courts
+    else if (this.case.caseType.name.contains("Anti-Gang Act")
+            || this.case.caseType.name.contains("Application")
+            || this.case.caseType.name.contains("Application for Re-Arrest")
+            || this.case.caseType.name.contains("Bail review application")
+            || this.case.caseType.name.contains("Complaint on oath")
+            || this.case.caseType.name.contains("Complaint without oath")
             || this.case.caseType.name.contains("Indictable Offence")
-            || this.case.caseType.name.contains("Proceeds of Crime Act")
-            || this.case.caseType.name.contains("Anti-Gang Act")
+            || this.case.caseType.name.contains("Indictment")
             || this.case.caseType.name.contains("Interception of Communications Act")
-            || this.case.caseType.name.contains("Triable either way")){
+            || this.case.caseType.name.contains("Notice of Intention to Plead Guilty")
+            || this.case.caseType.name.contains("Plea Agreement")
+            || this.case.caseType.name.contains("Proceeds of Crime Act")
+            || this.case.caseType.name.contains("Triable either way")) {
 
             response.result = this.doesCasePartyContainAccused();
             if (!response.result) {
@@ -2461,6 +2477,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.selectedDocumentTemplateType.name,
         this.selectedDocumentTemplateType.filename
         // this.selectedDocumentTemplateType.fname
+
       )
       .subscribe();
   }

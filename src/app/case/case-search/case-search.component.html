@@ -67,7 +67,7 @@
         <!-- SEARCH BUTTONS -->
         <div class="ui-g-12 mt-20 ta-c">
           <button type="submit" label="Search" icon="ui-icon-search" class="mr-20" pButton></button>
-          
+
           <button type="button" (click)="onReset()" label="Reset" icon="ui-icon-autorenew" class="ui-button-secondary " pButton></button>
         </div>
 
@@ -82,33 +82,33 @@
         scrollable="true" scrollHeight="280px"
         dataKey="caseOID" #dtCaseResults>
         <p-column field="caseNumber" header="Case Number" [style]="{'width':'13%'}" [sortable]="true"></p-column>
-             
+
         <p-column header="Caption" [style]="{'width':'23%'}" [sortable]="true">
           <ng-template pTemplate="body" let-item="rowData">
             <div *ngIf="item.sealIndicator == 1" >
-                <span style="color:red">              
+                <span style="color:red">
                  Case Sealed
               </span>
             </div>
 
             <div *ngIf="item.sealIndicator == 0" >
-              <span>              
+              <span>
                 {{ item.caseCaption }}
             </span>
           </div>
           </ng-template>
-        </p-column> 
+        </p-column>
 
         <p-column header="Case Type" [style]="{'width':'15%'}" [sortable]="true">
           <ng-template pTemplate="body" let-item="rowData">
             <div *ngIf="item.sealIndicator == 1" >
-                <span style="color:red">              
+                <span style="color:red">
                  Case Sealed
               </span>
             </div>
 
             <div *ngIf="item.sealIndicator == 0" >
-              <span>              
+              <span>
                 {{ item.caseType.name }}
             </span>
           </div>
@@ -118,12 +118,12 @@
         <p-column header="Case Status" [style]="{'width':'15%'}" [sortable]="true">
           <ng-template pTemplate="body" let-item="rowData">
             <div *ngIf="item.sealIndicator == 1" >
-                <span style="color:red">              
+                <span style="color:red">
                  Case Sealed
               </span>
             </div>
             <div *ngIf="item.sealIndicator == 0" >
-              <span>              
+              <span>
                 {{ item.caseStatus.name }}
             </span>
           </div>
@@ -133,16 +133,16 @@
         <p-column header="Case Phase" [style]="{'width':'15%'}" [sortable]="true">
           <ng-template pTemplate="body" let-item="rowData">
             <div *ngIf="item.sealIndicator == 1" >
-                <span style="color:red">              
+                <span style="color:red">
                  Case Sealed
               </span>
             </div>
             <div *ngIf="item.sealIndicator == 0" >
-              <span>              
+              <span>
                 {{ item.casePhase.name }}
             </span>
           </div>
-          </ng-template>        
+          </ng-template>
         </p-column>
 
         <!--p-column field="caseCaption" header="Caption" [style]="{'width':'25%'}" [sortable]="true"></p-column>
@@ -152,14 +152,14 @@
 
         <p-column styleClass="col-button" header="Create Assoc Case" [style]="{'width':'8%'}">
             <ng-template let-item="rowData" pTemplate="body">
-              <i class="material-icons" 
+              <i class="material-icons"
                 (click)="createAssocatedCase($event, item)"
               >library_books</i>
-            </ng-template>          
+            </ng-template>
         </p-column>
 
       </p-dataTable>
-    </div>
+
   </div>
   <!-- //END FISRT CARD -->
 </div>
@@ -168,15 +168,15 @@
 <!-- ADD PASSWORD PROMPT FOR A SEALED CASE -->
 
 <p-dialog header="Please re-enter your password to access this file" styleClass="passwordPromptModal" width="650" [(visible)]="showModalPasswordPrompt" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
-  
+
   <form #passwordForm="ngForm" *ngIf="showModalPasswordPrompt">
     <div class="ui-g">
       <div class="form-group" >
 
         <div class="ui-g-12">
-          
+
         <div class="ui-g-12 mt-0">
-          
+
           <!-- PASSWORD RE-ENTRY -->
           <div class="ui-g-12 mv-20">
             <span class="md-inputfield ui-float-label">
@@ -197,18 +197,18 @@
   </div>
 
     <p-footer>
-      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">          
-        
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+
         <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
                 (click)="hideModals()" >
         </button>
-        
+
         <button type="submit" (click)="validatePassword(selectedCase.caseOID);" label="Submit Password"
                 icon="ui-icon-add" class="ui-button-secondary mr-15"
                 pButton>
         </button>
       </div>
-    </p-footer>    
+    </p-footer>
   </form>
 </p-dialog>
 
