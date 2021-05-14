@@ -385,8 +385,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     }
 
-
-
   ngOnDestroy(){
     if (this.caseSubscription) {
       this.caseSubscription.unsubscribe();
