@@ -157,6 +157,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   // court docs all
   courtDocs: DocumentType[] = [];
 
+  caseNumberText: String;
+
+
   // Doc by Category for filter
   docTypesFilter: DocumentType[] = [];
   // selected filter
