@@ -152,14 +152,14 @@
 
             <div class="ui-g-12 ui-md-3">
               <label class="minimal primary block">Initiating Document</label>
-              <p-dropdown name="ddCid" #ddCid placeholder="initiating doc type..." 
+              <p-dropdown name="ddCid" #ddCid placeholder="initiating doc type..."
                 [required]="true"
                 [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                [(ngModel)]="case.initDocType" 
-                optionLabel="name" 
-                [options]="initDocumentTypes" 
+                [(ngModel)]="case.initDocType"
+                optionLabel="name"
+                [options]="initDocumentTypes"
                 [filter]="true"
-                styleClass="width-full" 
+                styleClass="width-full"
                 (onChange)="ddOnChange($event)">
               </p-dropdown>
               <div class="ui-message ui-messages-error ui-corner-all"
@@ -470,7 +470,7 @@
               <p-column field="leaChargingDetails" header="Lead Charge Description" [style]="{'width':'15%'}"></p-column>
               <p-column field="chargeDetails" header="Police Description" [style]="{'width':'15%'}"></p-column>
               <p-column field="localCharge.charge_weight" header="Charge Weight" [sortable]="true" [style]="{'width':'7%'}"></p-column>
-              
+
               <!-- <p-column field="iccsCode.categoryName" header="Charge Factors" [style]="{'width':'25%'}"></p-column> -->
               <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
               <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
@@ -913,6 +913,573 @@
             <div class="ui-g-12">
               <button type="button" *ngIf="hasPermission(Permission.CREATE_JUDICIAL_ASSIGNMENT)" (click)="onAddJudge()"
                 label="Add Judge" icon="ui-icon-add" class="ui-button-secondary mr-15" pButton></button>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <!-- SENTENCING TAB -->
+
+        <p-tabPanel header="Sentencing" leftIcon="ui-icon-account-balance">
+          <div class="ui-g">
+            <div class="ui-g-4">
+              <h3 class="page-header mt-0">CONSEQUENCES</h3>
+              <mat-selection-list #matSelectionList class="items-list card">
+                <mat-list-option *ngFor="let item of criminalConsequences; let i=index; let itm" [class.hi]="selected" [value]="item" (selectionChange)="onSentencingSelectionChange($event, item)">
+                  <span>{{item?.chargeDescription}} </span>
+                </mat-list-option>
+              </mat-selection-list>
+
+              <button mat-raised-button color="primary" (click)="showAddConsequenceModal=true" class="mt-15 width-full">
+                <mat-icon aria-label="Add data item button">add</mat-icon>
+                Add Consequence
+              </button>
+
+            </div>
+
+            <div class="ui-g-8" *ngIf="selectedCriminalCharge">
+                <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges' || selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                    <label class="minimal primary block">Sentencing Document</label>
+                    <p-dropdown placeholder="Sentencing Document" name="ddSentencingDocument" optionLabel="documentName" [options]="sentencingDocuments"
+                        [(ngModel)]="selectedCriminalCharge.chargeDocumentURL"
+                        (onChange)="sentencingDocumentOnChange($event)"
+                        styleClass="width-full">
+                    </p-dropdown>
+                  </div>
+
+
+              <div class="ui-g-12 mt-25">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.caseNumber" class="width-full" disabled>
+                  <label>Case Number</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.caseId" class="width-full" disabled>
+                  <label>Case ID</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeDescription" class="width-full">
+                  <label>Consequence Description</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges' || selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeId" class="width-full">
+                  <label>Charge ID</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeChangeType" class="width-full">
+                  <label>Charge Change Type</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeChangeReference" class="width-full">
+                  <label>Charge Change Reference</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeModificationCode" class="width-full">
+                  <label>Charge Modification Code</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeModificationText" class="width-full">
+                  <label>Charge Modification Text</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeChangeNotes" class="width-full">
+                  <label>Charge Change Notes</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.fingerprintCardId" class="width-full">
+                  <label>Fingerprint Card ID</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <label class="minimal primary block">Fingerprint Card Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.fingerprintCardDate"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences' || selectedCriminalCharge.type === 'sentence-performed' || selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence ID" [(ngModel)]="selectedCriminalCharge.sentenceId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <label class="minimal primary block">Sentence Order Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderDate"
+                  dateFormat="dd-M-yy" placeholder="Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentenceOrderDescription" class="width-full">
+                  <label>Sentence Order Description</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <label class="minimal primary block">Sentence Order Period Start Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderPeriodStartDate"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <label class="minimal primary block">Sentence Order Period End Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderPeriodEndDate"
+                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  appendTo="body"></p-calendar>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentenceOrderFrequency" class="width-full">
+                  <label>Sentence Order Frequency</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Order Credit" [(ngModel)]="selectedCriminalCharge.sentenceCredit">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Deferred" [(ngModel)]="selectedCriminalCharge.sentenceDeferred">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentenceType" class="width-full">
+                  <label>Sentence Type</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentenceSubtype" class="width-full">
+                  <label>Sentence Sub Type</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Code" [(ngModel)]="selectedCriminalCharge.sentenceCode">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Fine Amount" [(ngModel)]="selectedCriminalCharge.sentenceFineAmount">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Max Duration" [(ngModel)]="selectedCriminalCharge.sentenceMaxDuration">
+                </mat-form-field>
+              </div>
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Min Duration" [(ngModel)]="selectedCriminalCharge.sentenceMinDuration">
+                </mat-form-field>
+              </div>
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Deferred Amount" [(ngModel)]="selectedCriminalCharge.sentenceDeferredAmount">
+                </mat-form-field>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentencePerformedType" class="width-full">
+                  <label>Sentence Performed Type</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentencePerformedValueType" class="width-full">
+                  <label>Sentence Performed Value Type</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Performed Value Amount" [(ngModel)]="selectedCriminalCharge.sentencePerformedValueAmount">
+                </mat-form-field>
+              </div>
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <label class="minimal primary block">Sentence Performed Start Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentencePerformedBeginDate"
+                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <label class="minimal primary block">Sentence Performed End Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentencePerformedEndDate"
+                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2100"
+                  appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentencePerformedLocation" class="width-full">
+                  <label>Sentence Performed Location</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Performed Agency Id" [(ngModel)]="selectedCriminalCharge.sentencePerformedAgencyId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Performed Supervisor Id" [(ngModel)]="selectedCriminalCharge.sentencePerformedSupervisorId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentencePerformedVariance" class="width-full">
+                  <label>Sentence Performed Variance</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentencePerformedNotes" class="width-full">
+                  <label>Sentence Performed Notes</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Performed Balance" [(ngModel)]="selectedCriminalCharge.sentencePerformedBalance">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Amount" [(ngModel)]="selectedCriminalCharge.paymentAmount">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Receipt Id" [(ngModel)]="selectedCriminalCharge.paymentReceiptId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Receipt Number" [(ngModel)]="selectedCriminalCharge.paymentReceiptNumber">
+                </mat-form-field>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.paymentOrderDescription" class="width-full">
+                  <label>Payment Order Description </label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.paymentEventCode" class="width-full">
+                  <label>Payment Event Code </label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.paymentTypeTender" class="width-full">
+                  <label>Payment Type Tender </label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.paymentMethod" class="width-full">
+                  <label>Payment Method </label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Amount Made" [(ngModel)]="selectedCriminalCharge.paymentAmountMade">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Processing Fee" [(ngModel)]="selectedCriminalCharge.paymentProcessingFee">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Wipay Fee Amount" [(ngModel)]="selectedCriminalCharge.wipayFeeAmount">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Disbursement Amount" [(ngModel)]="selectedCriminalCharge.paymentDisbursementAmount">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.paymentAccountStatus" class="width-full">
+                  <label>Payment Account Status</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Event" [(ngModel)]="selectedCriminalCharge.paymentEvent">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Account Balance Amount" [(ngModel)]="selectedCriminalCharge.accountBalanceAmount">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Account Balance Forgiven" [(ngModel)]="selectedCriminalCharge.accountBalanceForgiven">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Bail Bond Id" [(ngModel)]="selectedCriminalCharge.bailBondId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Bail Poster Id" [(ngModel)]="selectedCriminalCharge.bailorPosterId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailorPosterName" class="width-full">
+                  <label>Bailor Poster Name</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailorPosterEntity" class="width-full">
+                  <label>Bailor Poster Entity</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailBondRestrictions" class="width-full">
+                  <label>Bail Bond Restrictions</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailSecurityType" class="width-full">
+                  <label>Bail Security Type</label>
+                </span>
+              </div>
+
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Bail Deed Number" [(ngModel)]="selectedCriminalCharge.bailDeedNumber">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailDeedNameOfOwner" class="width-full">
+                  <label>Bail Deed Name Of Owner</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailDeedDetails" class="width-full">
+                  <label>Bail Deed Details</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Financial Transaction Id" [(ngModel)]="selectedCriminalCharge.financialTransactionId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Financial Account Id" [(ngModel)]="selectedCriminalCharge.financialAccountId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Amount Bail Forfeited" [(ngModel)]="selectedCriminalCharge.amountBailForfeited">
+                </mat-form-field>
+              </div>
+
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Principal Bail Returned" [(ngModel)]="selectedCriminalCharge.principalBailReturned">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Amount Bail Interest" [(ngModel)]="selectedCriminalCharge.amountBailInterest">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Total Amount Bail Returned" [(ngModel)]="selectedCriminalCharge.totalAmountBailReturned">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeReference" class="width-full">
+                  <label>Charge Reference</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.lawEnforcementId" class="width-full">
+                  <label>Law Enforcement ID</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.charge" class="width-full">
+                  <label>charge</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges' || selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeUNCode" class="width-full">
+                  <label>Charge UN Code</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeEnhancements" class="width-full">
+                  <label>Charge Enhancements</label>
+                </span>
+              </div>
+
+              <div *ngFor="let df of selectedCriminalCharge.arrayFromDynamicFields">
+                  <div class="ui-g-12" *ngIf="df.property.substr(df.property.length - 3) == 'num'">
+                      <mat-form-field class="width-full">
+                        <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="{{df.property.slice(0, -4) | titlecase}}" [(ngModel)]="df.value">
+                      </mat-form-field>
+                    </div>
+
+                    <div class="ui-g-12 mt-25" *ngIf="df.property.substr(df.property.length - 3) == 'str'">
+                        <span class="md-inputfield">
+                            <input pInputText type="text" [required]="false" [(ngModel)]="df.value" class="width-full">
+                            <label>{{df.property.slice(0, -4) | titlecase}}</label>
+                          </span>
+                      </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
+                <label class="minimal primary block">Charge Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.chargeDate"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="addNewFieldToggle">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="dynamicField.name" class="width-full">
+                  <label>New Field Name</label>
+
+
+                  <select [(ngModel)]="dynamicField.type" name="" id="" class="width-full">
+                    <option value="str"> Text </option>
+                    <option value="num"> Number </option>
+                  </select>
+                </span>
+                <!-- <mat-form-field>
+                    <mat-label>Field Type</mat-label>
+                    <select matNativeControl [(ngModel)]="dynamicField.type" >
+                        <option value="str"> Text </option>
+                        <option value="num"> Number </option>
+                    </select>
+                  </mat-form-field> -->
+
+              </div>
+
+              <div class="ui-g-12 ta-r pb-0">
+                <button mat-raised-button align="end" *ngIf="addNewFieldToggle" color="secondary" (click)="addNewDynamicField(); addNewFieldToggle = !addNewFieldToggle" class="mt-15 ">
+                  Save Field
+                </button>
+
+                <div class="ui-g-12 mt-25" *ngIf="showField">
+                  <span class="md-inputfield">
+                    <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.dynamicFields" class="width-full">
+                    <label>My New Field</label>
+                  </span>
+                </div>
+
+                <button mat-raised-button align="end" color="secondary" (click)="addNewFieldToggle=true;" class="mt-15 ">
+                  <mat-icon aria-label="Add data item button">add</mat-icon>
+                  Add New Field
+                </button>
+              </div>
+              <div class="ui-g-12 ta-r pb-0">
+                <button mat-raised-button color="primary" type="submit" (click)="saveNewSentencingItem(selectedCriminalCharge)" class="mt-15 ">
+                  <mat-icon aria-label="Add data item button">check</mat-icon>
+                  Save Consequence
+                </button>
+              </div>
+
+
+
+
             </div>
           </div>
         </p-tabPanel>
@@ -1388,7 +1955,7 @@
                   <span class="md-inputfield" >
                     <input type="text" pInputText name="newCPoliceRegNum" [ngModel]="newCaseParty.caseParty?.policeRegimentalNumber"
                       (ngModelChange)="newCPoliceRegNumOnChange($event)"
-                      [required]="true">                
+                      [required]="true">
                   </span>
                 </div>
 
@@ -2238,7 +2805,7 @@
               [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK))
                           || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))
                           || selectedCasePayment.paymentMethod != 'CourtPay')"
-              [rows]="1" 
+              [rows]="1"
               [required]="true"
               pInputTextarea
               autoResize="autoResize"
@@ -2263,9 +2830,9 @@
                      [(ngModel)]="selectedCasePayment.processingFee"
                      [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
                      (ngModelChange)="processingFeeOnChange($event)">
-            </div>      
-              
-            <div class="ui-g-12 ui-md-3" *ngIf="((selectedCasePayment.paymentType == 'Compensation' || selectedCasePayment.paymentType == 'Fines') && (selectedCasePayment.paymentOID > 0))">  
+            </div>
+
+            <div class="ui-g-12 ui-md-3" *ngIf="((selectedCasePayment.paymentType == 'Compensation' || selectedCasePayment.paymentType == 'Fines') && (selectedCasePayment.paymentOID > 0))">
 
             <label class="minimal primary block">Date of Disbursement</label>
                   <p-calendar id="dateOfDisbursement" name="dateOfDisbursement" placeholder="Disbursement Date"
@@ -2501,7 +3068,44 @@
   </form>
 </p-dialog>
 
+<!-- SENTENCING MODAL -->
+<p-dialog header="Add Consequence" width="800" [(visible)]="showAddConsequenceModal" [responsive]="true" showEffect="fade"
+  [modal]="true" [closable]="false">
+  <div class="ui-g-12">
+    <div class="ui-g-12">
+      <span class="md-inputfield">
+        <input [(ngModel)]="caseNumberText" name="tiCaseNumber" type="text" class="width-full" pInputText>
+        <label>search consequence types</label>
+      </span>
+    </div>
+    <div class="ui-g-4">
+      <mat-selection-list #matSelectionList class="items-list card" >
+        <mat-list-option *ngFor="let item of sentencingTypes; let i=index; let itm" [class.hi]="selected" [value]="item" (selectionChange)="onSentencingModalSelectionChange($event,  item)">
+          <span>{{item?.description}} </span>
+        </mat-list-option>
+      </mat-selection-list>
 
+    </div>
+
+    <div class="ui-g-8">
+      <div class="ui-g-12 mt-25">
+        <span class="md-inputfield">
+          <input pInputText type="text" *ngIf="selectedConsequence" [required]="false" [(ngModel)]="selectedConsequence.chargeDescription"
+            class="width-full">
+          <label>Consequence Name</label>
+        </span>
+      </div>
+    </div>
+  </div>
+
+
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button label="Cancel" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
+      <button label="Save Consequence" mat-raised-button color="primary" type="button" pButton icon="fa-check" (click)="addNewConsequence(selectedConsequence)"></button>
+    </div>
+  </p-footer>
+</p-dialog>
 
 <!-- ADD JUDICIAL ASSIGNMENT MODAL -->
 

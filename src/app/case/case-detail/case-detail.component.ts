@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
-import { SelectItem } from 'primeng/primeng';
 import { ObjectUtils } from '../../common/utils/object-utils';
 import { Pool } from '../../common/entities/Pool';
 import { EventType } from '../../common/entities/EventType';
@@ -58,6 +57,9 @@ import { AppStateService } from "../../common/services/state/app.state.sevice";
 import { isNumber } from 'util';
 import { throwMatDialogContentAlreadyAttachedError } from '@angular/material';
 import { CloseScrollStrategy } from '@angular/cdk/overlay';
+import { SentencingType } from '../../common/entities/SentencingType';
+import { SentencingService } from '../../common/services/http/sentencing.service';
+import {CriminalCharge} from '../../common/entities/CriminalCharge';
 
 @Component({
   selector: 'app-case-detail',
@@ -76,6 +78,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   caseTaskSubscription: Subscription;
   caseWeightRanges: number[] = [1, 10];
   loadingCase = false;
+  chargeDescription: string;
+  docType: string;
+  showAddConsequenceModal: boolean = false;
   loadingMessage = 'loading case...';
   showLoadingBar = false;
   selectedCharge: CaseCharge;
@@ -92,7 +97,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   caseStatuses: CaseStatus[] = [];
   casePhases: CasePhase[] = [];
   caseSubTypes: CaseSubType[] = [];
+  criminalConsequences:  any[] = [];
+  docTypes: any [] = [];
+  selectedCriminalCharge: any;
+  selectedConsequence: any;
+  showField: boolean;
+  sentencingTypes: SentencingType[] = [];
   baseURL: string;
+  sentencingDocuments: any [] = [];
+  dynamicField: any = {'name': null, 'type': null};
   selectedChargeLawTypeId: any;
   appCaseParties: Party[] = [];
   paymentCaseParties: Party[] = [];
@@ -179,11 +192,45 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     private toastSvc: ToastService,
     private lookupSvc: LookupService,
     private localStorageService: LocalStorageService,
+    private sentencingSvc: SentencingService,
     private userSvc: UserService,
     private appState: AppStateService,
     private countriesSvc: CountriesService,
     private dropdownSvc: DropdownDataTransformService
   ) {
+
+    this.sentencingTypes = [{
+      type: 'criminal-charges', description: 'Police Charge', chargeDescription: 'Police Charge'
+    },
+    {
+      type: 'criminal-charges', description: 'Prosecutor Charge', chargeDescription: 'Prosecutor Charge'
+    },
+    {
+      type: 'criminal-charges', description: 'Police Charge', chargeDescription: 'Police Charge'
+    },
+    {
+      type: 'criminal-charge-modifications', description: 'Criminal Charge Modification', chargeDescription: 'Criminal Charge Modification'
+    },
+    {
+      type: 'criminal-sentences', description: 'Sentence Order', chargeDescription: 'Sentence Order'
+    },
+    {
+      type: 'criminal-sentences', description: 'Sentence Order Modification', chargeDescription: 'Sentence Order Modification'
+    },
+    {
+      type: 'sentence-performed', description: 'Compliance', chargeDescription: 'Compliance'
+    },
+    {
+      type: 'payment-records', description: 'Payment Record', chargeDescription: 'Payment Record'
+    },
+    {
+      type: 'bail-bond-records', description: 'Bail Bond Record', chargeDescription: 'Bail Bond Record'
+    },
+    {
+      type: 'criminal-charges', description: 'Work Service', chargeDescription: 'Criminal Charge'
+    }
+  ];
+
     this.breadCrumbSvc.setItems([
       { label: 'Case', routerLink: ['/case-detail'] }
     ]);
@@ -263,6 +310,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         // console.log(this.allTypesFull);
         // console.log(this.courtDocs);
         this.getCase(caseId);
+
+        this.sentencingSvc
+        .getAllByCaseId(caseId)
+        .subscribe(criminalConsequences => this.criminalConsequences = criminalConsequences);
       });
 
     });
@@ -663,6 +714,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.showModalAddCasePayment = false;
     this.showModalAddJudge = false;
     this.showModalAddEvent = false;
+    this.showAddConsequenceModal = false;
     this.showDeleteChargeModal = false;
     this.showDeletePartyModal = false;
     this.showModalEditCaseParty = false;
@@ -1796,7 +1848,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     charge.caseOID = this.case.caseOID;
     charge.courtOID = this.case.court.courtOID;
     charge.iccsCode = iccsCode;
-   
+
     charge.chargeFactorCategory = this.selectedChargeFactorCategory;
     charge.chargeFactors = this.selectedChargeFactors;
     charge.chargeFactorVariables = this.selectedChargeFactorVariables;
@@ -1810,7 +1862,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     charge.chargeDetails = this.policeChargeDesc;
     charge.localCharge = this.selectedChargeLawType;
     charge.iccsCode = this.selectedCharge.iccsCode;
-    
+
     if (!charge.caseChargeOID) {
       this.case.caseCharges.push(charge);
     }
@@ -2550,5 +2602,131 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   ddOnChangeSubType(event): void {
   }
+
+  saveNewSentencingItem(item: CriminalCharge) : void {
+    item.caseNumber = this.case.caseNumber;
+    item.caseId = this.case.caseOID;
+    let dynamicFieldsTempObject = {};
+
+    if(this.selectedCriminalCharge.arrayFromDynamicFields) {
+      this.selectedCriminalCharge.arrayFromDynamicFields.forEach(df => {
+        Object.defineProperty(dynamicFieldsTempObject, df.property, {   // dynamically define the properties
+          value: df.value,
+          writable: true,
+          enumerable: true    // important for JSON.stringtify to return valid
+        });
+      });
+
+      let dynamicFields = JSON.stringify(dynamicFieldsTempObject);
+
+      dynamicFields = dynamicFields.replace(/"/g, "'");   // replacing double quotes with single quotes for the BE to accept it
+      item.dynamicFields = dynamicFields;   // now we are ready to save it
+    }
+
+
+    this.sentencingSvc.postByType(item).subscribe(result => {
+      this.selectedCriminalCharge = result;
+      this.getDynamicFields();    // rebuild the dynamic fields array
+      this.toastSvc.showSuccessMessage('Item saved');
+    });
+   }
+
+  // TODO: change name to serialize dynamic fields
+   getDynamicFields() {
+
+    if(this.selectedCriminalCharge.dynamicFields) {
+      let dynamicFieldsObject;
+
+      // clean up any extra characters
+      dynamicFieldsObject = this.selectedCriminalCharge.dynamicFields.replace(/\\n/g, "\\n")
+         .replace(/\\'/g, "\\'")
+         .replace(/\\"/g, '\\"')
+         .replace(/\\&/g, "\\&")
+         .replace(/\\r/g, "\\r")
+         .replace(/\\t/g, "\\t")
+         .replace(/\\b/g, "\\b")
+         .replace(/\\f/g, "\\f");
+      // remove non-printable and other non-valid JSON chars
+      dynamicFieldsObject = dynamicFieldsObject.replace(/[\u0000-\u0019]+/g,"");
+
+      let parsedJson = JSON.parse(dynamicFieldsObject.replace(/'/g, '"'));  // put back double quotes
+
+      let keysFromDynamicFields = Object.keys(parsedJson);
+      this.selectedCriminalCharge.arrayFromDynamicFields = [];
+
+      for (let prop of keysFromDynamicFields) {   // create dynamic array to iterate later
+        this.selectedCriminalCharge.arrayFromDynamicFields.push({"property": prop, "value": parsedJson[prop]});
+      }
+    }
+
+   }
+
+  onSentencingSelectionChange(event, template) {
+    // deselect all others & set selected
+    if (event.selected) {
+      event.source.selectionList.options.toArray().forEach(element => {
+        if (element.value.id != template.id) {
+          element.selected = false;
+        } else {
+          this.selectedCriminalCharge = element.value;
+          this.getDynamicFields();
+        }
+      });
+    }
+  }
+
+  onDocTagModalSelectionChange(event, docType) {
+    // deselect all others & set selected
+    if (event.selected) {
+      event.source.selectionList.options.toArray().forEach(element => {
+        if (element.value.type != docType.type) {
+          element.selected = false;
+        } else {
+          this.docType = element.value.type;
+        }
+      });
+    }
+  }
+
+  onSentencingModalSelectionChange(event, template) {
+    // deselect all others & set selected
+    if (event.selected) {
+      event.source.selectionList.options.toArray().forEach(element => {
+        if (element.value.chargeDescription != template.chargeDescription) {
+          element.selected = false;
+        } else {
+          this.selectedConsequence = element.value;
+        }
+      });
+    }
+  }
+
+  showFieldToggle() {
+    this.showField = true;
+  }
+
+  addNewDynamicField() {
+
+    if(!this.selectedCriminalCharge.arrayFromDynamicFields) {
+      this.selectedCriminalCharge.arrayFromDynamicFields = [];    // initialize if not there
+    }
+
+    this.selectedCriminalCharge.arrayFromDynamicFields.push({"property": this.dynamicField.name+'_'+this.dynamicField.type, "value": null});
+
+  }
+
+  addNewConsequence(item) {
+    item.caseId = this.case.caseOID;
+    item.caseNumber = this.case.caseNumber;
+    this.sentencingSvc.postByType(item).subscribe(result => {
+      this.sentencingSvc.getAllByCaseId(this.case.caseOID).subscribe(criminalConsequences => {
+        this.criminalConsequences = criminalConsequences;
+        this.hideModals();
+        this.toastSvc.showSuccessMessage('New Consequence added');
+      });
+    });
+  }
+
+
 
 }
