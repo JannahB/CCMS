@@ -60,6 +60,7 @@ import { CloseScrollStrategy } from '@angular/cdk/overlay';
 import { SentencingType } from '../../common/entities/SentencingType';
 import { SentencingService } from '../../common/services/http/sentencing.service';
 import {CriminalCharge} from '../../common/entities/CriminalCharge';
+import { SelectItem } from 'primeng/primeng';
 
 @Component({
   selector: 'app-case-detail',
