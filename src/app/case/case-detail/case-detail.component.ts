@@ -63,12 +63,14 @@ import {CriminalCharge} from '../../common/entities/CriminalCharge';
 import { SelectItem } from 'primeng/primeng';
 import { TrafficCharge } from "../../common/entities/TrafficCharge";
 import { CaseTrafficCharge } from "../../common/entities/CaseTrafficCharge";
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-case-detail',
   templateUrl: './case-detail.component.html',
   styleUrls: ['./case-detail.component.scss']
 })
+
 export class CaseDetailComponent implements OnInit, OnDestroy{
 
 
@@ -131,7 +133,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedCourt: AuthorizedCourt;
   loggedInUser: Party;
   courts: AuthorizedCourt[];
-  /*trafficSubscription: Subscription;
+  trafficSubscription: Subscription;
   trafficCharges: TrafficCharge[];
   selectedCaseTrafficCharge = new CaseTrafficCharge();
   caseTrafficCharges: CaseTrafficCharge[];
@@ -143,8 +145,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedCTCBak: CaseTrafficCharge;
   selectedCTCIdx: Number;
   preventNavToCase = false;
-  msgs: Message[] = [];
-  showDeleteTrafficChargeConfirmation = false;*/
+  //msgs: Message[] = [];
+  showDeleteTrafficChargeConfirmation = false;
   initDocTypeTemp: DocumentType = new DocumentType();
 
 
@@ -286,6 +288,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       const caseId = params['caseId'];
 
       this.initDocType.name = "onload";
+      this.getTrafficData(caseId);
+      //this.caseTrafficCharges = [];
 
       this.selectedCourtJD = this.userSvc.appState.selectedCourt.courtJD;
 
@@ -351,6 +355,248 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.selectedCourt =
     this.appState.selectedCourt || this.loggedInUser.authorizedCourts[0];
   }
+
+  caseTrafficChargeOnRowSelect(event: { data: CaseTrafficCharge }): void {
+    this.selectedCaseTrafficCharge = event.data;
+    this.showModalAddTrafficCaseCharge = true;
+    this.selectedTrafficCharge = this.selectedCaseTrafficCharge.trafficCharge;
+    this.isEdit = true;
+    this.caseTrafficChargeForm.form.markAsPristine();
+  }
+
+
+  onAddTrafficCaseCharge(caseTrafficChargeForm: NgForm) {
+    if (!this.case.caseOID || this.case.caseOID === 0) {
+      this.toastSvc.showInfoMessage(
+        "Please complete case details and Save Case before proceeding.",
+        "Complete Case Details"
+      );
+      return;
+    }
+    this.isEdit = false;
+    this.showModalAddTrafficCaseCharge = true;
+    this.selectedCaseTrafficCharge = new CaseTrafficCharge();
+    this.selectedTrafficCharge = null;
+  }
+
+  onCancelMinute(caseTrafficChargeForm: NgForm) {
+    if (this.selectedCaseTrafficCharge.id === null) {
+      CollectionUtil.removeArrayItem(
+        this.caseTrafficCharges,
+        this.selectedCaseTrafficCharge
+      );
+      this.caseTrafficCharges = this.caseTrafficCharges.slice();
+    } else {
+      this.selectedCaseTrafficCharge = this.selectedCTCBak;
+    }
+    this.hideModals();
+  }
+
+
+  getTrafficData(caseId: number) {
+    const source = Observable.forkJoin<any>(
+      this.caseSvc.fetchTrafficCharge(),
+      this.caseSvc.fetchCaseTrafficCharge(caseId),
+      this.caseSvc.fetchCaseTrafficCharges()
+    );
+    this.trafficSubscription = source.subscribe(
+      results => {
+        this.trafficCharges = results[0] as TrafficCharge[];
+        this.caseTrafficCharges = results[1] as CaseTrafficCharge[];
+        this.allCaseTrafficCharges = results[2] as CaseTrafficCharge[];
+        this.getCaseTrafficChargesData();
+      },
+      error => {
+        console.log("get trafficcharges error", error);
+        this.toastSvc.showErrorMessage(
+          "There was an error fetching traffic data."
+        );
+      }
+    );
+  }
+
+  private getCaseTrafficChargesData() {
+    this.caseTrafficCharges.forEach(ctc => {
+      ctc.trafficCharge = this.trafficCharges.find(
+        c => c.id === ctc.trafficChargeId
+      );
+    });
+  }
+
+
+  public trafficChargeFilterFunction(filterText: string, options: TrafficCharge[]): TrafficCharge[] {
+
+    if (!options) {
+      return [];
+    }
+
+    if (!filterText) {
+      return options.copy();
+    }
+
+    return options.filter(o => {
+      const text = `${o.description} ${o.regulation}`;
+
+      return text.contains(filterText, false);
+    });
+    
+  }
+
+  trafficChargeOnChange(selectedTrafficChargeId: number) {
+    if (!this.trafficCharges) {
+      this.selectedTrafficCharge = null;
+      return;
+    }
+
+    this.selectedTrafficCharge = this.trafficCharges.find(
+      c => c.id === selectedTrafficChargeId
+    );
+
+    if (this.checkForDupTrafficCharge(this.selectedTrafficCharge)) {
+      this.selectedTrafficCharge = null;
+      this.toastSvc.showWarnMessage(
+        "A charge can only be added to the case once. ",
+        "Duplicate Charge"
+      );
+    }
+  }
+
+  private checkForDupTrafficCharge(trafficCharge: TrafficCharge): Boolean {
+    const caseTrafficCharges = this.caseTrafficCharges;
+    const idx: number = caseTrafficCharges.findIndex(c =>
+      ObjectUtils.areObjectsEqualDeep(c.trafficCharge, trafficCharge)
+    );
+    return idx > -1;
+  }
+
+  private UniqueCitationNumber(citationNumber: string): Boolean {
+    if (
+      this.allCaseTrafficCharges.find(
+        cn => cn.citationNumber === citationNumber
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  saveCaseTrafficCharge(ctcForm: NgForm) {
+    let caseTrafficCharge: CaseTrafficCharge;
+
+    if (this.selectedCaseTrafficCharge) {
+      caseTrafficCharge = this.selectedCaseTrafficCharge;
+    } else {
+      caseTrafficCharge = new CaseTrafficCharge();
+    }
+
+    caseTrafficCharge.caseId = this.case.caseOID;
+    caseTrafficCharge.trafficChargeId = this.selectedTrafficCharge.id;
+    caseTrafficCharge.offenceDatetime = this.selectedCaseTrafficCharge.offenceDatetime;
+    caseTrafficCharge.paymentDueDate = this.selectedCaseTrafficCharge.paymentDueDate;
+    caseTrafficCharge.deleted = false;
+
+    if (this.isEdit) {
+      this.caseTrafficCharges = this.caseTrafficCharges.slice();
+
+      if (ctcForm.form.controls["citationNumber"].dirty) {
+        if (this.UniqueCitationNumber(caseTrafficCharge.citationNumber)) {
+        } else {
+          this.toastSvc.showWarnMessage(
+            "A ticket with this Citation Number has already been used. Please enter another. ",
+            "Duplicate Citation Number"
+          );
+          return;
+        }
+      }
+
+      if (ctcForm.form.controls["ddTrafficChargeLaw"].dirty) {
+        if (!this.checkForDupTrafficCharge(this.selectedTrafficCharge)) {
+        } else {
+          this.toastSvc.showWarnMessage(
+            "A charge can only be added to the case once. ",
+            "Duplicate Charge"
+          );
+          return;
+        }
+      }
+
+      if (
+        !ctcForm.form.controls["citationNumber"].dirty &&
+        !ctcForm.form.controls["ddTrafficChargeLaw"].dirty
+      ) {
+        try {
+          this.caseSvc.saveCaseTrafficCharge(caseTrafficCharge).subscribe(
+            result => {
+              this.toastSvc.showSuccessMessage("Traffic Charge Saved");
+              console.log(result);
+            },
+            error => {
+              console.log(error);
+              this.toastSvc.showErrorMessage(
+                "There was an error while saving this traffic charge."
+              );
+            },
+            () => {
+              // final
+            }
+          );
+        } catch (error) {
+          console.log(error);
+          this.toastSvc.showErrorMessage(
+            "There was an error while saving this traffic charge."
+          );
+        }
+        this.getCaseTrafficChargesData();
+        this.hideModals();
+      }
+    } else {
+      if (!caseTrafficCharge.id) {
+        if (!this.checkForDupTrafficCharge(this.selectedTrafficCharge)) {
+          if (this.UniqueCitationNumber(caseTrafficCharge.citationNumber)) {
+            this.caseTrafficCharges.push(caseTrafficCharge);
+            this.caseTrafficCharges = this.caseTrafficCharges.slice();
+            try {
+              this.caseSvc.saveCaseTrafficCharge(caseTrafficCharge).subscribe(
+                result => {
+                  this.toastSvc.showSuccessMessage("Traffic Charge Saved");
+                  console.log(result);
+                },
+                error => {
+                  console.log(error);
+                  this.toastSvc.showErrorMessage(
+                    "There was an error while saving this traffic charge."
+                  );
+                },
+                () => {
+                  // final
+                }
+              );
+            } catch (error) {
+              console.log(error);
+              this.toastSvc.showErrorMessage(
+                "There was an error while saving this traffic charge."
+              );
+            }
+            this.getCaseTrafficChargesData();
+            this.hideModals();
+          } else {
+            this.toastSvc.showWarnMessage(
+              "A ticket with this Citation Number has already been used. Please enter another. ",
+              "Duplicate Citation Number"
+            );
+            return;
+          }
+        } else {
+          this.toastSvc.showWarnMessage(
+            "A charge can only be added to the case once. ",
+            "Duplicate Charge"
+          );
+          return;
+        }
+      }
+    }
+  }
+
 
 
 

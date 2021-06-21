@@ -514,7 +514,7 @@
       </button>
     </div>
 
-    <div class="ui-g-12">
+     <div class="ui-g-12">
       <p-dataTable [value]="caseTrafficCharges" selectionMode="single"
                    [(selection)]="selectedCaseTrafficCharge" (onRowSelect)="caseTrafficChargeOnRowSelect($event)"
                    scrollable="true" scrollHeight="200px" dataKey="id" #dtCaseTrafficCharges>
@@ -564,7 +564,7 @@
     </div>
 
 
-  </div>
+  </div> 
 
   <!-- SECOND CARD - TAB SECTION -->
   <div class="ui-g-12 card" *ngIf="case && case.caseOID && case.caseOID > 0">
@@ -3230,6 +3230,515 @@
     </p-footer>
 
   </form>
+</p-dialog>
+
+
+<!-- ADD CASE CHARGE MODAL -->
+
+<p-dialog header="Add Case Charge" width="580" [(visible)]="showModalAddCaseCharge" [responsive]="true"
+  showEffect="fade" [modal]="true" [closable]="false">
+  <form #caseChargeForm="ngForm" novalidate>
+    <!-- (ngSubmit)="saveCaseCharge()" -->
+    <div class="ui-g">
+      <div class="form-group">
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Section</label>
+          <span *ngIf="selectedChargeLawType && selectedSectionType">{{selectedSectionType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedSectionType">Not Applicable</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Division</label>
+          <span *ngIf="selectedChargeLawType && selectedDivisionType">{{selectedDivisionType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedDivisionType">Not Applicable</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Group</label>
+          <span *ngIf="selectedChargeLawType && selectedGroupType">{{selectedGroupType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedGroupType">Not Applicable</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Class</label>
+          <span *ngIf="selectedChargeLawType && selectedClassType">{{selectedClassType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedClassType">Not Applicable</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
+        </div>
+
+        <div class="ui-g-12 mb-0 feature-box">
+          <p>Enter Charge/Law First</p>
+          <div class="feature-box-inner">
+            <label class="minimal primary block">Charge/Law</label>
+            <custom-autocomplete name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel"
+              placeholder="choose Charge/Law..." [required]="true" [options]="chargeLawTypes" labelField="localCharge"
+              dataField="localChargeOID" [ngModel]="selectedChargeLawType?.localChargeOID"
+              (ngModelChange)="chargeLawTypeOnChange($event)" [filterFunction]="localChargeFilterFunction"
+              [labelFunction]="localChargeLabelFunction" styleClass="width-full">
+              <ng-template let-option>
+                <div class="custom-ac-label1">
+                  {{option.categoryIdentifier}} {{option.localCharge}}
+                </div>
+                <div class="custom-ac-label2">
+                  {{option.localLaw}}
+                </div>
+              </ng-template>
+            </custom-autocomplete>
+            <div class="custom-ac-label2" *ngIf="selectedChargeLawType">
+              {{selectedChargeLawType?.localLaw}}
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddChargeLaw.errors?.required && ddChargeLaw.touched">
+              Charge/Law is required
+            </div>
+          </div>
+        </div>
+        <!--
+        <div class="ui-g-12">
+          <label class="minimal primary block" for="tiLea">Police Lead Charge</label>
+          <textarea id="tiLea" name="tiLea" #tiLea="ngModel" [(ngModel)]="leaLeadChargeText" [rows]="2" pInputTextarea
+            autoResize="autoResize" class="width-full"></textarea>
+           <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiLea.errors?.required && tiLea.touched">
+            Police Lead Charge is required
+          </div>
+        </div>
+-->
+        <div class="ui-g-12">
+          <label class="minimal primary block" for="chgDeets">Charge Details</label>
+          <textarea id="chgDeets" name="chgDeets" #chgDeets="ngModel" [(ngModel)]="chargeDetails" [rows]="2"
+            pInputTextarea autoResize="autoResize" class="width-full" [required]="true"></textarea>
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="chgDeets.errors?.required && chgDeets.touched">
+            Charge Details is required
+          </div>
+        </div>
+
+        <!-- <div class="ui-g-12 ">
+          <label class="minimal primary block">Charge Factors</label>
+          <span class="ui-fluid">
+            <p-autoComplete name="acChargeFactors" #acChargeFactors="ngModel" [required]="true" field="description"
+              [(ngModel)]="selectedChargeFactors" [suggestions]="filteredChargeFactorTypes"
+              (completeMethod)="getChargeFactorsToFilter($event)" styleClass="width-full" [minLength]="1"
+              placeholder="select Charge Factors" [dropdown]="true" appendTo="body" [multiple]="true">
+            </p-autoComplete>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+            *ngIf="acChargeFactors.errors?.required && acChargeFactors.touched">
+            One or more Charge Factors are required.
+          </div>
+        </div> -->
+
+      </div>
+    </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+        <button label="Save" type="submit" pButton icon="fa-check" (click)="saveCaseCharge()"
+          [disabled]="!caseChargeForm.form.valid"></button>
+        <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+          (click)="hideModals()"></button>
+      </div>
+    </p-footer>
+
+  </form>
+</p-dialog>
+
+<!-- ADD TRAFFIC CASE CHARGE MODAL -->
+<!-- zaggy -->
+<p-dialog header="Traffic Offence" width="580" [(visible)]="showModalAddTrafficCaseCharge" [responsive]="true"
+  showEffect="fade" [modal]="true" [closable]="false">
+  <ng-container *ngIf="this.isEdit == false; then saveCharge; else editCharge"></ng-container>
+  <ng-template #saveCharge>
+    <form #caseTrafficChargeForm="ngForm" novalidate>
+      <div class="ui-g">
+        <div class="form-group">
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Description of Traffic violation or Offence</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.description}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Relevant Section/Regulation</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.regulation}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Penalty</label>
+            <span *ngIf="selectedTrafficCharge">${{selectedTrafficCharge.penalty}}.00</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Applicable Demerit Points</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.demeritPoints}}</span>
+          </div>
+
+
+          <div class="ui-g-12 mb-0 feature-box">
+            <p>Enter Traffic Charge/Law First</p>
+            <div class="feature-box-inner">
+              <label class="minimal primary block">Charge/Law</label>
+              <custom-autocomplete name="ddTrafficChargeLaw" id="ddTrafficChargeLaw" #ddTrafficChargeLaw="ngModel"
+                placeholder="choose Charge/Law..." [required]="true" [options]="trafficCharges" dataField="id"
+                labelField="description" [filterFunction]="trafficChargeFilterFunction"
+                [ngModel]="selectedTrafficCharge?.id" (ngModelChange)="trafficChargeOnChange($event)"
+                [labelFunction]="trafficChargeLabelFunction" styleClass="width-full">
+                <ng-template let-option>
+                  <div class="custom-ac-label1">
+                    {{option.description}}
+                  </div>
+                  <div class="custom-ac-label2">
+                    {{option.regulation}}
+                  </div>
+                </ng-template>
+              </custom-autocomplete>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddTrafficChargeLaw.errors?.required && ddTrafficChargeLaw.touched">
+                Charge/Law is required
+              </div>
+            </div>
+          </div>
+
+          <!-- CITATION NUMBER -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="citationNumber">Citation Number</label>
+            <input pInputText id="citationNumber" name="citationNumber" #citationNumber="ngModel"
+              (ngModelChange)="citationNumberOnChange($event)" [(ngModel)]="selectedCaseTrafficCharge.citationNumber"
+              [required]="true" />
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="citationNumber.errors?.required && citationNumber.touched">
+              A Citation Number is required
+            </div>
+          </div>
+
+          <!-- REASON FOR CONTEST -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="contestReason">Reason for Contest</label>
+            <textarea id="contestReason" name="contestReason" #contestReason="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.reasonForContest" [required]="true" [rows]="5" pInputTextarea
+              autoResize="autoResize" class="width-full"></textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="contestReason.errors?.required && contestReason.touched">
+              Contest reason is required
+            </div>
+          </div>
+
+          <!-- CHARGE DATE & TIME -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="offenceDateTime">Offence Date/Time</label>
+              <!-- <input pInputText id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+              [ngModel]="selectedCaseTrafficCharge?.offenceDatetime | date: 'medium'" [required]="true"
+              (ngModelChange)="selectedCaseTrafficCharge.offenceDatetime=$event" /> -->
+              <p-calendar id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.offenceDatetime" [required]="true" [showIcon]="true"
+                [showTime]="true"></p-calendar>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="offenceDateTime.errors?.required && offenceDateTime.touched">
+                Offence Date/Time is required
+              </div>
+            </div>
+
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="paymentDueDate">Payment Due Date</label>
+              <!-- <input pInputText id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+              [ngModel]="selectedCaseTrafficCharge.paymentDueDate | date:'medium'" [required]="true"
+              (ngModelChange)="selectedCaseTrafficCharge.paymentDueDate=$event" />-->
+              <p-calendar id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.paymentDueDate" [required]="true" [showIcon]="true"
+                [showTime]="true">
+              </p-calendar>
+              <!-- <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="paymentDueDate.errors?.required && paymentDueDate.touched">
+              Payment Due Date is required
+            </div> -->
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="offenceLocation">Location of Offence</label>
+            <textarea id="offenceLocation" name="offenceLocation" #offenceLocation="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.offenceLocation" [rows]="2" pInputTextarea autoResize="autoResize"
+              class="width-full">
+          </textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="offenceLocation.errors?.required && offenceLocation.touched">
+              Offence Location is required
+            </div>
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleMake">Vehicle Make</label>
+              <input pInputText id="vehicleMake" name="vehicleMake" #vehicleMake="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleMake" [required]="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleMake.errors?.required && vehicleMake.touched">
+                Vehicle Make is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleModel">Vehicle Model</label>
+              <input pInputText id="vehicleModel" name="vehicleModel" #vehicleModel="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleModel">
+              <!-- <span class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="vehicleModel.errors?.required && vehicleModel.touched">
+              Vehicle Model is required
+            </span> -->
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleRegistration">Vehicle Registration</label>
+              <input pInputText id="vehicleRegistration" name="vehicleRegistration" #vehicleRegistration="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleRegistration" [required]="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleRegistration.errors?.required && vehicleRegistration.touched">
+                Vehicle Registration Number is required
+              </span>
+            </div>
+
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleColour">Vehicle Colour</label>
+              <input pInputText id="vehicleColour" name="vehicleColour" #vehicleColour="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleColour">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleColour.errors?.required && vehicleColour.touched">
+                Vehicle Colour is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleYear">Vehicle Year</label>
+              <input pInputText id="vehicleYear" name="vehicleYear" #vehicleYear="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleYear">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleYear.errors?.required && vehicleYear.touched">
+                Vehicle Year is required
+              </span>
+            </div>
+            <div class=ui-g-4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="Save" type="submit" pButton icon="fa-check"
+            (click)="saveCaseTrafficCharge(caseTrafficChargeForm)"
+            [disabled]="!caseTrafficChargeForm.form.valid"></button>
+          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+            (click)="hideModals();"></button>
+        </div>
+      </p-footer>
+    </form>
+  </ng-template>
+
+
+  
+  <ng-template #editCharge>
+    <form #caseTrafficChargeForm="ngForm" novalidate>
+      <div class="ui-g">
+        <div class="form-group">
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Description of Traffic violation or Offence</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.description}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Relevant Section/Regulation</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.regulation}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Penalty</label>
+            <span *ngIf="selectedTrafficCharge">${{selectedTrafficCharge.penalty}}.00</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Applicable Demerit Points</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.demeritPoints}}</span>
+          </div>
+
+
+          <!-- <div class="ui-g-12 mb-0 feature-box">
+          <p>Enter Traffic Charge/Law First</p>
+          <div class="feature-box-inner">
+            <label class="minimal primary block">Charge/Law</label>
+            <custom-autocomplete name="ddTrafficChargeLaw" id="ddTrafficChargeLaw" #ddTrafficChargeLaw="ngModel"
+              placeholder="choose Charge/Law..." [required]="true" [options]="trafficCharges" dataField="id"
+              labelField="description" [filterFunction]="trafficChargeFilterFunction"
+              [ngModel]="selectedTrafficCharge?.id" (ngModelChange)="trafficChargeOnChange($event)"
+              [labelFunction]="trafficChargeLabelFunction" styleClass="width-full">
+              <ng-template let-option>
+                <div class="custom-ac-label1">
+                  {{option.description}}
+                </div>
+                <div class="custom-ac-label2">
+                  {{option.regulation}}
+                </div>
+              </ng-template>
+            </custom-autocomplete>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddTrafficChargeLaw.errors?.required && ddTrafficChargeLaw.touched">
+              Charge/Law is required
+            </div>
+          </div>
+        </div> -->
+
+          <!-- CITATION NUMBER -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="citationNumber">Citation Number</label>
+            <input pInputText id="citationNumber" name="citationNumber" #citationNumber="ngModel"
+              (ngModelChange)="citationNumberOnChange($event)" [(ngModel)]="selectedCaseTrafficCharge.citationNumber"
+              [required]="true" readonly="true" />
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="citationNumber.errors?.required && citationNumber.touched">
+              A Citation Number is required
+            </div>
+          </div>
+
+          <!-- REASON FOR CONTEST -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="contestReason">Reason for Contest</label>
+            <textarea id="contestReason" name="contestReason" #contestReason="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.reasonForContest" [required]="true" [rows]="5" pInputTextarea
+              autoResize="autoResize" class="width-full" readonly="true"></textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="contestReason.errors?.required && contestReason.touched">
+              Contest reason is required
+            </div>
+          </div>
+
+          <!-- CHARGE DATE & TIME -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="offenceDateTime">Offence Date/Time</label>
+              <input pInputText id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+                [ngModel]="selectedCaseTrafficCharge?.offenceDatetime | date: 'medium'" [required]="true"
+                (ngModelChange)="selectedCaseTrafficCharge.offenceDatetime=$event" readonly="true" />
+              <!-- <p-calendar id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.offenceDatetime" [required]="true" [showIcon]="true"
+              [showTime]="true"></p-calendar> -->
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="offenceDateTime.errors?.required && offenceDateTime.touched">
+                Offence Date/Time is required
+              </div>
+            </div>
+
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="paymentDueDate">Payment Due Date</label>
+              <input pInputText id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+                [ngModel]="selectedCaseTrafficCharge.paymentDueDate | date:'medium'" [required]="true"
+                (ngModelChange)="selectedCaseTrafficCharge.paymentDueDate=$event" readonly="true" />
+              <!-- <p-calendar id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.paymentDueDate" [required]="true" [showIcon]="true"
+              [showTime]="true">
+            </p-calendar> -->
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="paymentDueDate.errors?.required && paymentDueDate.touched">
+                Payment Due Date is required
+              </div>
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="offenceLocation">Location of Offence</label>
+            <textarea id="offenceLocation" name="offenceLocation" #offenceLocation="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.offenceLocation" [rows]="2" pInputTextarea autoResize="autoResize"
+              class="width-full" readonly="true">
+          </textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="offenceLocation.errors?.required && offenceLocation.touched">
+              Offence Location is required
+            </div>
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleMake">Vehicle Make</label>
+              <input pInputText id="vehicleMake" name="vehicleMake" #vehicleMake="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleMake" [required]="true" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleMake.errors?.required && vehicleMake.touched">
+                Vehicle Make is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleModel">Vehicle Model</label>
+              <input pInputText id="vehicleModel" name="vehicleModel" #vehicleModel="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleModel" readonly="true">
+              <!-- <span class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="vehicleModel.errors?.required && vehicleModel.touched">
+              Vehicle Model is required
+            </span> -->
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleRegistration">Vehicle Registration</label>
+              <input pInputText id="vehicleRegistration" name="vehicleRegistration" #vehicleRegistration="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleRegistration" [required]="true" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleRegistration.errors?.required && vehicleRegistration.touched">
+                Vehicle Registration Number is required
+              </span>
+            </div>
+
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleColour">Vehicle Colour</label>
+              <input pInputText id="vehicleColour" name="vehicleColour" #vehicleColour="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleColour" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleColour.errors?.required && vehicleColour.touched">
+                Vehicle Colour is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleYear">Vehicle Year</label>
+              <input pInputText id="vehicleYear" name="vehicleYear" #vehicleYear="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleYear" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleYear.errors?.required && vehicleYear.touched">
+                Vehicle Year is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <!-- <button label="Edit" type="submit" pButton icon="fa-check"
+            (click)="saveCaseTrafficCharge(caseTrafficChargeForm)" class="ui-button-success"
+            [disabled]="!caseTrafficChargeForm.form.valid && !caseTrafficChargeForm.form.dirty">
+          </button> -->
+          <button label="Close" class="ui-button-secondary" type="button" pButton icon="fa-close"
+            (click)="hideModals()">
+          </button>
+        </div>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button type="button" class="ui-button-danger" (click)="confirmDelete()" pButton icon="ui-icon-trash"
+            *ngIf="hasPermission(Permission.DELETE_CASE_TRAFFIC_CHARGE)" label="Delete"></button>
+        </div>
+      </p-footer>
+    </form>
+  </ng-template>
+
 </p-dialog>
 
 

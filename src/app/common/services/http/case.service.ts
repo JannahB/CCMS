@@ -44,6 +44,8 @@ import { CaseApplicant } from '../../entities/CaseApplicant';
 import { PaymentDisbursementDetails } from '../../entities//PaymentDisbursementDetails';
 import { CasePayment } from '../../entities//CasePayment';
 import { DocumentType } from '../../entities/DocumentType';
+import { TrafficCharge } from "../../entities/TrafficCharge";
+import { CaseTrafficCharge } from "../../entities/CaseTrafficCharge";
 
 
 @Injectable()
@@ -150,6 +152,36 @@ export class CaseService extends HttpBaseService<Case> {
         const kase: Case = res;
         return this.convertDates([kase]);
       });
+  }
+
+  private convertOffenceDates(charges: CaseTrafficCharge[]) {
+    if (
+      !charges ||
+      !charges.length ||
+      Object.keys(charges).length === 0 ||
+      charges[0] === undefined
+    ) {
+      return [];
+    }
+    charges.forEach(charge => {
+      if (charge.offenceDatetime) {
+        charge.offenceDatetime = DateConverter.convertDate(charge.offenceDatetime);
+      }
+    });
+    return charges;
+  }  
+
+
+  public saveCaseTrafficCharge(
+    ctc: CaseTrafficCharge
+  ): Observable<CaseTrafficCharge> {
+    const url = `${super.getBaseUrl()}/api/case-traffic-charges/`;
+    if (ctc.id > 0) {
+      return this.http.put<CaseTrafficCharge>(url, ctc);
+    } else {
+      ctc.id = null;
+      return this.http.post<CaseTrafficCharge>(url, ctc);
+    }
   }
 
   //This retrieves all case related information
@@ -330,6 +362,32 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http
       .post<LocalCharge[]>(url, "");
   }
+
+  public fetchTrafficCharge(): Observable<TrafficCharge[]> {
+    const url = `${super.getBaseUrl()}/api/traffic-charges`;
+
+    return this.http.get<TrafficCharge[]>(url);
+  }
+
+  public fetchCaseTrafficCharge(
+    caseId: string | number
+  ): Observable<CaseTrafficCharge[]> {
+    const url = `${super.getBaseUrl()}/api/case/${caseId}/case-traffic-charges`;
+
+    return this.http.get<CaseTrafficCharge[]>(url).map(result => {
+      const charges: CaseTrafficCharge[] = result;
+      return this.convertOffenceDates(charges);
+    });
+  }
+
+  public fetchCaseTrafficCharges(): Observable<CaseTrafficCharge[]> {
+    const url = `${super.getBaseUrl()}/api/case/case-traffic-charges`;
+
+    return this.http.get<CaseTrafficCharge[]>(url).map(result => {
+      const charges: CaseTrafficCharge[] = result;
+      return this.convertOffenceDates(charges);
+    });
+  }  
 
   public saveCourtCase(data: Case): Observable<Case> {
 
