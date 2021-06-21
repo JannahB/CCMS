@@ -295,6 +295,145 @@ export class OrdersComponent implements OnInit, OnDestroy {
       .subscribe((found) => (this.orders = found));
   }
 
+  // saveOrder(form: NgForm) {
+  //   const order = this.selectedOrder;
+
+  //   order.orderDate = new Date();
+
+  //   if (this.case.caseType.name === "Tickets/Notice to Contest") {
+  //     order.reference = this.caseTrafficCharges[0].citationNumber;
+  //     order.demeritPoints = this.caseTrafficCharges[0].trafficCharge.demeritPoints;
+  //   }
+
+  //   order.outcome = this.selectedOutcome.value.name;
+  //   order.orderType = this.selectedTemplate.name;
+  //   order.caseNumber = this.case.caseNumber;
+
+  //   if (order.orderType === "Forthwith Payment") {
+  //     order.fwFineAmount =
+  //       this.case.caseType.name === "Tickets/Notice to Contest"
+  //         ? this.caseTrafficCharges[0].trafficCharge.penalty
+  //         : this.penalty;
+  //     // order.fwTimePeriod = this.fwTimePeriod ? this.fwTimePeriod : null;
+  //     order.fwTimePeriod =
+  //       this.fwValue + " " + this.selectedTimeUnit.value.name;
+  //     order.fwTimeUnit = this.selectedTimeUnit.value.name;
+  //     order.fwTimeValue = this.fwValue;
+  //     order.fwDefaultTerms = this.defaultTerm
+  //       ? this.defaultTerm.value.name
+  //       : null;
+  //   } else if (
+  //     order.orderType === "Time Allowed" ||
+  //     order.orderType === "Time Allowed (alternate)"
+  //   ) {
+  //     order.taFineAmount =
+  //       this.case.caseType.name === "Tickets/Notice to Contest"
+  //         ? this.caseTrafficCharges[0].trafficCharge.penalty
+  //         : this.penalty;
+  //     // order.taTimePeriod = this.taTimePeriod ? this.taTimePeriod : null;
+  //     order.taTimePeriod =
+  //       this.taValue + " " + this.selectedTimeUnit.value.name;
+  //     order.taTimeUnit = this.selectedTimeUnit.value.name;
+  //     order.taTimeValue = this.taValue;
+  //     order.taDueDate = this.taDueDate ? this.taDueDate : null;
+  //     order.taDefaultTerms = this.defaultTerm
+  //       ? this.defaultTerm.value.name
+  //       : null;
+  //   } else if (order.orderType === "Community Service") {
+  //     order.csHours = this.csHours ? this.csHours : null;
+  //     order.csLocation = this.csLocation ? this.csLocation : null;
+  //     order.csStartDate = this.csStartDate ? this.csStartDate : null;
+  //   } else if (order.orderType === "Bonded") {
+  //     // order.bdTimePeriod = this.bdTimePeriod ? this.bdTimePeriod : null;
+  //     order.bdTimePeriod =
+  //       this.bdValue + " " + this.selectedTimeUnit.value.name;
+  //     order.bdTimeUnit = this.selectedTimeUnit.value.name;
+  //     order.bdTimeValue = this.bdValue;
+  //     order.bondAmount = this.bondAmount ? this.bondAmount : null;
+  //   } else if (
+  //     order.outcome === "Not Liable" &&
+  //     order.orderType === "Dismissed"
+  //   ) {
+  //     order.demeritPoints = 0;
+  //   } else if (order.orderType === "Probation") {
+  //     // order.pbTimePeriod = this.pbTimePeriod ? this.pbTimePeriod : null;
+  //     order.pbTimePeriod =
+  //       this.pbValue + " " + this.selectedTimeUnit.value.name;
+  //     order.pbTimeUnit = this.selectedTimeUnit.value.name;
+  //     order.pbTimeValue = this.pbValue;
+  //     order.pbFrequency = this.pbFrequency ? this.pbFrequency : null;
+  //     order.pbTimes = this.pbTimes ? this.pbTimes : null;
+  //   } else if (order.orderType === "Compensation") {
+  //     // order.compTimePeriod = this.compTimePeriod ? this.compTimePeriod : null;
+  //     order.compTimePeriod =
+  //       this.compValue + " " + this.selectedTimeUnit.value.name;
+  //     order.compTimeUnit = this.selectedTimeUnit.value.name;
+  //     order.compTimeValue = this.compValue;
+  //     order.compDefaultTerms = this.defaultTerm
+  //       ? this.defaultTerm.value.name
+  //       : null;
+  //     order.compAmount = this.compAmount ? this.compAmount : null;
+  //   } else if (order.orderType === "License Suspended") {
+  //     order.disqualified =
+  //       this.selectedTemplate.name === "License Suspended" ? true : false;
+  //     order.dqStartDate = this.dqStartDate ? this.dqStartDate : null;
+  //     // order.dqTimePeriod = this.dqTimePeriod ? this.dqTimePeriod : null;
+  //     order.dqTimePeriod =
+  //       this.dqValue + " " + this.selectedTimeUnit.value.name;
+  //     order.dqTimeUnit = this.selectedTimeUnit.value.name;
+  //     order.dqTimeValue = this.dqValue;
+  //   } else if (order.orderType === "License Revoked") {
+  //     order.revoked =
+  //       this.selectedTemplate.name === "License Revoked" ? true : false;
+  //     order.rvStartDate = this.rvStartDate ? this.rvStartDate : null;
+  //   }
+
+  //   //#region Register Entry
+  //   // register entry save
+  //   const regEntry: RegisterEntry = new RegisterEntry();
+  //   if (this.isEdit) {
+  //     regEntry.description = "Order updated!";
+  //   } else {
+  //     regEntry.description =
+  //       order.orderType + " order created. " + JSON.stringify(order);
+  //   }
+
+  //   regEntry.caseOID = (this.case.caseOID as any) as string;
+  //   regEntry.eventTypeName = "UPTD";
+
+  //   this.caseRegSvc.save(regEntry).subscribe(
+  //     (result) => {
+  //       this.updateRegister();
+  //     },
+  //     (error) => {
+  //       console.log(error);
+  //     },
+  //     () => {
+  //       // final
+  //     }
+  //   );
+
+  //   //#endregion
+
+  //   this.orderSvc.save(order).subscribe(
+  //     (result) => {
+  //       this.getOrders(result);
+  //       this.toastSvc.showSuccessMessage("Order Component Saved");
+  //     },
+  //     (error) => {
+  //       console.log(error);
+  //       this.toastSvc.showErrorMessage(
+  //         "There was an error while saving orders."
+  //       );
+  //     },
+  //     () => {
+  //       // final
+  //     }
+  //   );
+  //   this.hideModal();
+  //   form.reset();
+  // }
+
   saveOrder(form: NgForm) {
     const order = this.selectedOrder;
 
@@ -305,88 +444,178 @@ export class OrdersComponent implements OnInit, OnDestroy {
       order.demeritPoints = this.caseTrafficCharges[0].trafficCharge.demeritPoints;
     }
 
+    // console.log('SaveOrder Liable Option', this.selectedOutcome.value);
+    
     order.outcome = this.selectedOutcome.value.name;
     order.orderType = this.selectedTemplate.name;
     order.caseNumber = this.case.caseNumber;
 
     if (order.orderType === "Forthwith Payment") {
+
       order.fwFineAmount =
         this.case.caseType.name === "Tickets/Notice to Contest"
           ? this.caseTrafficCharges[0].trafficCharge.penalty
           : this.penalty;
       // order.fwTimePeriod = this.fwTimePeriod ? this.fwTimePeriod : null;
-      order.fwTimePeriod =
-        this.fwValue + " " + this.selectedTimeUnit.value.name;
+      order.fwTimePeriod = this.fwValue + " " + this.selectedTimeUnit.value.name;
       order.fwTimeUnit = this.selectedTimeUnit.value.name;
       order.fwTimeValue = this.fwValue;
       order.fwDefaultTerms = this.defaultTerm
         ? this.defaultTerm.value.name
         : null;
-    } else if (
-      order.orderType === "Time Allowed" ||
-      order.orderType === "Time Allowed (alternate)"
-    ) {
+    } 
+    
+    if ( order.orderType === "Time Allowed" ||order.orderType === "Time Allowed (alternate)") {
+      
       order.taFineAmount =
         this.case.caseType.name === "Tickets/Notice to Contest"
           ? this.caseTrafficCharges[0].trafficCharge.penalty
           : this.penalty;
-      // order.taTimePeriod = this.taTimePeriod ? this.taTimePeriod : null;
-      order.taTimePeriod =
-        this.taValue + " " + this.selectedTimeUnit.value.name;
+      order.taTimePeriod = this.taTimePeriod ? this.taTimePeriod : null;
+      order.taTimePeriod = this.taValue + " " + this.selectedTimeUnit.value.name;
       order.taTimeUnit = this.selectedTimeUnit.value.name;
       order.taTimeValue = this.taValue;
       order.taDueDate = this.taDueDate ? this.taDueDate : null;
       order.taDefaultTerms = this.defaultTerm
         ? this.defaultTerm.value.name
         : null;
-    } else if (order.orderType === "Community Service") {
+
+
+        order.fwFineAmount =
+        this.case.caseType.name === "Tickets/Notice to Contest"
+          ? this.caseTrafficCharges[0].trafficCharge.penalty
+          : this.penalty;
+      order.fwTimePeriod = this.taValue + " " + this.selectedTimeUnit.value.name;
+      order.fwTimeUnit = this.selectedTimeUnit.value.name;
+      order.fwTimeValue = this.taValue;
+      order.fwDefaultTerms = this.defaultTerm
+        ? this.defaultTerm.value.name
+        : null;
+
+        order.taDueDate = this.taDueDate ? this.taDueDate : null;
+
+    }
+    
+    if (order.orderType === "Community Service") {
+
+
       order.csHours = this.csHours ? this.csHours : null;
       order.csLocation = this.csLocation ? this.csLocation : null;
       order.csStartDate = this.csStartDate ? this.csStartDate : null;
-    } else if (order.orderType === "Bonded") {
-      // order.bdTimePeriod = this.bdTimePeriod ? this.bdTimePeriod : null;
+
+      order.fwFineAmount = 0;
+      order.fwDefaultTerms = "Community Service";
+      order.fwTimePeriod = this.csHours.toString() + " hours";
+      order.fwTimeUnit = "hours";
+      order.fwTimeValue = order.csHours;
+
+    }
+    
+    if (order.orderType === "Bonded") {
+
       order.bdTimePeriod =
         this.bdValue + " " + this.selectedTimeUnit.value.name;
       order.bdTimeUnit = this.selectedTimeUnit.value.name;
       order.bdTimeValue = this.bdValue;
       order.bondAmount = this.bondAmount ? this.bondAmount : null;
-    } else if (
-      order.outcome === "Not Liable" &&
-      order.orderType === "Dismissed"
-    ) {
+
+      order.fwFineAmount = this.bondAmount ? this.bondAmount : null;
+      order.fwDefaultTerms = "Bonded";
+      order.fwTimePeriod = this.bdValue + " " + this.selectedTimeUnit.value.name;
+      order.fwTimeUnit = this.selectedTimeUnit.value.name;
+      order.fwTimeValue = this.bdValue;
+
+    } 
+    
+    if (order.outcome === "Not Liable" && order.orderType === "Dismissed") {
       order.demeritPoints = 0;
-    } else if (order.orderType === "Probation") {
-      // order.pbTimePeriod = this.pbTimePeriod ? this.pbTimePeriod : null;
-      order.pbTimePeriod =
-        this.pbValue + " " + this.selectedTimeUnit.value.name;
+    } 
+
+    if (order.outcome === "Liable" && order.orderType === "Dismissed") {
+      
+      order.demeritPoints = 0;
+      order.fwFineAmount = 0;
+      order.fwDefaultTerms = "Dismissed";
+      order.fwTimePeriod =  "0 hours";
+      order.fwTimeUnit = "hours";
+      order.fwTimeValue = 0;  
+
+    }     
+    
+    if (order.orderType === "Probation") {
+
+      order.pbTimePeriod = this.pbValue + " " + this.selectedTimeUnit.value.name;
       order.pbTimeUnit = this.selectedTimeUnit.value.name;
-      order.pbTimeValue = this.pbValue;
+      order.pbTimeValue = this.pbValue;   
       order.pbFrequency = this.pbFrequency ? this.pbFrequency : null;
       order.pbTimes = this.pbTimes ? this.pbTimes : null;
-    } else if (order.orderType === "Compensation") {
-      // order.compTimePeriod = this.compTimePeriod ? this.compTimePeriod : null;
-      order.compTimePeriod =
-        this.compValue + " " + this.selectedTimeUnit.value.name;
-      order.compTimeUnit = this.selectedTimeUnit.value.name;
-      order.compTimeValue = this.compValue;
-      order.compDefaultTerms = this.defaultTerm
-        ? this.defaultTerm.value.name
-        : null;
+
+      order.fwFineAmount = 0;
+      order.fwDefaultTerms = "Probation";
+      order.fwTimePeriod =  this.pbValue + " " + this.selectedTimeUnit.value.name;
+      order.fwTimeUnit = this.selectedTimeUnit.value.name;
+      order.fwTimeValue = this.pbValue;
+
+      console.log('Sending Order Type: Probation');
+    } 
+    
+    if (order.orderType === "Compensation") {
+
+
+      order.compTimePeriod = this.compTimePeriod;
+      order.compDefaultTerms = this.defaultTerm? this.defaultTerm.value.name: null;
       order.compAmount = this.compAmount ? this.compAmount : null;
-    } else if (order.orderType === "License Suspended") {
-      order.disqualified =
-        this.selectedTemplate.name === "License Suspended" ? true : false;
+
+      order.fwFineAmount = this.compAmount ? this.compAmount : null;
+      order.fwDefaultTerms = this.defaultTerm? this.defaultTerm.value.name: null;
+      order.fwTimePeriod =  this.compTimePeriod;
+
+    } 
+    
+    if (order.orderType === "License Suspended") {
+
+      order.disqualified = this.selectedTemplate.name === "License Suspended" ? true : false;
       order.dqStartDate = this.dqStartDate ? this.dqStartDate : null;
-      // order.dqTimePeriod = this.dqTimePeriod ? this.dqTimePeriod : null;
       order.dqTimePeriod =
         this.dqValue + " " + this.selectedTimeUnit.value.name;
+
       order.dqTimeUnit = this.selectedTimeUnit.value.name;
-      order.dqTimeValue = this.dqValue;
-    } else if (order.orderType === "License Revoked") {
+		  order.dqTimeValue = this.dqValue;
+
+      order.fwFineAmount = 0;
+      order.fwDefaultTerms = "License Suspended";
+      order.fwTimePeriod = this.dqValue + " " + this.selectedTimeUnit.value.name;
+      order.fwTimeUnit = this.selectedTimeUnit.value.name;
+      order.fwTimeValue = this.dqValue;     
+    } 
+    
+    if (order.orderType === "License Revoked") {
       order.revoked =
         this.selectedTemplate.name === "License Revoked" ? true : false;
       order.rvStartDate = this.rvStartDate ? this.rvStartDate : null;
+
+      order.dqTimeUnit = 'months';
+		  order.dqTimeValue = 999;
+
+      order.fwFineAmount = 0;
+      order.fwDefaultTerms = "License Revoked";
+      order.fwTimePeriod = "999 months";
+      order.fwTimeUnit = "months";
+      order.fwTimeValue = 999;
+
     }
+
+    if (order.orderType === "Reprimanded and Discharged") {
+      
+      order.fwFineAmount = 0;
+      order.fwDefaultTerms = "Reprimanded and Discharged";
+      order.fwTimePeriod = "0 months";
+      order.fwTimeUnit = "months";
+      order.fwTimeValue = 0;
+
+    }
+    
+    // console.log('Order Passed to Registry ', order);
 
     //#region Register Entry
     // register entry save
@@ -415,7 +644,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
     //#endregion
 
-    this.orderSvc.save(order).subscribe(
+        this.orderSvc.save(order).subscribe(
       (result) => {
         this.getOrders(result);
         this.toastSvc.showSuccessMessage("Order Component Saved");
@@ -432,7 +661,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
     );
     this.hideModal();
     form.reset();
-  }
+  }  
 
   getOrders(resultOrder?) {
     this.loadingDataFlag = true;
@@ -583,7 +812,26 @@ order.driverPermit = "123123"
       }
     });
 
-    order.liable = order.outcome === "Liable" ? true : false;
+    // order.liable = order.outcome === "Liable" ? true : false;
+
+    if (this.orders[0].outcome === "Liable") {
+      
+      order.liable = true
+
+      if(this.orders[0].orderType === "License Suspended" || this.orders[0].orderType === "License Revoked"){
+        console.log('License Suspended/Revoked Order Compiled');
+        order.disqualificationPeriodUnit = this.orders[0].dqTimeUnit;
+        order.disqualificationPeriodValue = this.orders[0].dqTimeValue;
+      }
+
+    }
+    else order.liable = false;
+
+    //order.liable = order.outcome === "Liable" ? true : false;
+
+    console.log('The customer liability status', order.liable);
+    console.log('Compile Order: disqualificationPeriodUnit ', order.disqualificationPeriodUnit);
+    console.log('Compile Order: disqualificationPeriodValue ', order.disqualificationPeriodValue);    
 
     order.offenceName =
       this.case.caseType.name === "Tickets/Notice to Contest"
