@@ -480,6 +480,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     return true;
   }
 
+  citationNumberOnChange(citationNumber: string) {
+    if (!this.UniqueCitationNumber(citationNumber)) {
+      this.selectedCaseTrafficCharge.citationNumber = null;
+      this.toastSvc.showWarnMessage(
+        "A ticket with this Citation Number has already been entered",
+        "Duplicate Citation Number"
+      );
+    }
+  }
+
   saveCaseTrafficCharge(ctcForm: NgForm) {
     let caseTrafficCharge: CaseTrafficCharge;
 
@@ -970,6 +980,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.showDeletePartyModal = false;
     this.showModalEditCaseParty = false;
     this.showModalAuthorizedUsers = false;
+    this.showModalAddTrafficCaseCharge = false;
   }
 
   // -------------------------
