@@ -443,7 +443,7 @@
 
          <!-- CHARGES TABLE -->
 
-         <div class="ui-g-12 mt-30">
+         <!-- <div class="ui-g-12 mt-30">
 
           <div class="ui-g-12 ui-md-6">
             <h2 class="mb-10">Charges</h2>
@@ -471,16 +471,12 @@
               <p-column field="chargeDetails" header="Police Description" [style]="{'width':'15%'}"></p-column>
               <p-column field="localCharge.charge_weight" header="Charge Weight" [sortable]="true" [style]="{'width':'7%'}"></p-column>
 
-              <!-- <p-column field="iccsCode.categoryName" header="Charge Factors" [style]="{'width':'25%'}"></p-column> -->
+
               <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
-              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
-                  <ng-template let-item="rowData" pTemplate="body">
-                      <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
-                  </ng-template>
-              </p-column> -->
+
             </p-dataTable>
           </div>
-        </div>
+        </div> -->
 
           <p-message *ngIf="staticMessage.visible" severity="{{staticMessage.severity}}"
             text="{{staticMessage.message}}"></p-message>
@@ -494,77 +490,74 @@
         </div>
       </form>
     </div>
+
+
+  <!-- TRAFFIC OFFENCES *ngIf="case.caseType?.name.toUpperCase() === 'TICKETS/NOTICE TO CONTEST' "-->
+
+
+  <div class="ui-g-12 ui-md-6" >
+    <h2 class="mb-10">Traffic Offences</h2>
+  </div>
+  <div class="ui-g-12 ui-md-6 ta-r pos-relative">
+    <button type="button"
+            *ngIf="hasPermission(Permission.UPDATE_CASE)"
+            (click)="onAddTrafficCaseCharge(caseTrafficChargeForm)"
+            label="Add Traffic Offence"
+            icon="ui-icon-add"
+            class="ui-button-secondary mr-15 abs-btn" pButton>
+    </button>
+  </div>
+
+   <div class="ui-g-12">
+    <p-dataTable [value]="caseTrafficCharges" selectionMode="single"
+                 [(selection)]="selectedCaseTrafficCharge" (onRowSelect)="caseTrafficChargeOnRowSelect($event)"
+                 scrollable="true" scrollHeight="200px" dataKey="id" #dtCaseTrafficCharges>
+
+      <p-column field="" header="Offence" [style]="{'width':'15%'}">
+        <ng-template pTemplate="body" let-item="rowData">
+          <b>Description:</b>{{item?.trafficCharge.description}} <br />
+          <b>Penalty:</b> ${{item?.trafficCharge.penalty}}.00 <br />
+          <b>Demerit Points:</b> {{item?.trafficCharge.demeritPoints}}
+        </ng-template>
+      </p-column>
+
+      <p-column field="" header="Offence Particulars" [style]="{'width':'15%'}">
+        <ng-template pTemplate="body" let-item="rowData">
+          <b>Fixed Penalty Number:</b> {{item.citationNumber}} <br />
+          <b>Issued:</b> {{item.offenceDatetime | date:'full'}} <br />
+          <b>Offence Location:</b> {{item.offenceLocation}} <br />
+        </ng-template>
+      </p-column>
+
+      <p-column field="" header="Reason for Contest" [style]="{'width':'12%'}">
+        <ng-template pTemplate="body" let-item="rowData">
+          <b>Reason for contest:</b><br />
+          <ng-container *ngIf="item.reasonForContest.length > 300; then truncated; else normal">
+          </ng-container>
+          <ng-template #truncated>
+            <p>{{item.reasonForContest | slice:0:300}}...
+            </p>
+          </ng-template>
+          <ng-template #normal>
+            <p> {{ item.reasonForContest }}</p>
+          </ng-template>
+        </ng-template>
+      </p-column>
+
+      <p-column field="" header="Vehicle Particulars" [style]="{'width':'15%'}">
+        <ng-template pTemplate="body" let-item="rowData">
+          <b>Registration:</b> {{item.vehicleRegistration}} <br />
+          <b>Make:</b> {{item.vehicleMake}} <br />
+          <b>Model:</b> {{item.vehicleModel}} <br />
+          <b>Year:</b> {{item.vehicleYear}} <br />
+          <b>Colour:</b> {{item.vehicleColour}} <br />
+        </ng-template>
+      </p-column>
+
+    </p-dataTable>
+  </div>
   </div>
   <!-- //END FISRT CARD -->
-
-
-  <!-- TRAFFIC OFFENCES *ngIf="case.caseType?.name === 'Tickets/Notice to Contest' "-->
-  <div class="ui-g-12 mt-20 ph-0" >
-
-    <div class="ui-g-12 ui-md-6" >
-      <h2 class="mb-10">Traffic Offences</h2>
-    </div>
-    <div class="ui-g-12 ui-md-6 ta-r pos-relative">
-      <button type="button"
-              *ngIf="hasPermission(Permission.UPDATE_CASE)"
-              (click)="onAddTrafficCaseCharge(caseTrafficChargeForm)"
-              label="Add Traffic Offence"
-              icon="ui-icon-add"
-              class="ui-button-secondary mr-15 abs-btn" pButton>
-      </button>
-    </div>
-
-     <div class="ui-g-12">
-      <p-dataTable [value]="caseTrafficCharges" selectionMode="single"
-                   [(selection)]="selectedCaseTrafficCharge" (onRowSelect)="caseTrafficChargeOnRowSelect($event)"
-                   scrollable="true" scrollHeight="200px" dataKey="id" #dtCaseTrafficCharges>
-
-        <p-column field="" header="Offence" [style]="{'width':'15%'}">
-          <ng-template pTemplate="body" let-item="rowData">
-            <b>Description:</b>{{item?.trafficCharge.description}} <br />
-            <b>Penalty:</b> ${{item?.trafficCharge.penalty}}.00 <br />
-            <b>Demerit Points:</b> {{item?.trafficCharge.demeritPoints}}
-          </ng-template>
-        </p-column>
-
-        <p-column field="" header="Offence Particulars" [style]="{'width':'15%'}">
-          <ng-template pTemplate="body" let-item="rowData">
-            <b>Fixed Penalty Number:</b> {{item.citationNumber}} <br />
-            <b>Issued:</b> {{item.offenceDatetime | date:'full'}} <br />
-            <b>Offence Location:</b> {{item.offenceLocation}} <br />
-          </ng-template>
-        </p-column>
-
-        <p-column field="" header="Reason for Contest" [style]="{'width':'12%'}">
-          <ng-template pTemplate="body" let-item="rowData">
-            <b>Reason for contest:</b><br />
-            <ng-container *ngIf="item.reasonForContest.length > 300; then truncated; else normal">
-            </ng-container>
-            <ng-template #truncated>
-              <p>{{item.reasonForContest | slice:0:300}}...
-              </p>
-            </ng-template>
-            <ng-template #normal>
-              <p> {{ item.reasonForContest }}</p>
-            </ng-template>
-          </ng-template>
-        </p-column>
-
-        <p-column field="" header="Vehicle Particulars" [style]="{'width':'15%'}">
-          <ng-template pTemplate="body" let-item="rowData">
-            <b>Registration:</b> {{item.vehicleRegistration}} <br />
-            <b>Make:</b> {{item.vehicleMake}} <br />
-            <b>Model:</b> {{item.vehicleModel}} <br />
-            <b>Year:</b> {{item.vehicleYear}} <br />
-            <b>Colour:</b> {{item.vehicleColour}} <br />
-          </ng-template>
-        </p-column>
-
-      </p-dataTable>
-    </div>
-
-
-  </div> 
 
   <!-- SECOND CARD - TAB SECTION -->
   <div class="ui-g-12 card" *ngIf="case && case.caseOID && case.caseOID > 0">
@@ -1568,14 +1561,6 @@
           </div>
         </p-tabPanel>
 
-        <p-tabPanel header="Send to UTURN" leftIcon="ui-icon-compare-arrows">
-          <div class="ui-g">
-            <app-orders [case]="case" (filteredEventsChange)="updateRegister($event)"></app-orders>
-          </div>
-        </p-tabPanel>
-
-
-
 
         <!-- PAYMENT & DISBURSEMENTS TAB -->
         <p-tabPanel header="Payments and Disbursements" leftIcon="ui-icon-list">
@@ -1724,6 +1709,12 @@
 
           </div>
         </p-tabPanel>
+
+        <p-tabPanel header="Send to UTURN" leftIcon="ui-icon-compare-arrows">
+          <div class="ui-g">
+            <app-orders [case]="case" (filteredEventsChange)="updateRegister($event)"></app-orders>
+          </div>
+        </p-tabPanel>        
 
 
       </p-tabView>
@@ -3723,16 +3714,12 @@
 
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
-          <!-- <button label="Edit" type="submit" pButton icon="fa-check"
-            (click)="saveCaseTrafficCharge(caseTrafficChargeForm)" class="ui-button-success"
-            [disabled]="!caseTrafficChargeForm.form.valid && !caseTrafficChargeForm.form.dirty">
-          </button> -->
           <button label="Close" class="ui-button-secondary" type="button" pButton icon="fa-close"
             (click)="hideModals()">
           </button>
         </div>
         <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
-          <button type="button" class="ui-button-danger" (click)="confirmDelete()" pButton icon="ui-icon-trash"
+          <button type="button" class="ui-button-danger" (click)="showDeleteTrafficChargeConfirmation = true" pButton icon="ui-icon-trash"
             *ngIf="hasPermission(Permission.DELETE_CASE_TRAFFIC_CHARGE)" label="Delete"></button>
         </div>
       </p-footer>
@@ -3741,6 +3728,26 @@
 
 </p-dialog>
 
+
+<p-dialog header="Confirm Deletion" [(visible)]="showDeleteTrafficChargeConfirmation" [responsive]="true" showEffect="fade" [closable]="true" [modal]="true">
+  <h3>Are you sure that you want to delete this traffic offence?</h3>
+
+  <div class="ui-g-12 ta-r">
+      <button type="button"
+              (click)="confirmDeleteTrafficCharge()"
+              label="Yes"
+              icon="ui-icon-check"
+              class="secondary"
+              pButton></button>
+      <button type="button"
+              (click)="showDeleteTrafficChargeConfirmation = !showDeleteTrafficChargeConfirmation"
+              label="No"
+              icon="ui-icon-clear"
+              class="ui-button-secondary"
+              pButton></button>
+
+  </div>
+</p-dialog>
 
 
 <!-- ADD EVENT MODAL -->

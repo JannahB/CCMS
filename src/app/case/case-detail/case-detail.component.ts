@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
@@ -61,9 +61,12 @@ import { SentencingType } from '../../common/entities/SentencingType';
 import { SentencingService } from '../../common/services/http/sentencing.service';
 import {CriminalCharge} from '../../common/entities/CriminalCharge';
 import { SelectItem } from 'primeng/primeng';
+import { Message } from 'primeng/primeng';
 import { TrafficCharge } from "../../common/entities/TrafficCharge";
 import { CaseTrafficCharge } from "../../common/entities/CaseTrafficCharge";
 import { NgForm } from '@angular/forms';
+import { RegisterEntry } from "../../common/entities/RegisterEntry";
+import { CaseRegisterService } from "../../common/services/http/case-register.service";
 
 @Component({
   selector: 'app-case-detail',
@@ -76,6 +79,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   @ViewChild('caseForm') caseForm: any;
   @ViewChild("caseTrafficChargeForm") caseTrafficChargeForm: NgForm;
+  @Input() filteredCaseEvents: CaseEvent[];
+  @Output() filteredEventsChange = new EventEmitter<CaseEvent[]>();
 
   authToken: string;
   activeTabIndex = 1;
@@ -145,7 +150,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedCTCBak: CaseTrafficCharge;
   selectedCTCIdx: Number;
   preventNavToCase = false;
-  //msgs: Message[] = [];
+  msgs: Message[] = [];
   showDeleteTrafficChargeConfirmation = false;
   initDocTypeTemp: DocumentType = new DocumentType();
 
@@ -205,7 +210,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     private userSvc: UserService,
     private appState: AppStateService,
     private countriesSvc: CountriesService,
-    private dropdownSvc: DropdownDataTransformService
+    private dropdownSvc: DropdownDataTransformService,
+    private caseRegSvc: CaseRegisterService
   ) {
 
     this.sentencingTypes = [{
@@ -608,6 +614,75 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   }
 
 
+  confirmDeleteTrafficCharge() {
+    this.preventNavToCase = true;
+        let caseTrafficCharge = this.selectedCaseTrafficCharge;
+        caseTrafficCharge.deleted = true;
+        let oldCitationNumber = this.selectedCaseTrafficCharge.citationNumber;
+        caseTrafficCharge.citationNumber = this.selectedCaseTrafficCharge.citationNumber + "-del-" + this.selectedCaseTrafficCharge.id;
+        //try {
+          this.caseSvc.saveCaseTrafficCharge(caseTrafficCharge).subscribe(
+            result => {
+              this.msgs = [
+                {
+                  severity: "primary",
+                  summary: "Deleted",
+                  detail: "Traffic charge deleted successfully"
+                }];
+
+              this.preventNavToCase = false;
+              this.hideModals();
+              this.router.navigate(["/case-detail", this.case.caseOID]);
+              this.getTrafficData(this.case.caseOID);
+            },
+            error => {
+              console.log(error);
+              this.toastSvc.showErrorMessage(
+                "There was an error while deleting this traffic charge."
+              );
+            },
+            () => {
+              // final
+              // register entry save
+              const regEntry: RegisterEntry = new RegisterEntry();
+
+              regEntry.description = "Traffic charge with citation number [" + oldCitationNumber + "] deleted";
+              regEntry.caseOID = this.case.caseOID as any as string;
+              regEntry.eventTypeName = "UPTD";
+
+              this.caseRegSvc
+                .save(regEntry)
+                .subscribe(result => {
+                  this.updateRegisterEvents();
+                },
+                  (error) => {
+                    console.log(error);
+                  },
+                  () => {
+                    // final
+                  });
+            }
+          );
+          //}
+        }
+
+  public updateRegisterEvents() {
+      const currCaseOID: string = (this.case.caseOID as any) as string;
+      console.log(currCaseOID);
+      this.caseSvc.fetchOne(currCaseOID).subscribe(
+      kase => {
+        this.filteredEventsChange.emit(kase.caseEvents);
+      
+          this.toastSvc.showInfoMessage("Case register updated");
+        },
+        error => {
+        console.log(error);
+        },
+      () => {
+        // done
+        }
+       );
+   }
 
 
   getCaseLookupValues(){
@@ -981,6 +1056,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.showModalEditCaseParty = false;
     this.showModalAuthorizedUsers = false;
     this.showModalAddTrafficCaseCharge = false;
+    this.showDeleteTrafficChargeConfirmation = false;
   }
 
   // -------------------------
