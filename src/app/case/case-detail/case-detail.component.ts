@@ -105,6 +105,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   routeSubscription: Subscription;
   caseTypes: CaseType[] = [];
   caseApplicationTypes: CaseApplicationType[] = [];
+  paymentItems: SelectItem[] = [];
   caseDispositionTypes: CaseDispositionType[] = [];
   caseStatuses: CaseStatus[] = [];
   casePhases: CasePhase[] = [];
@@ -725,6 +726,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.caseSvc
       .fetchCaseApplicationType()
       .subscribe(appTypes => this.caseApplicationTypes = appTypes);
+
+    this.caseSvc
+      .fetchCasePaymentItem()
+      .subscribe(paymentItems => {
+        this.paymentItems = this.dropdownSvc.transform(paymentItems, 'name', 'paymentItemOID');
+      });
 
       this.countriesSubscription = this.countriesSvc.get().subscribe(countries => {
         this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
