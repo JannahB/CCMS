@@ -1172,8 +1172,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.selectedCaseApplication.caseApplicationStatus = event.value;
   }
 
-  paymentItemOnChange(event,acIdx) {
-    this.selectedCasePayment.paymentsDisbursements[acIdx].paymentItem = event;
+  paymentItemOnChange(event, acIdx) {
+    this.selectedCasePayment.paymentsDisbursements[acIdx].paymentItemOID = event;
   }
 
   paymentFrequencyOnChange(event,acIdx) {
