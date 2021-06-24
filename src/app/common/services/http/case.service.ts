@@ -32,6 +32,7 @@ import { FileSaver } from '../utility/file-saver.service';
 import { EventType } from '../../entities/EventType';
 import { CaseType } from '../../entities/CaseType';
 import { CaseApplicationType } from '../../entities/CaseApplicationType';
+import { PaymentItem } from '../../entities/PaymentItem';
 import { CaseDispositionType } from '../../entities/CaseDispositionType';
 import { CaseStatus } from '../../entities/CaseStatus';
 import { CasePhase } from '../../entities/CasePhase';
@@ -302,8 +303,8 @@ export class CaseService extends HttpBaseService<Case> {
         casePayments.forEach(ct => {
           ct.dateOfPayment = DateConverter.convertDate(ct.dateOfPayment);
           ct.disbursementDate = DateConverter.convertDate(ct.disbursementDate);
-          
-          
+
+
         })
       }
 
@@ -431,11 +432,11 @@ export class CaseService extends HttpBaseService<Case> {
       caseData.caseFilingDate = this.datePipe.transform(data.caseFilingDate, "yyyy-MM-dd");
     if (data.caseDispositionDate){
        caseData.caseDispositionDate = this.datePipe.transform(data.caseDispositionDate, "yyyy-MM-dd");
-    }      
+    }
     if (data.caseType)
       caseData.caseType = data.caseType.caseTypeOID.toString();
     if (data.caseDispositionType){
-      caseData.caseDispositionType = data.caseDispositionType.caseDispositionTypeOID.toString();  
+      caseData.caseDispositionType = data.caseDispositionType.caseDispositionTypeOID.toString();
     }
     if (data.caseStatus)
       caseData.caseStatus = data.caseStatus.statusOID.toString();
@@ -510,7 +511,7 @@ export class CaseService extends HttpBaseService<Case> {
       });
 
 
-  
+
     }
 
     const url = `${super.getBaseUrl()}/SaveCourtCase`;
@@ -555,7 +556,7 @@ export class CaseService extends HttpBaseService<Case> {
     ct.dateOfPayment = DateConverter.convertDate(ct.dateOfPayment);
     ct.disbursementDate = DateConverter.convertDate(ct.disbursementDate);
 
-    for (let i = 0; i < ct.paymentsDisbursements.length; i++){        
+    for (let i = 0; i < ct.paymentsDisbursements.length; i++){
       ct.paymentsDisbursements[i].paymentPeriodStartDate = DateConverter.convertDate(ct.paymentsDisbursements[i].paymentPeriodStartDate);
       ct.paymentsDisbursements[i].paymentPeriodEndDate = DateConverter.convertDate(ct.paymentsDisbursements[i].paymentPeriodEndDate);
     }
@@ -575,13 +576,13 @@ export class CaseService extends HttpBaseService<Case> {
       .post<Case>(url,data)
       .map(t => this.convertCaseTaskDates(t))
   }
-  
+
   public SealUnsealCourtCase(data: any): Observable<Case> {
     let url: string = `${super.getBaseUrl()}/SealUnsealCourtCase`;
     return this.http
       .post<Case>(url,data)
       .map(t => this.convertCaseTaskDates(t))
-  }    
+  }
 
   convertCaseTaskDates(ct) {
     ct.assignedDate = DateConverter.convertDate(ct.assignedDate);
@@ -748,7 +749,7 @@ export class CaseService extends HttpBaseService<Case> {
   public saveJudicialAssignment(data: JudicialAssignment): Observable<JudicialAssignment> {
     const url = `${super.getBaseUrl()}/SaveJudicialAssignment`;
 
-    let assignment: any = {   
+    let assignment: any = {
       caseOID: data.caseOID.toString(),
       partyOID: data.judicialOfficial.partyOID.toString(),
       judOfficerName: data.judicialOfficial.firstName + ' '+ data.judicialOfficial.lastName,
@@ -834,9 +835,16 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http
       .get<CaseApplicationType[]>(url);
   }
-  
+
+  public fetchCasePaymentItem(): Observable<PaymentItem[]> {
+    const url = `${super.getBaseUrl()}/FetchCasePaymentItem`;
+
+    return this.http
+      .get<PaymentItem[]>(url);
+  }
+
   public fetchCaseDispositionType(): Observable<CaseDispositionType[]> {
-    
+
     let url: string = `${super.getBaseUrl()}/FetchCaseDispositionTypes`;
     return this.http
       .get<CaseDispositionType[]>(url);
@@ -898,7 +906,7 @@ export class CaseService extends HttpBaseService<Case> {
     }
 
     return this.http.post<CasePayment[]>(url, params);
-  }  
+  }
 
  //This fetches all the case payment details
  public fetchCasePaymentDetails(caseNum: number): Observable<PaymentDisbursementDetails[]> {
@@ -909,7 +917,7 @@ export class CaseService extends HttpBaseService<Case> {
   }
 
   return this.http.post<PaymentDisbursementDetails[]>(url, params);
-}    
+}
   //This fetches all the applications for a specific case application
   /*public fetchCaseApplicants(applicationNum: number): Observable<CaseApplicant[]> {
     let url: string = `${super.getBaseUrl()}/FetchCaseApplicant`;
