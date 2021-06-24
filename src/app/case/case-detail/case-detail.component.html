@@ -3082,7 +3082,7 @@
                   <p-dropdown
                        placeholder="Choose Payment Item"
                       [required]="true"
-                      [options]="paymentItem"
+                      [options]="paymentItems"
                       filter = "true"
                       appendTo="body"
                       [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
