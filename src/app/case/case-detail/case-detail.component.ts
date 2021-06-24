@@ -1130,13 +1130,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   ];
 
-  paymentItem: any[] = [
-    { value: 'Fines', label: 'Fines' },
-    { value: 'Fees', label: 'Fees' },
-    { value: 'Compensation', label: 'Compensation' }
-
-  ];
-
   paymentMethod: any[] = [
     { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
     { value: 'Cash', label: 'Cash' },
