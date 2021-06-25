@@ -1171,8 +1171,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.selectedCasePayment.paymentsDisbursements[acIdx].paymentItemOID = event;
   }
 
-  paymentFrequencyOnChange(event,acIdx) {
-    this.selectedCasePayment.paymentsDisbursements[acIdx].paymentFrequency = event;
+  paymentFrequencyOnChange(event, acIdx) {
+    this.selectedCasePayment.paymentsDisbursements[acIdx].paymentFrequencyOID = event;
   }
 
   paymentAmountInOnChange(event,acIdx) {
