@@ -3098,7 +3098,7 @@
                   <p-dropdown
                       placeholder="Choose Payment Frequency"
                       [required]="true"
-                      [options]="paymentFrequency"
+                      [options]="paymentFrequencies"
                       filter = "true"
                       appendTo="body"
                       [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
