@@ -416,10 +416,14 @@ export class CaseService extends HttpBaseService<Case> {
           iccsCodeOID: value.localCharge.parentOID.toString(),
           lea: value.leaChargingDetails,
           polDesc: value.chargeDetails,
+          charge_id: value.charge_id,
+          charge_count: value.charge_count.toString(),
           factors: [],
           factorCategory: [],
           factorVariable: []
         };
+
+        console.log('case service ', charge.charge_count);
 
         if (value.localCharge){
 
