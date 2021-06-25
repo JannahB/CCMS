@@ -3104,7 +3104,7 @@
                       [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
                       (ngModelChange)="paymentFrequencyOnChange($event,acIdx)"
                       id="paymentsDisbursements-paymentFrequency-{{acIdx}}"
-                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentFrequency"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentFrequencyOID"
                       name="paymentsDisbursements[{{acIdx}}].paymentFrequency"
                       styleClass="width-full">
                   </p-dropdown>
