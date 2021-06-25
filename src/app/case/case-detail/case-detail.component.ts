@@ -1163,18 +1163,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     { value: 'Compensation', label: 'Compensation' }
   ];
 
-  paymentFrequency: any[] = [
-    { value: 'Daily', label: 'Daily' },
-    { value: 'Weekly', label: 'Weekly' },
-    { value: 'Monthly', label: 'Monthly' },
-    { value: 'Quarterly', label: 'Quarterly' },
-    { value: 'Yearly', label: 'Yearly' },
-    { value: 'Fortnightly', label: 'Fortnightly' },
-    { value: 'One Time Payment', label: 'One Time Payment' },
-    { value: 'Custom Days', label: 'Custom Days' },
-    { value: 'Suspended', label: 'Suspended' }
-  ];
-
 
   applicationTypeOnChange(event) {
     this.selectedCaseApplication.caseApplicationType = event.value.caseApplicationTypeOID;
