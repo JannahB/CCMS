@@ -106,6 +106,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   caseTypes: CaseType[] = [];
   caseApplicationTypes: CaseApplicationType[] = [];
   paymentItems: SelectItem[] = [];
+  paymentFrequencies: SelectItem[] = [];
   caseDispositionTypes: CaseDispositionType[] = [];
   caseStatuses: CaseStatus[] = [];
   casePhases: CasePhase[] = [];
@@ -731,6 +732,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .fetchCasePaymentItem()
       .subscribe(paymentItems => {
         this.paymentItems = this.dropdownSvc.transform(paymentItems, 'name', 'paymentItemOID');
+      });
+
+    this.caseSvc
+      .fetchCasePaymentFrequency()
+      .subscribe(paymentFrequencies => {
+        this.paymentFrequencies = this.dropdownSvc.transform(paymentFrequencies, 'name', 'paymentFrequencyOID');
       });
 
       this.countriesSubscription = this.countriesSvc.get().subscribe(countries => {
