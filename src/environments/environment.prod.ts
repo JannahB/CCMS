@@ -1,9 +1,6 @@
 export const environment = {
   production: true,
-  // apiUrl: "https://childcms.ttlawcourts.org/CCMS3",       // PROD
-  // apiUrl: "http://tt-qa.eastus2.cloudapp.azure.com/CCMS3",       // QA
-  // apiUrl: "http://tt-dev.eastus2.cloudapp.azure.com/CCMS3",       // DEV
-  apiUrl: "http://tt-crim-dev.eastus.cloudapp.azure.com/CCMS3",       // CRIM DEV
+  apiUrl: "https://cms.ttlawcourts.org/CCMS3",       // PROD
   mockUrl: "assets/mockData/",
 
   allowDeleteLookupItems: false,
@@ -11,6 +8,7 @@ export const environment = {
   allowAdminWorkflowFeature: true,
   allowAdminCalendarFeature: false,
   allowJudgeAssignMgmtFeature: false,
+  trafficApiUrl: "{{build.trafapiurl}}",
 
   VERSION: require('../../package.json').version
 };

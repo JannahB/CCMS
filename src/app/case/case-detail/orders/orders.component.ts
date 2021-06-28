@@ -833,11 +833,12 @@ order.driverPermit = "123123"
     console.log('Compile Order: disqualificationPeriodUnit ', order.disqualificationPeriodUnit);
     console.log('Compile Order: disqualificationPeriodValue ', order.disqualificationPeriodValue);    
 
-    order.offenceName =
-      this.case.caseType.name === "Tickets/Notice to Contest"
-        ? this.caseTrafficCharges[0].trafficCharge.description
-        : null;
-    // console.log(order);
+    // order.offenceName =
+    //   this.case.caseType.name === "Tickets/Notice to Contest"
+    //     ? this.caseTrafficCharges[0].trafficCharge.description
+    //     : null;
+
+    order.offenceName = "Tickets/Notice to Contest"
 
     order.id = id;
     return order;

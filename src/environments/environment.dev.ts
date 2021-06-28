@@ -9,6 +9,7 @@ export const environment = {
   // apiUrl: "https://testcms.ttlawcourts.org/CCMS3",     // TEST
   apiUrl: "http://localhost:8080",
   mockUrl: "assets/mockData/",
+  trafficApiUrl: 'https://trafapi.ttlawcourts.org:10443',
 
   allowDeleteLookupItems: false,
   allowResetPasswordFeature: true,
