@@ -33,7 +33,7 @@ import { EventType } from '../../entities/EventType';
 import { CaseType } from '../../entities/CaseType';
 import { CaseApplicationType } from '../../entities/CaseApplicationType';
 import { PaymentItem } from '../../entities/PaymentItem';
-import { PaymentFrequency} from '../../entities/PaymentFrequency';
+import { TimeFrequency} from '../../entities/TimeFrequency';
 import { CaseDispositionType } from '../../entities/CaseDispositionType';
 import { CaseStatus } from '../../entities/CaseStatus';
 import { CasePhase } from '../../entities/CasePhase';
@@ -844,9 +844,9 @@ export class CaseService extends HttpBaseService<Case> {
       .get<PaymentItem[]>(url);
   }
 
-  public fetchCasePaymentFrequency(): Observable<PaymentFrequency[]> {
-    const url = `${super.getBaseUrl()}/FetchCasePaymentFrequency`;
-    return this.http.get<PaymentFrequency[]>(url);
+  public fetchTimeFrequency(): Observable<TimeFrequency[]> {
+    const url = `${super.getBaseUrl()}/FetchTimeFrequency`;
+    return this.http.get<TimeFrequency[]>(url);
   }
 
   public fetchCaseDispositionType(): Observable<CaseDispositionType[]> {

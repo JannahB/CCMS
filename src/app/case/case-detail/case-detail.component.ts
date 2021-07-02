@@ -106,7 +106,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   caseTypes: CaseType[] = [];
   caseApplicationTypes: CaseApplicationType[] = [];
   paymentItems: SelectItem[] = [];
-  paymentFrequencies: SelectItem[] = [];
+  timeFrequencies: SelectItem[] = [];
   caseDispositionTypes: CaseDispositionType[] = [];
   caseStatuses: CaseStatus[] = [];
   casePhases: CasePhase[] = [];
@@ -735,9 +735,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       });
 
     this.caseSvc
-      .fetchCasePaymentFrequency()
-      .subscribe(paymentFrequencies => {
-        this.paymentFrequencies = this.dropdownSvc.transform(paymentFrequencies, 'name', 'paymentFrequencyOID');
+      .fetchTimeFrequency()
+      .subscribe(timeFrequencies => {
+        this.timeFrequencies = this.dropdownSvc.transform(timeFrequencies, 'name', 'timeFrequencyOID');
       });
 
       this.countriesSubscription = this.countriesSvc.get().subscribe(countries => {
@@ -1172,7 +1172,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   }
 
   paymentFrequencyOnChange(event, acIdx) {
-    this.selectedCasePayment.paymentsDisbursements[acIdx].paymentFrequencyOID = event;
+    this.selectedCasePayment.paymentsDisbursements[acIdx].timeFrequencyOID = event;
   }
 
   paymentAmountInOnChange(event,acIdx) {

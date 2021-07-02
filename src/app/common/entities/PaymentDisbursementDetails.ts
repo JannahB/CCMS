@@ -6,7 +6,7 @@ export class PaymentDisbursementDetails {
     paymentOID: number = 0; //unique identifier for the parent payment
     paymentDetailOID: number = 0; // unique identifier for payment details associate with a payment
     paymentItemOID: number = 0;
-    paymentFrequencyOID: string = "";
+    timeFrequencyOID: string = "";
     paymentPeriodStartDate: Date = null;
     paymentPeriodEndDate: Date = null;
     paymentAmountOrdered: number;

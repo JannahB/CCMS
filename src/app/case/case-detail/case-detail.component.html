@@ -3098,13 +3098,13 @@
                   <p-dropdown
                       placeholder="Choose Payment Frequency"
                       [required]="true"
-                      [options]="paymentFrequencies"
+                      [options]="timeFrequencies"
                       filter = "true"
                       appendTo="body"
                       [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
                       (ngModelChange)="paymentFrequencyOnChange($event,acIdx)"
                       id="paymentsDisbursements-paymentFrequency-{{acIdx}}"
-                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentFrequencyOID"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].timeFrequencyOID"
                       name="paymentsDisbursements[{{acIdx}}].paymentFrequency"
                       styleClass="width-full">
                   </p-dropdown>

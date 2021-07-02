@@ -1,4 +1,4 @@
-export class PaymentFrequency {
+export class TimeFrequency {
 
   private _id: number;
   private _paymentFrequencyOID: number;
