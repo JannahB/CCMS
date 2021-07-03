@@ -15,6 +15,8 @@ import { DateConverter } from '../../utils/date-converter';
 import { HttpBaseService } from './http-base.service';
 import { Case } from '../../entities/Case';
 import { CaseHearings } from '../../entities/CaseHearings';
+import { CasePaymentMethod } from '../../entities/CasePaymentMethod';
+import { CasePaymentType } from '../../entities/CasePaymentType';
 import { Email } from '../../entities/Email';
 import { IccsCode } from '../../entities/IccsCode';
 import { DatePipe } from '@angular/common';
@@ -849,6 +851,23 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http.get<TimeFrequency[]>(url);
   }
 
+  
+  public fetchCasePaymentMethod(): Observable<CasePaymentMethod[]>{
+
+    const url = `${super.getBaseUrl()}/FetchCasePaymentMethod`;
+
+    return this.http
+      .get<CasePaymentMethod[]>(url);
+  }
+
+  public fetchCasePaymentType(): Observable<CasePaymentType[]>{
+
+    const url = `${super.getBaseUrl()}/FetchCasePaymentType`;
+
+    return this.http
+      .get<CasePaymentType[]>(url);
+  }
+  
   public fetchCaseDispositionType(): Observable<CaseDispositionType[]> {
 
     let url: string = `${super.getBaseUrl()}/FetchCaseDispositionTypes`;

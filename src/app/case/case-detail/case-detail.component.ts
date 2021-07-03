@@ -725,6 +725,30 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .subscribe(roles => this.casePartyRoleTypes = roles);
 
     this.caseSvc
+      .fetchCasePaymentMethod()
+      .subscribe(paymentMethods => 
+        {
+          this.paymentMethod = paymentMethods.map((value) => {
+            return {value : value.name, label : value.name};
+          });
+          
+          //this.casePaymentMethods = paymentMethods;
+          console.log(paymentMethods);
+        });
+    
+    this.caseSvc
+        .fetchCasePaymentType()
+        .subscribe(paymentTypes => 
+          {
+            this.paymentTypes = paymentTypes.map((value) => {
+              return {value : value.name, label : value.name};
+            });
+            
+            //this.casePaymentMethods = paymentMethods;
+            console.log(paymentTypes);
+          });
+
+    this.caseSvc
       .fetchCaseApplicationType()
       .subscribe(appTypes => this.caseApplicationTypes = appTypes);
 
@@ -1137,25 +1161,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   ];
 
-  paymentMethod: any[] = [
-    { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
-    { value: 'Cash', label: 'Cash' },
-    { value: 'Cheque', label: 'Cheque' },
-    { value: 'CourtPay', label: 'CourtPay' },
-    { value: 'Credit Card', label: 'Credit Card' },
-    { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
-    { value: 'Personal Cheque', label: 'Personal Cheque' },
-    { value: 'Deferred Payment', label: 'Deferred Payment' }
-
-
-  ];
-
-  paymentTypes: any[] = [
-    { value: 'Fines', label: 'Fines' },
-    { value: 'Fees', label: 'Fees' },
-    { value: 'Compensation', label: 'Compensation' }
-  ];
-
+  paymentMethod: any[] = [];
+  paymentTypes: any[] = [];
+  
 
   applicationTypeOnChange(event) {
     this.selectedCaseApplication.caseApplicationType = event.value.caseApplicationTypeOID;
