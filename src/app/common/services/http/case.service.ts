@@ -15,6 +15,8 @@ import { DateConverter } from '../../utils/date-converter';
 import { HttpBaseService } from './http-base.service';
 import { Case } from '../../entities/Case';
 import { CaseHearings } from '../../entities/CaseHearings';
+import { CasePaymentMethod } from '../../entities/CasePaymentMethod';
+import { CasePaymentType } from '../../entities/CasePaymentType';
 import { Email } from '../../entities/Email';
 import { IccsCode } from '../../entities/IccsCode';
 import { DatePipe } from '@angular/common';
@@ -171,7 +173,7 @@ export class CaseService extends HttpBaseService<Case> {
       }
     });
     return charges;
-  }  
+  }
 
 
   public saveCaseTrafficCharge(
@@ -389,7 +391,7 @@ export class CaseService extends HttpBaseService<Case> {
       const charges: CaseTrafficCharge[] = result;
       return this.convertOffenceDates(charges);
     });
-  }  
+  }
 
   public saveCourtCase(data: Case): Observable<Case> {
 
@@ -421,10 +423,10 @@ export class CaseService extends HttpBaseService<Case> {
       caseData.caseNotes = data.caseNotes.toString();
     if (data.charges)
       caseData.charges = data.charges.toString();
-    
+
       if (data.initDocType)
-      caseData.caseInititingDoc = data.initDocType.name.toString();      
-      
+      caseData.caseInititingDoc = data.initDocType.name.toString();
+
     if (data.courtOfAppealNumber)
       caseData.courtOfAppealNumber = data.courtOfAppealNumber.toString();
     if (data.caseOID)
@@ -472,7 +474,7 @@ export class CaseService extends HttpBaseService<Case> {
 
         let charge: any = {
 
-          
+
           iccsCodeOID: value.localCharge.parentOID.toString(),
           lea: value.leaChargingDetails,
           polDesc: value.chargeDetails,
@@ -489,7 +491,7 @@ export class CaseService extends HttpBaseService<Case> {
 
           charge.localChargeOID = value.localCharge.localChargeOID.toString();
           charge.iccsCode = value.localCharge.parentOID.toString();
-        
+
         }
 
         /*value.chargeFactors.forEach(factor => {
@@ -708,7 +710,7 @@ export class CaseService extends HttpBaseService<Case> {
     });
   }
 
-  public fetchNewDocTypesFull(): Observable<DocumentType[]> {    
+  public fetchNewDocTypesFull(): Observable<DocumentType[]> {
     const url = `${super.getBaseUrl()}/api/new-doc-types-full`;
     //const url = `${super.getBaseUrl()}/api/new-doc-types`;
 
@@ -835,6 +837,22 @@ export class CaseService extends HttpBaseService<Case> {
 
     return this.http
       .get<CaseApplicationType[]>(url);
+  }
+
+  public fetchCasePaymentMethod(): Observable<CasePaymentMethod[]>{
+
+    const url = `${super.getBaseUrl()}/FetchCasePaymentMethod`;
+
+    return this.http
+      .get<CasePaymentMethod[]>(url);
+  }
+
+  public fetchCasePaymentType(): Observable<CasePaymentType[]>{
+
+    const url = `${super.getBaseUrl()}/FetchCasePaymentType`;
+
+    return this.http
+      .get<CasePaymentType[]>(url);
   }
 
   public fetchCasePaymentItem(): Observable<PaymentItem[]> {
