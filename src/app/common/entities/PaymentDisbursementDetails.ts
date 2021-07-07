@@ -13,6 +13,7 @@ export class PaymentDisbursementDetails {
     paymentAmountIn: number;
     paymentDate: Date = null;
     paymentType: string = "";
+    paymentTypeID:number = 0;
     receiptNumber: string = "";
 
 }

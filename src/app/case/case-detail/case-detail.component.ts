@@ -68,6 +68,7 @@ import { NgForm } from '@angular/forms';
 import { RegisterEntry } from "../../common/entities/RegisterEntry";
 import { CaseRegisterService } from "../../common/services/http/case-register.service";
 import { Console } from 'console';
+import { CasePaymentMethod } from '../../common/entities/CasePaymentMethod';
 
 @Component({
   selector: 'app-case-detail',
@@ -729,7 +730,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .subscribe(paymentMethods => 
         {
           this.paymentMethod = paymentMethods.map((value) => {
-            return {value : value.name, label : value.name};
+            return {value : value.name, label : value.name, id : value.casePaymentMethodOID};
           });
           
           //this.casePaymentMethods = paymentMethods;
@@ -741,7 +742,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         .subscribe(paymentTypes => 
           {
             this.paymentTypes = paymentTypes.map((value) => {
-              return {value : value.name, label : value.name};
+              return {value : value.name, label : value.name, id : value.casePaymentTypeOID};
             });
             
             //this.casePaymentMethods = paymentMethods;
@@ -893,13 +894,35 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         //This returns all the case payments for that particular application
         this.caseSvc
           .fetchCasePayments(caseId)
-          .subscribe(results => this.case.casePayments = results);
+          .subscribe(
+            results => {
+              this.case.casePayments = results.map((payment) => {
+                  
+                  let pmMethod = this.paymentMethod.find((item) => {return item.id == payment.paymentMethodID});
+                  payment.paymentMethod = pmMethod != undefined ? pmMethod.value : "";
+
+                  let pmType = this.paymentTypes.find((item) => {return item.id == payment.paymentTypeID});
+                  payment.paymentType = pmType != undefined ? pmType.value : "";
+              
+                  return payment;
+                });
+            });
 
         //console.log('Case Payments received for this case is', this.case.casePayments);
 
         this.caseSvc
         .fetchCasePaymentDetails(caseId)
-        .subscribe(results => this.case.casePaymentsDetails = results);
+        .subscribe(results => {
+          this.case.casePaymentsDetails = results.map((item) => {
+
+              let pmType = this.paymentTypes.find((type) => {
+                return type.id == item.paymentTypeID;
+              });
+
+              item.paymentType = pmType != undefined ? pmType.value : "";
+              return item;
+          });
+        });
 
 
         console.log('Case Applications Retrieved', this.case.caseApplications);
@@ -1220,10 +1243,22 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   paymentMethodOnChange(event) {
     this.selectedCasePayment.paymentMethod = event.value;
+
+    let pmMethod = this.paymentMethod.find((item) => {
+      return item.value == event.value;
+    })
+
+    this.selectedCasePayment.paymentMethodID = pmMethod.id
   }
 
   paymentTypeOnChange(event) {
     this.selectedCasePayment.paymentType = event.value;
+
+    let pmType = this.paymentTypes.find((item) => {
+      return item.value == event.value;
+    })
+
+    this.selectedCasePayment.paymentTypeID = pmType.id;
   }
 
   applicantRoleTypeOnChange(event){
@@ -1350,13 +1385,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
 
         this.case.casePayments.push(this.selectedCasePayment); //not working for some reason
-        if (this.selectedCasePayment.paymentMethod != "CourtPay") this.selectedCasePayment.processingFee = 0;
+        if (this.selectedCasePayment.paymentMethodID != 4) this.selectedCasePayment.processingFee = 0;
         //console.log('Case Payment Details to be saved are', this.selectedCasePayment);
 
         //Set the values to be used to generate an application number
         //The application type code is set then the case type is selected upon the initial
         //creation of the application.
-        if(this.selectedCasePayment.paymentMethod != "CourtPay" && this.selectedCasePayment.receiptNumber == "")
+        if(this.selectedCasePayment.paymentMethodID != 4 && this.selectedCasePayment.receiptNumber == "")
           this.selectedCasePayment.receiptNumber = this.case.caseNumber + "-"+  this.case.casePayments.length++;
 
         this.selectedCasePayment.caseNumber = this.case.caseNumber;
@@ -1364,8 +1399,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.selectedCasePayment.payorOID = this.selectedCasePayment.payorParty.partyOID;
         this.selectedCasePayment.beneficiaryOID = this.selectedCasePayment.beneficiaryParty.partyOID;
 
-        this.caseSvc.saveCasePayment(this.selectedCasePayment).subscribe(result => {
+        console.log(this.selectedCasePayment);
+        
+        this.caseSvc.saveCasePayment(this.selectedCasePayment).subscribe((result) => {
           this.selectedCasePayment = result[0];
+
+          let pmMethod = this.paymentMethod.find((item) => {return item.id == result[0].paymentMethodID});
+          this.selectedCasePayment.paymentMethod = pmMethod != undefined ? pmMethod.value : "";
+
+          let pmType = this.paymentTypes.find((item) => {return item.id == result[0].paymentTypeID});
+          this.selectedCasePayment.paymentType = pmType != undefined ? pmType.value : "";
         });
 
         this.toastSvc.showSuccessMessage('Case Payment Saved');
@@ -1376,7 +1419,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
     .fetchCasePaymentDetails(this.case.caseOID)
-    .subscribe(results => this.case.casePaymentsDetails = results);
+    .subscribe(results => {
+      this.case.casePaymentsDetails = results.map((item) => {
+            
+        let pmType = this.paymentTypes.find((type) => {
+          return type.id == item.paymentTypeID;
+        });
+
+        item.paymentType = pmType != undefined ? pmType.value : "";
+        return item;
+    });
+    });
 
     //After a payment is saved, reset so fresh data can be reloaded
     this.selectedCasePayment = new CasePayment ();
@@ -1793,6 +1846,27 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.showStaticMessage(false);
         this.case = c;
         this.case.initDocType = this.initDocTypeTemp;
+
+        //Loads extra Case payment and Case payment detail, data
+        c.casePayments = c.casePayments.map((item) => {
+            
+            let pmMethod = this.paymentMethod.find((method) => {return item.paymentMethodID == method.id});
+            item.paymentMethod = pmMethod != undefined ? pmMethod.value : "";
+
+            let pmType = this.paymentTypes.find((type) => {return item.paymentTypeID == type.id});
+            item.paymentType = pmType != undefined ? pmType.value : "";
+
+            return item
+        });
+
+        c.casePaymentsDetails = c.casePaymentsDetails.map((item) => {
+
+            let pmType = this.paymentTypes.find((type) => {return item.paymentTypeID == type.id});
+            item.paymentType = pmType != undefined ? pmType.value : "";
+
+            return item
+        });
+
         if (shouldShowSuccessMessage) {
           this.toastSvc.showSuccessMessage("Case Saved");
         }
