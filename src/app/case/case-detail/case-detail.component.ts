@@ -189,6 +189,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   //actualCompletionDate: Date = null; //Used to capture the actual cask task completion date from the DB.
   //selChargeFactor: string = "";
   isRegistrar: boolean = false;
+  isSentencingUser: boolean = false;
+  isUturnUser: boolean = false;
+
+
   sealIndicator: number = 0; //
   courtUsers: Party[] = [];
   authUsers: Party[] = [];
@@ -337,6 +341,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     });
 
     this.isRegistrar = (this.userSvc.loggedInUser && this.userSvc.isRegistrar());
+
+    this.isUturnUser = (this.userSvc.loggedInUser && (this.userSvc.isUturnUser()));
+    this.isSentencingUser = (this.userSvc.loggedInUser && (this.userSvc.isSentencingUser()));
+
+
     let caseOID: number = 0;
 
     this.routeSubscription = this.activatedRoute.params.subscribe(params => {
