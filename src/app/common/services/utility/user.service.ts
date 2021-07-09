@@ -60,21 +60,34 @@ export class UserService {
   }
 
   public isSentencingUser(): boolean {
+    let isSentencingUser = false;
 
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) {
-      return false;
+      return isSentencingUser;
     }
 
-    return this.loggedInUser.roles[0].staffRoleName === "Sentencing";
+    this.loggedInUser.roles.forEach(function (role) {
+      if(role.staffRoleName === "Sentencing")
+        isSentencingUser = true;
+    });
+
+    return isSentencingUser;
   }
 
   public isUturnUser(): boolean {
 
+    let isUturnUser = false;
+
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) {
-      return false;
+      return isUturnUser;
     }
 
-    return this.loggedInUser.roles[0].staffRoleName === "Uturn";
+    this.loggedInUser.roles.forEach(function (role) {
+      if(role.staffRoleName === "Uturn")
+       isUturnUser = true;
+    });
+
+    return isUturnUser;
   }
 
   public isJudicialOfficer(): boolean {

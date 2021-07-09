@@ -1717,7 +1717,7 @@
           </div>
         </p-tabPanel>
 
-        <p-tabPanel header="Send to UTURN" leftIcon="ui-icon-compare-arrows">
+        <p-tabPanel header="Send to UTURN" leftIcon="ui-icon-compare-arrows" *ngIf="isUturnUser">
           <div class="ui-g">
             <app-orders [case]="case" (filteredEventsChange)="updateRegister($event)"></app-orders>
           </div>
