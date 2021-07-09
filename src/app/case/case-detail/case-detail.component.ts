@@ -113,6 +113,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   docTypes: any [] = [];
   selectedCriminalCharge: any;
   selectedConsequence: any;
+  chargeDetails: any;
   showField: boolean;
   sentencingTypes: SentencingType[] = [];
   baseURL: string;
