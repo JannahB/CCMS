@@ -67,6 +67,7 @@ import { CaseTrafficCharge } from "../../common/entities/CaseTrafficCharge";
 import { NgForm } from '@angular/forms';
 import { RegisterEntry } from "../../common/entities/RegisterEntry";
 import { CaseRegisterService } from "../../common/services/http/case-register.service";
+import { Console } from 'console';
 
 @Component({
   selector: 'app-case-detail',
@@ -445,7 +446,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
       return text.contains(filterText, false);
     });
-    
+
   }
 
   trafficChargeOnChange(selectedTrafficChargeId: number) {
@@ -672,7 +673,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       this.caseSvc.fetchOne(currCaseOID).subscribe(
       kase => {
         this.filteredEventsChange.emit(kase.caseEvents);
-      
+
           this.toastSvc.showInfoMessage("Case register updated");
         },
         error => {
@@ -1189,6 +1190,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   totalAmountPainInOnChange(event) {
     this.selectedCasePayment.totalPaymentIn = event;
     console.log('Total Amount Paid In',this.selectedCasePayment.totalPaymentIn);
+  }
+
+  caseCountOnChange(event) {
+    this.charge_count = event;
+    console.log('Charge Count is',this.charge_count);
   }
 
   payorOnChange(event) {
@@ -1928,6 +1934,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedChargeLawType: any;
   leaLeadChargeText: string;
   policeChargeDesc: string;
+  charge_count: number = 1;
+  charge_id: string;
 
   chargeFactorTypes: ChargeFactor[];        // FetchChargeFactor GET
   selectedChargeFactors: ChargeFactor[];
@@ -2200,6 +2208,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     charge.chargeDetails = this.policeChargeDesc;
     charge.localCharge = this.selectedChargeLawType;
     charge.iccsCode = this.selectedCharge.iccsCode;
+    charge.charge_id = this.charge_id;
+    charge.charge_count = this.charge_count;
+
+    console.log ('Charge ID is ', charge.charge_id);
+    console.log ('Charge Count is ', charge.charge_count);
 
     if (!charge.caseChargeOID) {
       this.case.caseCharges.push(charge);

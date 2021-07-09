@@ -443,7 +443,7 @@
 
          <!-- CHARGES TABLE -->
 
-         <!-- <div class="ui-g-12 mt-30">
+          <div class="ui-g-12 mt-30">
 
           <div class="ui-g-12 ui-md-6">
             <h2 class="mb-10">Charges</h2>
@@ -465,6 +465,8 @@
                         (onRowSelect)="caseOnRowSelect($event)"
                         scrollable="true" scrollHeight="200px"
                         dataKey="caseChargeOID" #dtCharges>
+
+              <p-column field="charge_id" header="CHARGE ID" [style]="{'width':'5%'}" [sortable]="true"></p-column>
               <p-column field="localCharge.categoryIdentifier" header="UNODC Code" [style]="{'width':'7%'}"></p-column>
               <p-column field="localCharge.localCharge" header="Local Charge" [style]="{'width':'15%'}"></p-column>
               <p-column field="leaChargingDetails" header="Lead Charge Description" [style]="{'width':'15%'}"></p-column>
@@ -473,10 +475,15 @@
 
 
               <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
-
+              <p-column field="charge_count" header="COUNT" [style]="{'width':'5%'}"></p-column>
+              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
+                  </ng-template>
+              </p-column> -->
             </p-dataTable>
           </div>
-        </div> -->
+        </div>
 
           <p-message *ngIf="staticMessage.visible" severity="{{staticMessage.severity}}"
             text="{{staticMessage.message}}"></p-message>
@@ -1714,7 +1721,7 @@
           <div class="ui-g">
             <app-orders [case]="case" (filteredEventsChange)="updateRegister($event)"></app-orders>
           </div>
-        </p-tabPanel>        
+        </p-tabPanel>
 
 
       </p-tabView>
@@ -2561,6 +2568,26 @@
             Police Description is required
           </div>
         </div>
+
+        <div class="ui-g-12">
+
+          <div class="ui-g-12 ui-md-6">
+          <label class="minimal primary block" for="tiChgID">Charge ID</label>
+          <textarea id="tiChgID" name="tiChgID" #tiChgID="ngModel" [required]="true" [(ngModel)]="charge_id"
+            [rows]="1" pInputTextarea autoResize="autoResize" class="width-full"></textarea>
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiChgID.errors?.required && tiChgID.touched">
+            Charge ID is required
+          </div>
+
+      </div>
+
+        <div class="ui-g-12 ui-md-6">
+          <label class="minimal primary block" for="tiChgCount">Charge Count</label>
+              <input matInput type="number" name="tiChgCount" placeholder="Charge Count" min="1"
+              [(ngModel)]="charge_count"
+              (ngModelChange)="caseCountOnChange($event)">
+        </div>
+      </div>
 
 
 
@@ -3531,7 +3558,7 @@
   </ng-template>
 
 
-  
+
   <ng-template #editCharge>
     <form #caseTrafficChargeForm="ngForm" novalidate>
       <div class="ui-g">
