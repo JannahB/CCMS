@@ -2583,9 +2583,14 @@
 
         <div class="ui-g-12 ui-md-6">
           <label class="minimal primary block" for="tiChgCount">Charge Count</label>
-              <input matInput type="number" name="tiChgCount" placeholder="Charge Count" min="1"
-              [(ngModel)]="charge_count"
+              <input id="tiChgCount" matInput type="number" name="tiChgCount" placeholder="Charge Count" min="1"
+               #tiChgCount="ngModel"
+               [required]="true"
+               [(ngModel)]="charge_count"
               (ngModelChange)="caseCountOnChange($event)">
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiChgCount.errors?.required && tiChgCount.touched">
+            Charge Count is required
+          </div>
         </div>
       </div>
 
