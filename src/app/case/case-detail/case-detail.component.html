@@ -89,7 +89,7 @@
               <p-calendar id="dtFilingDate" name="dtFilingDate" #dtFilingDate [required]="true"
                 [disabled]="case.caseOID != 0 || !hasPermission(Permission.CREATE_CASE)"
                 [(ngModel)]="case.caseFilingDate" dateFormat="dd-M-yy" placeholder="Case Filing Date" [showIcon]="true"
-                yearRange="2000:2030" [yearNavigator]="true" appendTo="body"></p-calendar>
+                yearRange="1970:2030" [yearNavigator]="true" appendTo="body"></p-calendar>
               <!-- (onSelect)="generalDetailsOnBlur($event)" -->
               <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="dtFilingDate.errors?.required && dtFilingDate.touched">
@@ -251,7 +251,7 @@
                       dateFormat="mm/dd/yy"
                       placeholder="Disposition Date"
                       [showIcon]="true"
-                      yearRange="2000:2030"
+                      yearRange="1970:2030"
                       [yearNavigator]="true"
                       appendTo="body" ></p-calendar>
                 <div class="ui-message ui-messages-error ui-corner-all"
@@ -841,7 +841,7 @@
             <div class="ui-g-12 pt-0" *ngIf="hasPermission(Permission.UPDATE_CASE)">
               <div class="ui-g-6">
                 <h4 class="mt-0 mb-10">Generate Document</h4>
-                <div class="ui-g-4">
+                <div class="ui-g-9">
                   <!-- <label class="minimal primary block">Generate Document</label> -->
                   <!-- TODO: Get document types lookup data-->
                   <!--spiffy -->
@@ -980,7 +980,7 @@
             </div>
             <div class="ui-g-12">
               <button type="button" *ngIf="hasPermission(Permission.CREATE_JUDICIAL_ASSIGNMENT)" (click)="onAddJudge()"
-                label="Add Judge" icon="ui-icon-add" class="ui-button-secondary mr-15" pButton></button>
+                label="Add Judicial Team" icon="ui-icon-add" class="ui-button-secondary mr-15" pButton></button>
             </div>
           </div>
         </p-tabPanel>
@@ -1085,7 +1085,7 @@
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
                 <label class="minimal primary block">Fingerprint Card Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.fingerprintCardDate"
-                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
                   appendTo="body"></p-calendar>
               </div>
 
@@ -1098,7 +1098,7 @@
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
                 <label class="minimal primary block">Sentence Order Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderDate"
-                  dateFormat="dd-M-yy" placeholder="Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+                  dateFormat="dd-M-yy" placeholder="Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
               </div>
 
               <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
@@ -1111,14 +1111,14 @@
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
                 <label class="minimal primary block">Sentence Order Period Start Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderPeriodStartDate"
-                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
                   appendTo="body"></p-calendar>
               </div>
 
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
                 <label class="minimal primary block">Sentence Order Period End Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderPeriodEndDate"
-                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
                   appendTo="body"></p-calendar>
               </div>
               <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
@@ -1205,7 +1205,7 @@
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
                 <label class="minimal primary block">Sentence Performed Start Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentencePerformedBeginDate"
-                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
                   appendTo="body"></p-calendar>
               </div>
 
@@ -1496,7 +1496,7 @@
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
                 <label class="minimal primary block">Charge Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.chargeDate"
-                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
                   appendTo="body"></p-calendar>
               </div>
 
@@ -1888,14 +1888,14 @@
                   <label class="minimal primary block">Start Date</label>
                   <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full"
                     [(ngModel)]="selectedSearchPartyStartDate" dateFormat="dd-M-yy" placeholder="Start Date"
-                    [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030" appendTo="body"
+                    [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030" appendTo="body"
                     [required] = true></p-calendar>
                 </div>
                 <div class="ui-g-12 ui-md-6 mb-0">
                   <label class="minimal primary block">End Date</label>
                   <p-calendar id="dtEndDate" name="dtEndDate" inputStyleClass="width-full"
                     [(ngModel)]="selectedSearchPartyEndDate" dateFormat="dd-M-yy" placeholder="End Date"
-                    [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+                    [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
                 </div>
               </div>
             </div>
@@ -2046,14 +2046,14 @@
                 <label class="minimal primary block">Start Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full"
                   [(ngModel)]="newCaseParty.startDate" dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true"
-                  [yearNavigator]="true" yearRange="2000:2030" appendTo="body"
+                  [yearNavigator]="true" yearRange="1970:2030" appendTo="body"
                   [required]="true"></p-calendar>
               </div>
               <div class="ui-g-12 ui-md-6 mb-0">
                 <label class="minimal primary block">End Date</label>
                 <p-calendar id="dtEndDate" name="dtEndDate" inputStyleClass="width-full"
                   [(ngModel)]="newCaseParty.endDate" dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true"
-                  [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+                  [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
               </div>
             </div>
           </div>
@@ -2178,13 +2178,13 @@
             <label class="minimal primary block">Start Date</label>
             <p-calendar id="dtStartDate" name="dtStartDate" [disabled]="true" inputStyleClass="width-full"
               [(ngModel)]="selectedCaseParty.startDate" dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true"
-              [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+              [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
           </div>
           <div class="ui-g-12 ui-md-6 mb-0">
             <label class="minimal primary block">End Date</label>
             <p-calendar id="dtEndDate" name="dtEndDate" inputStyleClass="width-full"
               [(ngModel)]="selectedCaseParty.endDate" dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true"
-              [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+              [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
           </div>
 
           <div class="ui-g-12 ui-md-0 mb-0">
@@ -2583,9 +2583,14 @@
 
         <div class="ui-g-12 ui-md-6">
           <label class="minimal primary block" for="tiChgCount">Charge Count</label>
-              <input matInput type="number" name="tiChgCount" placeholder="Charge Count" min="1"
-              [(ngModel)]="charge_count"
+              <input id="tiChgCount" matInput type="number" name="tiChgCount" placeholder="Charge Count" min="1"
+               #tiChgCount="ngModel"
+               [required]="true"
+               [(ngModel)]="charge_count"
               (ngModelChange)="caseCountOnChange($event)">
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiChgCount.errors?.required && tiChgCount.touched">
+            Charge Count is required
+          </div>
         </div>
       </div>
 
