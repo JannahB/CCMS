@@ -1199,7 +1199,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     { value: 'Credit Card', label: 'Credit Card' },
     { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
     { value: 'Personal Cheque', label: 'Personal Cheque' },
-    { value: 'Deferred Payment', label: 'Deferred Payment' }
+    { value: 'Deferred Payment', label: 'Deferred Payment' }];
 
   // paymentMethod: any[] = [
   //   { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
@@ -1215,18 +1215,18 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   // ];
 
-  // paymentTypes: any[] = [
-  //   { value: 'Maintenance: Child', label: 'Maintenance: Child'},
-  //   { value: 'Maintenance: Adult', label: 'Maintenance: Adult' },
-  //   { value: 'Maintenance: Adult & Child', label: 'Maintenance: Adult & Child'},
-  //   { value: 'Fines Payment', label: 'Fines Payment' },
-  //   { value: 'Filing Fees', label: 'Filing Fees' },
-  //   { value: 'Revenue', label: 'Revenue' },
-  //   { value: 'Writs of Execution', label: 'Writs of Execution' },
-  //   { value: 'Writs of Possession', label: 'Writs of Possession' },
-  //   { value: 'Warrant of Apprehension', label: 'Warrant of Apprehension' },
-  //   { value: 'Warrant of Commitment', label: 'Warrant of Commitment' }
-  // ];
+  paymentTypes: any[] = [
+    { value: 'Maintenance: Child', label: 'Maintenance: Child'},
+    { value: 'Maintenance: Adult', label: 'Maintenance: Adult' },
+    { value: 'Maintenance: Adult & Child', label: 'Maintenance: Adult & Child'},
+    { value: 'Fines Payment', label: 'Fines Payment' },
+    { value: 'Filing Fees', label: 'Filing Fees' },
+    { value: 'Revenue', label: 'Revenue' },
+    { value: 'Writs of Execution', label: 'Writs of Execution' },
+    { value: 'Writs of Possession', label: 'Writs of Possession' },
+    { value: 'Warrant of Apprehension', label: 'Warrant of Apprehension' },
+    { value: 'Warrant of Commitment', label: 'Warrant of Commitment' }
+  ];
 
   paymentFrequency: any[] = [
     { value: 'Daily', label: 'Daily' },
