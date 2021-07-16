@@ -725,6 +725,30 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .subscribe(roles => this.casePartyRoleTypes = roles);
 
     this.caseSvc
+      .fetchCasePaymentMethod()
+      .subscribe(paymentMethods =>
+        {
+          this.paymentMethod = paymentMethods.map((value) => {
+            return {value : value.name, label : value.name};
+          });
+
+          //this.casePaymentMethods = paymentMethods;
+          console.log(paymentMethods);
+        });
+
+    this.caseSvc
+        .fetchCasePaymentType()
+        .subscribe(paymentTypes =>
+          {
+            this.paymentTypes = paymentTypes.map((value) => {
+              return {value : value.name, label : value.name};
+            });
+
+            //this.casePaymentMethods = paymentMethods;
+            console.log(paymentTypes);
+          });
+
+    this.caseSvc
       .fetchCaseApplicationType()
       .subscribe(appTypes => this.caseApplicationTypes = appTypes);
 
@@ -1154,13 +1178,43 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     { value: 'Personal Cheque', label: 'Personal Cheque' },
     { value: 'Deferred Payment', label: 'Deferred Payment' }
 
+  // paymentMethod: any[] = [
+  //   { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
+  //   { value: 'Cash', label: 'Cash' },
+  //   { value: 'Cheque', label: 'Cheque' },
+  //   { value: 'Court Pay', label: 'Court Pay' },
+  //   { value: 'Credit Card', label: 'Credit Card' },
+  //   { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
+  //   { value: 'Personal Cheque', label: 'Personal Cheque' },
+  //   { value: 'Deferred Payment', label: 'Deferred Payment' }
 
-  ];
 
-  paymentTypes: any[] = [
-    { value: 'Fines', label: 'Fines' },
-    { value: 'Fees', label: 'Fees' },
-    { value: 'Compensation', label: 'Compensation' }
+
+  // ];
+
+  // paymentTypes: any[] = [
+  //   { value: 'Maintenance: Child', label: 'Maintenance: Child'},
+  //   { value: 'Maintenance: Adult', label: 'Maintenance: Adult' },
+  //   { value: 'Maintenance: Adult & Child', label: 'Maintenance: Adult & Child'},
+  //   { value: 'Fines Payment', label: 'Fines Payment' },
+  //   { value: 'Filing Fees', label: 'Filing Fees' },
+  //   { value: 'Revenue', label: 'Revenue' },
+  //   { value: 'Writs of Execution', label: 'Writs of Execution' },
+  //   { value: 'Writs of Possession', label: 'Writs of Possession' },
+  //   { value: 'Warrant of Apprehension', label: 'Warrant of Apprehension' },
+  //   { value: 'Warrant of Commitment', label: 'Warrant of Commitment' }
+  // ];
+
+  paymentFrequency: any[] = [
+    { value: 'Daily', label: 'Daily' },
+    { value: 'Weekly', label: 'Weekly' },
+    { value: 'Monthly', label: 'Monthly' },
+    { value: 'Quarterly', label: 'Quarterly' },
+    { value: 'Yearly', label: 'Yearly' },
+    { value: 'Fortnightly', label: 'Fortnightly' },
+    { value: 'One Time Payment', label: 'One Time Payment' },
+    { value: 'Custom Days', label: 'Custom Days' },
+    { value: 'Suspended', label: 'Suspended' }
   ];
 
 
