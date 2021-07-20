@@ -738,6 +738,18 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         });
 
     this.caseSvc
+        .fetchCaseApplicationStatus()
+        .subscribe(statuses => 
+          {
+            this.applicationStatus = statuses.map((value) => {
+              return {value : value.name, label : value.name, id : value.caseApplicationStatusOID};
+            });
+            
+            //this.casePaymentMethods = paymentMethods;
+            console.log(statuses);
+          });
+    
+    this.caseSvc
         .fetchCasePaymentType()
         .subscribe(paymentTypes =>
           {
@@ -888,7 +900,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         // cannot use any other object besides the Case object since it is binded to the case service
         this.caseSvc
           .fetchCaseApplication(caseId)
-          .subscribe(results => this.case.caseApplications = results);
+          .subscribe(results => {
+            this.case.caseApplications = results.map((application) => {
+
+              let status = this.applicationStatus.find((item) => { return item.id == application.caseApplicationStatus});
+              application.caseApplicationStatus = status != undefined ? status.id : 0;
+              application.caseApplicationStatusDisplay = status != undefined ? status.value : "";
+
+              return application;
+            })
+          });
 
         //This returns all the case payments for that particular application
         this.caseSvc
@@ -1157,86 +1178,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   showModalAddCaseOrder = false;
   showModalMaintenancePayments = false;
 
-  applicationStatus: any[] = [
-    { value: 'Active', label: 'Active' },
-    { value: 'Listed for Hearing', label: 'Listed for Hearing' },
-    { value: 'Adjourned – Applicant Attorney unavailable', label: 'Adjourned – Applicant Attorney unavailable' },
-    { value: 'Adjourned – Accused Attorney unavailable', label: 'Adjourned – Accused Attorney unavailable' },
-    { value: 'Adjourned – Respondent Attorney unavailable', label: 'Adjourned – Respondent Attorney unavailable' },
-    { value: 'Adjourned – State Attorney unavailable', label: 'Adjourned – State Attorney unavailable' },
-    { value: 'Adjourned – Police Prosecutor unavailable', label: 'Adjourned – Police Prosecutor unavailable' },
-    { value: 'Adjourned – Judicial Officer unavailable', label: 'Adjourned – Judicial Officer unavailable' },
-    { value: 'Adjourned for service of documents', label: 'Adjourned for service of documents' },
-    { value: 'Adjourned for compliance with directions', label: 'Adjourned for compliance with directions' },
-    { value: 'Adjourned to produce documents', label: 'Adjourned to produce documents' },
-    { value: 'Adjourned – part heard', label: 'Adjourned – part heard' },
-    { value: 'Adjourned for decision', label: 'Adjourned for decision' },
-    { value: 'Determined – Application dismissed', label: 'Determined – Application dismissed' },
-    { value: 'Determined – Application withdrawn', label: 'Determined – Application withdrawn' },
-    { value: 'Determined – Application/Bail refused', label: 'Determined – Application/Bail refused' },
-    { value: 'Determined – Application/Bail granted', label: 'Determined – Application/Bail granted' },
-    { value: 'Determined – Application/Bail granted with electronic monitoring', label: 'Determined – Application/Bail granted with electronic monitoring' },
-    { value: 'Determined – Application/Bail granted on Committal to stand trial', label: 'Determined – Application/Bail granted on Committal to stand trial' },
-    { value: 'Determined – Application/Bail granted on Appeal', label: 'Determined – Application/Bail granted on Appeal' }
-
-  ];
-
-  paymentItem: any[] = [
-    { value: 'Fines', label: 'Fines' },
-    { value: 'Fees', label: 'Fees' },
-    { value: 'Compensation', label: 'Compensation' }
-
-  ];
-
-  paymentMethod: any[] = [
-    { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
-    { value: 'Cash', label: 'Cash' },
-    { value: 'Cheque', label: 'Cheque' },
-    { value: 'CourtPay', label: 'CourtPay' },
-    { value: 'Credit Card', label: 'Credit Card' },
-    { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
-    { value: 'Personal Cheque', label: 'Personal Cheque' },
-    { value: 'Deferred Payment', label: 'Deferred Payment' }];
-
-  // paymentMethod: any[] = [
-  //   { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
-  //   { value: 'Cash', label: 'Cash' },
-  //   { value: 'Cheque', label: 'Cheque' },
-  //   { value: 'Court Pay', label: 'Court Pay' },
-  //   { value: 'Credit Card', label: 'Credit Card' },
-  //   { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
-  //   { value: 'Personal Cheque', label: 'Personal Cheque' },
-  //   { value: 'Deferred Payment', label: 'Deferred Payment' }
-
-
-
-  // ];
-
-  paymentTypes: any[] = [
-    { value: 'Maintenance: Child', label: 'Maintenance: Child'},
-    { value: 'Maintenance: Adult', label: 'Maintenance: Adult' },
-    { value: 'Maintenance: Adult & Child', label: 'Maintenance: Adult & Child'},
-    { value: 'Fines Payment', label: 'Fines Payment' },
-    { value: 'Filing Fees', label: 'Filing Fees' },
-    { value: 'Revenue', label: 'Revenue' },
-    { value: 'Writs of Execution', label: 'Writs of Execution' },
-    { value: 'Writs of Possession', label: 'Writs of Possession' },
-    { value: 'Warrant of Apprehension', label: 'Warrant of Apprehension' },
-    { value: 'Warrant of Commitment', label: 'Warrant of Commitment' }
-  ];
-
-  paymentFrequency: any[] = [
-    { value: 'Daily', label: 'Daily' },
-    { value: 'Weekly', label: 'Weekly' },
-    { value: 'Monthly', label: 'Monthly' },
-    { value: 'Quarterly', label: 'Quarterly' },
-    { value: 'Yearly', label: 'Yearly' },
-    { value: 'Fortnightly', label: 'Fortnightly' },
-    { value: 'One Time Payment', label: 'One Time Payment' },
-    { value: 'Custom Days', label: 'Custom Days' },
-    { value: 'Suspended', label: 'Suspended' }
-  ];
-
+  applicationStatus: any[] = [];
+  paymentMethod: any[] = [];
+  paymentTypes: any[] = [];
 
   applicationTypeOnChange(event) {
     this.selectedCaseApplication.caseApplicationType = event.value.caseApplicationTypeOID;
@@ -1245,7 +1189,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   }
 
   applicationStatusOnChange(event) {
-    this.selectedCaseApplication.caseApplicationStatus = event.value;
+    this.selectedCaseApplication.caseApplicationStatusDisplay = event.value;
+
+    let status = this.applicationStatus.find((item) => {
+      return item.value == event.value;
+    })
+
+    this.selectedCaseApplication.caseApplicationStatus = status.id
   }
 
   paymentItemOnChange(event, acIdx) {
@@ -1390,7 +1340,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.selectedCaseApplication.caseOID = this.case.caseOID;
 
         this.caseSvc.saveCaseApplication(this.selectedCaseApplication).subscribe(result => {
-        this.selectedCaseApplication = result[0];
+          this.selectedCaseApplication = result[0];
+
+          let status = this.applicationStatus.find((item) => {return item.id == result[0].id});
+          this.selectedCaseApplication.caseApplicationStatus = status != undefined ? status.id : 0;
+          this.selectedCaseApplication.caseApplicationStatusDisplay = status != undefined ? status.value : "";
         });
 
         this.toastSvc.showSuccessMessage('Case Application Saved');
@@ -1903,7 +1857,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
             let pmType = this.paymentTypes.find((type) => {return item.paymentTypeID == type.id});
             item.paymentType = pmType != undefined ? pmType.value : "";
 
-            return item
+            return item;
         });
 
         c.casePaymentsDetails = c.casePaymentsDetails.map((item) => {
@@ -1911,7 +1865,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
             let pmType = this.paymentTypes.find((type) => {return item.paymentTypeID == type.id});
             item.paymentType = pmType != undefined ? pmType.value : "";
 
-            return item
+            return item;
+        });
+
+        c.caseApplications = c.caseApplications.map((application) => {
+
+            let status = this.applicationStatus.find((status) => { return application.caseApplicationStatus == status.id});
+            application.caseApplicationStatus = status != undefined ? status.id : 0;
+            application.caseApplicationStatusDisplay = status != undefined ? status.value : "";
+
+            return application;
         });
 
         if (shouldShowSuccessMessage) {

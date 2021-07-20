@@ -34,6 +34,7 @@ import { FileSaver } from '../utility/file-saver.service';
 import { EventType } from '../../entities/EventType';
 import { CaseType } from '../../entities/CaseType';
 import { CaseApplicationType } from '../../entities/CaseApplicationType';
+import { CaseApplicationStatus } from '../../entities/CaseApplicationStatus';
 import { PaymentItem } from '../../entities/PaymentItem';
 import { TimeFrequency} from '../../entities/TimeFrequency';
 import { CaseDispositionType } from '../../entities/CaseDispositionType';
@@ -839,6 +840,13 @@ export class CaseService extends HttpBaseService<Case> {
       .get<CaseApplicationType[]>(url);
   }
 
+  public fetchCaseApplicationStatus(): Observable<CaseApplicationStatus[]> {
+    const url = `${super.getBaseUrl()}/FetchCaseApplicationStatus`;
+
+    return this.http
+      .get<CaseApplicationStatus[]>(url);
+  }
+  
   public fetchCasePaymentMethod(): Observable<CasePaymentMethod[]>{
 
     const url = `${super.getBaseUrl()}/FetchCasePaymentMethod`;
