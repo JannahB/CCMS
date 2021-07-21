@@ -5,13 +5,14 @@
 
 export const environment = {
   production: false,
-  apiUrl: "https://testcrim.ttlawcourts.org/CCMS3",  // TEST CRIMINAL 129.150.194.137 testcrim.ttlawcourts.org
+  apiUrl: "https://criminal-uat.ttlawcourts.org/CCMS3",
   mockUrl: "assets/mockData/",
 
   allowDeleteLookupItems: false,
   allowResetPasswordFeature: true,
   allowAdminWorkflowFeature: true,
-
+  allowAdminCalendarFeature: false,
+  allowJudgeAssignMgmtFeature: false,
 
   VERSION: require('../../package.json').version
 };
