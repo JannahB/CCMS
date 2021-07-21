@@ -727,24 +727,23 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
       .fetchCasePaymentMethod()
-      .subscribe(paymentMethods => 
+      .subscribe(paymentMethods =>
         {
           this.paymentMethod = paymentMethods.map((value) => {
             return {value : value.name, label : value.name, id : value.casePaymentMethodOID};
           });
-          
+
           //this.casePaymentMethods = paymentMethods;
           console.log(paymentMethods);
         });
-    
+
     this.caseSvc
         .fetchCasePaymentType()
-        .subscribe(paymentTypes => 
+        .subscribe(paymentTypes =>
           {
             this.paymentTypes = paymentTypes.map((value) => {
               return {value : value.name, label : value.name, id : value.casePaymentTypeOID};
             });
-            
             //this.casePaymentMethods = paymentMethods;
             console.log(paymentTypes);
           });
@@ -897,13 +896,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
           .subscribe(
             results => {
               this.case.casePayments = results.map((payment) => {
-                  
                   let pmMethod = this.paymentMethod.find((item) => {return item.id == payment.paymentMethodID});
                   payment.paymentMethod = pmMethod != undefined ? pmMethod.value : "";
 
                   let pmType = this.paymentTypes.find((item) => {return item.id == payment.paymentTypeID});
                   payment.paymentType = pmType != undefined ? pmType.value : "";
-              
                   return payment;
                 });
             });
@@ -1184,9 +1181,62 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   ];
 
-  paymentMethod: any[] = [];
-  paymentTypes: any[] = [];
-  
+  paymentItem: any[] = [
+    { value: 'Fines', label: 'Fines' },
+    { value: 'Fees', label: 'Fees' },
+    { value: 'Compensation', label: 'Compensation' }
+
+  ];
+
+  paymentMethod: any[] = [
+    { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
+    { value: 'Cash', label: 'Cash' },
+    { value: 'Cheque', label: 'Cheque' },
+    { value: 'CourtPay', label: 'CourtPay' },
+    { value: 'Credit Card', label: 'Credit Card' },
+    { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
+    { value: 'Personal Cheque', label: 'Personal Cheque' },
+    { value: 'Deferred Payment', label: 'Deferred Payment' }];
+
+  // paymentMethod: any[] = [
+  //   { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
+  //   { value: 'Cash', label: 'Cash' },
+  //   { value: 'Cheque', label: 'Cheque' },
+  //   { value: 'Court Pay', label: 'Court Pay' },
+  //   { value: 'Credit Card', label: 'Credit Card' },
+  //   { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
+  //   { value: 'Personal Cheque', label: 'Personal Cheque' },
+  //   { value: 'Deferred Payment', label: 'Deferred Payment' }
+
+
+
+  // ];
+
+  paymentTypes: any[] = [
+    { value: 'Maintenance: Child', label: 'Maintenance: Child'},
+    { value: 'Maintenance: Adult', label: 'Maintenance: Adult' },
+    { value: 'Maintenance: Adult & Child', label: 'Maintenance: Adult & Child'},
+    { value: 'Fines Payment', label: 'Fines Payment' },
+    { value: 'Filing Fees', label: 'Filing Fees' },
+    { value: 'Revenue', label: 'Revenue' },
+    { value: 'Writs of Execution', label: 'Writs of Execution' },
+    { value: 'Writs of Possession', label: 'Writs of Possession' },
+    { value: 'Warrant of Apprehension', label: 'Warrant of Apprehension' },
+    { value: 'Warrant of Commitment', label: 'Warrant of Commitment' }
+  ];
+
+  paymentFrequency: any[] = [
+    { value: 'Daily', label: 'Daily' },
+    { value: 'Weekly', label: 'Weekly' },
+    { value: 'Monthly', label: 'Monthly' },
+    { value: 'Quarterly', label: 'Quarterly' },
+    { value: 'Yearly', label: 'Yearly' },
+    { value: 'Fortnightly', label: 'Fortnightly' },
+    { value: 'One Time Payment', label: 'One Time Payment' },
+    { value: 'Custom Days', label: 'Custom Days' },
+    { value: 'Suspended', label: 'Suspended' }
+  ];
+
 
   applicationTypeOnChange(event) {
     this.selectedCaseApplication.caseApplicationType = event.value.caseApplicationTypeOID;
@@ -1400,7 +1450,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.selectedCasePayment.beneficiaryOID = this.selectedCasePayment.beneficiaryParty.partyOID;
 
         console.log(this.selectedCasePayment);
-        
         this.caseSvc.saveCasePayment(this.selectedCasePayment).subscribe((result) => {
           this.selectedCasePayment = result[0];
 
@@ -1421,7 +1470,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     .fetchCasePaymentDetails(this.case.caseOID)
     .subscribe(results => {
       this.case.casePaymentsDetails = results.map((item) => {
-            
         let pmType = this.paymentTypes.find((type) => {
           return type.id == item.paymentTypeID;
         });
@@ -1849,7 +1897,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
         //Loads extra Case payment and Case payment detail, data
         c.casePayments = c.casePayments.map((item) => {
-            
             let pmMethod = this.paymentMethod.find((method) => {return item.paymentMethodID == method.id});
             item.paymentMethod = pmMethod != undefined ? pmMethod.value : "";
 

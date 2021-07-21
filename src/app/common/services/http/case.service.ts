@@ -173,7 +173,7 @@ export class CaseService extends HttpBaseService<Case> {
       }
     });
     return charges;
-  }  
+  }
 
 
   public saveCaseTrafficCharge(
@@ -391,7 +391,7 @@ export class CaseService extends HttpBaseService<Case> {
       const charges: CaseTrafficCharge[] = result;
       return this.convertOffenceDates(charges);
     });
-  }  
+  }
 
   public saveCourtCase(data: Case): Observable<Case> {
 
@@ -423,10 +423,10 @@ export class CaseService extends HttpBaseService<Case> {
       caseData.caseNotes = data.caseNotes.toString();
     if (data.charges)
       caseData.charges = data.charges.toString();
-    
+
       if (data.initDocType)
-      caseData.caseInititingDoc = data.initDocType.name.toString();      
-      
+      caseData.caseInititingDoc = data.initDocType.name.toString();
+
     if (data.courtOfAppealNumber)
       caseData.courtOfAppealNumber = data.courtOfAppealNumber.toString();
     if (data.caseOID)
@@ -474,7 +474,7 @@ export class CaseService extends HttpBaseService<Case> {
 
         let charge: any = {
 
-          
+
           iccsCodeOID: value.localCharge.parentOID.toString(),
           lea: value.leaChargingDetails,
           polDesc: value.chargeDetails,
@@ -491,7 +491,7 @@ export class CaseService extends HttpBaseService<Case> {
 
           charge.localChargeOID = value.localCharge.localChargeOID.toString();
           charge.iccsCode = value.localCharge.parentOID.toString();
-        
+
         }
 
         /*value.chargeFactors.forEach(factor => {
@@ -710,7 +710,7 @@ export class CaseService extends HttpBaseService<Case> {
     });
   }
 
-  public fetchNewDocTypesFull(): Observable<DocumentType[]> {    
+  public fetchNewDocTypesFull(): Observable<DocumentType[]> {
     const url = `${super.getBaseUrl()}/api/new-doc-types-full`;
     //const url = `${super.getBaseUrl()}/api/new-doc-types`;
 
@@ -839,19 +839,6 @@ export class CaseService extends HttpBaseService<Case> {
       .get<CaseApplicationType[]>(url);
   }
 
-  public fetchCasePaymentItem(): Observable<PaymentItem[]> {
-    const url = `${super.getBaseUrl()}/FetchCasePaymentItem`;
-
-    return this.http
-      .get<PaymentItem[]>(url);
-  }
-
-  public fetchTimeFrequency(): Observable<TimeFrequency[]> {
-    const url = `${super.getBaseUrl()}/FetchTimeFrequency`;
-    return this.http.get<TimeFrequency[]>(url);
-  }
-
-  
   public fetchCasePaymentMethod(): Observable<CasePaymentMethod[]>{
 
     const url = `${super.getBaseUrl()}/FetchCasePaymentMethod`;
@@ -867,7 +854,19 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http
       .get<CasePaymentType[]>(url);
   }
-  
+
+  public fetchCasePaymentItem(): Observable<PaymentItem[]> {
+    const url = `${super.getBaseUrl()}/FetchCasePaymentItem`;
+
+    return this.http
+      .get<PaymentItem[]>(url);
+  }
+
+  public fetchTimeFrequency(): Observable<TimeFrequency[]> {
+    const url = `${super.getBaseUrl()}/FetchTimeFrequency`;
+    return this.http.get<TimeFrequency[]>(url);
+  }
+
   public fetchCaseDispositionType(): Observable<CaseDispositionType[]> {
 
     let url: string = `${super.getBaseUrl()}/FetchCaseDispositionTypes`;
