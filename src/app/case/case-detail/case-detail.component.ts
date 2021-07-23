@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
@@ -61,17 +61,28 @@ import { SentencingType } from '../../common/entities/SentencingType';
 import { SentencingService } from '../../common/services/http/sentencing.service';
 import {CriminalCharge} from '../../common/entities/CriminalCharge';
 import { SelectItem } from 'primeng/primeng';
+import { Message } from 'primeng/primeng';
+import { TrafficCharge } from "../../common/entities/TrafficCharge";
+import { CaseTrafficCharge } from "../../common/entities/CaseTrafficCharge";
+import { NgForm } from '@angular/forms';
+import { RegisterEntry } from "../../common/entities/RegisterEntry";
+import { CaseRegisterService } from "../../common/services/http/case-register.service";
 import { Console } from 'console';
+import { CasePaymentMethod } from '../../common/entities/CasePaymentMethod';
 
 @Component({
   selector: 'app-case-detail',
   templateUrl: './case-detail.component.html',
   styleUrls: ['./case-detail.component.scss']
 })
+
 export class CaseDetailComponent implements OnInit, OnDestroy{
 
 
   @ViewChild('caseForm') caseForm: any;
+  @ViewChild("caseTrafficChargeForm") caseTrafficChargeForm: NgForm;
+  @Input() filteredCaseEvents: CaseEvent[];
+  @Output() filteredEventsChange = new EventEmitter<CaseEvent[]>();
 
   authToken: string;
   activeTabIndex = 1;
@@ -95,6 +106,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   routeSubscription: Subscription;
   caseTypes: CaseType[] = [];
   caseApplicationTypes: CaseApplicationType[] = [];
+  paymentItems: SelectItem[] = [];
+  timeFrequencies: SelectItem[] = [];
   caseDispositionTypes: CaseDispositionType[] = [];
   caseStatuses: CaseStatus[] = [];
   casePhases: CasePhase[] = [];
@@ -103,6 +116,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   docTypes: any [] = [];
   selectedCriminalCharge: any;
   selectedConsequence: any;
+  chargeDetails: any;
   showField: boolean;
   sentencingTypes: SentencingType[] = [];
   baseURL: string;
@@ -129,7 +143,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedCourt: AuthorizedCourt;
   loggedInUser: Party;
   courts: AuthorizedCourt[];
-  /*trafficSubscription: Subscription;
+  trafficSubscription: Subscription;
   trafficCharges: TrafficCharge[];
   selectedCaseTrafficCharge = new CaseTrafficCharge();
   caseTrafficCharges: CaseTrafficCharge[];
@@ -142,7 +156,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedCTCIdx: Number;
   preventNavToCase = false;
   msgs: Message[] = [];
-  showDeleteTrafficChargeConfirmation = false;*/
+  showDeleteTrafficChargeConfirmation = false;
   initDocTypeTemp: DocumentType = new DocumentType();
 
 
@@ -179,6 +193,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   //actualCompletionDate: Date = null; //Used to capture the actual cask task completion date from the DB.
   //selChargeFactor: string = "";
   isRegistrar: boolean = false;
+  isSentencingUser: boolean = false;
+  isUturnUser: boolean = false;
+
+
   sealIndicator: number = 0; //
   courtUsers: Party[] = [];
   authUsers: Party[] = [];
@@ -201,7 +219,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     private userSvc: UserService,
     private appState: AppStateService,
     private countriesSvc: CountriesService,
-    private dropdownSvc: DropdownDataTransformService
+    private dropdownSvc: DropdownDataTransformService,
+    private caseRegSvc: CaseRegisterService
   ) {
 
     this.sentencingTypes = [{
@@ -284,6 +303,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       const caseId = params['caseId'];
 
       this.initDocType.name = "onload";
+      this.getTrafficData(caseId);
+      //this.caseTrafficCharges = [];
 
       this.selectedCourtJD = this.userSvc.appState.selectedCourt.courtJD;
 
@@ -324,6 +345,11 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     });
 
     this.isRegistrar = (this.userSvc.loggedInUser && this.userSvc.isRegistrar());
+
+    this.isUturnUser = (this.userSvc.loggedInUser && (this.userSvc.isUturnUser()));
+    this.isSentencingUser = (this.userSvc.loggedInUser && (this.userSvc.isSentencingUser()));
+
+
     let caseOID: number = 0;
 
     this.routeSubscription = this.activatedRoute.params.subscribe(params => {
@@ -350,6 +376,327 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.appState.selectedCourt || this.loggedInUser.authorizedCourts[0];
   }
 
+  caseTrafficChargeOnRowSelect(event: { data: CaseTrafficCharge }): void {
+    this.selectedCaseTrafficCharge = event.data;
+    this.showModalAddTrafficCaseCharge = true;
+    this.selectedTrafficCharge = this.selectedCaseTrafficCharge.trafficCharge;
+    this.isEdit = true;
+    this.caseTrafficChargeForm.form.markAsPristine();
+  }
+
+
+  onAddTrafficCaseCharge(caseTrafficChargeForm: NgForm) {
+    if (!this.case.caseOID || this.case.caseOID === 0) {
+      this.toastSvc.showInfoMessage(
+        "Please complete case details and Save Case before proceeding.",
+        "Complete Case Details"
+      );
+      return;
+    }
+    this.isEdit = false;
+    this.showModalAddTrafficCaseCharge = true;
+    this.selectedCaseTrafficCharge = new CaseTrafficCharge();
+    this.selectedTrafficCharge = null;
+  }
+
+  onCancelMinute(caseTrafficChargeForm: NgForm) {
+    if (this.selectedCaseTrafficCharge.id === null) {
+      CollectionUtil.removeArrayItem(
+        this.caseTrafficCharges,
+        this.selectedCaseTrafficCharge
+      );
+      this.caseTrafficCharges = this.caseTrafficCharges.slice();
+    } else {
+      this.selectedCaseTrafficCharge = this.selectedCTCBak;
+    }
+    this.hideModals();
+  }
+
+
+  getTrafficData(caseId: number) {
+    const source = Observable.forkJoin<any>(
+      this.caseSvc.fetchTrafficCharge(),
+      this.caseSvc.fetchCaseTrafficCharge(caseId),
+      this.caseSvc.fetchCaseTrafficCharges()
+    );
+    this.trafficSubscription = source.subscribe(
+      results => {
+        this.trafficCharges = results[0] as TrafficCharge[];
+        this.caseTrafficCharges = results[1] as CaseTrafficCharge[];
+        this.allCaseTrafficCharges = results[2] as CaseTrafficCharge[];
+        this.getCaseTrafficChargesData();
+      },
+      error => {
+        console.log("get trafficcharges error", error);
+        this.toastSvc.showErrorMessage(
+          "There was an error fetching traffic data."
+        );
+      }
+    );
+  }
+
+  private getCaseTrafficChargesData() {
+    this.caseTrafficCharges.forEach(ctc => {
+      ctc.trafficCharge = this.trafficCharges.find(
+        c => c.id === ctc.trafficChargeId
+      );
+    });
+  }
+
+
+  public trafficChargeFilterFunction(filterText: string, options: TrafficCharge[]): TrafficCharge[] {
+
+    if (!options) {
+      return [];
+    }
+
+    if (!filterText) {
+      return options.copy();
+    }
+
+    return options.filter(o => {
+      const text = `${o.description} ${o.regulation}`;
+
+      return text.contains(filterText, false);
+    });
+
+  }
+
+  trafficChargeOnChange(selectedTrafficChargeId: number) {
+    if (!this.trafficCharges) {
+      this.selectedTrafficCharge = null;
+      return;
+    }
+
+    this.selectedTrafficCharge = this.trafficCharges.find(
+      c => c.id === selectedTrafficChargeId
+    );
+
+    if (this.checkForDupTrafficCharge(this.selectedTrafficCharge)) {
+      this.selectedTrafficCharge = null;
+      this.toastSvc.showWarnMessage(
+        "A charge can only be added to the case once. ",
+        "Duplicate Charge"
+      );
+    }
+  }
+
+  private checkForDupTrafficCharge(trafficCharge: TrafficCharge): Boolean {
+    const caseTrafficCharges = this.caseTrafficCharges;
+    const idx: number = caseTrafficCharges.findIndex(c =>
+      ObjectUtils.areObjectsEqualDeep(c.trafficCharge, trafficCharge)
+    );
+    return idx > -1;
+  }
+
+  private UniqueCitationNumber(citationNumber: string): Boolean {
+    if (
+      this.allCaseTrafficCharges.find(
+        cn => cn.citationNumber === citationNumber
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  citationNumberOnChange(citationNumber: string) {
+    if (!this.UniqueCitationNumber(citationNumber)) {
+      this.selectedCaseTrafficCharge.citationNumber = null;
+      this.toastSvc.showWarnMessage(
+        "A ticket with this Citation Number has already been entered",
+        "Duplicate Citation Number"
+      );
+    }
+  }
+
+  saveCaseTrafficCharge(ctcForm: NgForm) {
+    let caseTrafficCharge: CaseTrafficCharge;
+
+    if (this.selectedCaseTrafficCharge) {
+      caseTrafficCharge = this.selectedCaseTrafficCharge;
+    } else {
+      caseTrafficCharge = new CaseTrafficCharge();
+    }
+
+    caseTrafficCharge.caseId = this.case.caseOID;
+    caseTrafficCharge.trafficChargeId = this.selectedTrafficCharge.id;
+    caseTrafficCharge.offenceDatetime = this.selectedCaseTrafficCharge.offenceDatetime;
+    caseTrafficCharge.paymentDueDate = this.selectedCaseTrafficCharge.paymentDueDate;
+    caseTrafficCharge.deleted = false;
+
+    if (this.isEdit) {
+      this.caseTrafficCharges = this.caseTrafficCharges.slice();
+
+      if (ctcForm.form.controls["citationNumber"].dirty) {
+        if (this.UniqueCitationNumber(caseTrafficCharge.citationNumber)) {
+        } else {
+          this.toastSvc.showWarnMessage(
+            "A ticket with this Citation Number has already been used. Please enter another. ",
+            "Duplicate Citation Number"
+          );
+          return;
+        }
+      }
+
+      if (ctcForm.form.controls["ddTrafficChargeLaw"].dirty) {
+        if (!this.checkForDupTrafficCharge(this.selectedTrafficCharge)) {
+        } else {
+          this.toastSvc.showWarnMessage(
+            "A charge can only be added to the case once. ",
+            "Duplicate Charge"
+          );
+          return;
+        }
+      }
+
+      if (
+        !ctcForm.form.controls["citationNumber"].dirty &&
+        !ctcForm.form.controls["ddTrafficChargeLaw"].dirty
+      ) {
+        try {
+          this.caseSvc.saveCaseTrafficCharge(caseTrafficCharge).subscribe(
+            result => {
+              this.toastSvc.showSuccessMessage("Traffic Charge Saved");
+              console.log(result);
+            },
+            error => {
+              console.log(error);
+              this.toastSvc.showErrorMessage(
+                "There was an error while saving this traffic charge."
+              );
+            },
+            () => {
+              // final
+            }
+          );
+        } catch (error) {
+          console.log(error);
+          this.toastSvc.showErrorMessage(
+            "There was an error while saving this traffic charge."
+          );
+        }
+        this.getCaseTrafficChargesData();
+        this.hideModals();
+      }
+    } else {
+      if (!caseTrafficCharge.id) {
+        if (!this.checkForDupTrafficCharge(this.selectedTrafficCharge)) {
+          if (this.UniqueCitationNumber(caseTrafficCharge.citationNumber)) {
+            this.caseTrafficCharges.push(caseTrafficCharge);
+            this.caseTrafficCharges = this.caseTrafficCharges.slice();
+            try {
+              this.caseSvc.saveCaseTrafficCharge(caseTrafficCharge).subscribe(
+                result => {
+                  this.toastSvc.showSuccessMessage("Traffic Charge Saved");
+                  console.log(result);
+                },
+                error => {
+                  console.log(error);
+                  this.toastSvc.showErrorMessage(
+                    "There was an error while saving this traffic charge."
+                  );
+                },
+                () => {
+                  // final
+                }
+              );
+            } catch (error) {
+              console.log(error);
+              this.toastSvc.showErrorMessage(
+                "There was an error while saving this traffic charge."
+              );
+            }
+            this.getCaseTrafficChargesData();
+            this.hideModals();
+          } else {
+            this.toastSvc.showWarnMessage(
+              "A ticket with this Citation Number has already been used. Please enter another. ",
+              "Duplicate Citation Number"
+            );
+            return;
+          }
+        } else {
+          this.toastSvc.showWarnMessage(
+            "A charge can only be added to the case once. ",
+            "Duplicate Charge"
+          );
+          return;
+        }
+      }
+    }
+  }
+
+
+  confirmDeleteTrafficCharge() {
+    this.preventNavToCase = true;
+        let caseTrafficCharge = this.selectedCaseTrafficCharge;
+        caseTrafficCharge.deleted = true;
+        let oldCitationNumber = this.selectedCaseTrafficCharge.citationNumber;
+        caseTrafficCharge.citationNumber = this.selectedCaseTrafficCharge.citationNumber + "-del-" + this.selectedCaseTrafficCharge.id;
+        //try {
+          this.caseSvc.saveCaseTrafficCharge(caseTrafficCharge).subscribe(
+            result => {
+              this.msgs = [
+                {
+                  severity: "primary",
+                  summary: "Deleted",
+                  detail: "Traffic charge deleted successfully"
+                }];
+
+              this.preventNavToCase = false;
+              this.hideModals();
+              this.router.navigate(["/case-detail", this.case.caseOID]);
+              this.getTrafficData(this.case.caseOID);
+            },
+            error => {
+              console.log(error);
+              this.toastSvc.showErrorMessage(
+                "There was an error while deleting this traffic charge."
+              );
+            },
+            () => {
+              // final
+              // register entry save
+              const regEntry: RegisterEntry = new RegisterEntry();
+
+              regEntry.description = "Traffic charge with citation number [" + oldCitationNumber + "] deleted";
+              regEntry.caseOID = this.case.caseOID as any as string;
+              regEntry.eventTypeName = "UPTD";
+
+              this.caseRegSvc
+                .save(regEntry)
+                .subscribe(result => {
+                  this.updateRegisterEvents();
+                },
+                  (error) => {
+                    console.log(error);
+                  },
+                  () => {
+                    // final
+                  });
+            }
+          );
+          //}
+        }
+
+  public updateRegisterEvents() {
+      const currCaseOID: string = (this.case.caseOID as any) as string;
+      console.log(currCaseOID);
+      this.caseSvc.fetchOne(currCaseOID).subscribe(
+      kase => {
+        this.filteredEventsChange.emit(kase.caseEvents);
+
+          this.toastSvc.showInfoMessage("Case register updated");
+        },
+        error => {
+        console.log(error);
+        },
+      () => {
+        // done
+        }
+       );
+   }
 
 
   getCaseLookupValues(){
@@ -379,8 +726,43 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .subscribe(roles => this.casePartyRoleTypes = roles);
 
     this.caseSvc
+      .fetchCasePaymentMethod()
+      .subscribe(paymentMethods =>
+        {
+          this.paymentMethod = paymentMethods.map((value) => {
+            return {value : value.name, label : value.name, id : value.casePaymentMethodOID};
+          });
+
+          //this.casePaymentMethods = paymentMethods;
+          console.log(paymentMethods);
+        });
+
+    this.caseSvc
+        .fetchCasePaymentType()
+        .subscribe(paymentTypes =>
+          {
+            this.paymentTypes = paymentTypes.map((value) => {
+              return {value : value.name, label : value.name, id : value.casePaymentTypeOID};
+            });
+            //this.casePaymentMethods = paymentMethods;
+            console.log(paymentTypes);
+          });
+
+    this.caseSvc
       .fetchCaseApplicationType()
       .subscribe(appTypes => this.caseApplicationTypes = appTypes);
+
+    this.caseSvc
+      .fetchCasePaymentItem()
+      .subscribe(paymentItems => {
+        this.paymentItems = this.dropdownSvc.transform(paymentItems, 'name', 'paymentItemOID');
+      });
+
+    this.caseSvc
+      .fetchTimeFrequency()
+      .subscribe(timeFrequencies => {
+        this.timeFrequencies = this.dropdownSvc.transform(timeFrequencies, 'name', 'timeFrequencyOID');
+      });
 
       this.countriesSubscription = this.countriesSvc.get().subscribe(countries => {
         this.countries = this.dropdownSvc.transformSameLabelAndValue(countries, 'name');
@@ -511,13 +893,33 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         //This returns all the case payments for that particular application
         this.caseSvc
           .fetchCasePayments(caseId)
-          .subscribe(results => this.case.casePayments = results);
+          .subscribe(
+            results => {
+              this.case.casePayments = results.map((payment) => {
+                  let pmMethod = this.paymentMethod.find((item) => {return item.id == payment.paymentMethodID});
+                  payment.paymentMethod = pmMethod != undefined ? pmMethod.value : "";
+
+                  let pmType = this.paymentTypes.find((item) => {return item.id == payment.paymentTypeID});
+                  payment.paymentType = pmType != undefined ? pmType.value : "";
+                  return payment;
+                });
+            });
 
         //console.log('Case Payments received for this case is', this.case.casePayments);
 
         this.caseSvc
         .fetchCasePaymentDetails(caseId)
-        .subscribe(results => this.case.casePaymentsDetails = results);
+        .subscribe(results => {
+          this.case.casePaymentsDetails = results.map((item) => {
+
+              let pmType = this.paymentTypes.find((type) => {
+                return type.id == item.paymentTypeID;
+              });
+
+              item.paymentType = pmType != undefined ? pmType.value : "";
+              return item;
+          });
+        });
 
 
         console.log('Case Applications Retrieved', this.case.caseApplications);
@@ -722,6 +1124,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.showDeletePartyModal = false;
     this.showModalEditCaseParty = false;
     this.showModalAuthorizedUsers = false;
+    this.showModalAddTrafficCaseCharge = false;
+    this.showDeleteTrafficChargeConfirmation = false;
   }
 
   // -------------------------
@@ -792,15 +1196,33 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     { value: 'Credit Card', label: 'Credit Card' },
     { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
     { value: 'Personal Cheque', label: 'Personal Cheque' },
-    { value: 'Deferred Payment', label: 'Deferred Payment' }
+    { value: 'Deferred Payment', label: 'Deferred Payment' }];
+
+  // paymentMethod: any[] = [
+  //   { value: 'ACH Credit Transfer', label: 'ACH Credit transfer' },
+  //   { value: 'Cash', label: 'Cash' },
+  //   { value: 'Cheque', label: 'Cheque' },
+  //   { value: 'Court Pay', label: 'Court Pay' },
+  //   { value: 'Credit Card', label: 'Credit Card' },
+  //   { value: 'Manager’s Cheque', label: 'Manager’s Cheque' },
+  //   { value: 'Personal Cheque', label: 'Personal Cheque' },
+  //   { value: 'Deferred Payment', label: 'Deferred Payment' }
 
 
-  ];
+
+  // ];
 
   paymentTypes: any[] = [
-    { value: 'Fines', label: 'Fines' },
-    { value: 'Fees', label: 'Fees' },
-    { value: 'Compensation', label: 'Compensation' }
+    { value: 'Maintenance: Child', label: 'Maintenance: Child'},
+    { value: 'Maintenance: Adult', label: 'Maintenance: Adult' },
+    { value: 'Maintenance: Adult & Child', label: 'Maintenance: Adult & Child'},
+    { value: 'Fines Payment', label: 'Fines Payment' },
+    { value: 'Filing Fees', label: 'Filing Fees' },
+    { value: 'Revenue', label: 'Revenue' },
+    { value: 'Writs of Execution', label: 'Writs of Execution' },
+    { value: 'Writs of Possession', label: 'Writs of Possession' },
+    { value: 'Warrant of Apprehension', label: 'Warrant of Apprehension' },
+    { value: 'Warrant of Commitment', label: 'Warrant of Commitment' }
   ];
 
   paymentFrequency: any[] = [
@@ -826,12 +1248,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     this.selectedCaseApplication.caseApplicationStatus = event.value;
   }
 
-  paymentItemOnChange(event,acIdx) {
-    this.selectedCasePayment.paymentsDisbursements[acIdx].paymentItem = event;
+  paymentItemOnChange(event, acIdx) {
+    this.selectedCasePayment.paymentsDisbursements[acIdx].paymentItemOID = event;
   }
 
-  paymentFrequencyOnChange(event,acIdx) {
-    this.selectedCasePayment.paymentsDisbursements[acIdx].paymentFrequency = event;
+  paymentFrequencyOnChange(event, acIdx) {
+    this.selectedCasePayment.paymentsDisbursements[acIdx].timeFrequencyOID = event;
   }
 
   paymentAmountInOnChange(event,acIdx) {
@@ -859,7 +1281,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   caseCountOnChange(event) {
     this.charge_count = event;
     console.log('Charge Count is',this.charge_count);
-  }  
+  }
 
   payorOnChange(event) {
     this.selectedCasePayment.payorParty = event.value;
@@ -871,10 +1293,22 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   paymentMethodOnChange(event) {
     this.selectedCasePayment.paymentMethod = event.value;
+
+    let pmMethod = this.paymentMethod.find((item) => {
+      return item.value == event.value;
+    })
+
+    this.selectedCasePayment.paymentMethodID = pmMethod.id
   }
 
   paymentTypeOnChange(event) {
     this.selectedCasePayment.paymentType = event.value;
+
+    let pmType = this.paymentTypes.find((item) => {
+      return item.value == event.value;
+    })
+
+    this.selectedCasePayment.paymentTypeID = pmType.id;
   }
 
   applicantRoleTypeOnChange(event){
@@ -1001,13 +1435,13 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
 
         this.case.casePayments.push(this.selectedCasePayment); //not working for some reason
-        if (this.selectedCasePayment.paymentMethod != "CourtPay") this.selectedCasePayment.processingFee = 0;
+        if (this.selectedCasePayment.paymentMethodID != 4) this.selectedCasePayment.processingFee = 0;
         //console.log('Case Payment Details to be saved are', this.selectedCasePayment);
 
         //Set the values to be used to generate an application number
         //The application type code is set then the case type is selected upon the initial
         //creation of the application.
-        if(this.selectedCasePayment.paymentMethod != "CourtPay" && this.selectedCasePayment.receiptNumber == "")
+        if(this.selectedCasePayment.paymentMethodID != 4 && this.selectedCasePayment.receiptNumber == "")
           this.selectedCasePayment.receiptNumber = this.case.caseNumber + "-"+  this.case.casePayments.length++;
 
         this.selectedCasePayment.caseNumber = this.case.caseNumber;
@@ -1015,8 +1449,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.selectedCasePayment.payorOID = this.selectedCasePayment.payorParty.partyOID;
         this.selectedCasePayment.beneficiaryOID = this.selectedCasePayment.beneficiaryParty.partyOID;
 
-        this.caseSvc.saveCasePayment(this.selectedCasePayment).subscribe(result => {
+        console.log(this.selectedCasePayment);
+        this.caseSvc.saveCasePayment(this.selectedCasePayment).subscribe((result) => {
           this.selectedCasePayment = result[0];
+
+          let pmMethod = this.paymentMethod.find((item) => {return item.id == result[0].paymentMethodID});
+          this.selectedCasePayment.paymentMethod = pmMethod != undefined ? pmMethod.value : "";
+
+          let pmType = this.paymentTypes.find((item) => {return item.id == result[0].paymentTypeID});
+          this.selectedCasePayment.paymentType = pmType != undefined ? pmType.value : "";
         });
 
         this.toastSvc.showSuccessMessage('Case Payment Saved');
@@ -1027,7 +1468,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
     .fetchCasePaymentDetails(this.case.caseOID)
-    .subscribe(results => this.case.casePaymentsDetails = results);
+    .subscribe(results => {
+      this.case.casePaymentsDetails = results.map((item) => {
+        let pmType = this.paymentTypes.find((type) => {
+          return type.id == item.paymentTypeID;
+        });
+
+        item.paymentType = pmType != undefined ? pmType.value : "";
+        return item;
+    });
+    });
 
     //After a payment is saved, reset so fresh data can be reloaded
     this.selectedCasePayment = new CasePayment ();
@@ -1444,6 +1894,26 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.showStaticMessage(false);
         this.case = c;
         this.case.initDocType = this.initDocTypeTemp;
+
+        //Loads extra Case payment and Case payment detail, data
+        c.casePayments = c.casePayments.map((item) => {
+            let pmMethod = this.paymentMethod.find((method) => {return item.paymentMethodID == method.id});
+            item.paymentMethod = pmMethod != undefined ? pmMethod.value : "";
+
+            let pmType = this.paymentTypes.find((type) => {return item.paymentTypeID == type.id});
+            item.paymentType = pmType != undefined ? pmType.value : "";
+
+            return item
+        });
+
+        c.casePaymentsDetails = c.casePaymentsDetails.map((item) => {
+
+            let pmType = this.paymentTypes.find((type) => {return item.paymentTypeID == type.id});
+            item.paymentType = pmType != undefined ? pmType.value : "";
+
+            return item
+        });
+
         if (shouldShowSuccessMessage) {
           this.toastSvc.showSuccessMessage("Case Saved");
         }
@@ -1598,8 +2068,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedChargeLawType: any;
   leaLeadChargeText: string;
   policeChargeDesc: string;
-  charge_count: number = 1; 
-  charge_id: string; 
+  charge_count: number = 1;
+  charge_id: string;
 
   chargeFactorTypes: ChargeFactor[];        // FetchChargeFactor GET
   selectedChargeFactors: ChargeFactor[];

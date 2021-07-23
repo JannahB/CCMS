@@ -146,6 +146,8 @@ import { CaseSealService } from './common/services/http/caseSeal.service';
 import { CriminalChargeService } from './common/services/http/criminal-charges.service';
 import { CriminalChargeModificationService } from './common/services/http/criminal-charges-modification.service';
 import { SentencingService } from './common/services/http/sentencing.service';
+import { OrderService } from './common/services/http/order.service';
+import { OrdersComponent } from './case/case-detail/orders/orders.component';
 
 @NgModule({
   imports: [
@@ -247,6 +249,7 @@ import { SentencingService } from './common/services/http/sentencing.service';
     CalResourcesComponent,
     CalFacilitiesComponent,
     MinutesComponent,
+    OrdersComponent,
     TempHearingsComponent
   ],
   providers: [
@@ -293,6 +296,7 @@ import { SentencingService } from './common/services/http/sentencing.service';
     CriminalChargeService,
     CriminalChargeModificationService,
     SentencingService,
+    OrderService,
     CaseRegisterService,
     EventService,
     {

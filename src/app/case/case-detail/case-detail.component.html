@@ -89,7 +89,7 @@
               <p-calendar id="dtFilingDate" name="dtFilingDate" #dtFilingDate [required]="true"
                 [disabled]="case.caseOID != 0 || !hasPermission(Permission.CREATE_CASE)"
                 [(ngModel)]="case.caseFilingDate" dateFormat="dd-M-yy" placeholder="Case Filing Date" [showIcon]="true"
-                yearRange="2000:2030" [yearNavigator]="true" appendTo="body"></p-calendar>
+                yearRange="1970:2030" [yearNavigator]="true" appendTo="body"></p-calendar>
               <!-- (onSelect)="generalDetailsOnBlur($event)" -->
               <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="dtFilingDate.errors?.required && dtFilingDate.touched">
@@ -251,7 +251,7 @@
                       dateFormat="mm/dd/yy"
                       placeholder="Disposition Date"
                       [showIcon]="true"
-                      yearRange="2000:2030"
+                      yearRange="1970:2030"
                       [yearNavigator]="true"
                       appendTo="body" ></p-calendar>
                 <div class="ui-message ui-messages-error ui-corner-all"
@@ -443,7 +443,7 @@
 
          <!-- CHARGES TABLE -->
 
-         <div class="ui-g-12 mt-30">
+          <div class="ui-g-12 mt-30">
 
           <div class="ui-g-12 ui-md-6">
             <h2 class="mb-10">Charges</h2>
@@ -465,15 +465,15 @@
                         (onRowSelect)="caseOnRowSelect($event)"
                         scrollable="true" scrollHeight="200px"
                         dataKey="caseChargeOID" #dtCharges>
-              
-              <p-column field="charge_id" header="CHARGE ID" [style]="{'width':'5%'}" [sortable]="true"></p-column>                        
+
+              <p-column field="charge_id" header="CHARGE ID" [style]="{'width':'5%'}" [sortable]="true"></p-column>
               <p-column field="localCharge.categoryIdentifier" header="UNODC Code" [style]="{'width':'7%'}"></p-column>
               <p-column field="localCharge.localCharge" header="Local Charge" [style]="{'width':'15%'}"></p-column>
               <p-column field="leaChargingDetails" header="Lead Charge Description" [style]="{'width':'15%'}"></p-column>
               <p-column field="chargeDetails" header="Police Description" [style]="{'width':'15%'}"></p-column>
               <p-column field="localCharge.charge_weight" header="Charge Weight" [sortable]="true" [style]="{'width':'7%'}"></p-column>
 
-              <!-- <p-column field="iccsCode.categoryName" header="Charge Factors" [style]="{'width':'25%'}"></p-column> -->
+
               <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
               <p-column field="charge_count" header="COUNT" [style]="{'width':'5%'}"></p-column>
               <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
@@ -497,9 +497,77 @@
         </div>
       </form>
     </div>
+
+
+  <!-- TRAFFIC OFFENCES *ngIf="case.caseType?.name.toUpperCase() === 'TICKETS/NOTICE TO CONTEST' "-->
+  <div *ngIf="isUturnUser">
+
+      <div class="ui-g-12 ui-md-6" >
+        <h2 class="mb-10">Traffic Offences</h2>
+      </div>
+      <div class="ui-g-12 ui-md-6 ta-r pos-relative">
+        <button type="button"
+                *ngIf="hasPermission(Permission.UPDATE_CASE)"
+                (click)="onAddTrafficCaseCharge(caseTrafficChargeForm)"
+                label="Add Traffic Offence"
+                icon="ui-icon-add"
+                class="ui-button-secondary mr-15 abs-btn" pButton>
+        </button>
+      </div>
+
+      <div class="ui-g-12">
+        <p-dataTable [value]="caseTrafficCharges" selectionMode="single"
+                     [(selection)]="selectedCaseTrafficCharge" (onRowSelect)="caseTrafficChargeOnRowSelect($event)"
+                     scrollable="true" scrollHeight="200px" dataKey="id" #dtCaseTrafficCharges>
+
+          <p-column field="" header="Offence" [style]="{'width':'15%'}">
+            <ng-template pTemplate="body" let-item="rowData">
+              <b>Description:</b>{{item?.trafficCharge.description}} <br />
+              <b>Penalty:</b> ${{item?.trafficCharge.penalty}}.00 <br />
+              <b>Demerit Points:</b> {{item?.trafficCharge.demeritPoints}}
+            </ng-template>
+          </p-column>
+
+          <p-column field="" header="Offence Particulars" [style]="{'width':'15%'}">
+            <ng-template pTemplate="body" let-item="rowData">
+              <b>Fixed Penalty Number:</b> {{item.citationNumber}} <br />
+              <b>Issued:</b> {{item.offenceDatetime | date:'full'}} <br />
+              <b>Offence Location:</b> {{item.offenceLocation}} <br />
+            </ng-template>
+          </p-column>
+
+          <p-column field="" header="Reason for Contest" [style]="{'width':'12%'}">
+            <ng-template pTemplate="body" let-item="rowData">
+              <b>Reason for contest:</b><br />
+              <ng-container *ngIf="item.reasonForContest.length > 300; then truncated; else normal">
+              </ng-container>
+              <ng-template #truncated>
+                <p>{{item.reasonForContest | slice:0:300}}...
+                </p>
+              </ng-template>
+              <ng-template #normal>
+                <p> {{ item.reasonForContest }}</p>
+              </ng-template>
+            </ng-template>
+          </p-column>
+
+          <p-column field="" header="Vehicle Particulars" [style]="{'width':'15%'}">
+            <ng-template pTemplate="body" let-item="rowData">
+              <b>Registration:</b> {{item.vehicleRegistration}} <br />
+              <b>Make:</b> {{item.vehicleMake}} <br />
+              <b>Model:</b> {{item.vehicleModel}} <br />
+              <b>Year:</b> {{item.vehicleYear}} <br />
+              <b>Colour:</b> {{item.vehicleColour}} <br />
+            </ng-template>
+          </p-column>
+
+        </p-dataTable>
+      </div>
+
+  </div>
+
   </div>
   <!-- //END FISRT CARD -->
-
 
   <!-- SECOND CARD - TAB SECTION -->
   <div class="ui-g-12 card" *ngIf="case && case.caseOID && case.caseOID > 0">
@@ -776,7 +844,7 @@
             <div class="ui-g-12 pt-0" *ngIf="hasPermission(Permission.UPDATE_CASE)">
               <div class="ui-g-6">
                 <h4 class="mt-0 mb-10">Generate Document</h4>
-                <div class="ui-g-4">
+                <div class="ui-g-9">
                   <!-- <label class="minimal primary block">Generate Document</label> -->
                   <!-- TODO: Get document types lookup data-->
                   <!--spiffy -->
@@ -915,14 +983,14 @@
             </div>
             <div class="ui-g-12">
               <button type="button" *ngIf="hasPermission(Permission.CREATE_JUDICIAL_ASSIGNMENT)" (click)="onAddJudge()"
-                label="Add Judge" icon="ui-icon-add" class="ui-button-secondary mr-15" pButton></button>
+                label="Add Judicial Team" icon="ui-icon-add" class="ui-button-secondary mr-15" pButton></button>
             </div>
           </div>
         </p-tabPanel>
 
         <!-- SENTENCING TAB -->
 
-        <!-- <p-tabPanel header="Sentencing" leftIcon="ui-icon-account-balance">
+         <p-tabPanel header="Sentencing" leftIcon="ui-icon-account-balance" *ngIf="isSentencingUser">
           <div class="ui-g">
             <div class="ui-g-4">
               <h3 class="page-header mt-0">CONSEQUENCES</h3>
@@ -1020,7 +1088,7 @@
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
                 <label class="minimal primary block">Fingerprint Card Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.fingerprintCardDate"
-                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
                   appendTo="body"></p-calendar>
               </div>
 
@@ -1033,7 +1101,7 @@
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
                 <label class="minimal primary block">Sentence Order Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderDate"
-                  dateFormat="dd-M-yy" placeholder="Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+                  dateFormat="dd-M-yy" placeholder="Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
               </div>
 
               <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
@@ -1046,14 +1114,14 @@
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
                 <label class="minimal primary block">Sentence Order Period Start Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderPeriodStartDate"
-                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
                   appendTo="body"></p-calendar>
               </div>
 
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
                 <label class="minimal primary block">Sentence Order Period End Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderPeriodEndDate"
-                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
                   appendTo="body"></p-calendar>
               </div>
               <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
@@ -1140,7 +1208,7 @@
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
                 <label class="minimal primary block">Sentence Performed Start Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentencePerformedBeginDate"
-                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
                   appendTo="body"></p-calendar>
               </div>
 
@@ -1431,7 +1499,7 @@
               <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
                 <label class="minimal primary block">Charge Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.chargeDate"
-                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
                   appendTo="body"></p-calendar>
               </div>
 
@@ -1478,7 +1546,7 @@
 
             </div>
           </div>
-        </p-tabPanel> -->
+        </p-tabPanel>
 
         <!-- HEARINGS TAB -->
 
@@ -1502,8 +1570,6 @@
 
           </div>
         </p-tabPanel>
-
-
 
 
         <!-- PAYMENT & DISBURSEMENTS TAB -->
@@ -1642,7 +1708,7 @@
                 <p-column field="receiptNumber" header="Receipt Number" [style]="{'width':'10%'}" [sortable]="true"></p-column>
                 <p-column field="paymentType" header="Payment Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
                 <p-column field="paymentItem" header="Payment Item" [style]="{'width':'10%'}" [sortable]="true"></p-column>
-                <p-column field="paymentFrequency" header="Payment Frequency" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="timeFrequency" header="Payment Frequency" [style]="{'width':'10%'}" [sortable]="true"></p-column>
                 <p-column field="paymentAmountOrdered" header="Payment Amount Ordered" [style]="{'width':'10%'}" [sortable]="true"></p-column>
                 <p-column field="paymentAmountIn" header="Customer Payment" [style]="{'width':'10%'}" [sortable]="true"></p-column>
 
@@ -1651,6 +1717,12 @@
           </div>
 
 
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Send to UTURN" leftIcon="ui-icon-compare-arrows" *ngIf="isUturnUser">
+          <div class="ui-g">
+            <app-orders [case]="case" (filteredEventsChange)="updateRegister($event)"></app-orders>
           </div>
         </p-tabPanel>
 
@@ -1819,14 +1891,14 @@
                   <label class="minimal primary block">Start Date</label>
                   <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full"
                     [(ngModel)]="selectedSearchPartyStartDate" dateFormat="dd-M-yy" placeholder="Start Date"
-                    [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030" appendTo="body"
+                    [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030" appendTo="body"
                     [required] = true></p-calendar>
                 </div>
                 <div class="ui-g-12 ui-md-6 mb-0">
                   <label class="minimal primary block">End Date</label>
                   <p-calendar id="dtEndDate" name="dtEndDate" inputStyleClass="width-full"
                     [(ngModel)]="selectedSearchPartyEndDate" dateFormat="dd-M-yy" placeholder="End Date"
-                    [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+                    [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
                 </div>
               </div>
             </div>
@@ -1977,14 +2049,14 @@
                 <label class="minimal primary block">Start Date</label>
                 <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full"
                   [(ngModel)]="newCaseParty.startDate" dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true"
-                  [yearNavigator]="true" yearRange="2000:2030" appendTo="body"
+                  [yearNavigator]="true" yearRange="1970:2030" appendTo="body"
                   [required]="true"></p-calendar>
               </div>
               <div class="ui-g-12 ui-md-6 mb-0">
                 <label class="minimal primary block">End Date</label>
                 <p-calendar id="dtEndDate" name="dtEndDate" inputStyleClass="width-full"
                   [(ngModel)]="newCaseParty.endDate" dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true"
-                  [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+                  [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
               </div>
             </div>
           </div>
@@ -2109,13 +2181,13 @@
             <label class="minimal primary block">Start Date</label>
             <p-calendar id="dtStartDate" name="dtStartDate" [disabled]="true" inputStyleClass="width-full"
               [(ngModel)]="selectedCaseParty.startDate" dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true"
-              [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+              [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
           </div>
           <div class="ui-g-12 ui-md-6 mb-0">
             <label class="minimal primary block">End Date</label>
             <p-calendar id="dtEndDate" name="dtEndDate" inputStyleClass="width-full"
               [(ngModel)]="selectedCaseParty.endDate" dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true"
-              [yearNavigator]="true" yearRange="2000:2030" appendTo="body"></p-calendar>
+              [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
           </div>
 
           <div class="ui-g-12 ui-md-0 mb-0">
@@ -2509,14 +2581,19 @@
           <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiChgID.errors?.required && tiChgID.touched">
             Charge ID is required
           </div>
-        
+
       </div>
 
         <div class="ui-g-12 ui-md-6">
           <label class="minimal primary block" for="tiChgCount">Charge Count</label>
-              <input matInput type="number" name="tiChgCount" placeholder="Charge Count" min="1"
-              [(ngModel)]="charge_count"
+              <input id="tiChgCount" matInput type="number" name="tiChgCount" placeholder="Charge Count" min="1"
+               #tiChgCount="ngModel"
+               [required]="true"
+               [(ngModel)]="charge_count"
               (ngModelChange)="caseCountOnChange($event)">
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiChgCount.errors?.required && tiChgCount.touched">
+            Charge Count is required
+          </div>
         </div>
       </div>
 
@@ -3008,14 +3085,14 @@
                   <p-dropdown
                        placeholder="Choose Payment Item"
                       [required]="true"
-                      [options]="paymentItem"
+                      [options]="paymentItems"
                       filter = "true"
                       appendTo="body"
                       [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
                       (ngModelChange)="paymentItemOnChange($event,acIdx)"
                       styleClass="width-full"
                       id="paymentsDisbursements-paymentItem-{{acIdx}}"
-                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentItem"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentItemOID"
                       name="paymentsDisbursements[{{acIdx}}].paymentItem">
                   </p-dropdown>
                </div>
@@ -3024,13 +3101,13 @@
                   <p-dropdown
                       placeholder="Choose Payment Frequency"
                       [required]="true"
-                      [options]="paymentFrequency"
+                      [options]="timeFrequencies"
                       filter = "true"
                       appendTo="body"
                       [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
                       (ngModelChange)="paymentFrequencyOnChange($event,acIdx)"
                       id="paymentsDisbursements-paymentFrequency-{{acIdx}}"
-                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentFrequency"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].timeFrequencyOID"
                       name="paymentsDisbursements[{{acIdx}}].paymentFrequency"
                       styleClass="width-full">
                   </p-dropdown>
@@ -3181,6 +3258,418 @@
   </form>
 </p-dialog>
 
+
+<!-- ADD TRAFFIC CASE CHARGE MODAL -->
+<!-- zaggy -->
+<p-dialog header="Traffic Offence" width="580" [(visible)]="showModalAddTrafficCaseCharge" [responsive]="true"
+  showEffect="fade" [modal]="true" [closable]="false">
+  <ng-container *ngIf="this.isEdit == false; then saveCharge; else editCharge"></ng-container>
+  <ng-template #saveCharge>
+    <form #caseTrafficChargeForm="ngForm" novalidate>
+      <div class="ui-g">
+        <div class="form-group">
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Description of Traffic violation or Offence</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.description}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Relevant Section/Regulation</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.regulation}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Penalty</label>
+            <span *ngIf="selectedTrafficCharge">${{selectedTrafficCharge.penalty}}.00</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Applicable Demerit Points</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.demeritPoints}}</span>
+          </div>
+
+
+          <div class="ui-g-12 mb-0 feature-box">
+            <p>Enter Traffic Charge/Law First</p>
+            <div class="feature-box-inner">
+              <label class="minimal primary block">Charge/Law</label>
+              <custom-autocomplete name="ddTrafficChargeLaw" id="ddTrafficChargeLaw" #ddTrafficChargeLaw="ngModel"
+                placeholder="choose Charge/Law..." [required]="true" [options]="trafficCharges" dataField="id"
+                labelField="description" [filterFunction]="trafficChargeFilterFunction"
+                [ngModel]="selectedTrafficCharge?.id" (ngModelChange)="trafficChargeOnChange($event)"
+                [labelFunction]="trafficChargeLabelFunction" styleClass="width-full">
+                <ng-template let-option>
+                  <div class="custom-ac-label1">
+                    {{option.description}}
+                  </div>
+                  <div class="custom-ac-label2">
+                    {{option.regulation}}
+                  </div>
+                </ng-template>
+              </custom-autocomplete>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddTrafficChargeLaw.errors?.required && ddTrafficChargeLaw.touched">
+                Charge/Law is required
+              </div>
+            </div>
+          </div>
+
+          <!-- CITATION NUMBER -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="citationNumber">Citation Number</label>
+            <input pInputText id="citationNumber" name="citationNumber" #citationNumber="ngModel"
+              (ngModelChange)="citationNumberOnChange($event)" [(ngModel)]="selectedCaseTrafficCharge.citationNumber"
+              [required]="true" />
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="citationNumber.errors?.required && citationNumber.touched">
+              A Citation Number is required
+            </div>
+          </div>
+
+          <!-- REASON FOR CONTEST -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="contestReason">Reason for Contest</label>
+            <textarea id="contestReason" name="contestReason" #contestReason="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.reasonForContest" [required]="true" [rows]="5" pInputTextarea
+              autoResize="autoResize" class="width-full"></textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="contestReason.errors?.required && contestReason.touched">
+              Contest reason is required
+            </div>
+          </div>
+
+          <!-- CHARGE DATE & TIME -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="offenceDateTime">Offence Date/Time</label>
+              <!-- <input pInputText id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+              [ngModel]="selectedCaseTrafficCharge?.offenceDatetime | date: 'medium'" [required]="true"
+              (ngModelChange)="selectedCaseTrafficCharge.offenceDatetime=$event" /> -->
+              <p-calendar id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.offenceDatetime" [required]="true" [showIcon]="true"
+                [showTime]="true"></p-calendar>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="offenceDateTime.errors?.required && offenceDateTime.touched">
+                Offence Date/Time is required
+              </div>
+            </div>
+
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="paymentDueDate">Payment Due Date</label>
+              <!-- <input pInputText id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+              [ngModel]="selectedCaseTrafficCharge.paymentDueDate | date:'medium'" [required]="true"
+              (ngModelChange)="selectedCaseTrafficCharge.paymentDueDate=$event" />-->
+              <p-calendar id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.paymentDueDate" [required]="true" [showIcon]="true"
+                [showTime]="true">
+              </p-calendar>
+              <!-- <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="paymentDueDate.errors?.required && paymentDueDate.touched">
+              Payment Due Date is required
+            </div> -->
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="offenceLocation">Location of Offence</label>
+            <textarea id="offenceLocation" name="offenceLocation" #offenceLocation="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.offenceLocation" [rows]="2" pInputTextarea autoResize="autoResize"
+              class="width-full">
+          </textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="offenceLocation.errors?.required && offenceLocation.touched">
+              Offence Location is required
+            </div>
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleMake">Vehicle Make</label>
+              <input pInputText id="vehicleMake" name="vehicleMake" #vehicleMake="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleMake" [required]="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleMake.errors?.required && vehicleMake.touched">
+                Vehicle Make is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleModel">Vehicle Model</label>
+              <input pInputText id="vehicleModel" name="vehicleModel" #vehicleModel="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleModel">
+              <!-- <span class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="vehicleModel.errors?.required && vehicleModel.touched">
+              Vehicle Model is required
+            </span> -->
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleRegistration">Vehicle Registration</label>
+              <input pInputText id="vehicleRegistration" name="vehicleRegistration" #vehicleRegistration="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleRegistration" [required]="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleRegistration.errors?.required && vehicleRegistration.touched">
+                Vehicle Registration Number is required
+              </span>
+            </div>
+
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleColour">Vehicle Colour</label>
+              <input pInputText id="vehicleColour" name="vehicleColour" #vehicleColour="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleColour">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleColour.errors?.required && vehicleColour.touched">
+                Vehicle Colour is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleYear">Vehicle Year</label>
+              <input pInputText id="vehicleYear" name="vehicleYear" #vehicleYear="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleYear">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleYear.errors?.required && vehicleYear.touched">
+                Vehicle Year is required
+              </span>
+            </div>
+            <div class=ui-g-4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="Save" type="submit" pButton icon="fa-check"
+            (click)="saveCaseTrafficCharge(caseTrafficChargeForm)"
+            [disabled]="!caseTrafficChargeForm.form.valid"></button>
+          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+            (click)="hideModals();"></button>
+        </div>
+      </p-footer>
+    </form>
+  </ng-template>
+
+
+
+  <ng-template #editCharge>
+    <form #caseTrafficChargeForm="ngForm" novalidate>
+      <div class="ui-g">
+        <div class="form-group">
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Description of Traffic violation or Offence</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.description}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Relevant Section/Regulation</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.regulation}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Penalty</label>
+            <span *ngIf="selectedTrafficCharge">${{selectedTrafficCharge.penalty}}.00</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Applicable Demerit Points</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.demeritPoints}}</span>
+          </div>
+
+
+          <!-- <div class="ui-g-12 mb-0 feature-box">
+          <p>Enter Traffic Charge/Law First</p>
+          <div class="feature-box-inner">
+            <label class="minimal primary block">Charge/Law</label>
+            <custom-autocomplete name="ddTrafficChargeLaw" id="ddTrafficChargeLaw" #ddTrafficChargeLaw="ngModel"
+              placeholder="choose Charge/Law..." [required]="true" [options]="trafficCharges" dataField="id"
+              labelField="description" [filterFunction]="trafficChargeFilterFunction"
+              [ngModel]="selectedTrafficCharge?.id" (ngModelChange)="trafficChargeOnChange($event)"
+              [labelFunction]="trafficChargeLabelFunction" styleClass="width-full">
+              <ng-template let-option>
+                <div class="custom-ac-label1">
+                  {{option.description}}
+                </div>
+                <div class="custom-ac-label2">
+                  {{option.regulation}}
+                </div>
+              </ng-template>
+            </custom-autocomplete>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddTrafficChargeLaw.errors?.required && ddTrafficChargeLaw.touched">
+              Charge/Law is required
+            </div>
+          </div>
+        </div> -->
+
+          <!-- CITATION NUMBER -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="citationNumber">Citation Number</label>
+            <input pInputText id="citationNumber" name="citationNumber" #citationNumber="ngModel"
+              (ngModelChange)="citationNumberOnChange($event)" [(ngModel)]="selectedCaseTrafficCharge.citationNumber"
+              [required]="true" readonly="true" />
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="citationNumber.errors?.required && citationNumber.touched">
+              A Citation Number is required
+            </div>
+          </div>
+
+          <!-- REASON FOR CONTEST -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="contestReason">Reason for Contest</label>
+            <textarea id="contestReason" name="contestReason" #contestReason="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.reasonForContest" [required]="true" [rows]="5" pInputTextarea
+              autoResize="autoResize" class="width-full" readonly="true"></textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="contestReason.errors?.required && contestReason.touched">
+              Contest reason is required
+            </div>
+          </div>
+
+          <!-- CHARGE DATE & TIME -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="offenceDateTime">Offence Date/Time</label>
+              <input pInputText id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+                [ngModel]="selectedCaseTrafficCharge?.offenceDatetime | date: 'medium'" [required]="true"
+                (ngModelChange)="selectedCaseTrafficCharge.offenceDatetime=$event" readonly="true" />
+              <!-- <p-calendar id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.offenceDatetime" [required]="true" [showIcon]="true"
+              [showTime]="true"></p-calendar> -->
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="offenceDateTime.errors?.required && offenceDateTime.touched">
+                Offence Date/Time is required
+              </div>
+            </div>
+
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="paymentDueDate">Payment Due Date</label>
+              <input pInputText id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+                [ngModel]="selectedCaseTrafficCharge.paymentDueDate | date:'medium'" [required]="true"
+                (ngModelChange)="selectedCaseTrafficCharge.paymentDueDate=$event" readonly="true" />
+              <!-- <p-calendar id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.paymentDueDate" [required]="true" [showIcon]="true"
+              [showTime]="true">
+            </p-calendar> -->
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="paymentDueDate.errors?.required && paymentDueDate.touched">
+                Payment Due Date is required
+              </div>
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="offenceLocation">Location of Offence</label>
+            <textarea id="offenceLocation" name="offenceLocation" #offenceLocation="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.offenceLocation" [rows]="2" pInputTextarea autoResize="autoResize"
+              class="width-full" readonly="true">
+          </textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="offenceLocation.errors?.required && offenceLocation.touched">
+              Offence Location is required
+            </div>
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleMake">Vehicle Make</label>
+              <input pInputText id="vehicleMake" name="vehicleMake" #vehicleMake="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleMake" [required]="true" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleMake.errors?.required && vehicleMake.touched">
+                Vehicle Make is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleModel">Vehicle Model</label>
+              <input pInputText id="vehicleModel" name="vehicleModel" #vehicleModel="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleModel" readonly="true">
+              <!-- <span class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="vehicleModel.errors?.required && vehicleModel.touched">
+              Vehicle Model is required
+            </span> -->
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleRegistration">Vehicle Registration</label>
+              <input pInputText id="vehicleRegistration" name="vehicleRegistration" #vehicleRegistration="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleRegistration" [required]="true" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleRegistration.errors?.required && vehicleRegistration.touched">
+                Vehicle Registration Number is required
+              </span>
+            </div>
+
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleColour">Vehicle Colour</label>
+              <input pInputText id="vehicleColour" name="vehicleColour" #vehicleColour="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleColour" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleColour.errors?.required && vehicleColour.touched">
+                Vehicle Colour is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleYear">Vehicle Year</label>
+              <input pInputText id="vehicleYear" name="vehicleYear" #vehicleYear="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleYear" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleYear.errors?.required && vehicleYear.touched">
+                Vehicle Year is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="Close" class="ui-button-secondary" type="button" pButton icon="fa-close"
+            (click)="hideModals()">
+          </button>
+        </div>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button type="button" class="ui-button-danger" (click)="showDeleteTrafficChargeConfirmation = true" pButton icon="ui-icon-trash"
+            *ngIf="hasPermission(Permission.DELETE_CASE_TRAFFIC_CHARGE)" label="Delete"></button>
+        </div>
+      </p-footer>
+    </form>
+  </ng-template>
+
+</p-dialog>
+
+
+<p-dialog header="Confirm Deletion" [(visible)]="showDeleteTrafficChargeConfirmation" [responsive]="true" showEffect="fade" [closable]="true" [modal]="true">
+  <h3>Are you sure that you want to delete this traffic offence?</h3>
+
+  <div class="ui-g-12 ta-r">
+      <button type="button"
+              (click)="confirmDeleteTrafficCharge()"
+              label="Yes"
+              icon="ui-icon-check"
+              class="secondary"
+              pButton></button>
+      <button type="button"
+              (click)="showDeleteTrafficChargeConfirmation = !showDeleteTrafficChargeConfirmation"
+              label="No"
+              icon="ui-icon-clear"
+              class="ui-button-secondary"
+              pButton></button>
+
+  </div>
+</p-dialog>
 
 
 <!-- ADD EVENT MODAL -->

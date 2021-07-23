@@ -25,7 +25,9 @@ export class CasePayment {
   staffPartyRecordingDisbursement: Party = new Party(); //This is to be used for the update of a record
 
   paymentMethod: string = "";
+  paymentMethodID:number = 0;
   paymentType: string = "";
+  paymentTypeID:number = 0;
   processingFee: number;
   totalPaymentIn: number;
   paymentNotes: string = "";
