@@ -3218,7 +3218,7 @@
             {{judge.judicialOfficial.lastName}}</div>
           <div *ngIf="!judge.judicialAssignmentOID || judge.judicialAssignmentOID == 0">
             <p-dropdown name="ddJudge" id="ddJudge" placeholder="choose Judge..." #ddJudge="ngModel" [required]="true"
-              [options]="judges" optionLabel="name" [(ngModel)]="judge.judicialOfficial"
+              [options]="judges" optionLabel="name" [(ngModel)]="judge.judicialOfficial" [filter]="true"
               [disabled]="judge.judicialAssignmentOID > 0" styleClass="width-full">
             </p-dropdown>
             <div class="ui-message ui-messages-error ui-corner-all" *ngIf="ddJudge.errors?.required && ddJudge.touched">
