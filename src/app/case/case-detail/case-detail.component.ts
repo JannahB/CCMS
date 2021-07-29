@@ -152,6 +152,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   isEdit = false;
   showModalAddTrafficCaseCharge = false;
   selectedTrafficCharge: TrafficCharge;
+  isTrafficViewable = false;
   selectedCTCBak: CaseTrafficCharge;
   selectedCTCIdx: Number;
   preventNavToCase = false;
@@ -680,6 +681,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
           //}
         }
 
+  toggleTrafficComponents() {
+    if (this.case.caseType.name.toLowerCase() === 'tickets/notice to contest') {
+      this.isTrafficViewable = true;
+    } else {
+      this.isTrafficViewable = false;
+    }
+  }
+
   public updateRegisterEvents() {
       const currCaseOID: string = (this.case.caseOID as any) as string;
       console.log(currCaseOID);
@@ -860,6 +869,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
         if (this.case.caseType) {
 
+          // Display traffic components if it is a Traffic Case Type
+          this.toggleTrafficComponents();
+
           // load filtered case phases
           this.caseSvc
             .fetchPhaseByType(this.case.caseType.caseTypeOID)
@@ -957,6 +969,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   caseTypeChange(event): void {
     if (this.case.caseType) {
+
+      // Toggle traffic components based on case type
+      this.toggleTrafficComponents();
 
       // Load case phases
       this.caseSvc
