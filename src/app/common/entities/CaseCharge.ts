@@ -13,6 +13,9 @@ export class CaseCharge {
   iccsCode: IccsCode = null;
   leaChargingDetails: string = ""; 
   chargeDetails: string = ""; 
+  charge_count: number = 1; 
+  charge_id: string = ""; 
+
   
   localCharge: LocalCharge = null;
 

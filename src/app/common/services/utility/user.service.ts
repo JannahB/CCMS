@@ -59,6 +59,37 @@ export class UserService {
     return idx > -1;
   }
 
+  public isSentencingUser(): boolean {
+    let isSentencingUser = false;
+
+    if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) {
+      return isSentencingUser;
+    }
+
+    this.loggedInUser.roles.forEach(function (role) {
+      if(role.staffRoleName === "Sentencing")
+        isSentencingUser = true;
+    });
+
+    return isSentencingUser;
+  }
+
+  public isUturnUser(): boolean {
+
+    let isUturnUser = false;
+
+    if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) {
+      return isUturnUser;
+    }
+
+    this.loggedInUser.roles.forEach(function (role) {
+      if(role.staffRoleName === "Uturn")
+       isUturnUser = true;
+    });
+
+    return isUturnUser;
+  }
+
   public isJudicialOfficer(): boolean {
 
     if (this.loggedInUser.roles[0].staffRoleName === "Judicial") {
@@ -76,7 +107,7 @@ export class UserService {
   }
 
   public isReadOnlyUser(): boolean {
-       
+
      if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 2)) > -1)
       return true;
     else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 4)) > -1)
@@ -84,15 +115,15 @@ export class UserService {
     else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 7)) > -1)
       return true;
     else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 8)) > -1)
-      return true;  
-    else return false;    
+      return true;
+    else return false;
   }
 
   public isRegistrar(): boolean {
-       
+
     if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 9)) > -1)
-     return true; 
-   else return false;    
+     return true;
+   else return false;
  }
 
   //This function prevents a supervisor from access the workflow

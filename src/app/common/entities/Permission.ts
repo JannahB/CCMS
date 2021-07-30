@@ -18,6 +18,7 @@ export class Permission {
   public static readonly UPDATE_CASE_HEARING: number = 4051;
   public static readonly CREATE_TASK: number = 4100;
   public static readonly UPDATE_TASK: number = 4101;
+  public static readonly DELETE_CASE_TRAFFIC_CHARGE: number = 2100;
 
 
 }
