@@ -23,14 +23,14 @@
           (click)="fetchCase(0)"
           label="Previous Case"
           class="btn-big btn-med" pButton
-          [disabled]="!caseForm.form.valid"
+          [disabled]="!case?.caseOID"
         ></button>
 
         <button type="button"
           (click)="fetchCase(1)"
           label="Next Case"
           class="btn-big btn-med" pButton
-          [disabled]="!caseForm.form.valid"
+          [disabled]="!case?.caseOID"
         ></button>
     </div>
 
