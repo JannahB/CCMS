@@ -12,6 +12,7 @@ import { LoginComponent } from './login/login.component';
 import { CanActivateAuthenticationGuard } from './common/guards/can-activate-authentication.guard';
 import { ResetPasswordComponent } from './login/reset-password/reset-password.component';
 import { NewPasswordComponent } from './login/new-password/new-password.component';
+import { JemsDashboardComponent } from './jems/jems-dashboard/jems-dashboard.component';
 
 export const routes: Routes = [
   { path: '', component: DashboardComponent, canActivate: [CanActivateAuthenticationGuard] },
@@ -23,6 +24,7 @@ export const routes: Routes = [
   { path: 'case-detail/:caseId', component: CaseDetailComponent, canActivate: [CanActivateAuthenticationGuard] },
   { path: 'case-search', component: CaseSearchComponent, canActivate: [CanActivateAuthenticationGuard] },
   { path: 'reports/case-count', component: CaseCountsComponent, canActivate: [CanActivateAuthenticationGuard] },
+  { path: 'jems', component: JemsDashboardComponent, canActivate: [CanActivateAuthenticationGuard] },
 
   // { path: 'admin', loadChildren: 'app/admin/admin.module#AdminModule'},
 

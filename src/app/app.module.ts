@@ -148,6 +148,7 @@ import { CriminalChargeModificationService } from './common/services/http/crimin
 import { SentencingService } from './common/services/http/sentencing.service';
 import { OrderService } from './common/services/http/order.service';
 import { OrdersComponent } from './case/case-detail/orders/orders.component';
+import { JemsDashboardComponent } from './jems/jems-dashboard/jems-dashboard.component';
 
 @NgModule({
   imports: [
@@ -250,7 +251,8 @@ import { OrdersComponent } from './case/case-detail/orders/orders.component';
     CalFacilitiesComponent,
     MinutesComponent,
     OrdersComponent,
-    TempHearingsComponent
+    TempHearingsComponent,
+    JemsDashboardComponent
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
