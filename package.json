@@ -15,6 +15,7 @@
     "build:aot": "ng build --env=prod --prod --build-optimizer --vendor-chunk=true",
     "start": "ng serve --port 4800 --host 0.0.0.0",
     "start:local": "ng serve --env=local --port 4800 --host 0.0.0.0",
+    "start:crim-ssl": "ng serve --ssl true --ssl-key ~/.ssh/tt-ssl-certs/cert.key --ssl-cert ~/.ssh/tt-ssl-certs/cert.crt --env=local --port 4800 --host localhost.ttlawcourts.org",
     "start:prod": "ng serve --port 4800 --host 0.0.0.0 --prod",
     "start:crim-test": "ng serve --port 4800 --host 0.0.0.0 --env=crim-test",
     "local": "ng serve --port 4800 --host 192.168.2.100 --public",
