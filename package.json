@@ -12,7 +12,7 @@
     "build:crim-test": "ng build --env=crim-test",
     "build:training": "ng build --env=training",
     "build:prod": "ng build --env=prod",
-    "build:aot": "ng build --env=prod --prod --build-optimizer --vendor-chunk=true",
+    "build:aot": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --env=prod --prod --build-optimizer --vendor-chunk=true",
     "start": "ng serve --port 4800 --host 0.0.0.0",
     "start:local": "ng serve --env=local --port 4800 --host 0.0.0.0",
     "start:crim-ssl": "ng serve --ssl true --ssl-key ~/.ssh/tt-ssl-certs/cert.key --ssl-cert ~/.ssh/tt-ssl-certs/cert.crt --env=local --port 4800 --host localhost.ttlawcourts.org",
