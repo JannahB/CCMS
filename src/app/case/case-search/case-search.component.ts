@@ -59,6 +59,10 @@ export class CaseSearchComponent implements OnInit {
   public hasValidPassword: boolean = false;
 
   
+  isSearching = false;
+  creatingAssocCase = false;
+  page: number = 0;
+  size: number = 10;
 
   constructor(
     private caseSvc: CaseService,
@@ -121,21 +125,24 @@ export class CaseSearchComponent implements OnInit {
     }
   }
 
-  onSearch() {
-    this.isSearcing = true;
+  onSearch(page: number) {
+    this.isSearching = true;
     this.caseResults = null;
 
     let obj = {};
-    if(this.caseNumberText && this.caseNumberText != '') obj = {...obj, caseNumber: this.caseNumberText }; 
-    if(this.casePartyNameText && this.casePartyNameText != '') obj = {...obj, casePartyName: this.casePartyNameText};
-    if(this.selectedCaseType) obj = {...obj, caseType: this.selectedCaseType.caseTypeOID.toString() };
-    if(this.selectedCasePhaseType) obj = {...obj, casePhase: this.selectedCasePhaseType.casePhaseOID.toString()};
-    if(this.selectedCaseStatusType) obj = {...obj, caseStatus: this.selectedCaseStatusType.statusOID.toString()};
-    if(this.selectedCasePartyRoleType) obj = {...obj, casePartyRoleOID: this.selectedCasePartyRoleType.casePartyRoleOID.toString()};
+    if (this.caseNumberText && this.caseNumberText != '') obj = { ...obj, caseNumber: this.caseNumberText, prevCaseNumber: this.caseNumberText, magCourtNum: this.caseNumberText };
+    if (this.casePartyNameText && this.casePartyNameText != '') obj = { ...obj, casePartyName: this.casePartyNameText };
+    if (this.selectedCaseType) obj = { ...obj, caseType: this.selectedCaseType.caseTypeOID.toString() };
+    if (this.selectedCasePhaseType) obj = { ...obj, casePhase: this.selectedCasePhaseType.casePhaseOID.toString() };
+    if (this.selectedCaseStatusType) obj = { ...obj, caseStatus: this.selectedCaseStatusType.statusOID.toString() };
+    if (this.selectedCasePartyRoleType) obj = { ...obj, casePartyRoleOID: this.selectedCasePartyRoleType.casePartyRoleOID.toString() };
 
-    if(Object.keys(obj).length === 0) {
-      this.isSearcing = false;
-      this.toastSvc.showInfoMessage('Please enter/select criteria and try again.', 'Criteria Needed')
+    obj = { ...obj, "page" : page, "size": this.size};
+    this.page = page;
+
+    if (Object.keys(obj).length === 0) {
+      this.isSearching = false;
+      this.toastSvc.showInfoMessage('Please enter/select criteria and try again.', 'Criteria Needed');
       return;
     }
 

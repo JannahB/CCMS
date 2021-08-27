@@ -8,7 +8,7 @@
     <!-- FIRST SECTION -->
     <div class="ui-g-12 card">
 
-      <form (ngSubmit)="onSearch()" #searchForm="ngForm" novalidate>
+      <form (ngSubmit)="onSearch(0)" #searchForm="ngForm" novalidate>
 
         <div class="form-group mt-20" >
           <div class="ui-g-12 ph-30 big-search">
@@ -36,6 +36,8 @@
 
       <div class="ui-g-12 mv-20">
         <h2>Search Party Results</h2>
+        <loading-bar [visible]="isSearching" [message]="'searching...'"></loading-bar>
+
         <p-dataTable [value]="partyResults" selectionMode="single" [(selection)]="selectedParty" (onRowSelect)="partyOnRowSelect($event)"
           scrollable="true" scrollHeight="280px"
           dataKey="partyOID" #dtPartyResults>
@@ -64,9 +66,16 @@
         </p-dataTable>
       </div>
 
+      <div class="ui-g-12 mt-20 ta-c">
+          <button *ngIf="page !=0" type="button" (click)="onSearch(page-1)" label="Previous 10" class="ui-button-secondary "  pButton></button>
+        <button *ngIf="partyResults?.length == size" type="button" (click)="onSearch(page+1)" class="ui-button-secondary " label="Next 10" pButton></button>
+      </div>
+
       <div class="ui-g-12 mt-20 ta-c" *ngIf="hasPermission(Permission.CREATE_PARTY)">
         <button type="button" (click)="onNewParty()" label="New Party" icon="ui-icon-add" pButton></button>
       </div>
+
+
 
     </div>
     <!-- //END FISRT CARD -->

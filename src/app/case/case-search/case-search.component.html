@@ -8,7 +8,7 @@
   <!-- FIRST SECTION -->
   <div class="ui-g-12 card">
 
-    <form (ngSubmit)="onSearch()" #searchForm="ngForm" novalidate>
+    <form (ngSubmit)="onSearch(0)" #searchForm="ngForm" novalidate>
 
       <div class="form-group mt-20" >
         <div class="ui-g-12 ui-md-6">
@@ -159,7 +159,12 @@
         </p-column>
 
       </p-dataTable>
+    </div>
 
+    <div class="ui-g-12 mt-20 ta-c">
+        <button *ngIf="page !=0" type="button" (click)="onSearch(page-1)" label="Previous 10" class="ui-button-secondary "  pButton></button>
+      <button *ngIf="caseResults?.length == size" type="button" (click)="onSearch(page+1)" class="ui-button-secondary " label="Next 10" pButton></button>
+    </div>
   </div>
   <!-- //END FISRT CARD -->
 </div>

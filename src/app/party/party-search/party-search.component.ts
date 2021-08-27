@@ -21,6 +21,9 @@ export class PartySearchComponent implements OnInit {
   selectedParty: Party;
   showRecordsFoundMessage: boolean = false;
   recordsFoundMessage: string;
+  isSearching = false;
+  page: number = 0;
+  size: number = 10;
   public Permission: any = Permission;
 
 
@@ -33,15 +36,17 @@ export class PartySearchComponent implements OnInit {
   ngOnInit() {
   }
 
-  public onSearch(): void {
+  public onSearch(page: number): void {
     this.showRecordsFoundMessage = false;
-    let obj = { "partyName": this.partyNameText };
+    this.isSearching = true;
+    let obj = { "partyName": this.partyNameText, "page": page, "size": this.size };
+    this.page = page;
     this.partyService
       .fetchAny(obj)
       .subscribe((result) => {
         this.partyResults = result;
         this.showNumberOfRecordsFound(result.length);
-
+        this.isSearching = false;
         this.setPartiesAge();
 
       });
