@@ -423,7 +423,7 @@
 
               <p-column field="caseApplicationNumber" header="Application #" [style]="{'width':'10%'}" [sortable]="true"></p-column>
               <p-column field="caseApplicationObjType.name" header="Application Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
-              <p-column field="caseApplicationStatus" header="Application Status" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+              <p-column field="caseApplicationStatusDisplay" header="Application Status" [style]="{'width':'10%'}" [sortable]="true"></p-column>
               <p-column field="caseApplicationStartDate" header="Start Date" [style]="{'width':'10%'}" [sortable]="true">
                   <ng-template pTemplate="body" let-item="rowData">
                       {{item.caseApplicationStartDate | date:'dd-MMM-yyyy'}}
@@ -2293,7 +2293,7 @@
                   [options]="applicationStatus"
                   filter = "true"
                   [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
-                  [ngModel]="selectedCaseApplication.caseApplicationStatus"
+                  [ngModel]="selectedCaseApplication.caseApplicationStatusDisplay"
                   appendTo="body"
                   (onChange)="applicationStatusOnChange($event)"
                   styleClass="width-full">

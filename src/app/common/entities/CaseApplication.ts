@@ -9,7 +9,7 @@ export class CaseApplication {
     caseOID: number = 0;   
     caseApplicationNumber: string = "";
     caseApplicationType: number = 0;
-    caseApplicationStatus: string = "";
+    caseApplicationStatus: number = 0;
     caseApplicationStartDate: Date = null;
     caseApplicationEndDate: Date = null;
     dateOfMarriage: Date = null;
