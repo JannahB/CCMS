@@ -870,7 +870,7 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http
       .get<CaseApplicationStatus[]>(url);
   }
-  
+
   public fetchCasePaymentMethod(): Observable<CasePaymentMethod[]>{
 
     const url = `${super.getBaseUrl()}/FetchCasePaymentMethod`;
