@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: "https://traincms.ttlawcourts.org/CCMS3",                // TRAINING
+  apiUrl: "https://criminal-dev-oj.ttlawcourts.org/CCMS3",                // TRAINING
   mockUrl: "assets/mockData/",
   trafficApiUrl: 'https://trafapi.ttlawcourts.org:10443',
 

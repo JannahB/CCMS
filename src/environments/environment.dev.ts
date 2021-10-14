@@ -6,8 +6,8 @@
 export const environment = {
   production: false,
   // apiUrl: "http://206.189.224.74:8080/CCMS3",       // DEV DO
-  // apiUrl: "https://testcms.ttlawcourts.org/CCMS3",     // TEST
-  apiUrl: "http://localhost:8080",
+  apiUrl: "https://criminal-dev-oj.ttlawcourts.org/CCMS3",     // TEST
+  // apiUrl: "http://localhost:8080",
   mockUrl: "assets/mockData/",
   trafficApiUrl: 'https://trafapi.ttlawcourts.org:10443',
 
