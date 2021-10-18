@@ -847,9 +847,9 @@
                   <!-- <label class="minimal primary block">Generate Document</label> -->
                   <!-- TODO: Get document types lookup data-->
                   <!--spiffy -->
-                  <p-dropdown placeholder="document type..." [options]="courtDocs"
-                    [(ngModel)]="selectedDocumentTemplateType" optionLabel="name" (onChange)="ddOnChange($event)"
-                    styleClass="width-full" [filter]="true" filterBy="label,value.name">
+                  <p-dropdown placeholder="Select Document Template" [options]="documentTemplateTypes"
+                    [(ngModel)]="selectedDocumentTemplateType" optionLabel="label" (onChange)="ddOnChange($event)"
+                    styleClass="width-full" [filter]="true" filterBy="label,value">
                   </p-dropdown>
                 </div>
                 <div class="ui-g-2 pv-0">
