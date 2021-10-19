@@ -45,7 +45,8 @@ export class MinutesComponent implements OnInit, OnDestroy {
   caseSubscription: Subscription;
   hearingSubscription: Subscription;
   selectedMinute: Minute = new Minute();
-  permissionIsJudge: boolean = false; 
+  permissionIsJudge: boolean = false;
+  isReadOnly:boolean = false;
   selectedMinuteBak: Minute;
   selectedMinuteIdx: number;
   loadingDataFlag = false;
@@ -81,6 +82,7 @@ export class MinutesComponent implements OnInit, OnDestroy {
     this.minutes = [];
 
     this.permissionIsJudge = this.userSvc.isJudicialOfficer();
+    this.isReadOnly = (this.userSvc.isReadOnlyUser());
     console.log('User is a Judge',this.permissionIsJudge);
   }
 

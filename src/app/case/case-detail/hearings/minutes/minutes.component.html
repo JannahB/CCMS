@@ -8,7 +8,7 @@
     <div class="ui-g-6 pad-0 ta-r" >
       <button type="button" (click)="showMinuteModal()" label="New Minute" icon="ui-icon-add"
         class="ui-button-secondary mt-10" pButton
-        [disabled]="permissionIsJudge == true"></button>
+        [disabled]="permissionIsJudge == true || isReadOnly"></button>
     </div>
   </div>
 
@@ -99,7 +99,7 @@
               <label class="minimal primary block">Appearances</label>
               <span class="md-inputfield">
                 <!-- <p-chips pInputText id="tiAppearances" [required]="true" name="tiAppearances" class="width-full"
-                  [(ngModel)]="this.appearances" type="text"></p-chips> -->             
+                  [(ngModel)]="this.appearances" type="text"></p-chips> -->
                 <p-autoComplete id="tiAppearances" name="tiAppearances" [(ngModel)]="this.appearances"
                   [suggestions]="filteredCaseParties" (completeMethod)="search($event)" [multiple]="true"
                   [dropdown]="true" styleClass="width-full" [minLength]="1" appendTo="body" forceSelection="true">
@@ -245,7 +245,7 @@
         <p-footer>
           <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
             <button label="Save Changes" type="submit" pButton icon="fa-check"
-              [disabled]="!minuteForm.form.valid || permissionIsJudge == true"></button>
+              [disabled]="!minuteForm.form.valid || permissionIsJudge == true || isReadOnly"></button>
             <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
               (click)="hideModal()"></button>
           </div>

@@ -108,13 +108,17 @@ export class UserService {
 
   public isReadOnlyUser(): boolean {
 
-     if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 2)) > -1)
+     if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 2)) > -1)  // Role == Judicial
       return true;
     else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 4)) > -1)
       return true;
     else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 7)) > -1)
       return true;
     else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 8)) > -1)
+      return true;
+    else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 829135263907518)) > -1)  // Role == Judicial Officer
+      return true;
+    else if (this.loggedInUser.roles.findIndex((itm => itm.staffRoleOID == 920188899742322)) > -1)  // Role == Read Only
       return true;
     else return false;
   }
