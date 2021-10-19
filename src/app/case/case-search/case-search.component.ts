@@ -53,6 +53,7 @@ export class CaseSearchComponent implements OnInit {
   casePartyRoleTypesSubscription: Subscription;
 
   isSearcing:boolean = false;
+  isReadOnly:boolean = false;
   showModalPasswordPrompt = false;
   public password: string = '';
   public loginCounter: number = 0;
@@ -89,6 +90,9 @@ export class CaseSearchComponent implements OnInit {
     this.casePartyRoleTypesSubscription = this.lookupSvc.fetchLookup<CasePartyRole>('FetchCasePartyRole').subscribe(items => {
       this.casePartyRoleTypes = items;
     });
+
+    this.isReadOnly = (this.userSvc.isReadOnlyUser());
+    console.log('Read Only value is ', this.isReadOnly);
 
   }
 
