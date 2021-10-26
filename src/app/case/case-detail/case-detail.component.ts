@@ -1065,14 +1065,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     if (this.selCatDT.name === this.docTypesCategories[0].name) {
       // filings
       this.docTypesShown = this.allTypesFull.filter(fDocType => {
-        return fDocType.is_filing === 1;
+        return fDocType.is_filing === 1 && fDocType.jdcode === this.selectedCourtJD;
       });
     } else {
       // court_docs
       this.docTypesShown = this.allTypesFull.filter(fDocType => {
-        return fDocType.is_court_doc === 1;
+        return fDocType.is_court_doc === 1 && fDocType.jdcode === this.selectedCourtJD;
       });
     }
+    this.docTypesShown.sort(
+      (a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'})
+    );
   }
 
   dtNameToCat(name: string): string {
