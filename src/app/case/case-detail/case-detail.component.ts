@@ -748,16 +748,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
         .fetchCaseApplicationStatus()
-        .subscribe(statuses => 
+        .subscribe(statuses =>
           {
             this.applicationStatus = statuses.map((value) => {
               return {value : value.name, label : value.name, id : value.caseApplicationStatusOID};
             });
-            
+
             //this.casePaymentMethods = paymentMethods;
             console.log(statuses);
           });
-    
+
     this.caseSvc
         .fetchCasePaymentType()
         .subscribe(paymentTypes =>

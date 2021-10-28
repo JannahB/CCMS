@@ -1833,7 +1833,7 @@
 
                 <p-column header="Party Info" [style]="{'width':'50%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                    <div>{{item.fullName?item.fullName:item.firstName+" "+item.lastName}}</div>
+                    <div>{{ item.fullName ? item.fullName : item.firstName + " " + item.lastName}}</div>
                     <!-- Christian: turned on when fullName support on Server -->
                     <!-- <div>{{ item.fullName }}</div> -->
                     <div *ngIf="!item.isOrganization">
@@ -1978,9 +1978,9 @@
 
               <div class="ui-g-12 mb-20">
                 <span class="md-inputfield">
-                  <input type="text" pInputText #newCPfullName="ngModel" name="newCPfullName"
+                  <input type="text" pInputText #newCPfullName="ngModel" name="newCPfullName" [disabled]=true
                     [ngModel]="newCaseParty.caseParty?.fullName" (ngModelChange)="newCPlFullNameChanged($event)">
-                  <label>Full Name</label>
+                  <label>Full Name (Automatically Populated)</label>
                 </span>
                 <div class="ui-message ui-messages-error ui-corner-all"
                   *ngIf="newCPfullName.errors?.required && newCPfullName.touched">

@@ -53,9 +53,9 @@
             </div>
             <div class="ui-g-12 mb-20">
               <span class="md-inputfield">
-                <input type="text" pInputText [required]="true" [(ngModel)]="party.fullName" name="tiFullName"
+                <input type="text" pInputText [required]="true" [(ngModel)]="party.fullName" name="tiFullName" [disabled]=true
                   #tiFullName="ngModel">
-                <label>Full Name</label>
+                <label>Full Name (Automatically Populated)</label>
               </span>
               <div class="ui-message ui-messages-error ui-corner-all"
                 *ngIf="tiFullName.errors?.required && tiFullName.touched">
