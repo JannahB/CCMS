@@ -338,7 +338,11 @@
 
                 <p-column header="Party Info" [style]="{'width':'30%'}" >
                     <ng-template pTemplate="body" let-item="rowData">
-                      <div>{{item.caseParty.fullName?item.caseParty.fullName:item.caseParty.firstName+" "+item.caseParty.lastName}}</div>
+                      <div>
+                        {{ item.caseParty.fullName ?
+                        item.caseParty.fullName :
+                        item.caseParty.firstName + " " + item.caseParty.lastName }}
+                      </div>
                       <!-- Christian : turned this on with fullName support on Server -->
                       <div></div>
                       <div *ngIf="!item.caseParty.isOrganization" >
