@@ -780,7 +780,7 @@
               <p-column field="addressType" header="Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
               <p-column field="address1" header="Address" [style]="{'width':'12%'}" [sortable]="true">
                 <ng-template pTemplate="body" let-item="rowData">
-                  {{item.address1 + " " + item.address2}}
+                  {{(item.address1 ? item.address1 : "") + " " + (item.address2 ? item.address2 : "")}}
                 </ng-template>
               </p-column>
               <p-column field="communityCode" header="community / city" [style]="{'width':'15%'}" [sortable]="true"></p-column>
