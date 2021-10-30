@@ -15,6 +15,7 @@ export class Party extends LookupEntity {
   courtOID: number = 0;
   lastName: string = "";
   firstName: string = "";
+  displayName: string = "";
   sex: string = "";
   maritalStatus: string = "";
   password: string = "";
@@ -45,5 +46,29 @@ export class Party extends LookupEntity {
   primaryAddressLoc: number = 0;
   primaryContactLoc: number = 0;
   policeRegimentalNumber: string = ""; //Used to send PRG to BE if creating a Police Officer via the Add Case Party Modal.
+
+  public static createDisplayName(party: Party): string {
+
+    // Use full name as the preferred name form
+    if (typeof party.fullName === 'string'
+      && party.fullName.trim().length !== 0
+      && party.fullName.trim() !== "null") {
+      return party.fullName;
+    }
+
+    // ------- Set display name as concantenation of first and last names ------- //
+    let displayName = "";
+    if (typeof party.firstName === 'string') {
+      displayName += party.firstName;
+    }
+
+    if (typeof party.lastName === 'string') {
+      displayName += " " + party.lastName;
+    }
+
+    return displayName.trim();
+
+  }
+
 }
 

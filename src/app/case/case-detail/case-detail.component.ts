@@ -907,11 +907,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
           // Ensure names do not show null or undefined values
           for (const party of this.case.caseParties) {
-            party.caseParty.firstName = (!party.caseParty.firstName) ? "" : party.caseParty.firstName;
-            party.caseParty.lastName = (!party.caseParty.lastName) ? "" : party.caseParty.lastName;
-            if (!party.caseParty.fullName || party.caseParty.fullName.trim() === "null null") {
-              party.caseParty.fullName = "";
-            }
+            party.caseParty.displayName = Party.createDisplayName(party.caseParty);
           }
 
         }
@@ -1604,6 +1600,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .fetchAny(obj)
       .subscribe(results => {
         this.searchPartyResults = results;
+        this.searchPartyResults.forEach(party => party.displayName = Party.createDisplayName(party));
 
         if (results.length) {
           this.selectedSearchParty = results[0];
@@ -1620,6 +1617,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .fetchPartyByPoliceRegNum(obj)
       .subscribe(results => {
         this.searchPartyResults = results;
+        this.searchPartyResults.forEach(party => party.displayName = Party.createDisplayName(party));
 
         if (results.length) {
           this.selectedSearchParty = results[0];

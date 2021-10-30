@@ -338,12 +338,7 @@
 
                 <p-column header="Party Info" [style]="{'width':'30%'}" >
                     <ng-template pTemplate="body" let-item="rowData">
-                      <div>
-                        {{ item.caseParty.fullName ?
-                        item.caseParty.fullName :
-                        item.caseParty.firstName + " " + item.caseParty.lastName }}
-                      </div>
-                      <!-- Christian : turned this on with fullName support on Server -->
+                      <div>{{ item.caseParty.displayName }}</div>
                       <div></div>
                       <div *ngIf="!item.caseParty.isOrganization" >
                           <span class="smaller">
@@ -1833,9 +1828,7 @@
 
                 <p-column header="Party Info" [style]="{'width':'50%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                    <div>{{ item.fullName ? item.fullName : item.firstName + " " + item.lastName}}</div>
-                    <!-- Christian: turned on when fullName support on Server -->
-                    <!-- <div>{{ item.fullName }}</div> -->
+                    <div>{{ item.displayName}}</div>
                     <div *ngIf="!item.isOrganization">
                       <span class="smaller">
                         DOB: {{ item.dob | date:'dd-MMM-yy' }}
