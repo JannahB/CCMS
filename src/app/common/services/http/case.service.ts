@@ -472,6 +472,30 @@ export class CaseService extends HttpBaseService<Case> {
       });
     }
 
+    // Generate case caption if none was entered manually
+    if (!data.caseCaption.trim() && data.caseParties.length > 0) {
+
+      // Generate Caption for Citations
+      if (data.caseType.name.contains("Red Light") || data.caseType.name.contains("Speeding") ) {
+
+        const applicants = [];
+
+        // Get all parties of type 'Applicant'
+        for (const party of data.caseParties) {
+          if (party.role.name === "Applicant") {
+            let partyName = party.caseParty.fullName;
+            if (!partyName.trim()) {
+              partyName = party.caseParty.firstName + party.caseParty.lastName;
+            }
+            applicants.push(partyName);
+          }
+        }
+
+        const captionedApplicants = applicants.join(" and");
+        caseData.caseCaption = `${captionedApplicants} vs The State`;
+      }
+
+    }
 
     if (data.caseCharges.length > 0) {
 
@@ -850,7 +874,7 @@ export class CaseService extends HttpBaseService<Case> {
     return this.http
       .get<CaseApplicationStatus[]>(url);
   }
-  
+
   public fetchCasePaymentMethod(): Observable<CasePaymentMethod[]>{
 
     const url = `${super.getBaseUrl()}/FetchCasePaymentMethod`;

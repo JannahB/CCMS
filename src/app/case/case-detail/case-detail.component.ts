@@ -682,11 +682,14 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         }
 
   toggleTrafficComponents() {
-    if (this.case.caseType.name.toLowerCase() === 'tickets/notice to contest') {
-      this.isTrafficViewable = true;
-    } else {
-      this.isTrafficViewable = false;
-    }
+
+    const trafficCaseTypes = [
+      'tickets/notice to contest',
+      'red light/notice to contest',
+      'speeding/notice to contest'
+    ];
+
+    this.isTrafficViewable = trafficCaseTypes.includes(this.case.caseType.name.toLowerCase());
   }
 
   public updateRegisterEvents() {
@@ -2437,6 +2440,15 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         response.title = "Applicant Party Missing";
         response.errorMessage =
         "This case needs an Applicant Party to be added before it can be saved";
+      }
+    }
+
+    else if (this.case.caseType.name.contains("Red Light") || this.case.caseType.name.contains("Speeding") ) {
+
+      response.result = this.doesCasePartyContainApplicant();
+      if (!this.doesCasePartyContainApplicant()) {
+        response.title = "Applicant Party Missing";
+        response.errorMessage = "This case needs an Applicant Party to be added before it can be saved";
       }
     }
 
