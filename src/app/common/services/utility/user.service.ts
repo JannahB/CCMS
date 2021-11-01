@@ -92,14 +92,14 @@ export class UserService {
 
   public isJudicialOfficer(): boolean {
 
-    if (this.loggedInUser.roles[0].staffRoleName === "Judicial") {
+    if (this.loggedInUser.roles[0].staffRoleName === "Judicial" || this.loggedInUser.roles[0].staffRoleName === "Judicial Officer" ) {
       this.loggedInUser.roles[0].isJudicialOfficer = true;
     }
     if (!this.loggedInUser || !this.loggedInUser.roles || !this.loggedInUser.roles.length) {
       return false;
     }
 
-    const idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID === 2);
+    const idx = this.loggedInUser.roles.findIndex(itm => itm.staffRoleOID === 2 || itm.staffRoleOID === 829135263907518);
     console.log('Logged in user', this.loggedInUser.userName);
     console.log('Judicial Role', (idx > -1));
     return idx > -1;
