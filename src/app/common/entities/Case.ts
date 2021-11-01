@@ -57,6 +57,7 @@ export class Case extends LookupEntity {
   searchCasePartyRoleOID: number = 0;
 
   prevCaseNumber: string = "";
+  casePrevNumber: string = "";
   caseNotes: string = "";
   charges: string = "";
 

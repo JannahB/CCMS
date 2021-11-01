@@ -420,6 +420,10 @@ export class CaseService extends HttpBaseService<Case> {
 
     if (data.prevCaseNumber)
       caseData.prevCaseNumber = data.prevCaseNumber.toString();
+    
+    if (data.casePrevNumber)
+      caseData.casePrevNumber = data.casePrevNumber.toString();
+      
     if (data.caseNotes)
       caseData.caseNotes = data.caseNotes.toString();
     if (data.charges)
