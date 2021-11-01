@@ -101,7 +101,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedDoc: CaseDocument;
   selectedEvent: CaseEvent;
   selectedJudicialAssignment: any;
-  documentTemplateTypes: DocTemplate[] = [];
+  documentTemplateTypes: SelectItem[] = [];
   selectedDocumentTemplateType: DocumentType;
   routeSubscription: Subscription;
   caseTypes: CaseType[] = [];
@@ -712,7 +712,12 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
     .fetchDocumentTemplate()
-    .subscribe(results => this.documentTemplateTypes = results);
+    .subscribe(results => {
+      this.documentTemplateTypes = this.dropdownSvc.transform(results, 'documentName', 'documentTemplateOID');
+      this.documentTemplateTypes.sort(
+        (a, b) => a.label.localeCompare(b.label, undefined, {numeric: true, sensitivity: 'base'})
+      );
+    });
 
     this.caseSvc
       .fetchCaseType()
@@ -1067,14 +1072,17 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     if (this.selCatDT.name === this.docTypesCategories[0].name) {
       // filings
       this.docTypesShown = this.allTypesFull.filter(fDocType => {
-        return fDocType.is_filing === 1;
+        return fDocType.is_filing === 1 && fDocType.jdcode === this.selectedCourtJD;
       });
     } else {
       // court_docs
       this.docTypesShown = this.allTypesFull.filter(fDocType => {
-        return fDocType.is_court_doc === 1;
+        return fDocType.is_court_doc === 1 && fDocType.jdcode === this.selectedCourtJD;
       });
     }
+    this.docTypesShown.sort(
+      (a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'})
+    );
   }
 
   dtNameToCat(name: string): string {
