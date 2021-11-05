@@ -47,7 +47,7 @@ export class OrderService extends HttpBaseService<OrderTemplate> {
   }
 
   public send(uturnOrder: any): Observable<any> {
-    const url = `${super.getBaseUrl()}/SendOrder`;
+    const url = `${super.getBaseUrl()}/SendUturnOrder`;
     return this.http.post<any>(url, uturnOrder);
   }
 
