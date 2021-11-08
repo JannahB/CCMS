@@ -5,6 +5,7 @@ import {
   Output,
   EventEmitter,
   OnDestroy,
+  OnChanges
 } from "@angular/core";
 import { Case } from "../../../common/entities/Case";
 import { OrderTemplate } from "../../../common/entities/OrderTemplate";
@@ -141,6 +142,10 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getTrafficData(this.case.caseOID);
+  }
+
+  ngOnChanges() {
+    this.ngOnInit();
   }
 
   ngOnDestroy() {
