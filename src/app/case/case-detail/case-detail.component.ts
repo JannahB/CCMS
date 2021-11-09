@@ -332,7 +332,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
           );
 
         this.courtDocs = this.allTypesFull.filter(cdocs =>
-          cdocs.is_court_doc === 1
+          cdocs.is_court_doc === 1 && cdocs.jdcode === this.selectedCourtJD
+        );
+        this.courtDocs.sort(
+         (a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'})
         );
         // console.log(this.allTypesFull);
         // console.log(this.courtDocs);
