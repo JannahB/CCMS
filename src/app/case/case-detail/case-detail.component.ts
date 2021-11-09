@@ -101,7 +101,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedDoc: CaseDocument;
   selectedEvent: CaseEvent;
   selectedJudicialAssignment: any;
-  documentTemplateTypes: SelectItem[] = [];
+  documentTemplateTypes: DocTemplate[] = [];
   selectedDocumentTemplateType: DocumentType;
   routeSubscription: Subscription;
   caseTypes: CaseType[] = [];
@@ -332,7 +332,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
           );
 
         this.courtDocs = this.allTypesFull.filter(cdocs =>
-          cdocs.is_court_doc === 1
+          cdocs.is_court_doc === 1 && cdocs.jdcode === this.selectedCourtJD
+        );
+        this.courtDocs.sort(
+         (a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'})
         );
         // console.log(this.allTypesFull);
         // console.log(this.courtDocs);
@@ -715,12 +718,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
     .fetchDocumentTemplate()
-    .subscribe(results => {
-      this.documentTemplateTypes = this.dropdownSvc.transform(results, 'documentName', 'documentTemplateOID');
-      this.documentTemplateTypes.sort(
-        (a, b) => a.label.localeCompare(b.label, undefined, {numeric: true, sensitivity: 'base'})
-      );
-    });
+    .subscribe(results => this.documentTemplateTypes = results);
 
     this.caseSvc
       .fetchCaseType()
@@ -756,16 +754,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
         .fetchCaseApplicationStatus()
-        .subscribe(statuses =>
+        .subscribe(statuses => 
           {
             this.applicationStatus = statuses.map((value) => {
               return {value : value.name, label : value.name, id : value.caseApplicationStatusOID};
             });
-
+            
             //this.casePaymentMethods = paymentMethods;
             console.log(statuses);
           });
-
+    
     this.caseSvc
         .fetchCasePaymentType()
         .subscribe(paymentTypes =>
@@ -908,16 +906,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         })[0];
 
         if (this.case.caseParties.length > 0) {
-
           this.case.caseParties.map(cp => {
             cp.caseParty.age = this.calculateAge(cp.caseParty.dob);
           });
-
-          // Ensure names do not show null or undefined values
-          for (const party of this.case.caseParties) {
-            party.caseParty.displayName = Party.createDisplayName(party.caseParty);
-          }
-
         }
 
         for (let i = 0; i < this.case.caseTasks.length; i++) {
@@ -1611,7 +1602,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .fetchAny(obj)
       .subscribe(results => {
         this.searchPartyResults = results;
-        this.searchPartyResults.forEach(party => party.displayName = Party.createDisplayName(party));
 
         if (results.length) {
           this.selectedSearchParty = results[0];
@@ -1628,7 +1618,6 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       .fetchPartyByPoliceRegNum(obj)
       .subscribe(results => {
         this.searchPartyResults = results;
-        this.searchPartyResults.forEach(party => party.displayName = Party.createDisplayName(party));
 
         if (results.length) {
           this.selectedSearchParty = results[0];

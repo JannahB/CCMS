@@ -338,7 +338,8 @@
 
                 <p-column header="Party Info" [style]="{'width':'30%'}" >
                     <ng-template pTemplate="body" let-item="rowData">
-                      <div>{{ item.caseParty.displayName }}</div>
+                      <div>{{item.caseParty.fullName?item.caseParty.fullName:item.caseParty.firstName+" "+item.caseParty.lastName}}</div>
+                      <!-- Christian : turned this on with fullName support on Server -->
                       <div></div>
                       <div *ngIf="!item.caseParty.isOrganization" >
                           <span class="smaller">
@@ -846,9 +847,9 @@
                   <!-- <label class="minimal primary block">Generate Document</label> -->
                   <!-- TODO: Get document types lookup data-->
                   <!--spiffy -->
-                  <p-dropdown placeholder="Select Document Template" [options]="documentTemplateTypes"
-                    [(ngModel)]="selectedDocumentTemplateType" optionLabel="label" (onChange)="ddOnChange($event)"
-                    styleClass="width-full" [filter]="true" filterBy="label,value">
+                  <p-dropdown placeholder="document type..." [options]="courtDocs"
+                    [(ngModel)]="selectedDocumentTemplateType" optionLabel="name" (onChange)="ddOnChange($event)"
+                    styleClass="width-full" [filter]="true" filterBy="label,value.name">
                   </p-dropdown>
                 </div>
                 <div class="ui-g-2 pv-0">
@@ -1828,7 +1829,9 @@
 
                 <p-column header="Party Info" [style]="{'width':'50%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                    <div>{{ item.displayName}}</div>
+                    <div>{{ item.fullName ? item.fullName : item.firstName + " " + item.lastName}}</div>
+                    <!-- Christian: turned on when fullName support on Server -->
+                    <!-- <div>{{ item.fullName }}</div> -->
                     <div *ngIf="!item.isOrganization">
                       <span class="smaller">
                         DOB: {{ item.dob | date:'dd-MMM-yy' }}
