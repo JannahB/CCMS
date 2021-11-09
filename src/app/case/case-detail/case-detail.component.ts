@@ -908,20 +908,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         })[0];
 
         if (this.case.caseParties.length > 0) {
-
           this.case.caseParties.map(cp => {
             cp.caseParty.age = this.calculateAge(cp.caseParty.dob);
           });
-
-          // Ensure names do not show null or undefined values
-          for (const party of this.case.caseParties) {
-            party.caseParty.firstName = (!party.caseParty.firstName) ? "" : party.caseParty.firstName;
-            party.caseParty.lastName = (!party.caseParty.lastName) ? "" : party.caseParty.lastName;
-            if (!party.caseParty.fullName || party.caseParty.fullName.trim() === "null null") {
-              party.caseParty.fullName = "";
-            }
-          }
-
         }
 
         for (let i = 0; i < this.case.caseTasks.length; i++) {
