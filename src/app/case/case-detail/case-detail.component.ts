@@ -101,7 +101,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   selectedDoc: CaseDocument;
   selectedEvent: CaseEvent;
   selectedJudicialAssignment: any;
-  documentTemplateTypes: SelectItem[] = [];
+  documentTemplateTypes: DocTemplate[] = [];
   selectedDocumentTemplateType: DocumentType;
   routeSubscription: Subscription;
   caseTypes: CaseType[] = [];
@@ -715,12 +715,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
     .fetchDocumentTemplate()
-    .subscribe(results => {
-      this.documentTemplateTypes = this.dropdownSvc.transform(results, 'documentName', 'documentTemplateOID');
-      this.documentTemplateTypes.sort(
-        (a, b) => a.label.localeCompare(b.label, undefined, {numeric: true, sensitivity: 'base'})
-      );
-    });
+    .subscribe(results => this.documentTemplateTypes = results);
 
     this.caseSvc
       .fetchCaseType()
@@ -756,16 +751,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
         .fetchCaseApplicationStatus()
-        .subscribe(statuses =>
+        .subscribe(statuses => 
           {
             this.applicationStatus = statuses.map((value) => {
               return {value : value.name, label : value.name, id : value.caseApplicationStatusOID};
             });
-
+            
             //this.casePaymentMethods = paymentMethods;
             console.log(statuses);
           });
-
+    
     this.caseSvc
         .fetchCasePaymentType()
         .subscribe(paymentTypes =>
