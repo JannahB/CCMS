@@ -69,6 +69,7 @@ import { RegisterEntry } from "../../common/entities/RegisterEntry";
 import { CaseRegisterService } from "../../common/services/http/case-register.service";
 import { Console } from 'console';
 import { CasePaymentMethod } from '../../common/entities/CasePaymentMethod';
+import { RolePermissionCheckable } from '../../common/entities/RolePermissionCheckable';
 
 @Component({
   selector: 'app-case-detail',
@@ -80,6 +81,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
 
   @ViewChild('caseForm') caseForm: any;
+  @ViewChild('newCasePartyForm') newCasePartyForm: NgForm;
   @ViewChild("caseTrafficChargeForm") caseTrafficChargeForm: NgForm;
   @Input() filteredCaseEvents: CaseEvent[];
   @Output() filteredEventsChange = new EventEmitter<CaseEvent[]>();
@@ -206,6 +208,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   docTypeFilter: number = 1;
 
   public Permission: any = Permission;
+  party: Party;
+  caseParty: CaseParty;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -1575,17 +1579,23 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
   showAddCaseParty() {
     // this.newCaseParty.startDate =  this.datePipe.transform(new Date(), "MM/dd/yyyy");
-    this.newCaseParty.caseParty.isOrganization = false;
-    this.newCaseParty.caseParty.firstName = "";
-    this.newCaseParty.caseParty.lastName = "";
-    this.newCaseParty.caseParty.fullName = "";
-    this.newCaseParty.caseParty.alternativeName = "";
 
-    this.newCaseParty.startDate = null;
-    this.newCaseParty.caseParty.dob = null;
-    this.newCaseParty.caseParty.sex = '';
-    this.newCaseParty.caseParty.role = null;
-    this.newCaseParty.caseParty.policeRegimentalNumber = "";
+    this.newCaseParty = new CaseParty();
+
+    // this.newCaseParty.caseParty.id = 0;
+    // this.newCaseParty.caseParty.partyOID = 0;
+
+    // this.newCaseParty.caseParty.isOrganization = false;
+    // this.newCaseParty.caseParty.firstName = "";
+    // this.newCaseParty.caseParty.lastName = "";
+    // this.newCaseParty.caseParty.fullName = "";
+    // this.newCaseParty.caseParty.alternativeName = "";
+
+    // this.newCaseParty.startDate = null;
+    // this.newCaseParty.caseParty.dob = null;
+    // this.newCaseParty.caseParty.sex = '';
+    // this.newCaseParty.caseParty.role = null;
+    // this.newCaseParty.caseParty.policeRegimentalNumber = "";
 
     this.selectedSearchPartyStartDate = null;
     this.showModalAddCaseParty = true;
@@ -1779,9 +1789,8 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   createAndAddPartyToCase(caseForm) {
     this.loadingMessage = 'saving party...';
     this.loadingCase = true;
-
-    // CREATE LOCAL PARTY
-    const party: Party = this.newCaseParty.caseParty;
+    
+    let party: Party = this.newCaseParty.caseParty;
     party.dob = party.dob ? this.datePipe.transform(party.dob, "MM/dd/yyyy") : "";
 
     // SAVE THE PARTY
@@ -1791,7 +1800,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       this.toastSvc.showSuccessMessage('Party saved');
 
       // CREATE LOCAL CASE PARTY
-      const caseParty: CaseParty = this.newCaseParty;
+      let caseParty: CaseParty = this.newCaseParty;
       caseParty.startDate = caseParty.startDate ? this.datePipe.transform(caseParty.startDate, "MM/dd/yyyy") : "";
       caseParty.endDate = caseParty.endDate ? this.datePipe.transform(caseParty.endDate, "MM/dd/yyyy") : "";
       caseParty.caseParty = result;
@@ -1808,6 +1817,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.showStaticMessage(true, 'warn', 'Please complete Case Details and click Save Case to complete.', 'Complete Case Details');
       }
       caseForm.reset;
+      this.newCasePartyForm.reset;     
       this.hideModals();
 
     });

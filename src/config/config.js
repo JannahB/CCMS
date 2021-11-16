@@ -4,8 +4,8 @@ const config = {
   // so that environment variables can be set during release
 
   //production: false,
-  apiUrl: "https://criminal-dev-oj.ttlawcourts.org/CCMS3",
-  //apiUrl: "http://localhost:8080",  
+  //apiUrl: "https://criminal-dev-oj.ttlawcourts.org/CCMS3",
+  apiUrl: "http://localhost:8080",  
   // mockUrl: "assets/mockData/",
   // allowDeleteLookupItems: false,
   // allowAdminWorkflowFeature: true,

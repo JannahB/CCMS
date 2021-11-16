@@ -2063,7 +2063,7 @@
         <p-footer>
           <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30 ta-r">
             <button label="Create and Add Party To Case" type="submit" pButton icon="fa-check"
-              (click)="createAndAddPartyToCase(caseForm)"
+              (click)="createAndAddPartyToCase(newCasePartyForm)"
               [disabled]="!newCasePartyForm.form.valid || !newCaseParty"></button>
             <button label="Cancel" type="button" class="ui-button-secondary mr-15" pButton icon="fa-close"
               (click)="hideModals()"></button>
