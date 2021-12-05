@@ -164,11 +164,13 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit() {
+
       this.rightPanelMenuScroller = <HTMLDivElement> this.rightPanelMenuScrollerViewChild.nativeElement;
 
-      setTimeout(() => {
-          jQuery(this.rightPanelMenuScroller).nanoScroller({flash: true});
-      }, 10);
+      //REMOVES POLLING ON DB: RS
+      // setTimeout(() => {
+      //     jQuery(this.rightPanelMenuScroller).nanoScroller({flash: true});
+      // }, 10);
 
       this.getUserTasks();
     }
