@@ -92,7 +92,7 @@ declare var jQuery: any;
                       <i class="fa ui-icon-close"*ngIf="!task.doneDate" ></i>
 
                       <!-- <i class="fa ui-icon-check-box-outline-blank"*ngIf="!task.doneDate"></i> -->
-                      <span class="task-date">{{ task.dueDate | date:'MMM d, y' }}</span>
+                      <span class="task-date">{{ task.taskDueDate | date:'MMM d, y' }}</span>
                   </div>
                   </li>
                 </ul>
@@ -108,8 +108,8 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
 
     rightPanelMenuScroller: HTMLDivElement;
     taskStatus: SelectItem[] = [
-        {label:'Complete Tasks', value:1},
-        {label:'Incomplete Tasks', value:2},
+        //{label:'Complete Tasks', value:1},
+        //{label:'Incomplete Tasks', value:2},
         {label:'Overdue Tasks', value:3}
     ];
     selectedTaskStatuses: SelectItem[];
