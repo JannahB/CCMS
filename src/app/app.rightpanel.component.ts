@@ -82,9 +82,19 @@ declare var jQuery: any;
 
 
               <div>
+              <div
+                class="search-results"
+                infiniteScroll
+                [infiniteScrollDistance]="2"
+                [scrollWindow]="false"
+                [infiniteScrollThrottle]="50"
+                (scrolled)="onScroll()">
+                  
                 <loading-bar [visible]="isLoadingTasks" [message]="'loading tasks...'"></loading-bar>
                 <ul class="task-items" >
                   <li *ngFor="let task of filteredUserTasks" >
+                  
+
                   <div [ngClass]="{'overdue' : isOverdue(task)}">
                     <a href="#" (click)="gotoCase($event, task)"><p class="task-title">{{task.taskType?.name}}</p></a>
                     <a href="#" (click)="gotoCase($event, task)"><p class="task-subtitle">{{task.associatedCase.caseNumber}}</p></a>
@@ -96,6 +106,7 @@ declare var jQuery: any;
                   </div>
                   </li>
                 </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -120,6 +131,8 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     taskSubscription: Subscription;
     isLoadingTasks: boolean = false;
     currentFilter: any;
+    page = 0;
+    size= 10;
 
     @ViewChild('rightPanelMenuScroller') rightPanelMenuScrollerViewChild: ElementRef;
 
@@ -185,12 +198,17 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       this.selectedTaskStatuses = this.taskStatus;
     }
 
-    getUserTasks(userRefresh:boolean = false) {
+    getUserTasks(userRefresh:boolean = false, append?) {
       console.log("Retrieveing Staff ID", this.authSvc);
       // if we've already fetched once before then don't show loading bar
       if(!this.userTasks || userRefresh) this.isLoadingTasks = true;
-      this.taskSubscription = this.lookupSvc.fetchLookup<UserTask>('FetchUserTasks').subscribe(items => {
+      this.taskSubscription = this.lookupSvc.fetchPaginatedLookup<UserTask>('FetchUserTasks', this.page, this.size).subscribe(items => {
+        if(append) {    // we are paginating, so we need to preserve old tasks
+          items.concat(this.userTasks);
+        }
+
         this.userTasks = this.filteredUserTasks = items;
+       
         this.isLoadingTasks = false;
         if(items) {
           this.broadcastTaskCounts(items);
@@ -202,6 +220,12 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
         }
       });
 
+    }
+
+    onScroll() {
+      console.log('scrolled!!');
+      this.page = this.page + 1;
+      this.getUserTasks(true);
     }
 
     broadcastTaskCounts(userTasks: UserTask[]) {

@@ -28,6 +28,13 @@ export class LookupService {
     return this.http.get<T[]>(url);
   }
 
+  public fetchPaginatedLookup<T>(endpoint: string, page, size): Observable<T[]> {
+    const obj = { "page" : page, "size": size};
+
+    const url: string = this.getBaseUrl() + '/' + endpoint;
+    return this.http.post<T[]>(url, obj);
+  }
+
   public fetchPhaseByTypeLookup<T>(caseTypeOID: string | number): Observable<T[]> {
     const url: string = this.getBaseUrl() + '/FetchPhaseByType';
 
