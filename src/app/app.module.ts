@@ -149,12 +149,14 @@ import { SentencingService } from './common/services/http/sentencing.service';
 import { OrderService } from './common/services/http/order.service';
 import { OrdersComponent } from './case/case-detail/orders/orders.component';
 import { JemsDashboardComponent } from './jems/jems-dashboard/jems-dashboard.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   imports: [
     BrowserModule,
     FormsModule,
     CommonModule,
+    InfiniteScrollModule,
     AppRoutes,
     HttpModule,
     BrowserAnimationsModule,
