@@ -23,7 +23,14 @@ declare var jQuery: any;
             <i class="fa ui-icon-timer"></i>
           </a>
         </div>
-        <div #rightPanelMenuScroller class="nano">
+        <div
+          infiniteScroll
+          [infiniteScrollDistance]="2"
+          [infiniteScrollThrottle]="50"
+          (scrolled)="onScroll()"
+          [scrollWindow]="false"
+          infiniteScrollContainer=".right-panel-scroll-content"
+           #rightPanelMenuScroller class="nano">
           <div class="nano-content right-panel-scroll-content">
             <div class="layout-rightpanel-header">
                 <h1>Tasks</h1>
@@ -75,21 +82,14 @@ declare var jQuery: any;
                 <div>
                   <button label="" type="button"
                           class="ui-button-secondary ui-button-icon-only refresh-btn inline"
-                          pButton icon="ui-icon-refresh" (click)="refreshUserTasks()"></button>
+                          pButton icon="ui-icon-refresh" ></button>
                     <span class="muted-label">Showing: {{filteredUserTasks?.length}} of {{userTasks?.length}}</span>
                 </div>
               </div>
 
 
               <div>
-              <div
-                class="search-results"
-                infiniteScroll
-                [infiniteScrollDistance]="2"
-                [scrollWindow]="false"
-                [infiniteScrollThrottle]="50"
-                (scrolled)="onScroll()">
-                  
+             
                 <loading-bar [visible]="isLoadingTasks" [message]="'loading tasks...'"></loading-bar>
                 <ul class="task-items" >
                   <li *ngFor="let task of filteredUserTasks" >
@@ -106,7 +106,7 @@ declare var jQuery: any;
                   </div>
                   </li>
                 </ul>
-                </div>
+                
               </div>
             </div>
           </div>
@@ -132,7 +132,8 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     isLoadingTasks: boolean = false;
     currentFilter: any;
     page = 0;
-    size= 10;
+    size= 50;
+    alreadyScrolled = false;
 
     @ViewChild('rightPanelMenuScroller') rightPanelMenuScrollerViewChild: ElementRef;
 
@@ -198,13 +199,13 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
       this.selectedTaskStatuses = this.taskStatus;
     }
 
-    getUserTasks(userRefresh:boolean = false, append?) {
+    getUserTasks(userRefresh:boolean = false, append?: boolean) {
       console.log("Retrieveing Staff ID", this.authSvc);
       // if we've already fetched once before then don't show loading bar
       if(!this.userTasks || userRefresh) this.isLoadingTasks = true;
       this.taskSubscription = this.lookupSvc.fetchPaginatedLookup<UserTask>('FetchUserTasks', this.page, this.size).subscribe(items => {
         if(append) {    // we are paginating, so we need to preserve old tasks
-          items.concat(this.userTasks);
+          items = items.concat(this.userTasks);
         }
 
         this.userTasks = this.filteredUserTasks = items;
@@ -218,6 +219,14 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
           this.selectedTaskStatuses = null;
           this.onFilterTasks( { value:  this.currentFilter } );
         }
+
+        // wait until items get populated to not do the scroll again
+        setTimeout(() => {
+          console.log("reseting scroll");
+          this.alreadyScrolled = false; // reset to be ready to scroll again
+        }, 3000);
+       
+
       });
 
     }
@@ -225,7 +234,12 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     onScroll() {
       console.log('scrolled!!');
       this.page = this.page + 1;
-      this.getUserTasks(true);
+      if(!this.alreadyScrolled) {
+        this.alreadyScrolled = true;
+        console.log("refreshing tasks");
+        this.getUserTasks(true, true);
+
+      }
     }
 
     broadcastTaskCounts(userTasks: UserTask[]) {
