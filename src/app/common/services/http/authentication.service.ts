@@ -28,7 +28,7 @@ export class AuthenticationService{
             })
             .map(response => {
               AuthorizationInterceptor.authToken = response.token;
-
+            
               return response;
             });
     }

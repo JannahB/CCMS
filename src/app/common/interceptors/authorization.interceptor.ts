@@ -48,6 +48,7 @@ export class AuthorizationInterceptor implements HttpInterceptor {
     }
 
     let request = req.clone({
+      withCredentials: true,
       setHeaders: {
         token: AuthorizationInterceptor.authToken,
         Authorization: `Bearer ${AuthorizationInterceptor.authToken}`
