@@ -24,12 +24,6 @@ declare var jQuery: any;
           </a>
         </div>
         <div
-          infiniteScroll
-          [infiniteScrollDistance]="2"
-          [infiniteScrollThrottle]="50"
-          (scrolled)="onScroll()"
-          [scrollWindow]="false"
-          infiniteScrollContainer=".right-panel-scroll-content"
            #rightPanelMenuScroller class="nano">
           <div class="nano-content right-panel-scroll-content">
             <div class="layout-rightpanel-header">
@@ -106,7 +100,7 @@ declare var jQuery: any;
                   </div>
                   </li>
                 </ul>
-                
+                <button class=" btn-med" pButton [disabled]="alreadyScrolled" *ngIf="(filteredUserTasks?.length%size)==0" (click)="getNextPage()" label="Load More ...">  </button> 
               </div>
             </div>
           </div>
@@ -132,7 +126,7 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
     isLoadingTasks: boolean = false;
     currentFilter: any;
     page = 0;
-    size= 50;
+    size= 20;
     alreadyScrolled = false;
 
     @ViewChild('rightPanelMenuScroller') rightPanelMenuScrollerViewChild: ElementRef;
@@ -231,8 +225,8 @@ export class AppRightpanelComponent implements OnDestroy, AfterViewInit {
 
     }
 
-    onScroll() {
-      console.log('scrolled!!');
+    getNextPage() {
+      console.log('getting next page!!');
       this.page = this.page + 1;
       if(!this.alreadyScrolled) {
         this.alreadyScrolled = true;
