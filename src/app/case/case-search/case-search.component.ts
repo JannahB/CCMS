@@ -98,7 +98,7 @@ export class CaseSearchComponent implements OnInit {
 
   // This call is chained depency of CaseType Selection and needs caseTypeOID passed in
   onCaseTypeSelect(event) {
-    let typeOID = event.value.id.toString(); // TODO: Verify this is event.value
+    let typeOID = event.value.caseTypeOID.toString(); // TODO: Verify this is event.value
     this.casePhaseTypesSubscription = this.lookupSvc.fetchPhaseByTypeLookup<CasePhase>(typeOID).subscribe(items => {
       this.casePhaseTypes = items;
     });
