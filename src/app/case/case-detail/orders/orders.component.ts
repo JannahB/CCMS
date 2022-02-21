@@ -717,15 +717,29 @@ export class OrdersComponent implements OnInit, OnDestroy {
   }
 
   compileOrder(id): any {
+
     const order: any = new Object();
 
     // console.log(this.case.caseParties);
     let role = "";
+
     if (this.case.caseType.name === "Tickets/Notice to Contest") {
+       role = "Applicant";
+    } 
+
+    else if (this.case.caseType.name === "Red Light/Notice to Contest") {
       role = "Applicant";
-    } else if (this.case.caseType.name === "Private Complaint") {
+    } 
+
+    else if (this.case.caseType.name === "Speeding/Notice to Contest") {
+      role = "Applicant";
+    } 
+    
+    else if (this.case.caseType.name === "Private Complaint") {
       role = "Defendant";
-    } else {
+    } 
+    
+    else {
       role = "Accused";
     }
 
