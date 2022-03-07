@@ -444,7 +444,13 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
     order.orderDate = new Date();
 
-    if (this.case.caseType.name === "Tickets/Notice to Contest") {
+    //Value to indicate if the current case is either Tickets/Notice to Contest, 
+    //Red Light/Notice to Contest or Speeding/Notice to Contest
+    let isTrafficCase = (this.case.caseType.name === "Tickets/Notice to Contest" ||
+                        this.case.caseType.name === "Red Light/Notice to Contest" ||
+                        this.case.caseType.name === "Speeding/Notice to Contest");
+
+    if (isTrafficCase) {
       order.reference = this.caseTrafficCharges[0].citationNumber;
       order.demeritPoints = this.caseTrafficCharges[0].trafficCharge.demeritPoints;
     }
@@ -458,7 +464,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
     if (order.orderType === "Forthwith Payment") {
 
       order.fwFineAmount =
-        this.case.caseType.name === "Tickets/Notice to Contest"
+        isTrafficCase
           ? this.caseTrafficCharges[0].trafficCharge.penalty
           : this.penalty;
       // order.fwTimePeriod = this.fwTimePeriod ? this.fwTimePeriod : null;
@@ -473,7 +479,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
     if ( order.orderType === "Time Allowed" ||order.orderType === "Time Allowed (alternate)") {
       
       order.taFineAmount =
-        this.case.caseType.name === "Tickets/Notice to Contest"
+        isTrafficCase
           ? this.caseTrafficCharges[0].trafficCharge.penalty
           : this.penalty;
       order.taTimePeriod = this.taTimePeriod ? this.taTimePeriod : null;
@@ -487,7 +493,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
 
         order.fwFineAmount =
-        this.case.caseType.name === "Tickets/Notice to Contest"
+        isTrafficCase
           ? this.caseTrafficCharges[0].trafficCharge.penalty
           : this.penalty;
       order.fwTimePeriod = this.taValue + " " + this.selectedTimeUnit.value.name;
