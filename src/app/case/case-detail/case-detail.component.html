@@ -2554,18 +2554,18 @@
         </div>
 
         <div class="ui-g-12">
-          <label class="minimal primary block" for="tiLea">Lead Charge Description</label>
+          <label class="minimal primary block" for="tiLea">Lead Charge Description (2000 characters max)</label>
           <textarea id="tiLea" name="tiLea" #tiLea="ngModel" [(ngModel)]="leaLeadChargeText"
-            [rows]="2" pInputTextarea autoResize="autoResize" class="width-full"></textarea>
+            [rows]="2" pInputTextarea autoResize="autoResize" class="width-full" maxlength="2000"></textarea>
           <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiLea.errors?.required && tiLea.touched">
             Enter the Lead Charge Description
           </div>
         </div>
 
         <div class="ui-g-12">
-          <label class="minimal primary block" for="tiPolDesc">Police Description</label>
+          <label class="minimal primary block" for="tiPolDesc">Police Description (2000 characters max)</label>
           <textarea id="tiPolDesc" name="tiPolDesc" #tiPolDesc="ngModel" [required]="true" [(ngModel)]="policeChargeDesc"
-            [rows]="2" pInputTextarea autoResize="autoResize" class="width-full"></textarea>
+            [rows]="2" pInputTextarea autoResize="autoResize" class="width-full" maxlength="2000"></textarea>
           <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiLea.errors?.required && tiLea.touched">
             Police Description is required
           </div>
