@@ -5,11 +5,24 @@ import { Party } from '../entities/Party';
 export class NamePipe implements PipeTransform {
 
     transform(party: Party) {
+
         if (!party) {
-            return '';
+            return "";
         }
 
-        return `${party.firstName} ${party.lastName}`;
+        if (party.fullName && party.fullName !== "null null") {
+          return party.fullName;
+        }
+
+        if (party.firstName || party.lastName) {
+
+          const firstName = party.firstName ? party.firstName : "";
+          const lastName = party.lastName ? party.lastName : "";
+
+          return `${firstName} ${lastName}`.trim();
+        }
+
+        return "";
     }
 
 }
