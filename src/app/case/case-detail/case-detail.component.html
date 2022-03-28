@@ -1610,7 +1610,7 @@
                 <p-column field="" header="Name of Payor" [style]="{'width':'10%'}">
                   <ng-template pTemplate="body" let-item="rowData">
                       <div *ngIf="item.payorParty?.partyOID">
-                        {{ item.payorParty.fullName}}
+                        {{ item.payorParty | name }}
                       </div>
                   </ng-template>
                 </p-column>
@@ -1618,7 +1618,7 @@
                 <p-column field="" header="Name of Beneficiary" [style]="{'width':'10%'}">
                   <ng-template pTemplate="body" let-item="rowData">
                       <div *ngIf="item.beneficiaryParty?.partyOID">
-                        {{ item.beneficiaryParty.firstName + ' ' + item.beneficiaryParty.lastName }}
+                        {{ item.beneficiaryParty | name }}
                       </div>
                   </ng-template>
                 </p-column>
