@@ -234,7 +234,8 @@
                       pButton></button>
               <button type="button"
                       label="Save"
-                      [disabled] = "(!party.firstName) || (!party.lastName)"
+                      [disabled] = "(!party.isOrganization && (!party.firstName || !party.lastName))
+                       || (party.isOrganization && party.fullName.trim().length === 0)"
                       class=""
                       (click)="savePartyDetails()"
                       icon="ui-icon-check"
