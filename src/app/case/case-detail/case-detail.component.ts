@@ -70,6 +70,7 @@ import { CaseRegisterService } from "../../common/services/http/case-register.se
 import { Console } from 'console';
 import { CasePaymentMethod } from '../../common/entities/CasePaymentMethod';
 import { RolePermissionCheckable } from '../../common/entities/RolePermissionCheckable';
+import {NamePipe} from '../../common/pipes/name.pipe';
 
 @Component({
   selector: 'app-case-detail',
@@ -1501,9 +1502,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     //Convert the dates for the selected applications
     this.caseSvc.convertCaseApplicationDates(this.selectedCaseApplication);
     //Load the current parties associated with this case
+    const namePipe = new NamePipe();
     for (let i = 0; i < this.case.caseParties.length; i++){
       this.appCaseParties[i] = this.case.caseParties[i].caseParty;
-      this.appCaseParties[i].fullName = this.appCaseParties[i].firstName.concat(" ",this.appCaseParties[i].lastName);
+      namePipe.transform(this.appCaseParties[i]);
     }
 
     if(this.selectedCaseApplication.caseApplicationOID == 0){
