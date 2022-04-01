@@ -338,7 +338,7 @@
 
                 <p-column header="Party Info" [style]="{'width':'30%'}" >
                     <ng-template pTemplate="body" let-item="rowData">
-                      <div>{{item.caseParty.fullName?item.caseParty.fullName:item.caseParty.firstName+" "+item.caseParty.lastName}}</div>
+                      <div>{{item.caseParty | name}}</div>
                       <!-- Christian : turned this on with fullName support on Server -->
                       <div></div>
                       <div *ngIf="!item.caseParty.isOrganization" >
@@ -1610,7 +1610,7 @@
                 <p-column field="" header="Name of Payor" [style]="{'width':'10%'}">
                   <ng-template pTemplate="body" let-item="rowData">
                       <div *ngIf="item.payorParty?.partyOID">
-                        {{ item.payorParty.fullName}}
+                        {{ item.payorParty | name }}
                       </div>
                   </ng-template>
                 </p-column>
@@ -1618,7 +1618,7 @@
                 <p-column field="" header="Name of Beneficiary" [style]="{'width':'10%'}">
                   <ng-template pTemplate="body" let-item="rowData">
                       <div *ngIf="item.beneficiaryParty?.partyOID">
-                        {{ item.beneficiaryParty.firstName + ' ' + item.beneficiaryParty.lastName }}
+                        {{ item.beneficiaryParty | name }}
                       </div>
                   </ng-template>
                 </p-column>
@@ -1829,7 +1829,7 @@
 
                 <p-column header="Party Info" [style]="{'width':'50%'}">
                   <ng-template pTemplate="body" let-item="rowData">
-                    <div>{{ item.fullName ? item.fullName : item.firstName + " " + item.lastName}}</div>
+                    <div>{{ item | name }}</div>
                     <!-- Christian: turned on when fullName support on Server -->
                     <!-- <div>{{ item.fullName }}</div> -->
                     <div *ngIf="!item.isOrganization">

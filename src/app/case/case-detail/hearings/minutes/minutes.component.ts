@@ -25,6 +25,8 @@ import { EventType } from "../../../../common/entities/EventType";
 import { CaseRegisterService } from "../../../../common/services/http/case-register.service";
 import { RegisterEntry } from "../../../../common/entities/RegisterEntry";
 
+import { NamePipe } from "../../../../common/pipes/name.pipe";
+
 @Component({
   selector: "app-minutes",
   templateUrl: "./minutes.component.html",
@@ -291,11 +293,10 @@ export class MinutesComponent implements OnInit, OnDestroy {
 
   filterParty(query, parties: CaseParty[]): any[] {
     const filtered: any[] = [];
+    const namePipe = new NamePipe();
     for (let i = 0; i < parties.length; i++) {
       const party = parties[i];
-      //if (party.caseParty.fullName.toLowerCase().indexOf(query.toLowerCase()) === 0 ) {
-        filtered.push(party.caseParty.firstName + " "+party.caseParty.lastName);
-      //}
+      filtered.push(namePipe.transform(party.caseParty));
     }
     return filtered;
   }

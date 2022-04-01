@@ -70,6 +70,7 @@ import { CaseRegisterService } from "../../common/services/http/case-register.se
 import { Console } from 'console';
 import { CasePaymentMethod } from '../../common/entities/CasePaymentMethod';
 import { RolePermissionCheckable } from '../../common/entities/RolePermissionCheckable';
+import {NamePipe} from '../../common/pipes/name.pipe';
 
 @Component({
   selector: 'app-case-detail',
@@ -758,16 +759,16 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
 
     this.caseSvc
         .fetchCaseApplicationStatus()
-        .subscribe(statuses => 
+        .subscribe(statuses =>
           {
             this.applicationStatus = statuses.map((value) => {
               return {value : value.name, label : value.name, id : value.caseApplicationStatusOID};
             });
-            
+
             //this.casePaymentMethods = paymentMethods;
             console.log(statuses);
           });
-    
+
     this.caseSvc
         .fetchCasePaymentType()
         .subscribe(paymentTypes =>
@@ -1501,9 +1502,10 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
     //Convert the dates for the selected applications
     this.caseSvc.convertCaseApplicationDates(this.selectedCaseApplication);
     //Load the current parties associated with this case
+    const namePipe = new NamePipe();
     for (let i = 0; i < this.case.caseParties.length; i++){
       this.appCaseParties[i] = this.case.caseParties[i].caseParty;
-      this.appCaseParties[i].fullName = this.appCaseParties[i].firstName.concat(" ",this.appCaseParties[i].lastName);
+      namePipe.transform(this.appCaseParties[i]);
     }
 
     if(this.selectedCaseApplication.caseApplicationOID == 0){
@@ -1539,7 +1541,9 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
       this.paymentCaseParties[i].partyOID = this.case.caseParties[i].caseParty.partyOID;
       this.paymentCaseParties[i].firstName = this.case.caseParties[i].caseParty.firstName;
       this.paymentCaseParties[i].lastName = this.case.caseParties[i].caseParty.lastName;
-      this.paymentCaseParties[i].fullName = this.case.caseParties[i].caseParty.firstName.concat(" ",this.case.caseParties[i].caseParty.lastName);
+      this.paymentCaseParties[i].fullName = (this.case.caseParties[i].caseParty.fullName.trim())
+                                            ? this.case.caseParties[i].caseParty.fullName
+                                            : this.case.caseParties[i].caseParty.firstName + this.case.caseParties[i].caseParty.firstName;
     }
 
     //Initialize the modal with the Party that was retrieved from the server
@@ -1789,7 +1793,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
   createAndAddPartyToCase(caseForm) {
     this.loadingMessage = 'saving party...';
     this.loadingCase = true;
-    
+
     let party: Party = this.newCaseParty.caseParty;
     party.dob = party.dob ? this.datePipe.transform(party.dob, "MM/dd/yyyy") : "";
 
@@ -1817,7 +1821,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
         this.showStaticMessage(true, 'warn', 'Please complete Case Details and click Save Case to complete.', 'Complete Case Details');
       }
       caseForm.reset;
-      this.newCasePartyForm.reset;     
+      this.newCasePartyForm.reset;
       this.hideModals();
 
     });
@@ -2502,7 +2506,7 @@ export class CaseDetailComponent implements OnInit, OnDestroy{
                 response.errorMessage = "This case needs an Accused party to be added before it can be saved";
             }
     }
-    else if(this.case.caseType.name.contains("Anti-Gang Act") 
+    else if(this.case.caseType.name.contains("Anti-Gang Act")
             || this.case.caseType.name.contains("Proceeds of Crime Act")
             || this.case.caseType.name.contains("Interception of Communications Act")){
 
