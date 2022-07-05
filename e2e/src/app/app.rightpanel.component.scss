@@ -1,0 +1,157 @@
+// ::ng-deep .refresh-btn.ui-button.ui-button.ui-button-icon-only {
+//   width: 2em;
+//   height: 2em;
+//   box-shadow: none;
+//   background: white;
+//   &.ui-button-text-icon-left{
+//     padding-left: 1.4em;
+//   }
+// }
+
+.layout-rightpanel {
+  .handle {
+    position: absolute;
+    left:-35px;
+    top: 40px;
+    background-color: #BF2E1A;
+    width: 40px;
+    height: 50px;
+    border-radius: 4px 0 0 4px;
+
+    i {
+      color: white;
+      margin: 12px 6px;
+    }
+  }
+  .layout-rightpanel-header {
+      background: url("../assets/layout/images/dashboard/sidebar-red.jpg") no-repeat;
+      background-size: cover;
+      height: 100px;
+      padding: 20px 14px;
+
+      h1{
+        color: white;
+        margin: 0;
+        font-weight: 300;
+      }
+
+      .tasks-day, .tasks-date {
+          color: #ffffff;
+          left: 14px;
+          font-size: 18px;
+          font-weight: 700;
+          padding-bottom: 4px;
+      }
+  }
+
+  .layout-rightpanel-content {
+      padding: 14px;
+      position: relative;
+
+      .refresh-btn.ui-button.ui-button.ui-button-icon-only {
+        width: 1.8em;
+        height: 1.8em;
+        box-shadow: none;
+        background: white;
+        &.ui-button-text-icon-left{
+          padding-left: 1em;
+        }
+      }
+
+      h1 {
+          font-size: 24px;
+          margin: 0 0 4px 0;
+      }
+
+      h2 {
+          font-size: 16px;
+          margin: 0;
+          color: #777777;
+          font-weight: normal;
+      }
+
+      .task-badge{
+        position: absolute;
+        left: 2px;
+        top: 2px;
+        background-color: #25BF6B;
+        color: white;
+        -moz-border-radius: 50%;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+        padding: 2px 4px;
+        display: block;
+        font-size: 12px;
+        line-height: 12px;
+      }
+
+      .tasks-today {
+        text-align: center;
+        margin-top: 28px;
+
+        .tasks-today-value {
+          font-size: 36px;
+          vertical-align: middle;
+          margin-right: 14px;
+        }
+
+        img {
+          vertical-align: middle;
+        }
+      }
+
+      .task-items {
+        list-style-type: none;
+        margin: 28px 0 0 0;
+        padding: 0;
+
+        li {
+          padding: 8px 14px;
+          border-bottom: 1px solid #d8dae2;
+          position: relative;
+
+          .task-title{
+            margin: 0;
+            // text-decoration: underline;
+            color: #0277BD;
+
+            :hover{
+              background-color: #d8dae2;
+            }
+          }
+          .task-subtitle{
+            margin: 0;
+            font-size: 0.8em;
+            color: #0277BD;
+          }
+
+          .task-date {
+              position: absolute;
+              right: 10px;
+              font-size: 12px;
+          }
+          .task-done {
+            color: #0e7c5b;
+          }
+
+          img {
+              width: 24px;
+              position: absolute;
+              right: 0px;
+              top: 4px;
+          }
+
+          .overdue{
+            i {
+              color: #BF2E1A !important;
+            }
+            .task-date {
+              color: #BF2E1A !important;
+              font-weight: 700;
+            }
+
+          }
+        }
+      }
+    }
+  }

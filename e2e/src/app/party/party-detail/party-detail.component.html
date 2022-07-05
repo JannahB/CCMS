@@ -1,0 +1,1016 @@
+<div class="ui-g-12" class="base-fieldset">
+    <div class="ui-g-12 pb-0">
+      <h1 class="page-header inline">{{party?.firstName}} {{party?.lastName}}</h1>
+    </div>
+
+    <!-- GENERAL DETAILS -->
+    <p-fieldset legend="General Details" toggleable="true" >
+      <div class="ui-g form-group" novalidate>
+
+        <div  *ngIf="party">
+
+          <div class="ui-g-12 mb-20 ml-10">
+
+            <p-checkbox [(ngModel)]="party.isOrganization" binary="true" name="cb_isOrganization">
+              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+            </p-checkbox>
+
+            <span class="task-name">Is Organization?</span>
+          </div>
+
+          <!-- Organization column 1 -->
+          <div class="ui-g-12 ui-md-6" *ngIf="party.isOrganization">
+            <div class="ui-g-12 mb-20 pl-0" >
+              <span class="md-inputfield">
+                <input type="text" pInputText required
+                        [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                        [(ngModel)]="party.fullName" name="tiOrgName" #tiOrgName="ngModel" >
+                <label>Organization Name</label>
+              </span>
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                 *ngIf="tiOrgName.errors?.required && tiOrgName.touched" >
+                  Please enter the Organization Name
+            </div>
+          </div>
+
+          <!-- column 1 -->
+          <div class="ui-g-12 ui-md-4" *ngIf="!party.isOrganization">
+
+            <div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                <input pInputText type="text" [(ngModel)]="party.firstName" name="tiFirstName"
+                  (ngModelChange)="newFNameChanged($event)">
+                <label>Given Name</label>
+              </span>
+            </div>
+            <div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                <input type="text" pInputText [(ngModel)]="party.lastName" name="tiLastName"
+                  (ngModelChange)="newLNameChanged($event)">
+                <label>Family Name</label>
+              </span>
+            </div>
+            <div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                <input type="text" pInputText [required]="true" [(ngModel)]="party.fullName" name="tiFullName" [disabled]=true
+                  #tiFullName="ngModel">
+                <label>Full Name (Automatically Populated)</label>
+              </span>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiFullName.errors?.required && tiFullName.touched">
+                Please enter the Full Name
+              </div>
+            </div>
+
+            <div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                <input type="text" pInputText
+                      [(ngModel)]="party.alternativeName"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
+
+                <label>Alias</label>
+              </span>
+            </div>
+
+            <!--div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                <input type="text" pInputText [(ngModel)]="party.alternativeName2">
+                <label>Alias 2</label>
+              </span>
+            </div-->
+
+            <!--div class="ui-g-12 mb-20      ">
+              <span class="md-inputfield">
+                <input type="text" pInputText [(ngModel)]="party.alternativeName3">
+                <label>Alias 3</label>
+              </span>
+            </div-->
+
+          </div>
+
+          <!-- column 2 -->
+          <div class="ui-g-12 ui-md-3 pt-0 mt-n-5" *ngIf="!party.isOrganization">
+
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Date of Birth</label>
+              <p-calendar
+                    id="dob"
+                    inputStyleClass="width-full"
+                    [(ngModel)]="party.dob"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    dateFormat="dd-M-yy"
+                    placeholder="Date of Birth"
+                    [showIcon]="true"
+                    [yearNavigator]="true"
+                    yearRange="1900:2020" ></p-calendar>
+            </div>
+
+            <div class="ui-g-12 mb-0">
+              <label class="minimal block primary">Age</label>
+              <div class="mar-0">{{calculateAge(party.dob)}}</div>
+            </div>
+
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Sex</label>
+                <p-dropdown
+                    placeholder="Choose Sex"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [options]="genderTypes"
+                    [(ngModel)]="party.sex"
+                    (onChange)="genderTypesOnChange($event)">
+                </p-dropdown>
+
+
+
+            </div>
+
+            <div class="ui-g-12 mb-0">
+                <label class="minimal primary block">Marital Status</label>
+                <p-dropdown
+                    placeholder="Choose Marital Status"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [options]="maritalStatus"
+                    [(ngModel)]="party.maritalStatus"
+                    (onChange)="maritalStatusOnChange($event)">
+                </p-dropdown>
+
+            </div>
+
+          </div>
+
+          <!-- column 3 -->
+          <div class="ui-g-12 ui-md-5" *ngIf="!party.isOrganization">
+            <div class="ui-g-12 ">
+              <label class="minimal primary mr-10">Foreign Language Interpreter Required</label>
+              <p-inputSwitch [(ngModel)]="party.interpreterRequiredIndicator"
+                             [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
+              </p-inputSwitch>
+
+            </div>
+
+            <div class="ui-g-12 ">
+              <label class="minimal primary mr-10">Hearing Impaired / Sign Language Interpreter Required</label>
+              <p-inputSwitch [(ngModel)]="party.signLanguageInterpreterRequiredIndicator"
+                             [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
+              </p-inputSwitch>
+
+            </div>
+
+            <div class="ui-g-12 ">
+              <label class="minimal primary mr-10">Visually Impaired</label>
+              <p-inputSwitch [(ngModel)]="party.visuallyImpairedIndicator"
+                             [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)">
+              </p-inputSwitch>
+
+            </div>
+
+            <div class="ui-g-12 ">
+              <label class="minimal primary block">Languages Spoken</label>
+              <span class="ui-fluid">
+                <p-autoComplete
+                    field="languageName"
+                    [(ngModel)]="party.spokenLanguages"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [suggestions]="filteredLanguages"
+                    (completeMethod)="getLangsToFilter($event)"
+                    styleClass="width-full"
+                    [minLength]="1"
+                    placeholder="Languages Spoken"
+                    [dropdown]="true"
+                    [multiple]="true">
+                </p-autoComplete>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ">
+              <label class="minimal primary block">Country of Birth</label>
+              <span class="ui-fluid">
+                <p-dropdown
+                  placeholder="Choose Country of Birth"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="party.countryOfBirth"
+                  [filter] = "true"
+                  [options]="countries"
+                  [style]="{'width':'100%'}"
+                  (onChange)="countryOfBirthOnChange($event)">
+                </p-dropdown>
+              </span>
+
+            </div>
+
+            <div class="ui-g-12 ">
+              <label class="minimal primary block">Country of Residence</label>
+              <span class="ui-fluid">
+                <p-dropdown
+                  placeholder="Choose Country of Residence"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="party.countryOfResidence"
+                  [filter] = "true"
+                  [options]="countries"
+                  [style]="{'width':'100%'}"
+                  (onChange)="countryOfResidenceOnChange($event)">
+                </p-dropdown>
+              </span>
+            </div>
+          </div>
+
+          <div class="ui-g-12 pt-0">
+            <label class="minimal block primary">Notes</label>
+            <textarea [rows]="3" [cols]="30"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      [(ngModel)]="party.notes"
+                      pInputTextarea placeholder="Notes"
+                      styleClass="width-full"
+                      autoResize ="autoResize"></textarea>
+          </div>
+
+          <div class="ui-g-12 ta-r" *ngIf="hasPermission(Permission.UPDATE_PARTY)">
+              <button type="button"
+                      label="Cancel"
+                      class="ui-button-secondary mr-15"
+                      (click)="cancelDetailsEdit()"
+                      icon="ui-icon-clear"
+                      pButton></button>
+              <button type="button"
+                      label="Save"
+                      [disabled] = "(!party.isOrganization && (!party.firstName || !party.lastName))
+                       || (party.isOrganization && party.fullName.trim().length === 0)"
+                      class=""
+                      (click)="savePartyDetails()"
+                      icon="ui-icon-check"
+                      pButton></button>
+          </div>
+
+        </div>
+
+      </div>
+    </p-fieldset>
+
+    <!-- OCCUPATION -->
+    <p-fieldset legend="Employment History / Occupation" toggleable="true" collapsed="true">
+      <div class="ui-g form-group">
+
+        <div class="ui-g-12">
+          <p-dataTable [value]="party?.occupations" [loading]="newOccupationMode" [loadingIcon]="null"
+                       selectionMode="single"
+                       [(selection)]="selectedOccupation"
+                       scrollable="true" scrollHeight="200px"
+                       (onRowSelect)="identifierOnRowSelect($event)"
+                       dataKey="partyOccupationOID" #dtOccupation>
+                      <p-column field="jobTitle" header="Job Title" [style]="{'width':'20%'}"></p-column>
+                      <p-column field="identifierValue" header="Employment Status" [style]="{'width':'20%'}"></p-column>
+                      <p-column field="notes" header="Notes" [style]="{'width':'26%'}"></p-column>
+                      <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                      <ng-template pTemplate="body" let-item="rowData">
+                          {{item.startDate | date:'dd-MMM-yyyy'}}
+                    </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+          </p-dataTable>
+        </div>
+
+        <div class="ui-g-12" *ngIf="!newOccupationMode">
+          <button type="button"
+              *ngIf="hasPermission(Permission.UPDATE_PARTY)"
+              (click)="newOccupation()"
+              label="Add Occupation"
+              icon="ui-icon-add"
+              class="" pButton></button>
+        </div>
+
+        <div class="ui-g-12" *ngIf="selectedOccupation">
+          <h3 class="mt-0">{{ newOccupationMode ? 'New' : 'Edit'}} Occupation</h3>
+
+          <div class="ui-g-12 ui-md-6">
+              <div class="ui-g-12 mb-20">
+                  <label class="minimal primary block">Occupation Title</label>
+                  <p-dropdown
+                      placeholder="choose type"
+                      id="occTitle" name="occTitle" #occTitle="ngModel"
+                      [required] = "true"
+                      styleClass="width-full"
+                      [options]="occupation"
+                      [filter] = "true"
+                      [(ngModel)]="selectedOccupation.jobTitle"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      (onChange)="occupationTypeOnChange($event)">
+                  </p-dropdown>
+                </div>
+
+                <div class="ui-g-12 mb-20">
+                  <span class="md-inputfield">
+                      <input [(ngModel)]="selectedOccupation.identifierValue"
+                             id="empStatus" name="empStatus" #empStatus="ngModel"
+                             [required] = "true"
+                             [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                              type="text" pInputText
+                              [required]="true">
+                      <label>Employment Status</label>
+                  </span>
+                </div>
+
+                <div class="ui-g-12 mb-20">
+                  <span class="md-inputfield">
+                    <input type="text"
+                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                          [(ngModel)]="selectedOccupation.notes" pInputText>
+                    <label>Notes</label>
+                  </span>
+                </div>
+          </div>
+
+          <div class="ui-g-12 ui-md-6">
+
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="occupationStartDate" name="occupationStartDate" #occupationStartDate="ngModel"
+              [required] = "true"
+                placeholder="Start Date"
+                dateFormat="dd-M-yy"
+                [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                [(ngModel)]="selectedOccupation.startDate"
+                [yearNavigator]="true"
+                yearRange="2000:2030"
+                [showIcon]="true">
+              </p-calendar>
+            </div>
+
+            <div class="ui-g-12  mb-0">
+              <label class="minimal primary block">End Date</label>
+              <p-calendar id="occupationEndDate"
+                  placeholder="End Date"
+                  dateFormat="dd-M-yy"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="selectedOccupation.endDate"
+                  [yearNavigator]="true"
+                  yearRange="2000:2030"
+                  [showIcon]="true">
+                </p-calendar>
+            </div>
+
+          </div>
+          <div class="ui-g-12 ta-r" *ngIf="hasPermission(Permission.UPDATE_PARTY)">
+
+            <button type="button"
+                    label="Cancel"
+                    class="ui-button-secondary mr-15"
+                    (click)="cancelOccupationEdit()"
+                    icon="ui-icon-clear"
+                    pButton></button>
+            <button type="button"
+                    label="Save"
+                    [disabled] = "(!occupationStartDate.valid) || (!occTitle.valid) || (!empStatus.valid)"
+                    class=""
+                    (click)="saveOccupation()"
+                    icon="ui-icon-check"
+                    pButton></button>
+          </div>
+
+        </div>
+      </div>
+    </p-fieldset>
+
+    <!-- IDENTIFIERS -->
+    <p-fieldset legend="Identifiers" toggleable="true" collapsed="true">
+      <div class="ui-g form-group">
+
+        <div class="ui-g-12">
+          <p-dataTable [value]="party?.identifiers" [loading]="newIdentifierMode" [loadingIcon]="null"
+                       selectionMode="single"
+                       [(selection)]="selectedIdentifier"
+                       scrollable="true" scrollHeight="200px"
+                       (onRowSelect)="identifierOnRowSelect($event)"
+                       dataKey="partyIdentifierOID" #dtIdentifiers>
+                      <p-column field="identifierType" header="Type" [style]="{'width':'20%'}"></p-column>
+                      <p-column field="identifierValue" header="Value" [style]="{'width':'20%'}"></p-column>
+                      <p-column field="notes" header="Notes" [style]="{'width':'26%'}"></p-column>
+                      <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                      <ng-template pTemplate="body" let-item="rowData">
+                          {{item.startDate | date:'dd-MMM-yyyy'}}
+                    </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                  <ng-template let-identifier="rowData" pTemplate="body">
+                      <i class="material-icons delete-icon" (click)="requestDeleteIdentifier(identifier)">delete</i>
+                  </ng-template>
+              </p-column> -->
+          </p-dataTable>
+        </div>
+        <div class="ui-g-12" *ngIf="!newIdentifierMode">
+          <button type="button"
+              *ngIf="hasPermission(Permission.UPDATE_PARTY)"
+              (click)="newIdentifier()"
+              label="Add Identifier"
+              icon="ui-icon-add"
+              class="" pButton></button>
+        </div>
+
+        <div class="ui-g-12" *ngIf="selectedIdentifier">
+          <h3 class="mt-0">{{ newIdentifierMode ? 'New' : 'Edit'}} Identifier</h3>
+          <div class="ui-g-12 ui-md-6">
+              <div class="ui-g-12 mb-20">
+                  <label class="minimal primary block">Identifier Type</label>
+                  <p-dropdown
+                      id="idenType" name="idenType" #idenType="ngModel"
+                      placeholder="choose type"
+                      styleClass="width-full"
+                      [options]="identifierTypeOptions"
+                      [filter] = "true"
+                      [required] = "true"
+                      [(ngModel)]="selectedIdentifier.identifierType"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      (onChange)="identifierTypeOnChange($event)">
+                      <!--
+                        optionLabel="name"
+                      dataKey="id"
+                     -->
+                  </p-dropdown>
+                </div>
+
+                <div class="ui-g-12 mb-20">
+                  <span class="md-inputfield">
+                      <input [(ngModel)]="selectedIdentifier.identifierValue"
+                              id="idenValue" name="idenValue" #idenValue="ngModel"
+                              [required] = "true"
+                             [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                              type="text" pInputText>
+                      <label>Identifier Value</label>
+                  </span>
+                </div>
+
+                <div class="ui-g-12 mb-20">
+                  <span class="md-inputfield">
+                    <input type="text"
+                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                          [(ngModel)]="selectedIdentifier.notes" pInputText>
+                    <label>Notes</label>
+                  </span>
+                </div>
+          </div>
+
+          <div class="ui-g-12 ui-md-6">
+
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="identifierStartDate"
+                id="idenStartDate" name="idenStartDate" #idenStartDate="ngModel"
+                [required] = "true"
+                placeholder="Start Date"
+                dateFormat="dd-M-yy"
+                [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                [(ngModel)]="selectedIdentifier.startDate"
+                [yearNavigator]="true"
+                yearRange="2000:2030"
+                [showIcon]="true">
+              </p-calendar>
+            </div>
+
+            <div class="ui-g-12  mb-0">
+              <label class="minimal primary block">End Date</label>
+              <p-calendar id="identifierEndDate"
+                  placeholder="End Date"
+                  dateFormat="dd-M-yy"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="selectedIdentifier.endDate"
+                  [yearNavigator]="true"
+                  yearRange="2000:2030"
+                  [showIcon]="true">
+                </p-calendar>
+            </div>
+
+          </div>
+          <div class="ui-g-12 ta-r" *ngIf="hasPermission(Permission.UPDATE_PARTY)">
+
+            <button type="button"
+                    label="Cancel"
+                    class="ui-button-secondary mr-15"
+                    (click)="cancelIdentifierEdit()"
+                    icon="ui-icon-clear"
+                    pButton></button>
+            <button type="button"
+                    label="Save"
+                    class=""
+                    (click)="saveIdentifier()"
+                    [disabled]="(!idenType.valid) || (!idenValue.valid) || (!idenStartDate.valid)"
+                    icon="ui-icon-check"
+                    pButton></button>
+          </div>
+        </div>
+      </div>
+    </p-fieldset>
+
+    <!-- EMAILS  -->
+    <p-fieldset legend="Emails" toggleable="true" collapsed="true">
+      <div class="ui-g form-group" *ngIf="party">
+        <div class="ui-g-12">
+          <p-dataTable [value]="party?.emails"
+                        selectionMode="single"
+
+                        [(selection)]="selectedEmail"
+                        (onRowSelect)="emailOnRowSelect($event)"
+                        scrollable="true" scrollHeight="200px"
+                        dataKey="partyEmailOID">
+              <p-column field="emailAddressType" header="Type" [style]="{'width':'20%'}"></p-column>
+              <p-column field="emailAddress" header="Email Address" [style]="{'width':'20%'}"></p-column>
+              <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.startDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <i class="material-icons delete-icon" (click)="requestDeleteEmail(item)">delete</i>
+                  </ng-template>
+              </p-column> -->
+          </p-dataTable>
+        </div>
+        <div class="ui-g-12" *ngIf="!newEmailMode">
+          <button type="button"
+              *ngIf="hasPermission(Permission.UPDATE_PARTY)"
+              (click)="newEmail()"
+              label="Add Email"
+              icon="ui-icon-add"
+              class="" pButton></button>
+        </div>
+
+        <div class="ui-g-12" *ngIf="selectedEmail">
+          <form #emailForm="ngForm" novalidate>
+
+            <h3 class="mt-0">{{ newEmailMode ? 'New' : 'Edit'}} Email</h3>
+            <div class="ui-g-12 ui-md-6">
+              <div class="ui-g-12 mb-20">
+                <label class="minimal primary block">Email Type</label>
+                <p-dropdown name="ddEmailType" #ddEmailType="ngModel"
+                    placeholder="choose type"
+                    styleClass="width-full"
+                    [required]="true"
+                    [options]="emailTypes"
+                    [(ngModel)]="selectedEmail.emailAddressType"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    (onChange)="emailTypeOnChange($event)">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="ddEmailType.errors?.required && ddEmailType.touched" >
+                      Please choose a Email Type
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-20">
+                <span class="md-inputfield">
+                    <input type="email" name="tiEmail" #tiEmail="ngModel"
+                          [required]="true"
+                          [email]="true"
+                          pattern="^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$"
+                          [(ngModel)]="selectedEmail.emailAddress"
+                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                          type="text" pInputText>
+                    <label>Email Address</label>
+                </span>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="tiEmail.errors?.required && tiEmail.touched" >
+                      Please enter an email address
+                </div>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="tiEmail.errors?.pattern && tiEmail.touched" >
+                      Please enter a valid email address
+                </div>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-6">
+
+              <div class="ui-g-12 mb-0">
+                <label class="minimal primary block">Start Date</label>
+                <p-calendar id="emailStartDate" name="emailStartDate" #emailStartDate="ngModel"
+                  placeholder="Start Date"
+                  dateFormat="dd-M-yy"
+                  [required]="true"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="selectedEmail.startDate"
+                  [yearNavigator]="true"
+                  yearRange="2000:2030"
+                  [showIcon]="true">
+                </p-calendar>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="emailStartDate.errors?.required && emailStartDate.touched" >
+                      Please choose a Start Date
+                </div>
+              </div>
+
+              <div class="ui-g-12  mb-0">
+                <label class="minimal primary block">End Date</label>
+                <p-calendar id="emailEndDate" name="emailEndDate" #emailEndDate="ngModel"
+                    placeholder="End Date"
+                    dateFormat="dd-M-yy"
+                    [(ngModel)]="selectedEmail.endDate"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [yearNavigator]="true"
+                    yearRange="2000:2030"
+                    [showIcon]="true">
+                  </p-calendar>
+              </div>
+
+            </div>
+            <div class="ui-g-12 ta-r" *ngIf="hasPermission(Permission.UPDATE_PARTY)">
+
+              <button type="button"
+                      label="Cancel"
+                      class="ui-button-secondary mr-15"
+                      (click)="cancelEmailEdit()"
+                      icon="ui-icon-clear"
+                      pButton></button>
+              <button type="button"
+                      label="Save"
+                      class=""
+                      (click)="saveEmail()"
+                      icon="ui-icon-check"
+                      [disabled]="!emailForm.form.valid"
+                      pButton></button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </p-fieldset>
+
+    <!-- PHONES -->
+    <p-fieldset legend="Phones" toggleable="true" collapsed="true">
+      <div class="ui-g form-group" *ngIf="party">
+        <div class="ui-g-12">
+          <p-dataTable [value]="party?.phoneNumbers"
+                        selectionMode="single"
+                        [(selection)]="selectedPhone"
+                        (onRowSelect)="phoneOnRowSelect($event)"
+                        scrollable="true" scrollHeight="200px"
+                        dataKey="partyPhoneOID">
+              <p-column field="phoneType" header="Type" [style]="{'width':'20%'}"></p-column>
+              <p-column field="phoneNumber" header="Phone Number" [style]="{'width':'20%'}"></p-column>
+              <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.startDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'13%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <i class="material-icons delete-icon" (click)="requestDeletePhone(item)">delete</i>
+                  </ng-template>
+              </p-column> -->
+          </p-dataTable>
+        </div>
+        <div class="ui-g-12" *ngIf="!newPhoneMode">
+          <button type="button"
+              *ngIf="hasPermission(Permission.UPDATE_PARTY)"
+              (click)="newPhone()"
+              label="Add Phone"
+              icon="ui-icon-add"
+              class="" pButton></button>
+        </div>
+
+        <div class="ui-g-12" *ngIf="selectedPhone">
+          <h3 class="mt-0">{{ newPhoneMode ? 'New' : 'Edit'}} Phone</h3>
+
+          <div class="ui-g-12 ui-md-6">
+            <div class="ui-g-12 mb-20">
+              <label class="minimal primary block">Phone Type</label>
+              <p-dropdown
+                  id="phType" name="phType" #phType="ngModel"
+                  [required] = "true"
+                  placeholder="choose type"
+                  styleClass="width-full"
+                  [options]="phoneTypes"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="selectedPhone.phoneType"
+                  (onChange)="phoneTypeOnChange($event)">
+              </p-dropdown>
+            </div>
+
+            <div class="ui-g-12 mb-20">
+              <span class="md-inputfield">
+                  <input [(ngModel)]="selectedPhone.phoneNumber"
+                        type="text"
+                        id="phNumber" name="phNumber" #phNumber="ngModel"
+                        [required] = "true"
+                        [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                        pInputText>
+                  <label>Phone Number</label>
+              </span>
+            </div>
+          </div>
+
+          <div class="ui-g-12 ui-md-6">
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="phoneStartDate"
+                placeholder="Start Date"
+                dateFormat="dd-M-yy"
+                [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                [(ngModel)]="selectedPhone.startDate"
+                [yearNavigator]="true"
+                yearRange="2000:2030"
+                [showIcon]="true">
+              </p-calendar>
+            </div>
+
+            <div class="ui-g-12  mb-0">
+              <label class="minimal primary block">End Date</label>
+              <p-calendar id="phoneEndDate"
+                  placeholder="End Date"
+                  dateFormat="dd-M-yy"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="selectedPhone.endDate"
+                  [yearNavigator]="true"
+                  yearRange="2000:2030"
+                  [showIcon]="true">
+                </p-calendar>
+            </div>
+
+          </div>
+          <div class="ui-g-12 ta-r" *ngIf="hasPermission(Permission.UPDATE_PARTY)">
+
+            <button type="button"
+                    label="Cancel"
+                    class="ui-button-secondary mr-15"
+                    (click)="cancelPhoneEdit()"
+                    icon="ui-icon-clear"
+                    pButton></button>
+            <button type="button"
+                    label="Save"
+                    class=""
+                    (click)="savePhone()"
+                    [disabled] = "(!phType.valid) || (!phNumber.valid) || (!selectedPhone.startDate)"
+                    icon="ui-icon-check"
+                    pButton></button>
+          </div>
+        </div>
+      </div>
+    </p-fieldset>
+
+
+    <!-- ADDRESSES  -->
+    <p-fieldset legend="Addresses" toggleable="true" collapsed="true">
+
+      <div class="ui-g form-group" *ngIf="party">
+        <div class="ui-g-12" >
+          <p-dataTable [value]="party?.addresses"
+              selectionMode="single"
+              [(selection)]="selectedAddress"
+              (onRowSelect)="addressOnRowSelect($event)"
+              scrollable="true" scrollHeight="100%"
+              [responsive]="true"
+              dataKey="addressOID">
+              <p-column field="addressType" header="Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+              <p-column field="address1" header="Address" [style]="{'width':'12%'}" [sortable]="true">
+                <ng-template pTemplate="body" let-item="rowData">
+                  {{(item.address1 ? item.address1 : "") + " " + (item.address2 ? item.address2 : "")}}
+                </ng-template>
+              </p-column>
+              <p-column field="communityCode" header="community / city" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+              <p-column field="administrativeArea" header="Admin Code" [style]="{'width':'8%'}" [sortable]="true"></p-column>
+              <p-column field="postalCode" header="Postal Code" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+              <p-column field="countryName" header="Country" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+              <p-column field="startDate" header="Start Date" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.startDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'10%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.endDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+          </p-dataTable>
+        </div>
+        <div class="ui-g-12" *ngIf="!newAddressMode">
+          <button type="button"
+              *ngIf="hasPermission(Permission.UPDATE_PARTY)"
+              (click)="newAddress()"
+              label="Add Address"
+              icon="ui-icon-add"
+              class="" pButton></button>
+        </div>
+
+        <div class="ui-g-12" *ngIf="selectedAddress">
+          <h3 class="mt-0">{{ newAddressMode ? 'New' : 'Edit'}} Address</h3>
+
+          <div class="ui-g-12">
+            <div class="ui-g-12 ui-md-4 mb-20">
+              <label class="minimal primary block">Address Type</label>
+              <p-dropdown
+                  placeholder="choose type"
+                  id="addType" name="addType" #addType="ngModel"
+                  [required] = "true"
+                  styleClass="width-full"
+                  [options]="addressTypes"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="selectedAddress.addressType"
+                  (onChange)="addressTypeOnChange($event)">
+              </p-dropdown>
+            </div>
+          </div>
+
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.address1"  type="text"
+                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      pInputText>
+              <label>LP# / House Number</label>
+            </span>
+          </div>
+
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.address2"  type="text"
+                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                     pInputText>
+              <label>Street Name 1</label>
+            </span>
+          </div>
+
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield" >
+              <input [(ngModel)]="selectedAddress.address3" type="text"
+                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                     pInputText>
+              <label>Street Name 2</label>
+            </span>
+          </div>
+
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.communityCode"  type="text"
+                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      pInputText>
+              <label>Community Code</label>
+            </span>
+          </div>
+
+          <div class="ui-g-12 ui-md-4 mb-20">
+            <span class="md-inputfield">
+              <input [(ngModel)]="selectedAddress.administrativeArea"  type="text"
+                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                     pInputText>
+              <label>Administrative Area</label>
+            </span>
+          </div>
+
+          <div class="ui-g-12 ui-md-4 mb-20" >
+            <span class="md-inputfield" >
+              <input [(ngModel)]="selectedAddress.postalCode"  type="text"
+                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                     pInputText>
+              <label>Postal Code</label>
+            </span>
+          </div>
+
+          <div class="ui-g-12 ui-md-6 mb-20 mt-n-20">
+            <label class="minimal primary block">City / Town</label>
+            <span class="md-inputfield" *ngIf="selectedAddress.countryName != 'Trinidad and Tobago'">
+              <input [(ngModel)]="selectedAddress.municipalityName"  type="text"
+                     [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                     pInputText>
+            </span>
+
+            <p-dropdown
+              *ngIf="selectedAddress.countryName == 'Trinidad and Tobago'"
+              placeholder="City / Town"
+              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+              [(ngModel)]="selectedAddress.municipalityName"
+              [filter] = "true"
+              [options]="countriesAddressCityTown"
+              [style]="{'width':'100%'}"
+              (onChange)="cityTownOnChange($event)">
+            </p-dropdown>
+          </div>
+
+          <div class="ui-g-12 ui-md-6 mb-20 mt-n-20">
+            <label class="minimal primary block">Country</label>
+            <p-dropdown
+              placeholder="Choose Country"
+              [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+              [(ngModel)]="selectedAddress.countryName"
+              [filter] = "true"
+              [options]="countries"
+              [style]="{'width':'100%'}"
+              (onChange)="countryOnChange($event)">
+            </p-dropdown>
+          </div>
+
+          <div class="ui-g-12 ui-md-8 pt-0">
+            <label class="minimal block primary">Description</label>
+            <textarea pInputTextarea
+                      [rows]="4" [cols]="30"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      [(ngModel)]="selectedAddress.addressDescriptionText"
+                      placeholder="Description"
+                      styleClass="width-full"
+                      autoResize="autoResize"></textarea>
+          </div>
+
+          <div class="ui-g-12 ui-md-4 mb-20 mt-n-20">
+            <div class="ui-g-12 mb-0 ta-r">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="addressStartDate"
+                placeholder="Start Date"
+                dateFormat="dd-M-yy"
+                [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                [(ngModel)]="selectedAddress.startDate"
+                [yearNavigator]="true"
+                yearRange="2000:2030"
+                [showIcon]="true">
+              </p-calendar>
+            </div>
+
+            <div class="ui-g-12  mb-0 ta-r">
+              <label class="minimal primary block">End Date</label>
+              <p-calendar id="addressEndDate"
+                  placeholder="End Date"
+                  dateFormat="dd-M-yy"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="selectedAddress.endDate"
+                  [yearNavigator]="true"
+                  yearRange="2000:2030"
+                  [showIcon]="true">
+                </p-calendar>
+            </div>
+
+          </div>
+          <div class="ui-g-12 ta-r" *ngIf="hasPermission(Permission.UPDATE_PARTY)">
+
+            <button type="button"
+                    label="Cancel"
+                    class="ui-button-secondary mr-15"
+                    (click)="cancelAddressEdit()"
+                    icon="ui-icon-clear"
+                    pButton></button>
+            <button type="button"
+                    label="Save"
+                    class=""
+                    (click)="saveAddress()"
+                    [disabled] = "(!addType.valid) || (!selectedAddress.startDate)"
+                    icon="ui-icon-check"
+                    pButton></button>
+          </div>
+        </div>
+      </div>
+    </p-fieldset>
+  </div>
+
+  <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteIdentifierModal" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <div>Are you sure you want to delete this Identifier?</div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+            <button label="Yes"   type="button" pButton icon="fa-check" (click)="deleteIdentifier()" ></button>
+        </div>
+    </p-footer>
+  </p-dialog>
+
+  <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteEmailModal" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <div>Are you sure you want to delete this Email?</div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+            <button label="Yes"   type="button" pButton icon="fa-check" (click)="deleteEmail()" ></button>
+        </div>
+    </p-footer>
+  </p-dialog>
+
+  <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeletePhoneModal" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <div>Are you sure you want to delete this Phone?</div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+            <button label="Yes"   type="button" pButton icon="fa-check" (click)="deletePhone()" ></button>
+        </div>
+    </p-footer>
+  </p-dialog>
+
+  <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteAddressModal" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <div>Are you sure you want to delete this Address?</div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+            <button label="Yes"   type="button" pButton icon="fa-check" (click)="deleteAddress()" ></button>
+        </div>
+    </p-footer>
+  </p-dialog>

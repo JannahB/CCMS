@@ -1,0 +1,37 @@
+[
+  {
+    "caseTypeOID": 2,
+    "courtOID": 5,
+    "name": "Application-Children Authority",
+    "shortName": "AP",
+    "casePhases": []
+  },
+  {
+    "caseTypeOID": 1,
+    "courtOID": 5,
+    "name": "Application-Private",
+    "shortName": "AP",
+    "casePhases": []
+  },
+  {
+    "caseTypeOID": 4,
+    "courtOID": 5,
+    "name": "CHINS",
+    "shortName": "CH",
+    "casePhases": []
+  },
+  {
+    "caseTypeOID": 5,
+    "courtOID": 5,
+    "name": "Criminal-Indictable",
+    "shortName": "CR",
+    "casePhases": []
+  },
+  {
+    "caseTypeOID": 3,
+    "courtOID": 5,
+    "name": "Criminal-Summary",
+    "shortName": "CR",
+    "casePhases": []
+  }
+]

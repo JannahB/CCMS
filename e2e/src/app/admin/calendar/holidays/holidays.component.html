@@ -1,0 +1,133 @@
+<div class="ui-g">
+
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0">
+    <h1 class="page-header mt-0">Holidays</h1>
+  </div>
+
+  <div class="ui-g-12 card">
+
+    <!-- Column 1 -->
+    <div class="ui-g-12 pad-0 mar-0">
+      <div class="ui-g-3 ui-sm-12 mt-25"><!-- placeholder --></div>
+      <div class="ui-g-9 ui-sm-12 large">
+        <label class="mr-10">Holiday Year</label>
+        <p-dropdown [options]="filterYears" [(ngModel)]="selectedFilterYear" [style]="{'width':'100px'}" ></p-dropdown>
+      </div>
+    </div>
+
+    <div class="ui-g-12 ui-md-3 mv-25">
+      <mat-form-field class="width-full" *ngIf="holidays.length">
+        <input matInput name="tiSearch" #tiSearch="ngModel" placeholder="Search holidays" [(ngModel)]="searchText">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- LIST -->
+      <div class="">
+        <label class="mr-10 smaller">HOLIDAYS</label>
+        <mat-selection-list #matSelectionList class="items-list" (selectionChange)="holidaySelected($event)">
+          <mat-list-option
+            *ngFor="let item of holidays | nameFilter:searchText | yearFilter:selectedFilterYear; let i=index; let itm"
+            [class.hi]="selected" [value]="item">
+            {{ item.name }}
+          </mat-list-option>
+        </mat-selection-list>
+      </div>
+
+      <button mat-raised-button color="primary" (click)="newClicked()" class="mt-15 width-full">
+        <mat-icon aria-label="Add facility button">add</mat-icon>
+        New Holiday
+      </button>
+    </div>
+
+    <!-- Column 2 -->
+    <div class="ui-g-12 ui-md-9">
+      <div class="ui-g-12 ui-lg-6 pt-20" >
+        <mat-form-field class="width-full">
+          <input matInput name="tiName" #tiName="ngModel" placeholder="Holiday name"
+                [required]="true"
+                [disabled]="!selectedHoliday"
+                [(ngModel)]="name">
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiName.errors?.required && tiName.touched">
+            Please enter a Holiday Name
+          </div>
+        </mat-form-field>
+      </div>
+      <div class="ui-g-12">
+        <p-checkbox [(ngModel)]="isMultiDay"
+                    [disabled]="!selectedHoliday"
+                    [ngClass]="{ opacity50 : !selectedHoliday }"
+                    label="Holiday spans multiple days?"
+                    binary="true" name="isMultiDay"></p-checkbox>
+      </div>
+
+      <div class="ui-g-12">
+        <div class="ui-g-12 ui-md-6">
+          <label class="minimal primary">Holiday Start Date</label>
+          <br />
+          <p-calendar id="startDate" name="startDate"
+                      [required]="true"
+                      [inline]="true"
+                      [disabled]="!selectedHoliday"
+                      [ngClass]="{ opacity50 : !selectedHoliday }"
+                      [(ngModel)]="startDate"
+                      dateFormat="mm/dd/yy"
+                      placeholder="Start Date"
+                      [showIcon]="true"
+                      yearRange="2018:2038"
+                      [yearNavigator]="false"
+                      appendTo="body"
+                      (ngModelChange)="startDateSelected($event)"></p-calendar>
+        </div>
+
+        <div class="ui-g-12 ui-md-6" [ngClass]="{invisible: !isMultiDay}" style="vertical-align: top">
+          <label class="minimal primary">Holiday End Date</label>
+          <br />
+          <p-calendar id="endDate" name="endDate" #endDateCalendar
+                      [required]="true"
+                      [inline]="true"
+                      [disabled]="false"
+                      [(ngModel)]="endDate"
+                      dateFormat="mm/dd/yy"
+                      placeholder="End Date"
+                      [showIcon]="true"
+                      yearRange="2018:2038"
+                      [yearNavigator]="false"
+                      appendTo="body"></p-calendar>
+        </div>
+
+        <!-- (onSelect)="generalDetailsOnBlur($event)" -->
+
+      </div>
+
+      <div class="ui-g-12 ui-md-6" *ngIf="selectedHoliday">
+        <div class="ta-r">
+          <button mat-button color="warn" (click)="deleteClicked()" class="mt-30 fl">
+            <mat-icon aria-label="Add template button">delete</mat-icon>
+            Delete
+          </button>
+          <button mat-raised-button color="primary" (click)="saveClicked()" class="mt-30">
+            <mat-icon aria-label="Add template button">check</mat-icon>
+            Save
+          </button>
+          <button mat-button color="secondary" (click)="reset()" class="mt-30">
+            <mat-icon aria-label="Add template button">clear</mat-icon>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteItemModal" [responsive]="true" showEffect="fade" [modal]="true"
+      [closable]="false">
+      <div>Are you sure you want to delete this item?</div>
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+          <button label="No" type="button" pButton icon="fa-close" (click)="showDeleteItemModal = false"></button>
+          <button label="Yes" type="button" pButton icon="fa-check" (click)="deleteConfirmationClicked()"></button>
+        </div>
+      </p-footer>
+    </p-dialog>
+
+  </div>
+</div>

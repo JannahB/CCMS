@@ -1,0 +1,360 @@
+<div class="ui-g">
+
+    <loading-bar [visible]="showLoadingBar"></loading-bar>
+    <!-- HEADER -->
+    <div class="ui-g-12 pv-0">
+      <h1 class="page-header mt-0">Admin - Event Workflow</h1>
+    </div>
+
+    <!-- SELECT EVENT TYPE SECTION -->
+    <div class="ui-g-12 card">
+
+      <!--
+        EVENT Type----
+        courtOID: number;
+        description: string;
+        eventCategoryText: string;
+        eventTypeName: string;
+        eventTypeOID: number;
+       -->
+
+      <!-- PARENT CASE TYPE -->
+      <div class="ui-g-12 mb-0">
+        <label class="minimal primary block">Event Type</label>
+        <p-dropdown placeholder="choose Event Type..."
+                    [required]="true"
+                    [options]="eventTypes"
+                    optionLabel="description"
+                    [filter] = "true"
+                    [(ngModel)]="selectedEvent"
+                    (onChange)="eventTypeOnChange($event)"
+                    styleClass="width-full">
+        </p-dropdown>
+      </div>
+
+      <!-- Description -->
+      <div class="ui-g-12">
+        <label class="minimal primary block" for="taDesc">Description</label>
+        <textarea id="taDesc" name="taDesc" #taDesc="ngModel"
+                  *ngIf="selectedEventWorkflow"
+                  [required]="true"
+                  [(ngModel)]="selectedEventWorkflow.description"
+                  [rows]="2"
+                  pInputTextarea
+                  autoResize="autoResize"
+                  class="width-full"></textarea>
+      </div>
+
+      <!-- WORKFLOW STEPS TABLE -->
+
+      <div class="ui-g-12 mv-20">
+        <h2>Workflow Steps</h2>
+        <p-dataTable [value]="selectedEventWorkflow?.workflowSteps" selectionMode="single" [(selection)]="selectedStep" (onRowSelect)="stepOnRowSelect($event)"
+          scrollable="true" scrollHeight="200px" #dtWorkflowSteps>
+          <p-column header="Time Delay" field="delayMinutes" [style]="{'width':'10%'}"></p-column>
+          
+          <p-column header="Time Delay Unit" field="" [style]="{'width':'7%'}" >
+              <ng-template let-item="rowData" pTemplate="body">
+                  {{ getLabelFromValue(item.delayUnit)}}
+               </ng-template>
+            </p-column>
+          
+          <p-column header="Task" field="" [style]="{'width':'15%'}" >
+            <ng-template let-item="rowData" pTemplate="body" >
+              {{ item.taskType?.taskTypeOID | idToName:taskTypes:"taskTypeOID"}}
+            </ng-template>
+          </p-column>
+
+          <p-column header="Task Priority" field="" [style]="{'width':'7%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+                {{ getPriorityValue(item.taskPriorityCode)}}
+             </ng-template>
+          </p-column>
+
+          <p-column header="Document" field="" [style]="{'width':'15%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+              {{ item.documentTemplateOID | idToName:documentTemplates:"documentTemplateOID":"documentName" }}
+            </ng-template>
+          </p-column>
+          <p-column header="Assigned Resource" field="" [style]="{'width':'13%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+              <span *ngIf="item.assignedParty">
+                  {{ item.assignedParty.partyOID | idToName:parties:"id":"firstName" }}
+                  {{ item.assignedParty.partyOID | idToName:parties:"id":"lastName" }}
+              </span>
+              <span *ngIf="item.assignedPool">
+                  {{ item.assignedPool.poolName }}
+              </span>
+
+            </ng-template>
+          </p-column>
+          <p-column header="Remove" styleClass="col-button" [style]="{'width':'8%'}">
+            <ng-template let-item="rowData" pTemplate="body">
+              <i class="material-icons ui-icon-clear" (click)="deleteWorkflowStepRequest(item)"></i>
+            </ng-template>
+          </p-column>
+        </p-dataTable>
+      </div>
+
+      <div class="ui-g-12 mt-0 mb-30 ta-l">
+        <button type="button" (click)="onAddStep()" label="Add Task Step" icon="ui-icon-add" pButton [disabled]="!selectedEventWorkflow"></button>
+      </div>
+
+
+      <!-- SAVE / CANCEL BUTTONS -->
+      <div class="ui-g-12 ta-r">
+          <!-- <button type="button"
+                  (click)="deleteWorkflowEventRequest($event)"
+                  [disabled]="!selectedEvent"
+                  label="Delete"
+                  icon="ui-icon-delete"
+                  class="ui-button-danger fl" pButton></button> -->
+          <button type="button"
+                  (click)="saveWorkflow()"
+                  label="Save"
+                  icon="ui-icon-check"
+                  class="secondary" pButton></button>
+          <button type="button"
+                  (click)="cancelWorkflowEdit()"
+                  label="Cancel"
+                  icon="ui-icon-clear"
+                  class="ui-button-secondary"
+                  pButton></button>
+
+      </div>
+
+
+
+
+    </div>
+    <!-- //END SELECT EVENT TYPE SECTION -->
+
+    <p-dialog header="Workflow Step" width="450" [(visible)]="showWorkflowStepModal" [responsive]="true" showEffect="fade" [modal]="true" [closable]="true" *ngIf="selectedStep">
+      <form #workflowStepForm="ngForm" *ngIf="showWorkflowStepModal">
+
+        <div class="ui-g-12">
+            <mat-form-field class="width-full" >
+              <label class="minimal primary block" for="timeDelay">Enter Time Delay Amount (Enter 0 for immediate)</label>
+              <!-- This system should not compute the due date based on the time unit entered by staff -->
+                 <input matInput name="timeDelay" #timeDelayField="ngModel"
+                        [(ngModel)]="selectedStep.delayMinutes" required>
+                    <div class="ui-message ui-messages-error ui-corner-all"
+                        *ngIf="timeDelayField.errors?.required && timeDelayField.touched" >
+                        Please enter a time delay
+                  </div>
+                </mat-form-field>
+        </div>
+
+        <div class="ui-g-12">        
+            <label class="minimal primary block" for="timeDelayUnits">Choose Time Delay Unit</label>
+            <p-dropdown 
+              name="delayUnit" #delayUnit="ngModel"
+              [options]="timeDelayUnits"    
+              [(ngModel)]= "selectedStep.delayUnit"
+              (onChange)="timeDelayUnitOnChange($event)"
+              (onSelect)="timeDelayUnitOnChange($event)"
+              styleClass="width-full"  appendTo="body">
+            </p-dropdown>
+        </div>
+
+        <div class="ui-g-12">        
+            <label class="minimal primary block" for="priorityTypes">Choose Task Priority</label>
+            <p-dropdown 
+              name="taskProprityCode" #taskProprity="ngModel"
+              [options]="priorityTypes"    
+              [(ngModel)]= "selectedStep.taskPriorityCode"
+              (onChange)="taskPriorityOnChange($event)"
+              (onSelect)="taskPriorityOnChange($event)"
+              styleClass="width-full"  appendTo="body">
+            </p-dropdown>
+        </div>
+
+        <div class="ui-g-12">
+            <label class="minimal primary block" for="task">Task*</label>
+            <p-dropdown name="task" #taskField="ngModel" placeholder="choose Task..."
+                [required]="true"
+                [options]="taskTypes"
+                optionLabel="name"
+                [filter]="true"
+                [(ngModel)]="selectedStep.taskType"
+                styleClass="width-full"  appendTo="body">
+            </p-dropdown>
+            <!-- <button pButton label="+" (click)="showNewTaskTypeModal = true;"></button> -->
+            <button pButton icon="fa-plus" class="mt-10 ui-button-secondary ui-button-icon-only clear-btn inline"
+                    (click)="showNewTaskTypeModal = true;"></button>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="taskField.errors?.required && taskField.touched" >
+                  Please select a task
+            </div>
+          </div>
+
+        <div class="ui-g-12">
+          <!-- <label class="minimal primary block">Document</label> -->
+          <custom-autocomplete name="acDocument" id="acDocument" #acDocument="ngModel" placeholder="Document Template*"
+            [required]="true"
+            [options]="documentTemplates"
+            labelField="documentName"
+            dataField="documentTemplateOID"
+            [ngModel]="selectedStep.documentTemplateOID"
+            (ngModelChange)="documentSelected($event)"
+            styleClass="width-full"
+          >
+            <ng-template let-option>
+              <div class="custom-ac-label1">
+                {{option.documentName}}
+              </div>
+            </ng-template>
+          </custom-autocomplete>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="acDocument.errors?.required && acDocument.touched" >
+                Please select a document template
+          </div>
+        </div>
+
+        <!-- <div class="ui-g-12">
+          <label class="minimal primary block" for="document">Document</label>
+          <p-dropdown name="document" #documentField="ngModel" placeholder="choose Document..."
+              [required]="true"
+              [options]="documentTemplates"
+              optionLabel="documentName"
+              [ngModel]="selectedStep.documentTemplateOID"
+              (onChange)="documentSelected($event);"
+              styleClass="width-full" >
+          </p-dropdown>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="documentField.errors?.required && documentField.touched" >
+                Please select a document template
+          </div>
+        </div> -->
+
+        <!-- <div class="ui-g-12">
+          <label class="minimal primary block" for="resource">Assigned Resource</label>
+          <mat-form-field class="width-full" >
+              <mat-select placeholder="choose Resource..." name="resource"
+                  [value]="assignedPartyOrPool"
+                  (selectionChange)="assignedPartyOrPool = $event.value;" >
+
+                <mat-optgroup label="Staff Pools">
+                  <mat-option *ngFor="let pool of staffPools" [value]="pool">
+                      {{ pool.poolName }}
+                  </mat-option>
+                </mat-optgroup>
+                <mat-optgroup label="Court Parties">
+                  <mat-option *ngFor="let party of parties" [value]="party">
+                      {{ party.firstName }} {{ party.lastName }}
+                  </mat-option>
+                </mat-optgroup>
+              </mat-select>
+            </mat-form-field>
+        </div> -->
+
+        <div class="ui-g-12">
+          <!-- <label class="minimal primary block">Assigned Resource</label> -->
+          <custom-autocomplete name="acResource" id="acResource" #acResource="ngModel" placeholder="Assigned Resource*"
+            [required]="true"
+            [options]="poolParties"
+            labelField="fullName"
+            dataField="id"
+            [ngModel]="selectedPoolParty?.id"
+            (ngModelChange)="poolPartyOnChange($event)"
+            styleClass="width-full"
+          >
+          <!--
+             -->
+            <ng-template let-option>
+              <div class="custom-ac-label1">
+                {{option.fullName}}
+              </div>
+            </ng-template>
+          </custom-autocomplete>
+
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="acResource.errors?.required && acResource.touched" >
+                Please assign a resource
+          </div>
+        </div>
+
+        <!-- SAVE / CANCEL BUTTONS -->
+        <div class="ui-g-12 ta-r">
+            <button type="button"
+                    (click)="saveWorkflowStep()"
+                    label="Add Step"
+                    icon="ui-icon-add"
+                    class="secondary"
+                    pButton
+                    [disabled]="!selectedEventWorkflow"></button>
+            <button type="button"
+                    (click)="cancelWorkflowEdit()"
+                    label="Cancel"
+                    icon="ui-icon-clear"
+                    class="ui-button-secondary"
+                    pButton
+                    [disabled]="!selectedEventWorkflow"></button>
+
+        </div>
+      </form>
+    </p-dialog>
+
+    <p-dialog header="Confirm Deletion" [(visible)]="showDeleteWorkflowStepConfirmation" [responsive]="true" showEffect="fade" [closable]="true" [modal]="true">
+      <h3>Are you sure you want to delete this workflow step?</h3>
+
+      <div class="ui-g-12 ta-r">
+          <button type="button"
+                  (click)="confirmDeleteWorkflowStep()"
+                  label="Yes"
+                  icon="ui-icon-check"
+                  class="secondary"
+                  pButton></button>
+          <button type="button"
+                  (click)="clearSelectedWorkflowStep()"
+                  label="No"
+                  icon="ui-icon-clear"
+                  class="ui-button-secondary"
+                  pButton></button>
+
+      </div>
+    </p-dialog>
+
+    <p-dialog header="Create Task Type" width="410" [(visible)]="showNewTaskTypeModal" [responsive]="true" showEffect="fade" [closable]="true" >
+      <form #taskTypeForm="ngForm" *ngIf="showNewTaskTypeModal">
+
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="taskName">Name</label>
+            <mat-form-field class="width-full" >
+              <input matInput name="taskName" #taskNameField="ngModel"
+                      [(ngModel)]="taskName" required>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="taskNameField.errors?.required && taskNameField.touched" >
+                    Please enter a Task Name
+              </div>
+            </mat-form-field>
+          </div>
+
+
+        <div class="ui-g-12">
+          <label class="minimal primary block" for="taskDescription">Description</label>
+          <mat-form-field class="width-full" >
+            <textarea matInput name="taskDescription" #taskDescriptionField="ngModel"
+                    [(ngModel)]="taskDescription" required>
+            </textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="ui-g-12 ta-r">
+            <button type="button"
+                    (click)="saveNewTaskType()"
+                    label="Save"
+                    icon="ui-icon-check"
+                    class="secondary"
+                    pButton></button>
+            <button type="button"
+                    (click)="clearTaskType()"
+                    label="Cancel"
+                    icon="ui-icon-clear"
+                    class="ui-button-secondary"
+                    pButton></button>
+
+        </div>
+      </form>
+    </p-dialog>
+  </div>

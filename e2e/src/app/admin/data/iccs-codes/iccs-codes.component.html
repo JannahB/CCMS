@@ -1,0 +1,98 @@
+<div class="ui-g-4 ui-sm-12 mt-25">
+  <h2 class="mt-0" style="margin-bottom:35px;">{{tableLabel}}s </h2>
+
+  <mat-selection-list #itemsList (selectionChange)="onSelectionChange($event)" class="items-list">
+    <mat-list-option *ngFor="let item of typeItems; let i=index; let itm" [class.hi]="selected" [value]="item">
+      {{ item.categoryName }}
+    </mat-list-option>
+  </mat-selection-list>
+
+  <button mat-raised-button color="primary" (click)="createNewItem()" class="mt-15 width-full">
+    <mat-icon aria-label="Add data item button">add</mat-icon>
+    New Data Item
+  </button>
+</div>
+
+<div class="ui-g-8 ui-sm-12">
+  <div class="ui-g-6">
+    <h2 class="">{{tableLabel}}</h2>
+  </div>
+  <div class="ui-g-6 ta-r">
+    <!--  nothing to see hear, folks -->
+  </div>
+
+  <div class="ui-g-12">
+    <!-- -->
+    <div class="card" style="min-height:322px;" *ngIf="selectedItem">
+
+      <form (ngSubmit)="saveDataItem()" #tplForm="ngForm" novalidate>
+        <div class="ui-g form-group">
+
+          <!-- Parent ID -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <mat-form-field class="width-full">
+                <input matInput name="tiParentOID" #tiParentOID="ngModel" placeholder="Parent ID" [(ngModel)]="selectedItem.parentOID">
+                <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiParentOID.errors?.required && tiParentOID.touched">
+                  Please enter the Parent ID
+                </div>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Category Type and ID -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <mat-form-field class="width-full">
+                <input matInput name="tiCategoryID" #tiCategoryID="ngModel" placeholder="Category Identifier" [(ngModel)]="selectedItem.categoryIdentifier">
+                <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiCategoryID.errors?.required && tiCategoryID.touched">
+                  Please enter the Category Identifier
+                </div>
+              </mat-form-field>
+            </div>
+            <div class="ui-g-6">
+              <mat-form-field class="width-full">
+                <input matInput name="tiCategoryType" #tiCategoryType="ngModel" placeholder="Category Type" [(ngModel)]="selectedItem.categoryType">
+                <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiCategoryType.errors?.required && tiCategoryType.touched">
+                  Please enter a Category Type
+                </div>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Category Name -->
+          <div class="ui-g-12">
+            <mat-form-field class="width-full">
+              <input matInput name="tiCategoryName" #tiCategoryName="ngModel" placeholder=" Category Name" [required]="true"
+                [(ngModel)]="selectedItem.categoryName">
+              <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiCategoryName.errors?.required && tiCategoryName.touched">
+                Please enter the Category Name
+              </div>
+            </mat-form-field>
+          </div>
+
+          <!-- SAVE / CANCEL BUTTONS -->
+          <div class="ui-g-12 ta-r">
+            <button type="button" (click)="deleteDataItemRequest()" [disabled]="!selectedItem.iccsCodeOID" label="Delete"
+              icon="ui-icon-delete" class="ui-button-danger fl" pButton></button>
+            <button type="button" (click)="saveDataItem()" [disabled]="!tplForm.form.valid" label="Save" icon="ui-icon-check"
+              class="secondary" pButton></button>
+            <button type="button" (click)="cancelDataItemEdit()" label="Cancel" icon="ui-icon-clear" class="ui-button-secondary"
+              pButton></button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteItemModal" [responsive]="true" showEffect="fade"
+  [modal]="true" [closable]="false">
+  <div>Are you sure you want to delete this item?</div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
+      <button label="Yes" type="button" pButton icon="fa-check" (click)="deleteDataItem()"></button>
+    </div>
+  </p-footer>
+</p-dialog>

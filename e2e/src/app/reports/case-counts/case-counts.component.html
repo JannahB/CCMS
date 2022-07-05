@@ -1,0 +1,44 @@
+<div class="ui-g">
+
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0">
+    <h1 class="page-header mt-0">Counts Report</h1>
+  </div>
+
+  <div class="ui-g-12 card">
+
+    <!-- CASE Count TABLE -->
+
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <h2>Court Case Counts</h2>
+      </div>
+      <div class="ui-g-4">
+        <div class="ui-g-9 ui-sm-12 large">
+          <label class="mr-10">Year</label>
+          <p-dropdown [options]="filterYears" [(ngModel)]="selectedYear" (onChange)="onYearChange($event)" [style]="{'width':'100px'}" ></p-dropdown>
+        </div>
+      </div>
+
+      <div class="ui-g-12">
+        <p-dataTable [value]="courtCounts" selectionMode="single"
+                     [(selection)]="selectedCourt"
+                     (onRowSelect)="onRowSelect($event)"
+                     scrollable="true" scrollHeight="280px"
+                     dataKey="courtId" #dtcourtCounts>
+          <p-column field="name" header="Court" [style]="{'width':'25%'}"></p-column>
+          <p-column field="casesYear" header="Total" [style]="{'width':'15%', 'text-align':'center'}"></p-column>
+          <p-column field="casesClosedYear" header="Closed" [style]="{'width':'15%', 'text-align':'center'}"></p-column>
+          <p-column field="casesActive" header="Active" [style]="{'width':'15%', 'text-align':'center'}"></p-column>
+          <p-column field="casesInactive" header="Inactive" [style]="{'width':'15%', 'text-align':'center'}"></p-column>
+          <p-column field="casesTwelve" header="12mo Rolling" [style]="{'width':'15%', 'text-align':'center'}"></p-column>
+        </p-dataTable>
+      </div>
+
+      <div class="ui-g-12">
+        <!-- CHART -->
+        <p-chart type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
+      </div>
+    </div>
+  </div>
+</div>

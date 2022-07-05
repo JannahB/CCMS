@@ -1,0 +1,322 @@
+// Overrides -------------
+
+body {
+
+  background: linear-gradient(to bottom, #E6EFF6, #e9fffb);
+
+  .layout-wrapper{
+    height: 100%;
+    width: 100%;
+
+    .layout-container{
+      height: 100%;
+      width: 100%;
+
+      .layout-main {
+        height: 100%;
+        width: auto;
+      }
+      .footer {
+        padding: .5em;
+        padding-left: 0;
+        padding-right: 0px;
+        font-size: 10px;
+
+        .card {
+          padding: 0.25em 2em 0.25em 2em;
+        }
+      }
+    }
+  }
+}
+
+
+body .ui-widget-header .ui-inputtext, .ui-widget-content .ui-inputtext {
+  width: 100%;
+}
+
+.court-dropdown{
+  ul.ui-dropdown-items.ui-dropdown-list {
+    padding: 0 !important;
+
+    li {
+      font-size: inherit;
+    }
+  }
+}
+
+// ------------------------
+// CALENDAR
+// ------------------------
+body .ui-datepicker .ui-datepicker-header select.ui-datepicker-month,
+body .ui-datepicker .ui-datepicker-header select.ui-datepicker-year {
+  font-size: 15px;
+  color: #444;
+  background-color: white;
+}
+
+.task-date-range{
+  span.ui-calendar.ui-calendar-w-btn {
+    width: 100%;
+  }
+
+  input.ui-inputtext.ui-widget {
+    font-size: 0.9em;
+  }
+}
+
+.task-multiselect {
+  .ui-widget-header.ui-corner-all.ui-multiselect-header.ui-helper-clearfix::after {
+    content: "Show all";
+    display: inline;
+  }
+
+  .ui-multiselect .ui-multiselect-label{
+    font-size: 0.9em;
+  }
+}
+
+
+// Remove L/R gutters on phone
+@media (max-width: 600px) {
+
+  .layout-container .layout-main .layout-content{
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+  body .ui-fieldset {
+    padding-left: 0 !important;
+    padding-right:0 !important;
+  }
+
+  .ui-g.form-group > div {
+    padding: 1em 0.33em;
+  }
+}
+
+.layout-container .ultima-menu li a {
+  // padding: 1em 1em;
+}
+.layout-container .ultima-menu li a i:first-child {
+  // font-size: 2em;
+}
+
+.layout-container .topbar .logo {
+  // margin-top: -5px;
+}
+
+
+// Toggleable Fieldsets
+// must include 'body' b/c primeng uses it
+body {
+  .base-fieldset {
+
+    label.input-label {
+      font-size: 0.8em;
+      color: #777777;
+      text-transform: uppercase;
+    }
+    label.section-label {
+      font-size: 0.8em;
+      color: #026cb6;
+      text-transform: uppercase;
+    }
+
+    .ui-tabmenu .ui-tabmenu-nav {
+      background: none;
+    }
+    .ui-widget-content {
+      border: none;
+    }
+    .ui-tabview .ui-tabview-panel {
+      padding: 0.625em 0em;
+    }
+    .ui-tabview.ui-widget.ui-widget-content.ui-corner-all.ui-tabview-top {
+      border: none;
+      background: none;
+    }
+    .ui-fieldset .ui-fieldset-legend {
+      font-size: 1.35em;
+    }
+    .ui-fieldset .ui-fieldset-legend .ui-fieldset-toggler {
+      font-size: 0.75em;
+      padding: .25em;
+      height: 1.5em;
+      width: 1.5em;
+      border-radius: 4px;
+    }
+    .ui-tabview .ui-tabview-nav li {
+      font-size: 1.2em;
+      list-style: none;
+      float: left;
+      position: relative;
+      margin: 0 .125em 1px 0;
+      padding: 0;
+      white-space: nowrap;
+    }
+    .ui-fieldset-toggleable {
+      background: white;
+      border: 1px solid #BAD9F1;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+    }
+  }
+  @media (max-width: 600px) {
+    .base-fieldset {
+      .ui-tabview .ui-tabview-nav li {
+        font-size: 1em;
+      }
+    }
+    .ui-fieldset {
+      padding: 0.625em 0;
+    }
+  }
+}
+
+// Horizontal Menu --------------
+
+@media (min-width: 1025px) {
+
+  .layout-container.menu-layout-horizontal .layout-menu {
+    overflow: visible;
+    position: fixed;
+    width: 100%;
+    top: 60px;
+    height: auto;
+    border-bottom: #949179 1px solid;
+    background-color: #a7a596;
+    box-shadow: 0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
+  }
+}
+
+.casePartyModal{
+  min-height: 650px;
+
+  .ui-tabview-panels {
+    padding-top: 30px;
+  }
+}
+
+// BUTTONS -------------------------
+.btn-big.ui-button {
+  height: 50px;
+  border-radius: 0;
+  box-shadow: none;
+
+
+
+  .ui-button-text, .ui-button-icon-left {
+    font-weight: 300;
+    font-size: 1.25em;
+    line-height: 1em;
+  }
+
+  .ui-button-text{
+    text-transform: uppercase;
+  }
+
+  &.btn-md {
+    font-size: 0.7em;
+    font-weight: 700;
+    height: auto;
+    padding: 0.8rem;
+
+    .ui-button-text{
+      font-weight: 400;
+    }
+  }
+}
+
+
+// COLOR BOX ------------------------
+.dashboard {
+  .colorbox {
+
+    &.colorbox-urgent {
+      background-color: #b94839;
+
+      div:first-child {
+          background-color: #943326;
+      }
+    }
+    &.colorbox-neutral {
+      background-color: #9e9797;
+
+      div:first-child {
+          background-color: #727070
+      }
+    }
+  }
+}
+
+// AutoComplete Overlay
+.cdk-overlay-container{
+  z-index: 2000!important;
+}
+
+.mat-selection-list .mat-list-option {
+  font-size: 14px !important;
+}
+
+// TEXT INPUT PLACEHOLDER --------------------------
+body .ui-column-filter::placeholder {
+  color: #a1c8da;
+}
+body .ui-column-filter::-ms-input-placeholder {
+  color: #a1c8da;
+}
+
+body .ui-column-filter {
+  color:white;
+  border-bottom-color: #a1c8da;
+  border-bottom-width: 1px;
+}
+
+// DATA TABLE --------------------------------------
+body .lite-table .ui-datatable {
+
+  box-shadow: 0px 3px 24px 0px #dddddd;
+
+  .ui-datatable-thead > tr th {
+    background-color: white;
+    color: #1A87BF;
+  }
+  .ui-datatable-data tr.ui-state-highlight {
+    background-color: #E6EFF6;
+    color: #255d88;
+    border: 1px solid #d1e3f1;
+  }
+  .ui-datatable-data tr.ui-datatable-even.ui-state-highlight {
+    background-color: #E6EFF6;
+    color: #255d88;
+    border: 1px solid #d1e3f1;
+    box-shadow: 0px 4px 10px 1px #cccccc;
+  }
+  // TEXT INPUT PLACEHOLDER within a p-datatable --------------------------
+  .ui-column-filter::placeholder {
+    color: #adadad;
+  }
+  .ui-column-filter::-ms-input-placeholder {
+    color: #a1c8da;
+  }
+  .ui-column-filter {
+    color: #1A87BF;
+    border-bottom-color: #a1c8da;
+    border-bottom-width: 1px;
+    margin-top: 15px;
+  }
+}
+
+// Daypilot Calendar Override
+.calendar_default_event_inner {
+  line-height: 1em;
+}
+
+
+.ui-messages-error {
+  color: #ab1a0f;
+  background-color: #f7e2e1;
+  border-color: #ffcbc8;
+  font-size: 12px;
+  line-height: 12px;
+}

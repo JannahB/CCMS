@@ -1,0 +1,270 @@
+<div class="ui-g">
+
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0">
+    <h1 class="page-header mt-0">User Management</h1>
+  </div>
+
+  <!-- SEARCH USER CARD -->
+  <div class="ui-g-12 card">
+    <form (ngSubmit)="onSearch()" #searchForm="ngForm" novalidate>
+      <div class="form-group mt-20" >
+        <div class="ui-g-12 ph-30 big-search">
+          <span class="md-inputfield">
+            <input [(ngModel)]="partyNameText" name="tiName" type="text" class="width-full"  pInputText>
+            <label>Search First or Last Name (partial)</label>
+            <button type="submit" label="Search" icon="ui-icon-search" class="mr-20 mt-10 fr" pButton></button>
+            <button type="button" label="Reset" (click)="onReset()"  icon="ui-icon-autorenew" class="ui-button-secondary mt-10 mr-10 fr" pButton></button>
+          </span>
+          <div>
+            <p-message severity="info" text="{{recordsFoundMessage}}" *ngIf="showRecordsFoundMessage"></p-message>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="ui-g-12 mb-20 pos-relative">
+      <loading-bar [visible]="isSearching" [message]="'searching...'"></loading-bar>
+      <h2 class="mt-0">Search User Results</h2>
+      <p-dataTable [value]="partyResults" selectionMode="single"
+            [(selection)]="selectedParty" (onRowSelect)="partyOnRowSelect($event)"
+            scrollable="true" scrollHeight="280px"
+            dataKey="partyOID" #dtPartyResults>
+        <p-column field="firstName" header="First Name" [style]="{'width':'35%'}"></p-column>
+        <p-column field="lastName" header="Last Name" [style]="{'width':'35%'}"></p-column>
+        <p-column field="userName" header="User Name" styleClass="ta-c" [style]="{'width':'30%'}"></p-column>
+      </p-dataTable>
+    </div>
+
+    <div class="ui-g-12 mt-20 ta-c">
+      <button type="button" (click)="addNewUser()" label="New User" icon="ui-icon-add" pButton></button>
+    </div>
+  </div>
+  <!-- //END USER SEARCH CARD -->
+
+
+  <!-- USER DETAILS SECTION -->
+  <div class="ui-g-12 card">
+    <loading-bar [visible]="loadingUser" [message]="loadingMessage"></loading-bar>
+
+    <form #addUserForm="ngForm" novalidate>
+
+      <div class="form-group">
+
+        <div class="ui-g-12 ph-10">
+          <div class="ui-g-12 ui-md-8">
+              <h2 class="mb-0">User Details</h2>
+          </div>
+          <div class="ui-g-12 ui-md-4 ta-r pb-0">
+            <button type="button"
+                    (click)="saveUser(addUserForm)"
+                    label="Save User"
+                    icon="ui-icon-check"
+                    class="btn-big" pButton
+                    [disabled]="!addUserForm.form.valid"></button>
+          </div>
+        </div>
+
+        <!-- FIRST NAME -->
+        <div class="ui-g-12 ui-md-6 pad-20">
+          <span class="md-inputfield">
+            <input name="tiFirstName" #tiFirstName="ngModel" class="width-full"
+                [(ngModel)]="user.firstName" [required]="true" type="text"
+                pInputText>
+            <label>First Name</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiFirstName.errors?.required && tiFirstName.touched">
+            Please enter a First Name
+          </div>
+        </div>
+
+        <!-- LAST NAME -->
+        <div class="ui-g-12 ui-md-6 pad-20">
+          <span class="md-inputfield">
+            <input name="tiLastName" #tiLastName="ngModel" class="width-full"
+                [(ngModel)]="user.lastName" [required]="true" type="text"
+                pInputText>
+            <label>Last Name</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiLastName.errors?.required && tiLastName.touched">
+            Please enter a Last Name
+          </div>
+        </div>
+
+        <!-- EMAIL ADDRESS -->
+        <div class="ui-g-12 ui-md-6 pad-20" >
+          <span class="md-inputfield">
+            <input type="text" type="email" name="tiEmail" #tiEmail="ngModel" class="width-full"
+                [required]="true" [email]="true"
+                pattern="^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$"
+                [ngModel]="user.emails[0]?.emailAddress"
+                (ngModelChange)="emailChanged($event)"
+                pInputText>
+            <label>Email Address</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiEmail.errors?.required && tiEmail.touched">
+            Please enter an email address
+          </div>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiEmail.errors?.pattern && tiEmail.touched">
+            Please enter a valid email address
+          </div>
+        </div>
+
+
+        <!-- USER NAME -->
+        <div class="ui-g-12 ui-md-6 pad-20">
+          <span class="md-inputfield">
+            <input name="tiUserName" #tiUserName="ngModel" class="width-full"
+                [(ngModel)]="user.userName" [required]="true" type="text"
+                pInputText>
+            <label>User Name</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="tiUserName.errors?.required && tiUserName.touched">
+            Please enter a User Name
+          </div>
+        </div>
+
+
+        <ng-template #resetPasswordTemplate>
+          <div class="ui-g-12 ui-md-6 pad-20">
+            <button type="button"
+              (click)="onShowResetPassword()"
+              label="Reset Password"
+              icon="ui-icon-refresh"
+              class="ui-button-secondary" pButton></button>
+          </div>
+        </ng-template>
+
+        <div *ngIf="user.partyOID == 0 || showResetPassword; else resetPasswordTemplate">
+
+          <!-- PASSWORD -->
+          <div class="ui-g-12 ui-md-6 pad-20">
+            <span class="md-inputfield">
+              <input name="tiUserPwd" #tiUserPwd="ngModel" class="width-full"
+                  [(ngModel)]="user.password" [required]="true" minlength="6" type="password"
+                  pInputText>
+              <label>Password</label>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiUserPwd.errors?.required && tiUserPwd.touched">
+              Please enter a Password for the User
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiUserPwd.errors?.minlength && tiUserPwd.touched">
+              Password must be a minimum of 6 characters
+            </div>
+          </div>
+
+          <!-- PASSWORD CONFIRM -->
+          <div class="ui-g-12 ui-md-6 pad-20">
+            <span class="md-inputfield">
+              <input name="tiUserPwd2" #tiUserPwd2="ngModel" class="width-full" [(ngModel)]="password2"
+                  [required]="true" minlength="6" type="password"
+                  pInputText>
+              <label>Confirm Password</label>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiUserPwd2.errors?.required && tiUserPwd2.touched">
+              Please enter a Confirmation Password for the User
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiUserPwd.errors?.minlength && tiUserPwd.touched">
+              Password must be a minimum of 6 characters
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="password2?.length >= user.password?.length && user.password != password2 && tiUserPwd.touched">
+              Passwords must be the same
+            </div>
+          </div>
+
+          <!-- Cancel Reset Password Button -->
+          <span *ngIf="user.partyOID > 0 && showResetPassword" class="pl-20">
+            <button type="button"
+              (click)="showResetPassword = false;"
+              label="Cancel Reset Password"
+              icon="ui-icon-refresh"
+              class="ui-button-secondary" pButton></button>
+          </span>
+        </div>
+
+        <!-- ADD COURTS & ROLES SECTION  -->
+
+        <div class="ui-g-12 mt-0">
+          <div class="ui-g-12">
+            <h2 class="mb-10">Authorized Courts &amp; Roles</h2>
+          </div>
+
+          <!-- COURTS & ROLES -->
+
+          <div class="ui-g-12 mb-5 courts-th">
+            <div class="ui-g-5 pv-0">
+              Courts
+            </div>
+            <div class="ui-g-6 pv-0">
+              Roles
+            </div>
+          </div>
+
+          <div class="ui-g-12 mb-5 authCourt-row" *ngFor="let authCourt of user.authorizedCourts; let acIdx = index">
+            <div class="ui-g-5 ph-20 pv-5">
+              <mat-form-field class="width-full" >
+                <!-- Note: This will break [(ngModel)]="authCourt". Use [value]="authCourt" instead -->
+                <mat-select placeholder="Court" name="ddCourt"
+                    [compareWith]="compareByCourtId"
+                    [value]="authCourt"
+                    (selectionChange)="courtOnChange($event, acIdx)" >
+                  <mat-option *ngFor="let ct of courts" [value]="ct">
+                    {{ct.courtName}} {{ct.locationCode}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+
+            <div class="ui-g-6 ph-20 pv-5">
+              <mat-form-field class="width-full" >
+                <mat-select placeholder="Staff Roles" name="ddStaffRoles" multiple
+                    [compareWith]="compareByRoleId"
+                    [value]="authCourt.roles"
+                    (filter) = "true"
+                    (selectionChange)="staffRolesOnChange($event, acIdx)" >
+                  <mat-option *ngFor="let sRole of staffRoles" [value]="sRole">
+                    {{sRole.staffRoleName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
+              <i class="material-icons delete-icon" (click)="requestDeleteAuthCourt(acIdx)">delete</i>
+            </div>
+          </div>
+
+          <div class="ui-g-12">
+            <button type="button" (click)="addAuthCourt();" label="Add Court &amp; Role"
+                  icon="ui-icon-add" class="ui-button-secondary mr-15"
+                  pButton></button>
+          </div>
+
+        </div>
+
+        <!-- SAVE BUTTON -->
+        <div class="ui-g-12 ph-10">
+          <div class="ui-g-12 ta-r">
+            <button type="button"
+                    (click)="saveUser(addUserForm)"
+                    label="Save User"
+                    icon="ui-icon-check"
+                    class="btn-big" pButton
+                    [disabled]="!addUserForm.form.valid"></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

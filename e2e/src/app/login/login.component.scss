@@ -1,0 +1,76 @@
+
+
+
+.login{
+
+  .login-logo{
+    width: 200px;
+    margin-bottom: 30px;
+
+    // display: inline-block;
+    // vertical-align: middle;
+    // width: 150px;
+    // height: 78px;
+    // background: url(../images/logo/logo-red-300x156.png) top left no-repeat;
+    // background-size: 150px 78px;
+  }
+
+  h1 {
+    font-size: 2em;
+    font-weight: 100;
+    text-transform: uppercase;
+    color: white;
+  }
+
+  .bg-img{
+
+    background: url('./../../assets/layout/images/login/red_glow.jpg');
+    background-repeat: no-repeat;
+    //background-size: 66.5%, 300%, 300%;
+    //background-size: center;
+    background-size: 66.5% 100%;
+    background-position:top right;
+  }
+
+  .login-container{
+    // background-color: rgba(255, 255, 255, 0.5);
+
+    // Blue Theme
+    background: linear-gradient( rgba(26, 135, 191,0.75), rgba(37, 191, 107, 0.75));
+
+    // Red Theme
+    // background: linear-gradient( rgba(192, 45, 26, 0.75), rgba(100, 95, 94, 0.75));
+  }
+
+  input {
+    width: 100%;
+    color: black;
+    font-size: 1.5em;
+    font-weight: 100;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 20px;
+  }
+
+  input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+    background-color: #BAD9F1 !important;
+    background-image: none !important;
+    color: #3369b1 !important;
+  }
+
+  .md-inputfield label {
+
+    text-transform: uppercase;
+    color: white;
+    font-size: 0.85em;
+    font-weight: 700;
+    top: -15px;
+  }
+
+  .ui-button {
+    font-size: 1.4em;
+    text-transform: uppercase;
+    height: 70px;
+  }
+}
+
+

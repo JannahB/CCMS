@@ -1,0 +1,34 @@
+<div class="layout-breadcrumb">
+    <ul>
+        <li>
+            <a routerLink="">
+                <i class="material-icons">home</i>
+            </a>
+        </li>
+        <li>/</li>
+        <ng-template ngFor let-item let-last="last" [ngForOf]="items">
+            <li>
+                <a [routerLink]="item.routerLink" *ngIf="item.routerLink">{{item.label}}</a>
+                <ng-container *ngIf="!item.routerLink">{{item.label}}</ng-container>
+            </li>
+            <li *ngIf="!last">/</li>
+        </ng-template>
+    </ul>
+
+    <div class="layout-breadcrumb-options">
+        <!-- <span class="text-muted">North Children Court</span> -->
+        <div class="pt-5">
+
+          <mat-form-field class="width-full court-dropdown" floatLabel="never" >
+            <mat-select placeholder="Court" name="ddCourt"
+                [ngModel]="selectedCourt.courtOID"
+                (selectionChange)="courtOnChange($event)" >
+              <mat-option *ngFor="let ct of courts" [value]="ct.courtOID">
+                {{ct.courtName}} {{ct.locationCode}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+    </div>
+</div>

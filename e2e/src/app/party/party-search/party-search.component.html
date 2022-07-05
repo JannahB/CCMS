@@ -1,0 +1,82 @@
+<div class="ui-g">
+
+    <!-- HEADER -->
+    <div class="ui-g-12 pv-0">
+      <h1 class="page-header mt-0">Search Party</h1>
+    </div>
+
+    <!-- FIRST SECTION -->
+    <div class="ui-g-12 card">
+
+      <form (ngSubmit)="onSearch(0)" #searchForm="ngForm" novalidate>
+
+        <div class="form-group mt-20" >
+          <div class="ui-g-12 ph-30 big-search">
+            <span class="md-inputfield">
+              <input [(ngModel)]="partyNameText" name="tiName" type="text" class="width-full"  pInputText>
+              <label>Full Name / Partial Name / Alias</label>
+            </span>
+            <div>
+              <p-message severity="info" text="{{recordsFoundMessage}}" *ngIf="showRecordsFoundMessage"></p-message>
+            </div>
+          </div>
+
+
+          <!-- SEARCH BUTTONS -->
+          <div class="ui-g-12 mt-20 ta-c">
+            <button type="submit" label="Search" icon="ui-icon-search" class="mr-20" pButton></button>
+
+            <button type="button" (click)="onReset()" label="Reset" icon="ui-icon-autorenew" class="ui-button-secondary " pButton></button>
+          </div>
+
+        </div>
+      </form>
+
+      <!-- CASE PARTIES TABLE -->
+
+      <div class="ui-g-12 mv-20">
+        <h2>Search Party Results</h2>
+        <loading-bar [visible]="isSearching" [message]="'searching...'"></loading-bar>
+
+        <p-dataTable [value]="partyResults" selectionMode="single" [(selection)]="selectedParty" (onRowSelect)="partyOnRowSelect($event)"
+          scrollable="true" scrollHeight="280px"
+          dataKey="partyOID" #dtPartyResults>
+          <p-column field="firstName" header="Is Org?" [style]="{'width':'7%', 'text-align':'center'}">
+            <ng-template pTemplate="body" let-item="rowData" >
+                <i class="fa ui-icon-check task-done" *ngIf="item.isOrganization"></i>
+                <!-- <i class="fa ui-icon-close"*ngIf="!item.isOrganization" ></i> -->
+            </ng-template>
+          </p-column>
+          <p-column field="fullName" header="Full Name" [style]="{'width':'20%'}" [sortable]="true">
+            <!-- Christian: changed first/lastName to fullName -->
+              <ng-template pTemplate="body" let-item="rowData">
+                  {{ item | name }}
+              </ng-template>
+          </p-column>
+          <p-column field="alternativeName" header="Alias" styleClass="ta-c" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+          <p-column field="dob" header="DOB" styleClass="ta-c" [style]="{'width':'15%'}" [sortable]="true">
+              <ng-template pTemplate="body" let-item="rowData">
+                  {{item.dob | date:'dd-MMM-yyyy'}}
+              </ng-template>
+          </p-column>
+          <p-column field="age" header="Age" styleClass="ta-c" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+          <p-column field="sex" header="Sex" styleClass="ta-c" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+          <p-column field="maritalStatus" header="Marital Status" styleClass="ta-c" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+          <p-column field="countryOfBirth" header="Nationality" styleClass="ta-c" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+        </p-dataTable>
+      </div>
+
+      <div class="ui-g-12 mt-20 ta-c">
+          <button *ngIf="page !=0" type="button" (click)="onSearch(page-1)" label="Previous 10" class="ui-button-secondary "  pButton></button>
+        <button *ngIf="partyResults?.length == size" type="button" (click)="onSearch(page+1)" class="ui-button-secondary " label="Next 10" pButton></button>
+      </div>
+
+      <div class="ui-g-12 mt-20 ta-c" *ngIf="hasPermission(Permission.CREATE_PARTY)">
+        <button type="button" (click)="onNewParty()" label="New Party" icon="ui-icon-add" pButton></button>
+      </div>
+
+
+
+    </div>
+    <!-- //END FISRT CARD -->
+  </div>

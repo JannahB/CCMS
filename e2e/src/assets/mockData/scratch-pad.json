@@ -1,0 +1,54 @@
+{
+  "id": 1,
+  "name": "Children North Court",
+  "description": "#6 Elizabeth Street, St. Clair, POS - Test",
+  "court": 5,
+  "days": [
+    {
+      "id": 16,
+      "start": "2018-01-02T08:30:00-05:00",
+      "end": "2018-01-02T10:30:00-05:00",
+      "text": "Available"
+    },
+    {
+      "id": 9,
+      "start": "2018-01-01T04:00:00-05:00",
+      "end": "2018-01-01T07:00:00-05:00",
+      "text": "Available"
+    },
+    {
+      "id": 10,
+      "start": "2018-01-02T04:00:00-05:00",
+      "end": "2018-01-02T07:00:00-05:00",
+      "text": "Available"
+    },
+    {
+      "id": 14,
+      "start": "2018-01-03T04:00:00-05:00",
+      "end": "2018-01-03T08:00:00-05:00",
+      "text": "Available"
+    },
+    {
+      "start": "2018-06-19T09:00:00Z",
+      "end": "2018-06-19T12:00:00Z",
+      "id": 6335588132532091,
+      "text": "Available"
+    },
+    {
+      "start": "2018-06-19T13:00:00Z",
+      "end": "2018-06-19T17:00:00Z",
+      "id": 5780475101379328,
+      "text": "Available"
+    }
+  ],
+  "tags": [
+    {
+      "id": 1,
+      "name": "Jury Room"
+    },
+    {
+      "id": 3,
+      "name": "Video Conferencing"
+    }
+  ]
+}

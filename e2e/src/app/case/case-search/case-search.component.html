@@ -1,0 +1,221 @@
+<div class="ui-g">
+
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0 header-bg">
+    <h1 class="page-header mt-0">Search Case</h1>
+  </div>
+
+  <!-- FIRST SECTION -->
+  <div class="ui-g-12 card">
+
+    <form (ngSubmit)="onSearch(0)" #searchForm="ngForm" novalidate>
+
+      <div class="form-group mt-20" >
+        <div class="ui-g-12 ui-md-6">
+            <span class="md-inputfield">
+                <input [(ngModel)]="caseNumberText" name="tiCaseNumber" type="text" class="width-full"  pInputText>
+                <label>Case Number (partial)</label>
+            </span>
+        </div>
+
+        <div class="ui-g-12 ui-md-6">
+            <span class="md-inputfield">
+                <input [(ngModel)]="casePartyNameText" name="tiCasePartyName" type="text" class="width-full" pInputText>
+                <label>Case Party Full Name (partial)</label>
+            </span>
+        </div>
+
+        <div class="ui-g-12 ui-md-3">
+          <label class="minimal primary block">Case Party Type</label>
+          <p-dropdown placeholder="-" name="ddRoleType" optionLabel="name" [options]="casePartyRoleTypes"
+              [(ngModel)]="selectedCasePartyRoleType"
+              (onChange)="casePartyTypeOnChange($event)"
+              [filter]="true"
+              styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+        <div class="ui-g-12 ui-md-3">
+          <label class="minimal primary block">Case Type</label>
+          <p-dropdown placeholder="-" name="ddCaseType" optionLabel="name" [options]="caseTypes"
+              [(ngModel)]="selectedCaseType"
+              (onChange)="onCaseTypeSelect($event)"
+              [filter]="true"
+              styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+        <div class="ui-g-12 ui-md-3">
+          <label class="minimal primary block">Case Phase</label>
+          <p-dropdown placeholder="-" name="ddCasePhase" optionLabel="name" [options]="casePhaseTypes"
+              [(ngModel)]="selectedCasePhaseType"
+              [filter]="true"
+              (onFocus)="casePhaseOnFocus()"
+              styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+        <div class="ui-g-12 ui-md-3">
+          <label class="minimal primary block">Case Status</label>
+          <p-dropdown placeholder="-" name="ddCaseStatus" optionLabel="name" [options]="caseStatusTypes"
+              [(ngModel)]="selectedCaseStatusType"
+              [filter]="true"
+              styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+        <!-- SEARCH BUTTONS -->
+        <div class="ui-g-12 mt-20 ta-c">
+          <button type="submit" label="Search" icon="ui-icon-search" class="mr-20" pButton></button>
+
+          <button type="button" (click)="onReset()" label="Reset" icon="ui-icon-autorenew" class="ui-button-secondary " pButton></button>
+        </div>
+
+      </div>
+    </form>
+    <!-- CASE PARTIES TABLE -->
+
+    <div class="ui-g-12 mv-20 pos-relative">
+        <loading-bar [visible]="isSearching" [message]="'searching...'"></loading-bar>
+      <h2>Search Case Results</h2>
+      <p-dataTable [value]="caseResults" selectionMode="single" [(selection)]="selectedCase" (onRowSelect)="caseOnRowSelect($event)"
+        scrollable="true" scrollHeight="280px"
+        dataKey="caseOID" #dtCaseResults>
+        <p-column field="caseNumber" header="Case Number" [style]="{'width':'13%'}" [sortable]="true"></p-column>
+
+        <p-column header="Caption" [style]="{'width':'23%'}" [sortable]="true">
+          <ng-template pTemplate="body" let-item="rowData">
+            <div *ngIf="item.sealIndicator == 1" >
+                <span style="color:red">
+                 Case Sealed
+              </span>
+            </div>
+
+            <div *ngIf="item.sealIndicator == 0" >
+              <span>
+                {{ item.caseCaption }}
+            </span>
+          </div>
+          </ng-template>
+        </p-column>
+
+        <p-column header="Case Type" [style]="{'width':'15%'}" [sortable]="true">
+          <ng-template pTemplate="body" let-item="rowData">
+            <div *ngIf="item.sealIndicator == 1" >
+                <span style="color:red">
+                 Case Sealed
+              </span>
+            </div>
+
+            <div *ngIf="item.sealIndicator == 0" >
+              <span>
+                {{ item.caseType.name }}
+            </span>
+          </div>
+          </ng-template>
+        </p-column>
+
+        <p-column header="Case Status" [style]="{'width':'15%'}" [sortable]="true">
+          <ng-template pTemplate="body" let-item="rowData">
+            <div *ngIf="item.sealIndicator == 1" >
+                <span style="color:red">
+                 Case Sealed
+              </span>
+            </div>
+            <div *ngIf="item.sealIndicator == 0" >
+              <span>
+                {{ item.caseStatus.name }}
+            </span>
+          </div>
+          </ng-template>
+        </p-column>
+
+        <p-column header="Case Phase" [style]="{'width':'15%'}" [sortable]="true">
+          <ng-template pTemplate="body" let-item="rowData">
+            <div *ngIf="item.sealIndicator == 1" >
+                <span style="color:red">
+                 Case Sealed
+              </span>
+            </div>
+            <div *ngIf="item.sealIndicator == 0" >
+              <span>
+                {{ item.casePhase.name }}
+            </span>
+          </div>
+          </ng-template>
+        </p-column>
+
+        <!--p-column field="caseCaption" header="Caption" [style]="{'width':'25%'}" [sortable]="true"></p-column>
+        <p-column field="caseType.name" header="Case Type" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+        <p-column field="caseStatus.name" header="Case Status" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+        <p-column field="casePhase.name" header="Case Phase" [style]="{'width':'15%'}" [sortable]="true"></p-column-->
+
+        <div *ngIf="isReadOnly === false" >
+          <p-column styleClass="col-button" header="Create Assoc Case" [style]="{'width':'8%'}">
+              <ng-template let-item="rowData" pTemplate="body">
+                <i class="material-icons"
+                  (click)="createAssocatedCase($event, item)"
+                >library_books</i>
+              </ng-template>
+          </p-column>
+        </div>
+
+      </p-dataTable>
+    </div>
+
+    <div class="ui-g-12 mt-20 ta-c">
+        <button *ngIf="page !=0" type="button" (click)="onSearch(page-1)" label="Previous 10" class="ui-button-secondary "  pButton></button>
+      <button *ngIf="caseResults?.length == size" type="button" (click)="onSearch(page+1)" class="ui-button-secondary " label="Next 10" pButton></button>
+    </div>
+  </div>
+  <!-- //END FISRT CARD -->
+</div>
+
+
+<!-- ADD PASSWORD PROMPT FOR A SEALED CASE -->
+
+<p-dialog header="Please re-enter your password to access this file" styleClass="passwordPromptModal" width="650" [(visible)]="showModalPasswordPrompt" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+
+  <form #passwordForm="ngForm" *ngIf="showModalPasswordPrompt">
+    <div class="ui-g">
+      <div class="form-group" >
+
+        <div class="ui-g-12">
+
+        <div class="ui-g-12 mt-0">
+
+          <!-- PASSWORD RE-ENTRY -->
+          <div class="ui-g-12 mv-20">
+            <span class="md-inputfield ui-float-label">
+              <input pInputText id="password" name="password" #tiPassword="ngModel" type="password" class=""
+                      placeholder="re-enter password..."
+                      required
+                      [(ngModel)]="password"/>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="tiPassword.errors?.required && tiPassword.touched" >
+                  Please enter a Password
+            </div>
+          </div>
+
+     </div>
+     </div>
+    </div>
+  </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+
+        <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
+                (click)="hideModals()" >
+        </button>
+
+        <button type="submit" (click)="validatePassword(selectedCase.caseOID);" label="Submit Password"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+                pButton>
+        </button>
+      </div>
+    </p-footer>
+  </form>
+</p-dialog>
+

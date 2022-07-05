@@ -1,0 +1,84 @@
+[
+  {
+    "casePhaseOID": 2,
+    "courtOID": 5,
+    "caseTypeOID": 1,
+    "name": "Hearing \u0026 Management"
+  },
+  {
+    "casePhaseOID": 1,
+    "courtOID": 5,
+    "caseTypeOID": 1,
+    "name": "Intake"
+  },
+
+
+  {
+    "casePhaseOID": 13,
+    "courtOID": 5,
+    "caseTypeOID": 5,
+    "name": "Case Preparation Management"
+  },
+  {
+    "casePhaseOID": 14,
+    "courtOID": 5,
+    "caseTypeOID": 5,
+    "name": "Hearing"
+  },
+  {
+    "casePhaseOID": 12,
+    "courtOID": 5,
+    "caseTypeOID": 5,
+    "name": "Intake"
+  },
+  {
+    "casePhaseOID": 16,
+    "courtOID": 5,
+    "caseTypeOID": 5,
+    "name": "Monitoring"
+  },
+  {
+    "casePhaseOID": 17,
+    "courtOID": 5,
+    "caseTypeOID": 5,
+    "name": "Preliminary Inquiry"
+  },
+  {
+    "casePhaseOID": 15,
+    "courtOID": 5,
+    "caseTypeOID": 5,
+    "name": "Sentencing"
+  },
+  
+
+  {
+    "casePhaseOID": 8,
+    "courtOID": 5,
+    "caseTypeOID": 3,
+    "name": "Case Preparation Management"
+  },
+  {
+    "casePhaseOID": 9,
+    "courtOID": 5,
+    "caseTypeOID": 3,
+    "name": "Hearing"
+  },
+  {
+    "casePhaseOID": 7,
+    "courtOID": 5,
+    "caseTypeOID": 3,
+    "name": "Intake"
+  },
+  {
+    "casePhaseOID": 11,
+    "courtOID": 5,
+    "caseTypeOID": 3,
+    "name": "Monitoring"
+  },
+  {
+    "casePhaseOID": 10,
+    "courtOID": 5,
+    "caseTypeOID": 3,
+    "name": "Sentencing"
+  }
+]

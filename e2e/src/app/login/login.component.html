@@ -1,0 +1,64 @@
+
+<div class="ui-g login" >
+  <div class="ui-g-12 pad-0 card bg-img">
+    <div class="ui-g-12  pad-0">
+
+
+      <div class="ui-g-12 ui-md-6 ui-lg-4 login-container  pad-30">
+        <div class="ui-g-12 ta-c">
+          <img src="./../../assets/layout/images/logo/logo-white-200.png" class="login-logo">
+        </div>
+        <form #loginForm="ngForm" (ngSubmit)="loginClicked()">
+            <h1 class="ta-c">Login</h1>
+
+          <!-- USER NAME -->
+          <div class="ui-g-12 mv-20">
+            <span class="md-inputfield ui-float-label">
+              <input pInputText id="username" name="username" #tiUsername="ngModel" class=""
+                      placeholder="enter user name..."
+                      required
+                      [(ngModel)]="userName"/>
+              <label for="username">User Name</label>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="tiUsername.errors?.required && tiUsername.touched" >
+                  Please enter a User Name
+            </div>
+          </div>
+
+          <!-- USER NAME -->
+          <div class="ui-g-12 mv-20">
+            <span class="md-inputfield ui-float-label">
+              <input pInputText id="password" name="password" #tiPassword="ngModel" type="password" class=""
+                      placeholder="enter password..."
+                      required
+                      [(ngModel)]="password"/>
+              <label for="password">Password</label>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="tiPassword.errors?.required && tiPassword.touched" >
+                  Please enter a Password
+            </div>
+          </div>
+
+          <div class="ui-g-12 mv-20 ui-fluid">
+            <button pButton type="submit" label="Log In" (click)="loginClicked()" class="ui-button ui-button-secondary"
+                    [disabled]="isAttemptingLogin || !loginForm.form.valid"></button>
+
+            <!-- <button pButton type="button" label="Inline Button" style="margin-bottom:10px;width:auto" styleClass="flat"></button> -->
+
+          </div>
+          <div *ngIf="hasLoginFailed" class="ui-messages-error">Login Failed</div>
+
+          <div *ngIf="allowResetPasswordFeature">
+            Forgot your password?  <a [routerLink]="['/reset-password']">Reset it</a>.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+

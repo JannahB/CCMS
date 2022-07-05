@@ -1,0 +1,182 @@
+<div class="ui-g dashboard">
+
+  <div class="ui-g-12 ui-md-12 ph-0">
+    <div class="card">
+      <h1>Welcome to CCMS</h1>
+      <p>Welcome to the Trinidad and Tobago Criminal Court Case Management System.
+        All data contained herein is the official court record and should be treated as
+        confidential as defined by law and court rule.
+        <br><br>
+        Every effort is made to provide
+        accurate and current information. However, no data system is perfect and therefore
+        errors and/or omissions should be reported to court management as soon as possible.
+
+      </p>
+    </div>
+
+    <div class="ui-g-12 ui-md-4 pl-0">
+      <a href="#" (click)="app.onRightPanelButtonClick($event)">
+        <div class="ui-g card colorbox colorbox-1">
+          <div class="ui-g-4">
+            <i class="material-icons">timer</i>
+          </div>
+          <div class="ui-g-8">
+            <span class="colorbox-name">Total Tasks</span>
+            <span class="colorbox-count">{{totalTaskCount}}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="ui-g-12 ui-md-4 pr-0">
+      <a href="#" (click)="app.onRightPanelButtonClick($event)">
+        <div class="ui-g card colorbox colorbox-2">
+          <div class="ui-g-4">
+            <i class="material-icons">timer</i>
+          </div>
+          <div class="ui-g-8">
+            <span class="colorbox-name">Incomplete Tasks</span>
+            <span class="colorbox-count">{{incompleteTaskCount}}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="ui-g-12 ui-md-4 pr-0">
+      <a href="#" (click)="app.onRightPanelButtonClick($event)">
+        <div class="ui-g card colorbox" [ngClass]="(overdueTaskCount > 0) ? 'colorbox-urgent' : 'colorbox-neutral'">
+          <div class="ui-g-4">
+            <i class="material-icons">timer</i>
+          </div>
+          <div class="ui-g-8">
+            <span class="colorbox-name">Overdue Tasks</span>
+            <span class="colorbox-count">{{overdueTaskCount}}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- <div class="ui-g-12 ui-fluid contact-form">
+      <p-panel header="Support">
+        <div class="ui-g">
+          <div class="ui-g-12">
+            <p-dropdown [options]="suggestionTypes" [autoWidth]="false" [(ngModel)]="selectedCourt"></p-dropdown>
+          </div>
+          <div class="ui-g-12">
+            <span class="md-inputfield">
+              <input id="name" type="text" pInputText />
+              <label for="name">Name</label>
+            </span>
+          </div>
+          <div class="ui-g-12">
+            <span class="md-inputfield">
+              <input id="message" type="text" pInputText />
+              <label for="message">Message</label>
+            </span>
+          </div>
+        </div>
+        <button type="button" label="Send" icon="ui-icon-send" (click)="makeToast()" pButton></button>
+      </p-panel>
+    </div> -->
+
+  </div>
+
+  <div class="card" *ngIf="caseResults.length > 0 || !caseResults">
+    <h2>Your Docket: Upcoming Hearings within 14 Days</h2>
+    <p-dataTable [value]="caseResults" selectionMode="single" (onRowSelect)="caseOnRowSelect($event)" scrollable="true"
+      scrollHeight="280px" dataKey="caseOID" #dtCaseResults>
+      <p-column field="caseNumber" header="Case Number" [style]="{'width':'13%'}" [sortable]="true"></p-column>
+      <p-column field="caseCaption" header="Caption" [style]="{'width':'25%'}" [sortable]="true"></p-column>
+      <p-column field="caseType.name" header="Case Type" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+      <p-column field="caseStatus.name" header="Case Status" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+      <p-column field="casePhase.name" header="Case Phase" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+    </p-dataTable>
+  </div>
+
+  <!-- <div class="ui-g-12 ui-md-4">
+
+    <div class="ui-g-12 pt-0 contacts">
+      <p-panel header="Messages">
+        <ul>
+          <li role="menuitem">
+            <a href="#">
+                <i class="material-icons fr">&#xE7FB;</i>
+                <p class="mv-0">Important Message </p>
+                <p class="muted-label mt-0">Dec 31, 2017</p>
+                <span class="muted-label">A message for all to see here. Very importantant announcement about an upcoming case. Read about the change here... </span>
+            </a>
+          </li>
+          <li role="menuitem">
+              <a href="#" class="topbar-message">
+                <i class="material-icons fr">&#xE7FB;</i>
+                <p class="mv-0">Happy New Year </p>
+                <p class="muted-label mt-0">Jan 1, 2017</p>
+                <span class="muted-label">Happy new year to all our employees. Very importantant announcement about an upcoming case. Read about the change here... </span>
+              </a>
+          </li>
+          <li role="menuitem">
+              <a href="#" class="topbar-message">
+                <i class="material-icons fr">&#xE7FB;</i>
+                <p class="mv-0">Procedure Change </p>
+                <p class="muted-label mt-0">Jan 2, 2017</p>
+                <span class="muted-label">We've made a change to the following procedure... </span>
+              </a>
+          </li>
+          <li role="menuitem">
+            <a href="#">
+              <i class="material-icons fr">&#xE7FB;</i>
+              <p class="mv-0">Message </p>
+              <p class="muted-label mt-0">Jan 3, 2017</p>
+              <span class="muted-label">A message for all to see here. Very importantant announcement about an upcoming case. Read about the change here... </span>
+            </a>
+          </li>
+        </ul>
+      </p-panel>
+    </div>
+
+  </div> -->
+
+
+  <!-- <div class="ui-g-12 ui-md-6 ui-lg-4 task-list">
+    <p-panel header="Tasks">
+      <ul>
+        <li>
+          <p-checkbox binary="true"></p-checkbox>
+          <span class="task-name">Sales Reports</span>
+          <i class="material-icons">&#xE8C9;</i>
+        </li>
+        <li>
+          <p-checkbox binary="true"></p-checkbox>
+          <span class="task-name">Pay Invoices</span>
+          <i class="material-icons">&#xE8A1;</i>
+        </li>
+        <li>
+          <p-checkbox binary="true"></p-checkbox>
+          <span class="task-name">Dinner with Tony</span>
+          <i class="material-icons">&#xE561;</i>
+        </li>
+        <li>
+          <p-checkbox binary="true"></p-checkbox>
+          <span class="task-name">Client Meeting</span>
+          <i class="material-icons">&#xE7FB;</i>
+        </li>
+        <li>
+          <p-checkbox binary="true"></p-checkbox>
+          <span class="task-name">New Theme</span>
+          <i class="material-icons">&#xE3AE;</i>
+        </li>
+        <li>
+          <p-checkbox binary="true"></p-checkbox>
+          <span class="task-name">Flight Ticket</span>
+          <i class="material-icons">&#xE01B;</i>
+        </li>
+        <li>
+          <p-checkbox binary="true"></p-checkbox>
+          <span class="task-name">Generate Charts</span>
+          <i class="material-icons">&#xE6C4;</i>
+        </li>
+      </ul>
+    </p-panel>
+  </div> -->
+
+
+
+</div>

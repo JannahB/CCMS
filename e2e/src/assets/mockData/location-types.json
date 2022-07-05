@@ -1,0 +1,43 @@
+[
+  {
+    "locationOID": 1,
+    "courtOID": 5,
+    "locationID": "Courtroom 1"
+  },
+  {
+    "locationOID": 2,
+    "courtOID": 5,
+    "locationID": "Courtroom 2"
+  },
+  {
+    "locationOID": 3,
+    "courtOID": 5,
+    "locationID": "Courtroom 3"
+  },
+  {
+    "locationOID": 4,
+    "courtOID": 5,
+    "locationID": "Courtroom 4"
+  },
+  {
+    "locationOID": 5,
+    "courtOID": 5,
+    "locationID": "Hearing Room 1"
+  },
+  {
+    "locationOID": 6,
+    "courtOID": 5,
+    "locationID": "Hearing Room 2"
+  },
+  {
+    "locationOID": 7,
+    "courtOID": 5,
+    "locationID": "Hearing Room 3"
+  },
+  {
+    "locationOID": 6239730299114704,
+    "courtOID": 5,
+    "locationID": "test",
+    "locationName": "courtroom location added successfully"
+  }
+]

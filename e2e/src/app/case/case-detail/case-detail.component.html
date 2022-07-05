@@ -1,0 +1,3827 @@
+<p-message *ngIf="staticMessage.visible" severity="{{staticMessage.severity}}" text="{{staticMessage.message}}">
+</p-message>
+
+<div class="ui-g">
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0 pl-0">
+    <div class="ui-g-12 ui-md-4">
+      <label class="minimal block mb-0">Case:</label>
+      <h1 class="page-header mt-0">{{case?.caseNumber}}</h1>
+    </div>
+
+    <div class="ui-g-12 ui-md-4" *ngIf="case?.sealIndicator == 1">
+      <h1 style="color:red">This is a Sealed Case</h1>
+    </div>
+
+    <div class="ui-g-12 ui-md-4" *ngIf="case?.sealIndicator == 0">
+      <h1>                      </h1>
+    </div>
+
+    <div class="ui-g-12 ui-md-4 ta-r pb-0">
+
+        <button type="button"
+          (click)="fetchCase(0)"
+          label="Previous Case"
+          class="btn-big btn-med" pButton
+          [disabled]="!case?.caseOID"
+        ></button>
+
+        <button type="button"
+          (click)="fetchCase(1)"
+          label="Next Case"
+          class="btn-big btn-med" pButton
+          [disabled]="!case?.caseOID"
+        ></button>
+    </div>
+
+  </div>
+
+  <!-- FIRST SECTION -->
+  <div class="ui-g-12 card">
+
+    <loading-bar [visible]="loadingCase" [message]="loadingMessage"></loading-bar>
+
+    <div class="ui-g-12 ph-10">
+      <div class="ui-g-12 ui-md-2">
+          <h2 class="mb-0">Case Details</h2>
+      </div>
+      <div class="ui-g-12 ui-md-10 ta-r pb-0">
+
+        <!-- <p-progressSpinner strokeWidth="4" [style]="{width: '30px', height: '30px'}"></p-progressSpinner> -->
+        <button type="button"
+            (click)="sealCase(1)"
+            label="Update Access"
+            icon="ui-icon-check"
+            class="btn-big" pButton
+            [disabled]="!caseForm.form.valid"
+            *ngIf="isRegistrar == true">
+        </button>
+
+        <button type="button"
+            (click)="sealCase(0)"
+            label="Unseal Case"
+            icon="ui-icon-check"
+            class="btn-big" pButton
+            [disabled]="!caseForm.form.valid"
+            *ngIf="isRegistrar == true">
+        </button>
+
+        <button type="button"
+                (click)="saveCase()"
+                label="Save Case"
+                icon="ui-icon-check"
+                class="btn-big" pButton
+                [disabled]="!caseForm.form.valid"
+                *ngIf="hasPermission(Permission.CREATE_CASE)">
+        </button>
+      </div>
+    </div>
+
+
+
+    <div class="ui-g-12">
+      <form #caseForm="ngForm" novalidate>
+        <div *ngIf="case">
+
+          <div class="ui-g-12 ui">
+            <div class="ui-g-12 ui-md-2">
+              <label class="minimal primary block">Filing Date</label>
+              <p-calendar id="dtFilingDate" name="dtFilingDate" #dtFilingDate [required]="true"
+                [disabled]="case.caseOID != 0 || !hasPermission(Permission.CREATE_CASE)"
+                [(ngModel)]="case.caseFilingDate" dateFormat="dd-M-yy" placeholder="Case Filing Date" [showIcon]="true"
+                yearRange="1970:2030" [yearNavigator]="true" appendTo="body"></p-calendar>
+              <!-- (onSelect)="generalDetailsOnBlur($event)" -->
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="dtFilingDate.errors?.required && dtFilingDate.touched">
+                Please choose a Filing Date
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-2 pr-20">
+              <label class="minimal block primary">Case Weight</label>
+              <div class="mar-0">{{ case.caseWeight }}</div>
+              <p-slider name="slCaseWeight" #slCaseWeight="ngModel" [disabled]="!hasPermission(Permission.CREATE_CASE)"
+                [required]="true" min="0" [(ngModel)]="case.caseWeight" [style]="{'width':'100%'}" [min]="0" [max]="10"
+                [animate]="true"></p-slider>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="slCaseWeight.errors?.min && slCaseWeight.touched">
+                Please choose a Case Weight
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-2 mt-25" *ngIf="case.caseOID > 0">
+              <span class="md-inputfield">
+                <input pInputText type="text" #tiprevCaseNumber="ngModel" required name="tiprevCaseNumber"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [required]="false" [(ngModel)]="case.casePrevNumber" class="width-full">
+                <label>Originating Case Number</label>
+              </span>
+            </div>
+
+            <!-- Court of Appeal Number -->
+            <div class="ui-g-12 ui-md-2 mt-25" *ngIf="case.caseOID > 0">
+              <span class="md-inputfield">
+                <input pInputText type="text" #tiprevCaseNumber="ngModel" required name="tiCourtofAppealCaseNumber"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [required]="false" [(ngModel)]="case.courtOfAppealNumber" class="width-full">
+                <label>Court of Appeal Case Number</label>
+              </span>
+            </div>
+
+
+
+            <!-- Case Caption Field -->
+            <div class="ui-g-12 ui-md-4 mt-25" *ngIf="case.caseOID > 0">
+              <span class="md-inputfield">
+                <input pInputText type="text" #tiCaseCaption="ngModel" required name="tiCaseCaption"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [(ngModel)]="case.caseCaption" [required]="false" class="width-full">
+                <label>Case Caption</label>
+              </span>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiCaseCaption.errors?.required && tiCaseCaption.touched">
+                Please enter a Case Caption
+              </div>
+            </div>
+
+          </div>
+
+
+
+          <div class="ui-g-12">
+
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Initiating Document</label>
+              <p-dropdown name="ddCid" #ddCid placeholder="initiating doc type..."
+                [required]="true"
+                [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                [(ngModel)]="case.initDocType"
+                optionLabel="name"
+                [options]="initDocumentTypes"
+                [filter]="true"
+                styleClass="width-full"
+                (onChange)="ddOnChange($event)">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddCid.errors?.required && ddCid.touched">
+                Please choose an Initiating Document
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Case Status</label>
+              <p-dropdown name="ddCaseStaus" #ddCaseStaus placeholder="case status..."
+                [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                [required]="true" optionLabel="name" [options]="caseStatuses" [filter]="true"
+                [(ngModel)]="case.caseStatus" (onChange)="ddOnChange($event)" styleClass="width-full">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddCaseStaus.errors?.required && ddCaseStaus.touched">
+                Please choose a Case Status
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Case Type</label>
+              <!-- [disabled]="case.caseOID != 0" -->
+              <p-dropdown name="ddCaseType" #ddCaseType placeholder="case type..."
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [required]="true"
+                  optionLabel="name"
+                  [options]="caseTypes"
+                  [filter]="true"
+                  [(ngModel)]="case.caseType"
+                  (onChange)="caseTypeChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddCaseType.errors?.required && ddCaseType.touched">
+                Please choose a Case Type
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Case Phase</label>
+              <!-- [disabled]="!casePhases || !case.caseType || case.caseOID != 0" -->
+              <p-dropdown name="ddCasePhase" #ddCasePhase placeholder="case phase..."
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [required]="true"
+                  (click)="isCaseTypeSelected($event)"
+                  optionLabel="name"
+                  [options]="casePhases"
+                  [filter]="true"
+                  [(ngModel)]="case.casePhase"
+                  (onChange)="ddOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddCasePhase.errors?.required && ddCasePhase.touched">
+                Please choose a Case Phase
+              </div>
+            </div>
+
+            <!--div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Case Sub Type</label>
+              < [disabled]="!casePhases || !case.caseType || case.caseOID != 0" >
+              <p-dropdown name="ddCaseSubPhase" #ddCasePhase placeholder="case subtype..."
+                [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                [required]="true" (click)="isCaseTypeSelected($event)" optionLabel="name" [options]="caseSubTypes"
+                [(ngModel)]="case.caseSubType" (onChange)="ddOnChangeSubType($event)" styleClass="width-full"
+                [filter]="true">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddCasePhase.errors?.required && ddCasePhase.touched">
+                Please choose a Case Sub Type
+              </div>
+            </div-->
+
+
+          </div>
+
+
+            <div class="ui-g-12 ui">
+
+              <div class="ui-g-12 ui-md-3" *ngIf="case.caseOID != 0">
+                <label class="minimal primary block">Disposition Date</label>
+                <p-calendar id="DispositionDate" name="DispositionDate" #finalDispositionDate
+
+                      [required]="false"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE)"
+                      [(ngModel)]="case.caseDispositionDate"
+                      dateFormat="mm/dd/yy"
+                      placeholder="Disposition Date"
+                      [showIcon]="true"
+                      yearRange="1970:2030"
+                      [yearNavigator]="true"
+                      appendTo="body" ></p-calendar>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="dtFilingDate.errors?.required && dtFilingDate.touched" >
+                      Please choose a Dispisition Date
+                </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-5" *ngIf="case.caseOID != 0">
+                <label class="minimal primary block">Disposition Type</label>
+                <p-dropdown name="ddCaseDispositionType" #ddCaseDispositionType placeholder="Disposition Type"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [required]="false"
+                    [filter] = "true"
+                    optionLabel="name"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE)"
+                    [options]="caseDispositionTypes"
+                    [(ngModel)]="case.caseDispositionType"
+                    (onChange)="caseDispositionTypeChange($event)"
+                    styleClass="width-full">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="ddCaseType.errors?.required && ddCaseType.touched" >
+                      Please choose a Disposition Type
+                </div>
+              </div>
+            </div>
+
+                      <!-- Adding Case Notes Field  -->
+            <div class="ui-g-12 mb-20" *ngIf="case.caseOID > 0">
+                <label class="minimal primary block">Case Notes</label>
+                  <textarea name="tiCaseNotes"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      [rows]="2"
+                      [cols]="30"
+                      autoResize="autoResize"
+                      pInputTextarea placeholder="Enter Case Notes"
+                      [(ngModel)]="case.caseNotes"
+                      class="width-full">
+                   </textarea>
+          </div>
+
+            <!-- Adding Case Charges Field  -->
+            <!-- <div class="ui-g-12 mb-20" *ngIf="case.caseOID > 0">
+                <label class="minimal primary block">Charges</label>
+                  <textarea name="tiCharges"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      [rows]="2"
+                      [cols]="30"
+                      autoResize="autoResize"
+                      pInputTextarea placeholder="Enter Charges"
+                      [(ngModel)]="case.charges"
+                      class="width-full">
+                    </textarea>
+          </div> -->
+
+
+
+        <!-- CASE PARTIES TABLE -->
+
+          <div class="ui-g-12 mt-20 ph-0">
+
+            <div class="ui-g-12 ui-md-6">
+              <h2 class="mb-10">Case Parties</h2>
+            </div>
+
+            <div class="ui-g-12 ui-md-6 ta-r pos-relative">
+              <button type="button" *ngIf="hasPermission(Permission.CREATE_CASE)" (click)="showAddCaseParty();"
+                label="Add Case Party" icon="ui-icon-add" class="ui-button-secondary mr-15 abs-btn" pButton></button>
+            </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.caseParties" selectionMode="single" [(selection)]="selectedParty"
+                (onRowSelect)="partyOnRowSelect($event)" scrollable="true" scrollHeight="200px"
+                dataKey="caseParty.partyOID" #dtParties>
+
+                <p-column field="caseParty.isOrganization" header="Is Org?" [style]="{'width':'8%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <i class="fa ui-icon-check task-done" *ngIf="item.caseParty.isOrganization"></i>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="role.name" header="Role" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+
+                <p-column header="Party Info" [style]="{'width':'30%'}" >
+                    <ng-template pTemplate="body" let-item="rowData">
+                      <div>{{item.caseParty | name}}</div>
+                      <!-- Christian : turned this on with fullName support on Server -->
+                      <div></div>
+                      <div *ngIf="!item.caseParty.isOrganization" >
+                          <span class="smaller">
+                          DOB: {{ item.caseParty.dob | date:'dd-MMM-yyyy' }}
+                          Sex: {{ item.caseParty.sex }}
+                          Age: {{ item.caseParty.age }}
+                        </span>
+                      </div>
+                    </ng-template>
+                </p-column>
+
+                <p-column header="Party Address" [style]="{'width':'20%'}" >
+                   <ng-template pTemplate="body" let-item="rowData" >
+                    <div *ngIf = "item.caseParty.addresses.length >= 1">
+                      <span class="smaller">
+                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].addressType + ":" }}
+                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].address1 + "," }}
+                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].communityCode + "," }}
+                          {{ item.caseParty.addresses[item.caseParty.primaryAddressLoc].countryName }}
+                      </span>
+                    </div>
+                  </ng-template>
+                </p-column>
+
+                <p-column header="Party Phone #" [style]="{'width':'20%'}" >
+                  <ng-template pTemplate="body" let-item="rowData" >
+                   <div *ngIf = "item.caseParty.phoneNumbers.length >= 1">
+                     <span class="smaller">
+                         {{ item.caseParty.phoneNumbers[item.caseParty.primaryContactLoc].phoneType + ":" }}
+                         {{ item.caseParty.phoneNumbers[item.caseParty.primaryContactLoc].phoneNumber }}
+                     </span>
+                   </div>
+                 </ng-template>
+               </p-column>
+
+
+                <p-column field="startDate" header="Start Date" [style]="{'width':'13%'}" [sortable]="true">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.startDate | date:'dd-MMM-yyyy'}}
+
+                    </ng-template>
+                </p-column>
+                <p-column field="endDate" header="End Date" [style]="{'width':'13%'}" [sortable]="true">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{item.endDate | date:'dd-MMM-yyyy'}}
+                    </ng-template>
+                </p-column>
+                <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                    <ng-template let-item="rowData" pTemplate="body">
+                        <i class="material-icons delete-icon" (click)="requestDeleteParty(item)">delete</i>
+                    </ng-template>
+                </p-column> -->
+              </p-dataTable>
+            </div>
+          </div>
+
+        <!-- CASE APPLICATIONS -->
+
+        <div class="ui-g-12 mt-20 ph-0">
+
+          <div class="ui-g-12 ui-md-6">
+            <h2 class="mb-10">Case Applications</h2>
+          </div>
+
+          <div class="ui-g-12 ui-md-6 ta-r pos-relative">
+            <button type="button"
+                *ngIf="hasPermission(Permission.CREATE_CASE)"
+                (click)="resetAddCaseApplicationModal();"
+                label="Add Case Application"
+                icon="ui-icon-add"
+                class="ui-button-secondary mr-15 abs-btn" pButton></button>
+          </div>
+
+          <div class="ui-g-12">
+            <p-dataTable [value]="case.caseApplications"
+                        selectionMode="single"
+                        [(selection)]="selectedCaseApplication"
+                        (onRowSelect)="showAddCaseCaseApplication($event)"
+                        scrollable="true" scrollHeight="200px"
+                        dataKey="caseApplicationOID" #dtCaseApps>
+
+              <p-column field="caseApplicationNumber" header="Application #" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+              <p-column field="caseApplicationObjType.name" header="Application Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+              <p-column field="caseApplicationStatusDisplay" header="Application Status" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+              <p-column field="caseApplicationStartDate" header="Start Date" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.caseApplicationStartDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+              <p-column field="caseApplicationEndDate" header="End Date" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.caseApplicationEndDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+              </p-column>
+
+            </p-dataTable>
+          </div>
+        </div>
+
+
+
+         <!-- CHARGES TABLE -->
+
+          <div *ngIf="!isTrafficViewable" class="ui-g-12 mt-30">
+
+          <div class="ui-g-12 ui-md-6">
+            <h2 class="mb-10">Charges</h2>
+          </div>
+          <div class="ui-g-12 ui-md-6 ta-r pos-relative">
+            <button type="button"
+                *ngIf="hasPermission(Permission.UPDATE_CASE)"
+                (click)="onAddCaseCharge(caseChargeForm)"
+                label="Add Case Charge"
+                icon="ui-icon-add"
+                class="ui-button-secondary mr-15 abs-btn" pButton></button>
+          </div>
+
+          <div class="ui-g-12">
+
+            <p-dataTable [value]="case.caseCharges"
+                        selectionMode="single"
+                        [(selection)]="selectedCharge"
+                        (onRowSelect)="caseOnRowSelect($event)"
+                        scrollable="true" scrollHeight="200px"
+                        dataKey="caseChargeOID" #dtCharges>
+
+              <p-column field="charge_id" header="CHARGE ID" [style]="{'width':'5%'}" [sortable]="true"></p-column>
+              <p-column field="localCharge.categoryIdentifier" header="UNODC Code" [style]="{'width':'7%'}"></p-column>
+              <p-column field="localCharge.localCharge" header="Local Charge" [style]="{'width':'15%'}"></p-column>
+              <p-column field="leaChargingDetails" header="Lead Charge Description" [style]="{'width':'15%'}"></p-column>
+              <p-column field="chargeDetails" header="Police Description" [style]="{'width':'15%'}"></p-column>
+              <p-column field="localCharge.charge_weight" header="Charge Weight" [sortable]="true" [style]="{'width':'7%'}"></p-column>
+
+
+              <p-column field="localCharge.localLaw" header="Legislation" [style]="{'width':'30%'}"></p-column>
+              <p-column field="charge_count" header="COUNT" [style]="{'width':'5%'}"></p-column>
+              <!-- <p-column styleClass="col-button" header="Delete" [style]="{'width':'8%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <i class="material-icons delete-icon" (click)="requestDeleteCharge(item)">delete</i>
+                  </ng-template>
+              </p-column> -->
+            </p-dataTable>
+          </div>
+        </div>
+
+          <p-message *ngIf="staticMessage.visible" severity="{{staticMessage.severity}}"
+            text="{{staticMessage.message}}"></p-message>
+
+          <!-- TRAFFIC OFFENCES-->
+          <div *ngIf="isTrafficViewable" class="ui-g-12 mt-30">
+
+            <div class="ui-g-12 ui-md-6" >
+              <h2 class="mb-10">Traffic Offences</h2>
+            </div>
+            <div class="ui-g-12 ui-md-6 ta-r pos-relative">
+              <button type="button"
+                      *ngIf="hasPermission(Permission.UPDATE_CASE)"
+                      (click)="onAddTrafficCaseCharge(caseTrafficChargeForm)"
+                      label="Add Traffic Offence"
+                      icon="ui-icon-add"
+                      class="ui-button-secondary mr-15 abs-btn" pButton>
+              </button>
+            </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="caseTrafficCharges" selectionMode="single"
+                           [(selection)]="selectedCaseTrafficCharge" (onRowSelect)="caseTrafficChargeOnRowSelect($event)"
+                           scrollable="true" scrollHeight="200px" dataKey="id" #dtCaseTrafficCharges>
+
+                <p-column field="" header="Offence" [style]="{'width':'15%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <b>Description:</b>{{item?.trafficCharge.description}} <br />
+                    <b>Penalty:</b> ${{item?.trafficCharge.penalty}}.00 <br />
+                    <b>Demerit Points:</b> {{item?.trafficCharge.demeritPoints}}
+                  </ng-template>
+                </p-column>
+
+                <p-column field="" header="Offence Particulars" [style]="{'width':'15%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <b>Fixed Penalty Number:</b> {{item.citationNumber}} <br />
+                    <b>Issued:</b> {{item.offenceDatetime | date:'full'}} <br />
+                    <b>Offence Location:</b> {{item.offenceLocation}} <br />
+                  </ng-template>
+                </p-column>
+
+                <p-column field="" header="Reason for Contest" [style]="{'width':'12%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <b>Reason for contest:</b><br />
+                    <ng-container *ngIf="item.reasonForContest.length > 300; then truncated; else normal">
+                    </ng-container>
+                    <ng-template #truncated>
+                      <p>{{item.reasonForContest | slice:0:300}}...
+                      </p>
+                    </ng-template>
+                    <ng-template #normal>
+                      <p> {{ item.reasonForContest }}</p>
+                    </ng-template>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="" header="Vehicle Particulars" [style]="{'width':'15%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <b>Registration:</b> {{item.vehicleRegistration}} <br />
+                    <b>Make:</b> {{item.vehicleMake}} <br />
+                    <b>Model:</b> {{item.vehicleModel}} <br />
+                    <b>Year:</b> {{item.vehicleYear}} <br />
+                    <b>Colour:</b> {{item.vehicleColour}} <br />
+                  </ng-template>
+                </p-column>
+
+              </p-dataTable>
+            </div>
+
+          </div>
+
+          <!-- CASE SAVE BUTTON -->
+          <div class="ui-g-12 ta-r mt-30">
+            <button type="button" *ngIf="hasPermission(Permission.CREATE_CASE)" (click)="saveCase()" label="Save Case"
+              icon="ui-icon-check" class="btn-big" pButton [disabled]="!caseForm.form.valid"></button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+  </div>
+  <!-- //END FISRT CARD -->
+
+  <!-- SECOND CARD - TAB SECTION -->
+  <div class="ui-g-12 card" *ngIf="case && case.caseOID && case.caseOID > 0">
+
+    <div *ngIf="case">
+
+      <p-tabView [activeIndex]="activeTabIndex">
+
+        <!-- EVENTS TAB -->
+
+        <p-tabPanel header="Register" leftIcon="ui-icon-list">
+          <div class="ui-g">
+            <div class="ui-g-12 ui-md-4">
+              <h2>Case Events</h2>
+            </div>
+
+            <!-- <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Event Category Filter</label>
+              <p-dropdown
+                  placeholder="Event Category filter..."
+                  [options]="eventTypes"
+                  [(ngModel)]="eventTypeFilter"
+                  optionLabel="eventTypeName"
+                  (onChange)="eventCategoryFilterChange($event)"
+                  styleClass="width-auto">
+              </p-dropdown>
+              <button label="" type="button" class="ml-10 ui-button-secondary ui-button-icon-only clear-btn inline" pButton icon="fa-close" (click)="clearEventFilter()"></button>
+            </div> -->
+
+            <div class="ui-g-12 ui-md-8">
+                <label class="minimal primary block">Event Description Filter</label>
+                <p-dropdown
+                    styleClass="strokeWidth"
+                    [style]="{'width': '400px'}"
+                    placeholder="Event ID filter..."
+                    [options]="eventTypes"
+                    [filter] = "true"
+                    [(ngModel)]="eventTypeFilter"
+                    optionLabel="description"
+                    (onChange)="eventTypeFilterChange($event)">
+                </p-dropdown>
+                <button label="" type="button" class="ml-10 ui-button-secondary ui-button-icon-only clear-btn inline" pButton icon="fa-close" (click)="clearEventFilter()"></button>
+              </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="filteredEvents" selectionMode="single" [(selection)]="caseEvent"
+                (onRowSelect)="caseEventOnRowSelect($event)" scrollable="true" dataKey="caseEventOID" #dtCaseEvents>
+                <!-- <p-column styleClass="col-button" header="Done" [style]="{'width':'6%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                      <i class="fa ui-icon-check task-done" *ngIf="item.eventType?.description == 'Task Completed'"></i>
+                      <i class="fa ui-icon-close" *ngIf="item.eventType?.description != 'Task Completed'"></i>
+                  </ng-template>
+                </p-column> -->
+                <p-column field="eventDate" header="Date/Time" [style]="{'width':'12%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    {{item.eventDate | date:'medium'}}
+                  </ng-template>
+                </p-column>
+                <p-column header="Entering Party" [style]="{'width':'13%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    {{ item.enteringParty?.firstName }} {{ item.enteringParty?.lastName }}
+                  </ng-template>
+                </p-column>
+                <p-column field="eventType.eventCategoryText" header="Event Category" [style]="{'width':'10%'}"
+                  [sortable]="true"></p-column>
+                <!-- <p-column field="eventType.eventTypeName" header="Event ID" [style]="{'width':'8%'}"></p-column> -->
+                <p-column header="Event ID: Description" [style]="{'width':'25%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    {{ item.eventType?.eventTypeName }}: {{ item.eventType?.description }}
+                  </ng-template>
+                </p-column>
+                <p-column field="description" header="Event Details" styleClass="text-break" [style]="{'width':'35%'}">
+                </p-column>
+              </p-dataTable>
+
+            </div>
+            <div class="ui-g-12">
+              <button type="button" (click)="addCaseEventClicked()" label="Add Completed Event" icon="ui-icon-add"
+                class="ui-button-secondary mr-15" pButton></button>
+            </div>
+          </div>
+        </p-tabPanel>
+
+
+        <!-- TASKS TAB -->
+        <p-tabPanel header="Case Tasks" leftIcon="ui-icon-timer">
+
+          <div class="ui-g">
+            <div class="ui-g-12">
+              <h2>Case Tasks</h2>
+            </div>
+
+            <div class="ui-g-12 ta-r mt-30">
+              <button type="button" *ngIf="hasPermission(Permission.CREATE_TASK)" (click)="createCaseTask()"
+                label="Add Case Task" icon="ui-icon-add" class="ui-button-secondary mr-15" pButton></button>
+            </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.caseTasks" selectionMode="single" [(selection)]="selectedCaseTask"
+                (onRowSelect)="taskOnRowSelect($event)" scrollable="true" dataKey="taskOID" #dtTasks>
+
+                <p-column field="taskType.name" header="Task Type" [style]="{'width':'10%'}" [sortable]="true">
+                </p-column>
+                <p-column field="taskType.description" header="Task Description" [style]="{'width':'10%'}"
+                  [sortable]="true"></p-column>
+                <p-column field="taskDetails" header="Task Details" [style]="{'width':'10%'}" [sortable]="true">
+                </p-column>
+                <p-column field="docTemplate.documentName" header="Document to Generate" [style]="{'width':'10%'}"
+                  [sortable]="true"></p-column>
+
+
+
+                <p-column header="Priority" field="" [style]="{'width':'6%'}">
+                  <ng-template let-item="rowData" pTemplate="body">
+                    {{ getPriorityValue(item.taskPriorityCode)}}
+                  </ng-template>
+                </p-column>
+
+                <p-column field="" header="Assigned Group" [style]="{'width':'10%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <!--div *ngIf="item.assignedParty?.partyOID">
+                        {{ 'Party: ' + item.assignedParty.firstName + ' ' + item.assignedParty.lastName }}
+                      </div-->
+                    <div *ngIf="item.assignedPool?.poolOID">
+                      {{ item.assignedPool.poolName }}
+                    </div>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="assignedDate" header="Assigned Date" [style]="{'width':'8%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    {{item.assignedDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>
+
+                <p-column field="taskDueDate" header="Due Date and Time" [style]="{'width':'9%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <div>
+                      {{item.taskDueDate | date:'dd-MMM-yyyy hh:mm a'}}
+                    </div>
+                  </ng-template>
+                </p-column>
+
+                <!--p-column field="taskCheckedOutBy" header="Task Checked Out" [style]="{'width':'5%'}" [sortable]="true"></p-column-->
+
+                <p-column header="Task Checked Out" field="" [style]="{'width':'6%'}" [sortable]="true">
+                  <ng-template let-item="rowData" pTemplate="body">
+                    <div *ngIf="item.taskCheckedOutBy">
+                      {{ getTaskCheckoutValue(item.taskCheckedOutBy)}}
+                    </div>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="" header="Task Checked Out By" [style]="{'width':'8%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <!--div *ngIf="item.taskCompletedByParty?.partyOID">
+                        {{item.taskCompletedByParty.firstName + ' ' + item.taskCompletedByParty.lastName}}
+                      </div-->
+                    <div *ngIf="item.taskCheckedOutByParty?.partyOID">
+                      {{ item.taskCheckedOutByParty.firstName + ' ' + item.taskCheckedOutByParty.lastName }}
+                    </div>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="" header="Task Completed By" [style]="{'width':'10%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <div *ngIf="item.taskCompletedByParty?.partyOID">
+                      {{item.taskCompletedByParty.firstName + ' ' + item.taskCompletedByParty.lastName}}
+                    </div>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="taskDoneDate" header="Completion Date" [style]="{'width':'8%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    {{item.taskDoneDate | date:'dd-MMM-yyyy hh:mm a'}}
+                  </ng-template>
+                </p-column>
+
+              </p-dataTable>
+
+            </div>
+
+
+
+
+            <div class="ui-g-12 ta-r mt-30">
+              <button type="button" *ngIf="hasPermission(Permission.CREATE_CASE)" (click)="saveCase()" label="Save Case"
+                icon="ui-icon-check" class="btn-big" pButton [disabled]="!caseForm.form.valid"></button>
+            </div>
+
+
+          </div>
+        </p-tabPanel>
+
+        <!-- OLD DOCUMENTS TAB  -->
+
+        <!-- <p-tabPanel header="Documents" leftIcon="ui-icon-insert-drive-file" >
+          <div class="ui-g">
+            <div class="ui-g-12">
+                <h2>Documents</h2>
+            </div>
+            <div class="ui-g-12 pt-0" *ngIf="hasPermission(Permission.UPDATE_CASE)">
+              <div class="ui-g-12 ui-md-6">
+                <h4 class="mt-0 mb-10">Generate Document</h4>
+                <div class="ui-g-12 ui-md-6"> -->
+        <!-- <label class="minimal primary block">Generate Document</label> -->
+        <!-- TODO: Get document types lookup data -->
+        <!-- <p-dropdown
+                      placeholder="document type..."
+                      [options]="documentTemplateTypes"
+                      [(ngModel)]="selectedDocumentTemplateType"
+                      optionLabel="documentName"
+                      (onChange)="ddOnChange($event)"
+                      styleClass="width-full">
+                  </p-dropdown>
+                </div>
+                <div class="ui-g-12 ui-md-6 pv-0">
+                    <button type="button"
+                        (click)="generateDoc()"
+                        label="Generate"
+                        icon="ui-icon-settings-applications"
+                        class="ui-button-secondary inline" pButton></button>
+                </div>
+              </div> -->
+        <!-- FILE UPLOAD -->
+        <!-- <div class="ui-g-12 ui-md-6 ta-r">
+                <h4 class="mt-0 mb-10">Upload Document</h4>
+
+                  <p-fileUpload mode="basic" name="theFiles[]" url="{{baseURL}}/GetAttachment" (onUpload)="onUpload($event)"
+                      (onBeforeSend)="onBeforeSendFile($event)"
+                      multiple="multiple" accept="application/pdf" maxFileSize="20000000"> -->
+        <!-- accept="*.doc, *.docx, application/pdf" -->
+        <!-- <ng-template pTemplate="content">
+                          <ul *ngIf="uploadedFiles.length">
+                              <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                          </ul>
+                      </ng-template>
+                  </p-fileUpload>
+              </div>
+            </div>
+
+            <div class="ui-g-12">
+                <p-dataTable [value]="case.caseDocs"
+                            selectionMode="single"
+                            [(selection)]="selectedDoc"
+                            (onRowSelect)="docOnRowSelect($event)"
+                            scrollable="true"
+                            dataKey="documentOID" #dtDocs>
+                    <p-column field="docReceived" header="Document Received" [style]="{'width':'25%'}" [sortable]="true">
+                        <ng-template pTemplate="body" let-item="rowData">
+                            {{item.docReceived | date:'medium'}}
+                        </ng-template>
+                    </p-column>
+                    <p-column field="documentName" header="Document Name" [style]="{'width':'75%'}" [sortable]="true">
+                        <ng-template pTemplate="body" let-item="rowData" styleClass="text-break">
+                            <span>
+                                <a href="{{baseURL + '/GetDocument?' + item.documentURL}}" target="_blank">{{item.documentName}}</a>
+                            </span>
+                            <div style="font-size:10px">{{baseURL + '/GetDocument?' + item.documentURL}}</div>
+                        </ng-template>
+                    </p-column>
+                </p-dataTable>
+            </div>
+          </div>
+        </p-tabPanel> -->
+
+        <!-- DOCUMENTS TAB  -->
+
+        <p-tabPanel header="Documents" leftIcon="ui-icon-insert-drive-file">
+          <div class="ui-g">
+            <div class="ui-g-12">
+              <h2>Documents</h2>
+            </div>
+            <div class="ui-g-12 pt-0" *ngIf="hasPermission(Permission.UPDATE_CASE)">
+              <div class="ui-g-6">
+                <h4 class="mt-0 mb-10">Generate Document</h4>
+                <div class="ui-g-9">
+                  <!-- <label class="minimal primary block">Generate Document</label> -->
+                  <!-- TODO: Get document types lookup data-->
+                  <!--spiffy -->
+                  <p-dropdown placeholder="document type..." [options]="courtDocs"
+                    [(ngModel)]="selectedDocumentTemplateType" optionLabel="name" (onChange)="ddOnChange($event)"
+                    styleClass="width-full" [filter]="true" filterBy="label,value.name">
+                  </p-dropdown>
+                </div>
+                <div class="ui-g-2 pv-0">
+                  <button type="button" (click)="generateDoc()" label="Generate" icon="ui-icon-settings-applications"
+                    class="ui-button-secondary inline" pButton></button>
+                </div>
+              </div>
+
+
+
+              <!-- FILE UPLOAD -->
+              <div class="ui-g-6">
+                <p-dialog width="700" header="Uploading" [(visible)]="uploadPVis" [responsive]="true" showEffect="fade"
+                  [modal]="true" [closable]="false">
+                  <loading-bar [visible]="uploadPVis" [message]="uploadPMsg"></loading-bar>
+                  <div [style.height.px]="600">
+                  </div>
+
+                </p-dialog>
+                <h4 class="mt-0 mb-10">Upload Document</h4>
+
+                <div class="ui-g-12">
+                  <!-- Document Filing Date -->
+                  <div class="ui-g-12 ui-md-4">
+                    <label class="minimal">Document Filing Date</label>
+                    <p-calendar name="caseDocumentFilingDate"
+                      styleClass="width-full"
+                      [required]="false"
+                      [(ngModel)]="caseDocumentFilingDate"
+                      [showIcon]="true"
+                      appendTo="body"
+                      [inline]="false"
+                      [showTime]="true"
+                      [hourFormat]="12"
+                      dateTimeFormat="dd-M-yy HH-mm a"
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
+                      yearRange="2000:2030">
+                    </p-calendar>
+                  </div>
+                </div>
+
+                <div class="ui-g-12">
+                  <div class="ui-g-6">
+                    <p-dropdown name="docCat" (onChange)="ddOnDocCatChange($event)" placeholder="category..."
+                      optionLabel="name" [autoWidth]="false" [style]="{'width': '100%'}" [options]="docTypesCategories"
+                      [(ngModel)]="selCatDT" [filter]="true" filterBy="label,value.name"></p-dropdown>
+                  </div>
+                  <div class="ui-g-6">
+                    <p-dropdown name="DocFil" #ddDocFil placeholder="type..." optionLabel="name" [autoWidth]="false"
+                      [style]="{'width': '100%'}" [(ngModel)]="selDocTypeUpload" [options]="docTypesShown"
+                      [filter]="true" filterBy="label,value.name"></p-dropdown>
+                  </div>
+                  <div class="ui-g-12 ta-r">
+                    <p-fileUpload
+                      #documentUploadForm
+                      accept="application/pdf"
+                      invalidFileTypeMessageDetail="Only PDFs Allowed"
+                      maxFileSize="20000000"
+                      mode="advanced"
+                      name="theFiles[]"
+                      url="{{baseURL}}/GetAttachment"
+                      styleClass="ui-fileupload-override"
+                      (onUpload)="onUpload($event)"
+                      (onBeforeSend)="onBeforeSendFile($event)" >
+                      <ng-template pTemplate="content">
+                        <ul *ngIf="uploadedFiles.length">
+                          <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                        </ul>
+                      </ng-template>
+                    </p-fileUpload>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+            <div class="ui-g-12">
+              <h4 class="mt-0 mb-10">Filter</h4>
+              <div class="ui-g-3">
+                <p-dropdown (onChange)="ddOnFilterDTChange($event)" placeholder="category..." optionLabel="name"
+                  [autoWidth]="false" [style]="{'width': '100%'}" [options]="docTypesFilter" [(ngModel)]="filterDT">
+                </p-dropdown>
+              </div>
+
+              <div class="ui-g-3">
+                <input placeholder="Fuzzy Document Search" pInputText type="text" #tiCaseCaption="ngModel"
+                  [(ngModel)]="dtFilterText" (ngModelChange)="onDtFilterTextChange($event)" class="width-full">
+              </div>
+
+            </div>
+
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="filterDocs" selectionMode="single" [(selection)]="selectedDoc"
+                (onRowSelect)="docOnRowSelect($event)" scrollable="true" dataKey="documentOID" #dtDocs>
+
+                <p-column field="caseDocumentFilingDate" header="Filing Date" [style]="{'width':'25%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    {{item.caseDocumentFilingDate | date:'MMM d, y, h:mm a'}}
+                  </ng-template>
+                </p-column>
+
+                <p-column field="docType" header="Document Type" [style]="{'width':'25%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <div style="font-size:10px">{{dtNameCat(item)}}</div>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="documentName" header="Document Name" [style]="{'width':'75%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData" styleClass="text-break">
+                      <span>
+                          <a href="{{baseURL + '/GetDocument?' + (item.documentURL | encodeURIComponentPipe) }}" target="_blank">{{item.documentName}}</a>
+                      </span>
+                  </ng-template>
+              </p-column>
+
+              <p-column field="docReceived" header="Document Date" [style]="{'width':'25%'}" [sortable]="true">
+                <ng-template pTemplate="body" let-item="rowData">
+
+                  {{item.docReceived | date:'medium'}}
+                </ng-template>
+              </p-column>
+
+              </p-dataTable>
+            </div>
+
+          </div>
+        </p-tabPanel>
+
+
+        <!-- JUDICIAL ASSIGNMENTS TAB -->
+
+        <p-tabPanel header="Judicial Assignments" leftIcon="ui-icon-assignment">
+          <div class="ui-g">
+            <div class="ui-g-12">
+              <h2>Judicial Assignments</h2>
+            </div>
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.judicialAssignments" selectionMode="single"
+                [(selection)]="selectedJudicialAssignment" (onRowSelect)="judicialAssignmentOnRowSelect($event)"
+                scrollable="true" dataKey="judicialAssignmentOID" #dtJudicialAssignment>
+                <p-column field="" header="Start Date/Time" [style]="{'width':'20%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    {{item.startDate | date:'dd-MMM-yyyy hh:mm a'}}
+                  </ng-template>
+                </p-column>
+                <p-column field="" header="End Date/Time" [style]="{'width':'20%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    {{item.endDate | date:'dd-MMM-yyyy hh:mm a'}}
+                  </ng-template>
+                </p-column>
+                <p-column field="" header="Assigned Judicial Officer" [style]="{'width':'17%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        {{ item.judicialOfficial?.firstName + ' ' + item.judicialOfficial?.lastName }}
+                    </ng-template>
+                </p-column>
+                <!-- <p-column styleClass="col-button" header="View" [style]="{'width':'7%'}">
+                    <ng-template let-item="rowData" pTemplate="body">
+                        <i class="material-icons" (click)="requestViewJudicialAssignment(item)">search</i>
+                    </ng-template>
+                </p-column> -->
+              </p-dataTable>
+            </div>
+            <div class="ui-g-12">
+              <button type="button" *ngIf="hasPermission(Permission.CREATE_JUDICIAL_ASSIGNMENT)" (click)="onAddJudge()"
+                label="Add Judicial Team" icon="ui-icon-add" class="ui-button-secondary mr-15" pButton></button>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <!-- SENTENCING TAB -->
+
+         <p-tabPanel header="Sentencing" leftIcon="ui-icon-account-balance" *ngIf="isSentencingUser">
+          <div class="ui-g">
+            <div class="ui-g-4">
+              <h3 class="page-header mt-0">CONSEQUENCES</h3>
+              <mat-selection-list #matSelectionList class="items-list card">
+                <mat-list-option *ngFor="let item of criminalConsequences; let i=index; let itm" [class.hi]="selected" [value]="item" (selectionChange)="onSentencingSelectionChange($event, item)">
+                  <span>{{item?.chargeDescription}} </span>
+                </mat-list-option>
+              </mat-selection-list>
+
+              <button mat-raised-button color="primary" (click)="showAddConsequenceModal=true" class="mt-15 width-full">
+                <mat-icon aria-label="Add data item button">add</mat-icon>
+                Add Consequence
+              </button>
+
+            </div>
+
+            <div class="ui-g-8" *ngIf="selectedCriminalCharge">
+                <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges' || selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                    <label class="minimal primary block">Sentencing Document</label>
+                    <p-dropdown placeholder="Sentencing Document" name="ddSentencingDocument" optionLabel="documentName" [options]="sentencingDocuments"
+                        [(ngModel)]="selectedCriminalCharge.chargeDocumentURL"
+                        (onChange)="sentencingDocumentOnChange($event)"
+                        styleClass="width-full">
+                    </p-dropdown>
+                  </div>
+
+
+              <div class="ui-g-12 mt-25">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.caseNumber" class="width-full" disabled>
+                  <label>Case Number</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.caseId" class="width-full" disabled>
+                  <label>Case ID</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeDescription" class="width-full">
+                  <label>Consequence Description</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges' || selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeId" class="width-full">
+                  <label>Charge ID</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeChangeType" class="width-full">
+                  <label>Charge Change Type</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeChangeReference" class="width-full">
+                  <label>Charge Change Reference</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeModificationCode" class="width-full">
+                  <label>Charge Modification Code</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeModificationText" class="width-full">
+                  <label>Charge Modification Text</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeChangeNotes" class="width-full">
+                  <label>Charge Change Notes</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.fingerprintCardId" class="width-full">
+                  <label>Fingerprint Card ID</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <label class="minimal primary block">Fingerprint Card Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.fingerprintCardDate"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
+                  appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences' || selectedCriminalCharge.type === 'sentence-performed' || selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence ID" [(ngModel)]="selectedCriminalCharge.sentenceId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <label class="minimal primary block">Sentence Order Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderDate"
+                  dateFormat="dd-M-yy" placeholder="Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentenceOrderDescription" class="width-full">
+                  <label>Sentence Order Description</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <label class="minimal primary block">Sentence Order Period Start Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderPeriodStartDate"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
+                  appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <label class="minimal primary block">Sentence Order Period End Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentenceOrderPeriodEndDate"
+                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
+                  appendTo="body"></p-calendar>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentenceOrderFrequency" class="width-full">
+                  <label>Sentence Order Frequency</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Order Credit" [(ngModel)]="selectedCriminalCharge.sentenceCredit">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Deferred" [(ngModel)]="selectedCriminalCharge.sentenceDeferred">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentenceType" class="width-full">
+                  <label>Sentence Type</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentenceSubtype" class="width-full">
+                  <label>Sentence Sub Type</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Code" [(ngModel)]="selectedCriminalCharge.sentenceCode">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Fine Amount" [(ngModel)]="selectedCriminalCharge.sentenceFineAmount">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Max Duration" [(ngModel)]="selectedCriminalCharge.sentenceMaxDuration">
+                </mat-form-field>
+              </div>
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Min Duration" [(ngModel)]="selectedCriminalCharge.sentenceMinDuration">
+                </mat-form-field>
+              </div>
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'criminal-sentences'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Deferred Amount" [(ngModel)]="selectedCriminalCharge.sentenceDeferredAmount">
+                </mat-form-field>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentencePerformedType" class="width-full">
+                  <label>Sentence Performed Type</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentencePerformedValueType" class="width-full">
+                  <label>Sentence Performed Value Type</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Performed Value Amount" [(ngModel)]="selectedCriminalCharge.sentencePerformedValueAmount">
+                </mat-form-field>
+              </div>
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <label class="minimal primary block">Sentence Performed Start Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentencePerformedBeginDate"
+                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
+                  appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <label class="minimal primary block">Sentence Performed End Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.sentencePerformedEndDate"
+                  dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2100"
+                  appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentencePerformedLocation" class="width-full">
+                  <label>Sentence Performed Location</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Performed Agency Id" [(ngModel)]="selectedCriminalCharge.sentencePerformedAgencyId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Performed Supervisor Id" [(ngModel)]="selectedCriminalCharge.sentencePerformedSupervisorId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentencePerformedVariance" class="width-full">
+                  <label>Sentence Performed Variance</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.sentencePerformedNotes" class="width-full">
+                  <label>Sentence Performed Notes</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'sentence-performed'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Sentence Performed Balance" [(ngModel)]="selectedCriminalCharge.sentencePerformedBalance">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Amount" [(ngModel)]="selectedCriminalCharge.paymentAmount">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Receipt Id" [(ngModel)]="selectedCriminalCharge.paymentReceiptId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Receipt Number" [(ngModel)]="selectedCriminalCharge.paymentReceiptNumber">
+                </mat-form-field>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.paymentOrderDescription" class="width-full">
+                  <label>Payment Order Description </label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.paymentEventCode" class="width-full">
+                  <label>Payment Event Code </label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.paymentTypeTender" class="width-full">
+                  <label>Payment Type Tender </label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.paymentMethod" class="width-full">
+                  <label>Payment Method </label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Amount Made" [(ngModel)]="selectedCriminalCharge.paymentAmountMade">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Processing Fee" [(ngModel)]="selectedCriminalCharge.paymentProcessingFee">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Wipay Fee Amount" [(ngModel)]="selectedCriminalCharge.wipayFeeAmount">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Disbursement Amount" [(ngModel)]="selectedCriminalCharge.paymentDisbursementAmount">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.paymentAccountStatus" class="width-full">
+                  <label>Payment Account Status</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Payment Event" [(ngModel)]="selectedCriminalCharge.paymentEvent">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Account Balance Amount" [(ngModel)]="selectedCriminalCharge.accountBalanceAmount">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'payment-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Account Balance Forgiven" [(ngModel)]="selectedCriminalCharge.accountBalanceForgiven">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Bail Bond Id" [(ngModel)]="selectedCriminalCharge.bailBondId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Bail Poster Id" [(ngModel)]="selectedCriminalCharge.bailorPosterId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailorPosterName" class="width-full">
+                  <label>Bailor Poster Name</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailorPosterEntity" class="width-full">
+                  <label>Bailor Poster Entity</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailBondRestrictions" class="width-full">
+                  <label>Bail Bond Restrictions</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailSecurityType" class="width-full">
+                  <label>Bail Security Type</label>
+                </span>
+              </div>
+
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Bail Deed Number" [(ngModel)]="selectedCriminalCharge.bailDeedNumber">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailDeedNameOfOwner" class="width-full">
+                  <label>Bail Deed Name Of Owner</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.bailDeedDetails" class="width-full">
+                  <label>Bail Deed Details</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Financial Transaction Id" [(ngModel)]="selectedCriminalCharge.financialTransactionId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Financial Account Id" [(ngModel)]="selectedCriminalCharge.financialAccountId">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Amount Bail Forfeited" [(ngModel)]="selectedCriminalCharge.amountBailForfeited">
+                </mat-form-field>
+              </div>
+
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Principal Bail Returned" [(ngModel)]="selectedCriminalCharge.principalBailReturned">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Amount Bail Interest" [(ngModel)]="selectedCriminalCharge.amountBailInterest">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12" *ngIf="selectedCriminalCharge.type === 'bail-bond-records'">
+                <mat-form-field class="width-full">
+                  <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="Total Amount Bail Returned" [(ngModel)]="selectedCriminalCharge.totalAmountBailReturned">
+                </mat-form-field>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeReference" class="width-full">
+                  <label>Charge Reference</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.lawEnforcementId" class="width-full">
+                  <label>Law Enforcement ID</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.charge" class="width-full">
+                  <label>charge</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges' || selectedCriminalCharge.type === 'criminal-charge-modifications'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeUNCode" class="width-full">
+                  <label>Charge UN Code</label>
+                </span>
+              </div>
+              <div class="ui-g-12 mt-25" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.chargeEnhancements" class="width-full">
+                  <label>Charge Enhancements</label>
+                </span>
+              </div>
+
+              <div *ngFor="let df of selectedCriminalCharge.arrayFromDynamicFields">
+                  <div class="ui-g-12" *ngIf="df.property.substr(df.property.length - 3) == 'num'">
+                      <mat-form-field class="width-full">
+                        <input matInput type="number" name="tiDuration" #tiDuration="ngModel" placeholder="{{df.property.slice(0, -4) | titlecase}}" [(ngModel)]="df.value">
+                      </mat-form-field>
+                    </div>
+
+                    <div class="ui-g-12 mt-25" *ngIf="df.property.substr(df.property.length - 3) == 'str'">
+                        <span class="md-inputfield">
+                            <input pInputText type="text" [required]="false" [(ngModel)]="df.value" class="width-full">
+                            <label>{{df.property.slice(0, -4) | titlecase}}</label>
+                          </span>
+                      </div>
+              </div>
+
+              <div class="ui-g-12 ui-md-6 mb-0" *ngIf="selectedCriminalCharge.type === 'criminal-charges'">
+                <label class="minimal primary block">Charge Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full" [(ngModel)]="selectedCriminalCharge.chargeDate"
+                  dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030"
+                  appendTo="body"></p-calendar>
+              </div>
+
+              <div class="ui-g-12 mt-25" *ngIf="addNewFieldToggle">
+                <span class="md-inputfield">
+                  <input pInputText type="text" [required]="false" [(ngModel)]="dynamicField.name" class="width-full">
+                  <label>New Field Name</label>
+
+
+                  <select [(ngModel)]="dynamicField.type" name="" id="" class="width-full">
+                    <option value="str"> Text </option>
+                    <option value="num"> Number </option>
+                  </select>
+                </span>
+
+              </div>
+
+              <div class="ui-g-12 ta-r pb-0">
+                <button mat-raised-button align="end" *ngIf="addNewFieldToggle" color="secondary" (click)="addNewDynamicField(); addNewFieldToggle = !addNewFieldToggle" class="mt-15 ">
+                  Save Field
+                </button>
+
+                <div class="ui-g-12 mt-25" *ngIf="showField">
+                  <span class="md-inputfield">
+                    <input pInputText type="text" [required]="false" [(ngModel)]="selectedCriminalCharge.dynamicFields" class="width-full">
+                    <label>My New Field</label>
+                  </span>
+                </div>
+
+                <button mat-raised-button align="end" color="secondary" (click)="addNewFieldToggle=true;" class="mt-15 ">
+                  <mat-icon aria-label="Add data item button">add</mat-icon>
+                  Add New Field
+                </button>
+              </div>
+              <div class="ui-g-12 ta-r pb-0">
+                <button mat-raised-button color="primary" type="submit" (click)="saveNewSentencingItem(selectedCriminalCharge)" class="mt-15 ">
+                  <mat-icon aria-label="Add data item button">check</mat-icon>
+                  Save Consequence
+                </button>
+              </div>
+
+
+
+
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <!-- HEARINGS TAB -->
+
+        <p-tabPanel header="Hearings" leftIcon="ui-icon-gavel">
+          <div class="ui-g">
+
+            <!-- ------ HEARINGs COMPONENT -->
+            <!-- <hearings [case]="case"></hearings> -->
+            <app-temp-hearings [case]="case" (filteredEventsChange)="updateRegister($event)"></app-temp-hearings>
+
+          </div>
+        </p-tabPanel>
+
+        <!-- MINUTES TAB -->
+
+        <p-tabPanel header="Minutes" leftIcon="ui-icon-pencil">
+          <div class="ui-g">
+
+            <!-- ------ Minutes COMPONENT -->
+            <app-minutes [case]="case"></app-minutes>
+
+          </div>
+        </p-tabPanel>
+
+
+        <!-- PAYMENT & DISBURSEMENTS TAB -->
+        <p-tabPanel header="Payments and Disbursements" leftIcon="ui-icon-list">
+
+          <div class="ui-g">
+            <div class="ui-g-12">
+              <h2>Payments & Disbursements</h2>
+            </div>
+
+            <div class="ui-g-12 ta-r mt-30">
+              <button type="button"
+                  *ngIf="hasPermission(Permission.CREATE_CASE)"
+                  (click)="resetAddCasePaymentModal()"
+                  label="Add Payment"
+                  icon="ui-icon-add"
+                  class="ui-button-secondary mr-15" pButton></button>
+            </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.casePayments"
+                          selectionMode="single"
+                          [(selection)]="selectedCasePayment"
+                          (onRowSelect)="ShowAddCasePayment($event)"
+                          scrollable="true"
+                          dataKey="paymentOID" #dtPayments>
+
+                <p-column field="dateOfPayment" header="Date of Payment" [style]="{'width':'8%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.dateOfPayment | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>
+
+                <p-column field="receiptNumber" header="Receipt Number" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="paymentMethod" header="Payment Method" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="paymentType" header="Payment Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="paymentNotes" header="Payment Notes" [style]="{'width':'14%'}" [sortable]="true"></p-column>
+
+                <p-column field="" header="Name of Payor" [style]="{'width':'10%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngIf="item.payorParty?.partyOID">
+                        {{ item.payorParty | name }}
+                      </div>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="" header="Name of Beneficiary" [style]="{'width':'10%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngIf="item.beneficiaryParty?.partyOID">
+                        {{ item.beneficiaryParty | name }}
+                      </div>
+                  </ng-template>
+                </p-column>
+
+                <p-column field="" header="Payment In by Payor" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      <div *ngIf="item.totalPaymentIn">
+                        {{ '$'+ item.totalPaymentIn }}
+                      </div>
+                  </ng-template>
+                </p-column>
+
+
+                <p-column field="" header="Payment Recorded By" [style]="{'width':'10%'}">
+                    <ng-template pTemplate="body" let-item="rowData">
+                        <div *ngIf="item.staffPartyRecordingPayment?.partyOID">
+                          {{ item.staffPartyRecordingPayment.fullName}}
+                        </div>
+                    </ng-template>
+                  </p-column>
+
+                  <p-column field="" header="Payment Disbursed By" [style]="{'width':'10%'}" >
+                      <ng-template pTemplate="body" let-item="rowData">
+                          <div *ngIf="item.staffPartyRecordingDisbursement?.partyOID">
+                            {{ item.staffPartyRecordingDisbursement.fullName}}
+                          </div>
+                      </ng-template>
+                    </p-column>
+
+                <p-column field="disbursementDate" header="Date of Disbursement" [style]="{'width':'8%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.disbursementDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>
+
+            </p-dataTable>
+
+            </div>
+
+            <div class="ui-g-12 ta-r mt-30">
+              <button type="button"
+                  *ngIf="hasPermission(Permission.CREATE_CASE)"
+                  (click)="saveCase()"
+                  label="Save Case"
+                  icon="ui-icon-check"
+                  class="btn-big" pButton
+                  [disabled]="!caseForm.form.valid"></button>
+            </div>
+
+
+          </div>
+        </p-tabPanel>
+
+
+        <!-- PAYMENT HISTORY -->
+        <p-tabPanel header="Payment History" leftIcon="ui-icon-list">
+
+          <div class="ui-g">
+            <div class="ui-g-12">
+              <h2>Payment History</h2>
+            </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="case.casePaymentsDetails"
+                          scrollable="true"
+                          dataKey="paymentDetailOID" #dtPaymentHistory>
+
+                <p-column field="paymentDate" header="Date of Payment" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.paymentDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>
+
+                <p-column field="paymentPeriodStartDate" header="Period Start Date" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.paymentPeriodStartDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>
+
+                <p-column field="paymentPeriodEndDate" header="Period End Date" [style]="{'width':'10%'}" [sortable]="true">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.paymentPeriodEndDate | date:'dd-MMM-yyyy'}}
+                  </ng-template>
+                </p-column>
+
+                <p-column field="receiptNumber" header="Receipt Number" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="paymentType" header="Payment Type" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="paymentItem" header="Payment Item" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="timeFrequency" header="Payment Frequency" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="paymentAmountOrdered" header="Payment Amount Ordered" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+                <p-column field="paymentAmountIn" header="Customer Payment" [style]="{'width':'10%'}" [sortable]="true"></p-column>
+
+            </p-dataTable>
+
+          </div>
+
+
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Send to UTURN" leftIcon="ui-icon-compare-arrows" *ngIf="isTrafficViewable">
+          <div class="ui-g">
+            <app-orders [case]="case" (filteredEventsChange)="updateRegister($event)"></app-orders>
+          </div>
+        </p-tabPanel>
+
+
+      </p-tabView>
+
+    </div>
+  </div>
+  <!-- //END SECOND CARD - TAB SECTION -->
+
+</div>
+
+
+
+
+
+<!--
+  ----------------------------------
+  MODALS
+  ----------------------------------
+ -->
+
+<!-- SAMPLE MODAL -->
+<!-- <p-dialog header="Title"
+           [(visible)]="showDetailsModal"
+           [modal]="true"
+           [draggable]="false"
+           [positionLeft]="0"
+           [positionTop]="0"
+           [blockScroll]="true"
+           [closable]="false">
+ </p-dialog> -->
+
+
+<!-- REMOVE CHARGE CONFIRMATION MODAL -->
+
+<!-- <p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeleteHearingModal" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <div>Are you sure you want to delete this Hearing?</div>
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+            <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()" ></button>
+            <button label="Yes"   type="button" pButton icon="fa-check" (click)="deleteHearing()" ></button>
+        </div>
+    </p-footer>
+</p-dialog> -->
+
+<!-- REMOVE PARTY CONFIRMATION MODAL -->
+
+<p-dialog header="Confirm Delete?" width="450" [(visible)]="showDeletePartyModal" [responsive]="true" showEffect="fade"
+  [modal]="true" [closable]="false">
+  <div>Are you sure you want to delete this Party?</div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button label="No" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
+      <button label="Yes" type="button" pButton icon="fa-check" (click)="deleteParty()"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<!-- ADD CASE PARTY MODAL -->
+
+<p-dialog header="Add Case Party" styleClass="casePartyModal" width="700" [(visible)]="showModalAddCaseParty"
+  [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+
+  <p-tabView>
+
+    <!-- TAB 1 of ADD CASE PARTY
+     ------------ ADD EXISTING PARTY ----------------
+    -->
+    <p-tabPanel header="Existing Party">
+      <form #casePartyForm="ngForm" novalidate>
+        <div class="ui-g">
+          <div class="form-group">
+
+            <div class="ui-g-12 ui-md-6">
+              <div class="ui-inputgroup">
+                <span class="md-inputfield">
+                  <input type="text" [(ngModel)]="partySearchText" name="tiPartySearch" pInputText>
+                  <label>Search party name</label>
+                </span>
+                <button pButton type="button" (click)="searchForParty()" icon="ui-icon-search"></button>
+              </div>
+            </div>
+
+            <div class="ui-g-12 ui-md-6">
+              <div class="ui-inputgroup">
+                <span class="md-inputfield">
+                  <input type="text" [(ngModel)]="partySearchPoliceRegNum" name="tiPartySearchbyPoliceRegNum" pInputText>
+                  <label>Search Police Regimental Num</label>
+                </span>
+                <button pButton type="button" (click)="searchForPartyByPoliceRegNumber()" icon="ui-icon-search"></button>
+              </div>
+            </div>
+
+            <div class="ui-g-12">
+              <p-dataTable [value]="searchPartyResults" selectionMode="single" [(selection)]="selectedSearchParty"
+                scrollHeight="200px" [scrollable]="true" (onRowSelect)="searchPartyOnRowSelect($event)"
+                dataKey="partyOID" #dtSearchParty>
+
+                <p-column field="isOrganization" header="Is Org?" [style]="{'width':'8%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <i class="fa ui-icon-check task-done" *ngIf="item.isOrganization"></i>
+                  </ng-template>
+                </p-column>
+
+                <p-column header="Party Info" [style]="{'width':'50%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                    <div>{{ item | name }}</div>
+                    <!-- Christian: turned on when fullName support on Server -->
+                    <!-- <div>{{ item.fullName }}</div> -->
+                    <div *ngIf="!item.isOrganization">
+                      <span class="smaller">
+                        DOB: {{ item.dob | date:'dd-MMM-yy' }}
+                        Sex: {{ item.sex }}
+                        Age: {{ item.age }}
+                      </span>
+                    </div>
+                  </ng-template>
+                </p-column>
+
+                <!-- <p-column header="Full Name" field="fullName" [style]="{'width':'50%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.fdob | date:'M/d/yyyy'}}
+                  </ng-template>
+                </p-column>
+
+                <p-column header="First Name" field="firstName" [style]="{'width':'25%'}"></p-column>
+                <p-column header="Last Name" field="lastName" [style]="{'width':'25%'}"></p-column>
+
+                <p-column header="DOB" field="dob" [style]="{'width':'15%'}">
+                  <ng-template pTemplate="body" let-item="rowData">
+                      {{item.dob | date:'M/d/yyyy'}}
+                  </ng-template>
+                </p-column>
+                <p-column header="Age" field="age" [style]="{'width':'10%'}"></p-column>
+                <p-column header="Sex" field="sex" [style]="{'width':'7%'}"></p-column> -->
+
+              </p-dataTable>
+            </div>
+
+            <div *ngIf="selectedSearchParty">
+              <div class="ui-g-12 mb-0">
+                <h3 class="mb-0">
+                  {{selectedSearchParty.fullName?selectedSearchParty.fullName:selectedSearchParty.firstName+" "+selectedSearchParty.lastName}}
+                </h3>
+              </div>
+              <div class="ui-g-12 mv-0">
+                <label class="minimal primary block">Party Role</label>
+                <p-dropdown name="ddPartyRole" id="ddPartyRole" #ddPartyRole="ngModel" placeholder="choose Party Role..."
+                    [required]="true"
+                    [options]="casePartyRoleTypes"
+                    optionLabel="name"
+                    [filter] = "true"
+                    [(ngModel)]="selectedSearchPartyRole"
+                    (onChange)="searchPartyRoleTypeOnChange($event)"
+                    styleClass="width-full">
+                </p-dropdown>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="ddPartyRole.errors?.required && ddPartyRole.touched">
+                  Party Role is required
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-0 pl-0">
+                <div class="ui-g-12 ui-md-6 mb-0">
+                  <label class="minimal primary block">Start Date</label>
+                  <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full"
+                    [(ngModel)]="selectedSearchPartyStartDate" dateFormat="dd-M-yy" placeholder="Start Date"
+                    [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030" appendTo="body"
+                    [required] = true></p-calendar>
+                </div>
+                <div class="ui-g-12 ui-md-6 mb-0">
+                  <label class="minimal primary block">End Date</label>
+                  <p-calendar id="dtEndDate" name="dtEndDate" inputStyleClass="width-full"
+                    [(ngModel)]="selectedSearchPartyEndDate" dateFormat="dd-M-yy" placeholder="End Date"
+                    [showIcon]="true" [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p-footer>
+          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+            <button label="Add Party To Case" type="submit" pButton icon="fa-check" (click)="addPartyToCase(caseForm)"
+              [disabled]="!casePartyForm.form.valid || !selectedSearchParty"></button>
+            <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
+              (click)="hideModals()"></button>
+          </div>
+        </p-footer>
+      </form>
+    </p-tabPanel>
+
+
+    <!-- TAB 2 of ADD CASE PARTY
+     ------------ CREATE NEW PARTY ----------------
+    -->
+    <p-tabPanel header="Create New Party">
+      <form #newCasePartyForm="ngForm" novalidate class="mt-n-30">
+
+
+        <div class="ui-g form-group" novalidate>
+
+          <div *ngIf="newCaseParty">
+
+            <div class="ui-g-12 mb-20 ml-10" *ngIf="newCaseParty.caseParty">
+              <p-checkbox [(ngModel)]="newCaseParty.caseParty.isOrganization" binary="true" name="cb_isOrganization">
+              </p-checkbox>
+              <span class="task-name">Is Organization?</span>
+            </div>
+
+            <!-- Organization -->
+            <div class="ui-g-12 ui-md-6" *ngIf="newCaseParty.caseParty?.isOrganization">
+              <div class="ui-g-12 mb-20 pl-0">
+                <span class="md-inputfield">
+                  <input type="text" pInputText required [(ngModel)]="newCaseParty.caseParty.fullName" name="tiOrgName"
+                    #tiOrgName="ngModel">
+                  <label>Organization Name</label>
+                </span>
+              </div>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="tiOrgName.errors?.required && tiOrgName.touched">
+                Please enter an Organization Name
+              </div>
+            </div>
+
+            <div *ngIf="!newCaseParty.caseParty?.isOrganization">
+              <div class="ui-g-12 mb-20">
+                <span class="md-inputfield">
+                  <input pInputText type="text" #newCPfName="ngModel" required name="newCPfName"
+                    [ngModel]="newCaseParty.caseParty?.firstName" (ngModelChange)="newCPfNameChanged($event)">
+                  <label>Given Name</label>
+                </span>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="newCPfName.errors?.required && newCPfName.touched">
+                  Please enter Given Name
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-20">
+                <span class="md-inputfield">
+                  <input type="text" pInputText #newCPlName="ngModel" name="newCPlName" required
+                    [ngModel]="newCaseParty.caseParty?.lastName" (ngModelChange)="newCPlNameChanged($event)">
+                  <label>Family Name</label>
+                </span>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="newCPlName.errors?.required && newCPlName.touched">
+                  Please enter Family Name
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-20">
+                <span class="md-inputfield">
+                  <input type="text" pInputText #newCPfullName="ngModel" name="newCPfullName" [disabled]=true
+                    [ngModel]="newCaseParty.caseParty?.fullName" (ngModelChange)="newCPlFullNameChanged($event)">
+                  <label>Full Name (Automatically Populated)</label>
+                </span>
+                <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="newCPfullName.errors?.required && newCPfullName.touched">
+                  Please enter Full Name
+                </div>
+              </div>
+
+              <div class="ui-g-12 mb-0">
+                <span class="md-inputfield">
+                  <input type="text" pInputText name="newCPaltName" [ngModel]="newCaseParty.caseParty?.alternativeName"
+                    (ngModelChange)="newCPaltNameChanged($event)">
+                  <label>Alternative Name</label>
+                </span>
+              </div>
+
+              <div class="ui-g-12 mb-0 pl-0">
+                <div class="ui-g-12 ui-md-4 mb-0">
+                  <label class="minimal primary block">Date of Birth</label>
+                  <p-calendar id="newCPdob" name="newCPdob" #newCPdob="ngModel" [required]="true"
+                    inputStyleClass="width-full" [ngModel]="newCaseParty.caseParty?.dob"
+                    (ngModelChange)="newCPdobChange($event)" dateFormat="dd-M-yy" placeholder="Date of Birth"
+                    [showIcon]="true" [yearNavigator]="true" yearRange="1900:2020" appendTo="body"></p-calendar>
+                  <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="newCPdob.errors?.required && newCPdob.touched">
+                    Please enter a Date of Birth
+                  </div>
+                </div>
+
+                <div class="ui-g-12 ui-md-4 mb-0">
+                  <label class="minimal primary block">Sex</label>
+                  <p-dropdown name="newCPsex" #newCPsex="ngModel" placeholder="choose gender" [required]="true"
+                    [options]="genderTypes" [ngModel]="newCaseParty.caseParty?.sex"
+                    (ngModelChange)="newCPsexChange($event)" styleClass="width-auto">
+                  </p-dropdown>
+                  <div class="ui-message ui-messages-error ui-corner-all"
+                    *ngIf="newCPsex.errors?.required && newCPsex.touched">
+                    Please enter a gender
+                  </div>
+                </div>
+
+                <div class="ui-g-12 ui-md-4 mb-0" *ngIf = "newCaseParty.role.name === 'Police Officer'" >
+                  <label class="minimal primary block" >Police Regimental Number</label>
+                  <span class="md-inputfield" >
+                    <input type="text" pInputText name="newCPoliceRegNum" [ngModel]="newCaseParty.caseParty?.policeRegimentalNumber"
+                      (ngModelChange)="newCPoliceRegNumOnChange($event)"
+                      [required]="true">
+                  </span>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Party Role</label>
+              <p-dropdown name="ddNewPartyRole" #ddNewPartyRole="ngModel" placeholder="choose Party Role..."
+                [required]="true" [options]="casePartyRoleTypes" optionLabel="name" [(ngModel)]="newCaseParty.role"
+                (onChange)="newCasePartyRoleTypeOnChange($event)" styleClass="width-full"
+                [filter] = "true">
+              </p-dropdown>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddNewPartyRole.errors?.required && ddNewPartyRole.touched">
+                Party Role is required
+              </div>
+            </div>
+
+            <!-- column 3 -->
+            <div class="ui-g-12 mb-0 pl-0">
+              <div class="ui-g-12 ui-md-6 mb-0">
+                <label class="minimal primary block">Start Date</label>
+                <p-calendar id="dtStartDate" name="dtStartDate" inputStyleClass="width-full"
+                  [(ngModel)]="newCaseParty.startDate" dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true"
+                  [yearNavigator]="true" yearRange="1970:2030" appendTo="body"
+                  [required]="true"></p-calendar>
+              </div>
+              <div class="ui-g-12 ui-md-6 mb-0">
+                <label class="minimal primary block">End Date</label>
+                <p-calendar id="dtEndDate" name="dtEndDate" inputStyleClass="width-full"
+                  [(ngModel)]="newCaseParty.endDate" dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true"
+                  [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p-footer>
+          <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30 ta-r">
+            <button label="Create and Add Party To Case" type="submit" pButton icon="fa-check"
+              (click)="createAndAddPartyToCase(newCasePartyForm)"
+              [disabled]="!newCasePartyForm.form.valid || !newCaseParty"></button>
+            <button label="Cancel" type="button" class="ui-button-secondary mr-15" pButton icon="fa-close"
+              (click)="hideModals()"></button>
+          </div>
+        </p-footer>
+
+      </form>
+    </p-tabPanel>
+
+  </p-tabView>
+</p-dialog>
+
+<!-- DIALOG CASE PARTY
+  ------------ EDIT PARTY ----------------
+-->
+<p-dialog header="Case Party Information" width="950" [(visible)]="showModalEditCaseParty" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+    <form #editCasePartyForm="ngForm" novalidate>
+      <div class="ui-g form-group" novalidate>
+
+
+      <!--div *ngIf="selectedCaseParty.isOrganization">
+             <div class="ui-g-12 mb-20 pl-0" >
+                <span class="md-inputfield">
+                  <input type="text" pInputText required
+                          [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                          [(ngModel)]="selectedCaseParty.fullName" name="tiOrgName" #tiOrgName="ngModel" >
+                  <label>Organization Name</label>
+                </span>
+              </div>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                   *ngIf="tiOrgName.errors?.required && tiOrgName.touched" >
+                    Please enter the Organization Name
+              </div>
+            </div-->
+
+
+      <div *ngIf="selectedCaseParty">
+
+        <div class="ui-g-12 mb-20">
+          <span class="md-inputfield">
+            <input pInputText type="text" #editCPfName="ngModel" required name="editCPfName" [disabled]="true"
+              [ngModel]="selectedCaseParty.caseParty?.firstName" (ngModelChange)="editCPfNameChanged($event)">
+            <label>First Name</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+            *ngIf="editCPfName.errors?.required && editCPfName.touched">
+            Please enter First Name
+          </div>
+        </div>
+
+        <div class="ui-g-12 mb-20">
+          <span class="md-inputfield">
+            <input type="text" pInputText #editCPlName="ngModel" name="editCPlName" required [disabled]="true"
+              [ngModel]="selectedCaseParty.caseParty?.lastName" (ngModelChange)="editCPlNameChanged($event)">
+            <label>Last Name</label>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+            *ngIf="editCPlName.errors?.required && editCPlName.touched">
+            Please enter Last Name
+          </div>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <span class="md-inputfield">
+            <input type="text" pInputText name="editCPaltName" [disabled]="true"
+              [ngModel]="selectedCaseParty.caseParty?.alternativeName" (ngModelChange)="editCPaltNameChanged($event)">
+            <label>Alternative Name</label>
+          </span>
+        </div>
+
+
+        <div class="ui-g-12 mb-0 pl-0">
+          <div class="ui-g-12 ui-md-6 mb-0">
+            <label class="minimal primary block">Date of Birth</label>
+            <p-calendar id="editCPdob" name="editCPdob" #editCPdob="ngModel" [disabled]="true" [required]="true"
+              inputStyleClass="width-full" [ngModel]="selectedCaseParty.caseParty?.dob"
+              (ngModelChange)="editCPdobChange($event)" dateFormat="dd-M-yy" placeholder="Date of Birth"
+              [showIcon]="true" [yearNavigator]="true" yearRange="1900:2020" appendTo="body"></p-calendar>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="editCPdob.errors?.required && editCPdob.touched">
+              Please enter a Date of Birth
+            </div>
+          </div>
+
+          <div class="ui-g-12 ui-md-6 mb-0">
+            <label class="minimal primary block">Sex</label>
+            <p-dropdown name="editCPsex" #editCPsex="ngModel" placeholder="choose gender" [disabled]="true"
+              [required]="true" [options]="genderTypes" [ngModel]="selectedCaseParty.caseParty?.sex"
+              (ngModelChange)="editCPsexChange($event)" styleClass="width-auto">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="editCPsex.errors?.required && editCPsex.touched">
+              Please enter a gender
+            </div>
+          </div>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Party Role</label>
+          <p-dropdown name="ddNewPartyRole" #ddNewPartyRole="ngModel" placeholder="choose Party Role..."
+            [disabled]="true" [required]="true" [options]="casePartyRoleTypes" optionLabel="name"
+            [(ngModel)]="selectedCaseParty.role" (onChange)="editCasePartyRoleTypeOnChange($event)"
+            styleClass="width-full">
+          </p-dropdown>
+          <div class="ui-message ui-messages-error ui-corner-all"
+            *ngIf="ddNewPartyRole.errors?.required && ddNewPartyRole.touched">
+            Party Role is required
+          </div>
+        </div>
+
+        <!-- column 3 -->
+        <div class="ui-g-12 mb-0 pl-0">
+          <div class="ui-g-12 ui-md-6 mb-0">
+            <label class="minimal primary block">Start Date</label>
+            <p-calendar id="dtStartDate" name="dtStartDate" [disabled]="true" inputStyleClass="width-full"
+              [(ngModel)]="selectedCaseParty.startDate" dateFormat="dd-M-yy" placeholder="Start Date" [showIcon]="true"
+              [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
+          </div>
+          <div class="ui-g-12 ui-md-6 mb-0">
+            <label class="minimal primary block">End Date</label>
+            <p-calendar id="dtEndDate" name="dtEndDate" inputStyleClass="width-full"
+              [(ngModel)]="selectedCaseParty.endDate" dateFormat="dd-M-yy" placeholder="End Date" [showIcon]="true"
+              [yearNavigator]="true" yearRange="1970:2030" appendTo="body"></p-calendar>
+          </div>
+
+          <div class="ui-g-12 ui-md-0 mb-0">
+            <label class="minimal primary block">Party Contact Information</label>
+            <p-dataTable [value]="selectedCaseParty.caseParty.phoneNumbers"
+                        scrollable="true" scrollHeight="200px"
+                        dataKey="phoneNumbers.partyPhoneOID" #dtContact>
+
+              <p-column field="phoneType" header="Contact Type" [style]="{'width':'10%'}" [sortable]="true"> </p-column>
+              <p-column field="phoneNumber" header="Phone Number" [style]="{'width':'20%'}" [sortable]="true"> </p-column>
+
+              <p-column field="startDate" header="Start Date" [style]="{'width':'10%'}" [sortable]="true">
+                <ng-template pTemplate="body" let-item="rowData">
+                    {{item.startDate | date:'dd-MMM-yyyy'}}
+                </ng-template>
+              </p-column>
+
+              <p-column field="endDate" header="End Date" [style]="{'width':'10%'}" [sortable]="true">
+                <ng-template pTemplate="body" let-item="rowData">
+                    {{item.endDate | date:'dd-MMM-yyyy'}}
+                </ng-template>
+              </p-column>
+              </p-dataTable>
+          </div>
+
+          <div class="ui-g-12 ui-md-0 mb-0">
+            <label class="minimal primary block">Party Address Information</label>
+            <p-dataTable [value]="selectedCaseParty.caseParty.addresses"
+                        scrollable="true" scrollHeight="200px"
+                        dataKey="addresses.addressOID" #dtAddress>
+
+              <p-column field="addressType" header="Address Type" [style]="{'width':'10%'}" [sortable]="true"> </p-column>
+              <p-column field="startDate" header="Start Date" [style]="{'width':'8%'}" [sortable]="true">
+                <ng-template pTemplate="body" let-item="rowData">
+                    {{item.startDate | date:'dd-MMM-yyyy'}}
+                </ng-template>
+              </p-column>
+              <p-column field="endDate" header="End Date" [style]="{'width':'8%'}" [sortable]="true">
+                <ng-template pTemplate="body" let-item="rowData">
+                    {{item.endDate | date:'dd-MMM-yyyy'}}
+                </ng-template>
+              </p-column>
+
+              <p-column field="address1" header="Street Name" [style]="{'width':'20%'}" [sortable]="true"> </p-column>
+              <p-column field="communityCode"  header="City / Town"[style]="{'width':'10%'}" [sortable]="true"></p-column>
+              <p-column field="countryName"  header="Country" [style]="{'width':'15%'}" [sortable]="true"></p-column>
+              </p-dataTable>
+        </div>
+
+        </div>
+      </div>
+    </div>
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30 ta-r">
+        <button label="Edit Party" type="submit" pButton icon="fa-check" (click)="editParty()"
+          [disabled]="!editCasePartyForm.form.valid || !selectedCaseParty"></button>
+        <button label="Cancel" type="button" class="ui-button-secondary mr-15" pButton icon="fa-close"
+          (click)="hideModals()"></button>
+      </div>
+    </p-footer>
+
+  </form>
+
+</p-dialog>
+
+<!-- START: ADD CASE APPLICATION MODAL -->
+
+<p-dialog header="Case Application Details" styleClass="caseApplicationModal" width="1200" [(visible)]="showModalAddCaseApplication" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+
+  <form #caseApplicationForm="ngForm" *ngIf="showModalAddCaseApplication">
+    <div class="ui-g">
+      <div class="form-group" >
+
+        <div class="ui-g-12">
+
+          <div class="ui-g-12 ui-md-3" *ngIf="case.caseNumber != 0">
+            <label class="minimal primary block">Case Number</label>
+            <div class="mar-0">{{case.caseNumber}}</div>
+          </div>
+
+           <div class="ui-g-12 ui-md-3" *ngIf="selectedCaseApplication.caseApplicationOID != 0">
+              <label class="minimal primary block">Application Number</label>
+              <div class="mar-0">{{selectedCaseApplication.caseApplicationNumber}}</div>
+           </div>
+
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Application Type</label>
+              <p-dropdown name="ddApplicationType" id="ddApplicationType"  placeholder="Choose Application Type"
+                  [required]="true"
+                  [options]="caseApplicationTypes"
+                  optionLabel="name"
+                  [disabled]="(!hasPermission(Permission.CREATE_TASK) && selectedCaseApplication.caseApplicationOID > 0) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
+                  [filter] = "true"
+                  [(ngModel)]="selectedCaseApplication.caseApplicationObjType"
+                  (onChange)="applicationTypeOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+            </div>
+
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Application Status</label>
+              <p-dropdown name="ddApplicationStatus" id="ddApplicationStatus" placeholder="Choose Application Status"
+                  [required]="true"
+                  [options]="applicationStatus"
+                  filter = "true"
+                  [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [ngModel]="selectedCaseApplication.caseApplicationStatusDisplay"
+                  appendTo="body"
+                  (onChange)="applicationStatusOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+           </div>
+        </div>
+
+        <div class="ui-g-12">
+           <div class="ui-g-12 ui-md-4">
+              <label class="minimal primary block">Start Date</label>
+              <p-calendar id="dtAppStartDate" name="dtAppStartDate" placeholder="Start Date"
+                    (ngModelChange) ="caseApplicationStartDateOnChange($event)"
+                    [ngModel]="selectedCaseApplication?.caseApplicationStartDate"
+                    [required]="true"
+                    appendTo="body"
+                    [inline] = "false"
+                    dateFormat="dd-M-yy"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [showIcon]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2030"
+                    appendTo="body">
+              </p-calendar>
+           </div>
+
+          <div class="ui-g-12 ui-md-4">
+            <label class="minimal primary block">End Date</label>
+            <p-calendar id="dtAppEndDate" name="dtAppEndDate" placeholder="Application End Date"
+                    (ngModelChange) ="caseApplicationEndDateOnChange($event)"
+                    [ngModel]="selectedCaseApplication?.caseApplicationEndDate"
+                    [required]="false"
+                    appendTo="body"
+                    [inline] = "false"
+                    dateFormat="dd-M-yy"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [showIcon]="true"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2030"
+                    appendTo="body">
+              </p-calendar>
+          </div>
+
+       </div>
+
+
+        <!-- ADD PARTY APPLICANT & PARTY ROLES SECTION  -->
+
+        <div class="ui-g-12 mt-0">
+          <div class="ui-g-12">
+            <header class="mb-10">Party Applicant &amp; Party Roles</header>
+          </div>
+
+          <div class="ui-g-12 mb-5 partyNames-th">
+            <div class="ui-g-5 pv-0">
+              <label class="minimal primary block">Party Name</label>
+            </div>
+            <div class="ui-g-6 pv-0">
+              <label class="minimal primary block">Party Role</label>
+            </div>
+          </div>
+
+          <div class="ui-g-12 mb-5 caseapplicant-row" *ngFor="let caseapplicant of selectedCaseApplication.caseApplicants; let acIdx = index">
+
+            <div class="ui-g-5 ph-20 pv-5">
+              <mat-form-field class="width-full" >
+                  <mat-select name="ddCPName"
+                    [value]="caseapplicant"
+                    [compareWith]="compareByCasePartyId"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    (selectionChange)="caseApplicantOnChange($event, acIdx)">
+                 <mat-option *ngFor="let caName of appCaseParties" [value]="caName">
+                    {{caName.fullName}}
+                  </mat-option>
+
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="ui-g-5 ph-20 pv-5">
+               <mat-form-field class="width-full" >
+                   <mat-select name="ddCPRole"
+                      [value]="caseapplicant"
+                      [compareWith]="compareByCasePartyRoleId"
+                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      (selectionChange)="caseApplicantRoleOnChange($event, acIdx)" >
+                    <mat-option *ngFor="let roleTypes of casePartyRoleTypes" [value]="roleTypes">
+                      {{roleTypes.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
+              <i class="material-icons delete-icon" (click)="requestDeleteCasePartyApplicant(acIdx)">delete</i>
+            </div>
+        </div>
+     </div>
+     </div>
+    </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+
+
+        <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
+                (click)="hideModals()" >
+        </button>
+        <button label="Save Application Details" type="submit" pButton icon="fa-check"
+                (click)="addCaseApplication()"
+                [disabled]="!caseApplicationForm.form.valid">
+        </button>
+        <button type="button" (click)="addCaseApplicant();" label="Add Applicant &amp; Role"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+                pButton>
+        </button>
+      </div>
+    </p-footer>
+  </form>
+</p-dialog>
+
+<!-- END: ADD CASE APPLICATION MODAL -->
+
+
+<!-- ADD SEAL CASE : AUTHORIZED USERS MODAL -->
+
+<p-dialog header="Seal Case File" styleClass="authorizedUserModal" width="650" [(visible)]="showModalAuthorizedUsers" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+
+  <form #authorizedUsersForm="ngForm" *ngIf="showModalAuthorizedUsers">
+    <div class="ui-g">
+      <div class="form-group" >
+
+        <div class="ui-g-12">
+
+        <div class="ui-g-12 mt-0">
+          <div class="ui-g-12">
+            <header class="mb-10">Sealing Case Number {{case.caseNumber}}: The Registrar and active JO's will have access if the case is sealed</header>
+          </div>
+
+          <div class="ui-g-12 mb-5 authorizedAccessCaseParties-row" *ngFor="let authorizedAccessCaseParties of case.authorizedAccessCaseParties; let acIdx = index">
+
+            <div class="ui-g-8 ph-20 pv-5">
+
+              <mat-form-field class="width-full"  >
+
+                  <mat-select name="ddAuName"
+
+                    [value]="authorizedAccessCaseParties"
+                    [compareWith]="compareByPartyId"
+                    [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    (selectionChange)="authorizedUsersOnChange($event, acIdx)">
+
+
+                    <mat-option *ngFor="let auName of courtUsers" [value]="auName" >
+                      {{auName.lastName + ", "+ auName.firstName }}
+                    </mat-option>
+
+                </mat-select>
+                </mat-form-field>
+
+            </div>
+            <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
+              <i class="material-icons delete-icon" (click)="requestDeleteAuthorizedUser(acIdx)">delete</i>
+            </div>
+        </div>
+     </div>
+     </div>
+    </div>
+  </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+        <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
+                (click)="hideModals()" >
+        </button>
+        <button *ngIf = "case.authorizedAccessCaseParties.length == 0" label="Seal Case" type="submit" pButton icon="fa-check"
+                (click)="saveSealCaseParties(1)"
+                [disabled]="!authorizedUsersForm.form.valid">
+        </button>
+        <button *ngIf = "case.authorizedAccessCaseParties.length > 0" label="Save Authorized Users" type="submit" pButton icon="fa-check"
+                (click)="saveSealCaseParties(1)"
+                [disabled]="!authorizedUsersForm.form.valid">
+        </button>
+        <button type="button" (click)="addAuthorizedUser();" label="Add Authorized User"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+                pButton>
+        </button>
+      </div>
+    </p-footer>
+  </form>
+</p-dialog>
+
+
+<!-- ADD CASE CHARGE MODAL -->
+
+<p-dialog header="Add Case Charge" width="80%" [(visible)]="showModalAddCaseCharge" [responsive]="true"
+  showEffect="fade" [modal]="true" [closable]="false">
+  <form #caseChargeForm="ngForm" novalidate>
+    <!-- (ngSubmit)="saveCaseCharge()" -->
+    <div class="ui-g">
+      <div class="form-group">
+
+        <!-- <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Section</label>
+          <span *ngIf="selectedChargeLawType && selectedSectionType">{{selectedSectionType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedSectionType">Not Applicable</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
+        </div> -->
+
+        <!-- <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Division</label>
+          <span *ngIf="selectedChargeLawType && selectedDivisionType">{{selectedDivisionType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedDivisionType">Not Applicable</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
+        </div> -->
+
+        <!-- <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Group</label>
+          <span *ngIf="selectedChargeLawType && selectedGroupType">{{selectedGroupType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedGroupType">Not Applicable</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
+        </div> -->
+
+        <!-- <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Class</label>
+          <span *ngIf="selectedChargeLawType && selectedClassType">{{selectedClassType.categoryName}}</span>
+          <span *ngIf="selectedChargeLawType && !selectedClassType">Not Applicable</span>
+          <span class="text-muted" *ngIf="!selectedChargeLawType">Unknown</span>
+        </div> -->
+
+        <div class="ui-g-12 mb-0 feature-box">
+          <p>Enter Local Charge</p>
+          <div class="feature-box-inner">
+            <label class="minimal primary block">Local Charge</label>
+            <custom-autocomplete name="ddChargeLaw" id="ddChargeLaw" #ddChargeLaw="ngModel"
+              placeholder="Choose Local Charge..." [required]="true" [options]="chargeLawTypes" labelField="localCharge"
+              dataField="localChargeOID" [ngModel]="selectedChargeLawType?.localChargeOID"
+              (ngModelChange)="chargeLawTypeOnChange($event)" [filterFunction]="localChargeFilterFunction"
+              [labelFunction]="localChargeLabelFunction" styleClass="width-full">
+              <ng-template let-option>
+                <div class="custom-ac-label1">
+                  {{option.categoryIdentifier}} {{option.localCharge}}
+                </div>
+                <div class="custom-ac-label2">
+                  {{option.localLaw}}
+                </div>
+              </ng-template>
+            </custom-autocomplete>
+            <div class="custom-ac-label2" *ngIf="selectedChargeLawType">
+              {{selectedChargeLawType?.localLaw}}
+            </div>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddChargeLaw.errors?.required && ddChargeLaw.touched">
+              Charge/Law is required
+            </div>
+          </div>
+        </div>
+
+        <div class="ui-g-12">
+          <label class="minimal primary block" for="tiLea">Lead Charge Description (2000 characters max)</label>
+          <textarea id="tiLea" name="tiLea" #tiLea="ngModel" [(ngModel)]="leaLeadChargeText"
+            [rows]="2" pInputTextarea autoResize="autoResize" class="width-full" maxlength="2000"></textarea>
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiLea.errors?.required && tiLea.touched">
+            Enter the Lead Charge Description
+          </div>
+        </div>
+
+        <div class="ui-g-12">
+          <label class="minimal primary block" for="tiPolDesc">Police Description (2000 characters max)</label>
+          <textarea id="tiPolDesc" name="tiPolDesc" #tiPolDesc="ngModel" [required]="true" [(ngModel)]="policeChargeDesc"
+            [rows]="2" pInputTextarea autoResize="autoResize" class="width-full" maxlength="2000"></textarea>
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiLea.errors?.required && tiLea.touched">
+            Police Description is required
+          </div>
+        </div>
+
+        <div class="ui-g-12">
+
+          <div class="ui-g-12 ui-md-6">
+          <label class="minimal primary block" for="tiChgID">Charge ID</label>
+          <textarea id="tiChgID" name="tiChgID" #tiChgID="ngModel" [required]="true" [(ngModel)]="charge_id"
+            [rows]="1" pInputTextarea autoResize="autoResize" class="width-full"></textarea>
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiChgID.errors?.required && tiChgID.touched">
+            Charge ID is required
+          </div>
+
+      </div>
+
+        <div class="ui-g-12 ui-md-6">
+          <label class="minimal primary block" for="tiChgCount">Charge Count</label>
+              <input id="tiChgCount" matInput type="number" name="tiChgCount" placeholder="Charge Count" min="1"
+               #tiChgCount="ngModel"
+               [required]="true"
+               [(ngModel)]="charge_count"
+              (ngModelChange)="caseCountOnChange($event)">
+          <div class="ui-message ui-messages-error ui-corner-all" *ngIf="tiChgCount.errors?.required && tiChgCount.touched">
+            Charge Count is required
+          </div>
+        </div>
+      </div>
+
+
+
+        <!--Rhea Seegobin Implemented 3 tier filtering without constant server calls-->
+
+        <!--div class="ui-g-12 ">
+            <div class="ui-g-3 ph-20 pv-5">
+            <label class="minimal primary block">Charge Factor Category</label>
+            <span class="ui-fluid">
+              <p-autoComplete name="acChargeFactorCategory" #acChargeFactorCategory="ngModel"
+                  [required]="true"
+                  field="chargeFactorCategoryDesc"
+                  [(ngModel)]="selectedChargeFactorCategory"
+                  [suggestions]="filteredChargeFactorCategory"
+                  (completeMethod)="getChargeFactorCategoryToFilter($event)"
+                  styleClass="width-full"
+                  [minLength]="1"
+                  placeholder="Please Select a Charge Factor Category"
+                  [dropdown]="true"
+                  appendTo="body"
+                  [multiple]="false">
+              </p-autoComplete>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="acChargeFactorCategory.errors?.required && acChargeFactorCategory.touched" >
+                  One or more Charge Factor Category is required.
+            </div>
+          </div>
+
+          <div class="ui-g-4 ph-20 pv-5">
+          <label class="minimal primary block">Charge Factor</label>
+          <span class="ui-fluid">
+            <p-autoComplete name="acChargeFactors" #acChargeFactors="ngModel"
+                [required]="true"
+                field="description"
+                [(ngModel)]="selectedChargeFactors"
+                [suggestions]="filteredChargeFactorTypes"
+                (completeMethod)="getChargeFactorsToFilter($event,selectedChargeFactorCategory)"
+                styleClass="width-full"
+                [minLength]="1"
+                placeholder="Please select a Charge Factor"
+                [dropdown]="true"
+                appendTo="body"
+                [multiple]="false">
+            </p-autoComplete>
+          </span>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="acChargeFactors.errors?.required && acChargeFactors.touched" >
+                One or more Charge Factors are required.
+          </div>
+        </div>
+
+        <!(completeMethod)="getChargeFactorsVariablesToFilter($event)" Taken out by RS>
+        <div class="ui-g-4 ph-20 pv-5">
+            <label class="minimal primary block">Charge Factor Variable</label>
+            <span class="ui-fluid">
+              <p-autoComplete name="acChargeFactorVariable" #acChargeFactorVariable="ngModel"
+                  [required]="true"
+                  field="chargeFactorVariableDesc"
+                  (completeMethod)= "getChargeFactorsVariablesToFilter($event,selectedChargeFactors)"
+                  [(ngModel)]="selectedChargeFactorVariables"
+                  [suggestions]="filteredChargeFactorVariables"
+                  styleClass="width-full"
+                  [minLength]="1"
+                  placeholder="Please Select a Charge Factor Variable"
+                  [dropdown]="true"
+                  appendTo="body"
+                  [multiple]="false">
+              </p-autoComplete>
+            </span>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="acChargeFactorVariable.errors?.required && acChargeFactorVariable.touched" >
+                  One or more Charge Factor Variables are required.
+            </div>
+          </div>
+
+          <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
+              <i class="material-icons delete-icon" (click)="requestDeleteAuthCourt(acIdx)">delete</i>
+            </div>
+
+
+
+        </div-->
+
+
+      </div>
+    </div>
+
+    <p-footer>
+
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+
+        <!--button type="button" (click)="addChargeFactorDetails();" label="Add Additional Charge Factor Variables"
+            icon="ui-icon-add" class="ui-button-secondary mr-15"
+            pButton></button-->
+
+        <button label="Save" type="submit" pButton icon="fa-check" (click)="saveCaseCharge()"
+          [disabled]="!caseChargeForm.form.valid"></button>
+
+        <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+          (click)="hideModals()"></button>
+
+        <!--Add button to add multiple charge factors-->
+      </div>
+    </p-footer>
+
+  </form>
+</p-dialog>
+
+
+
+<!-- ADD CASE TASK MODAL -->
+
+<p-dialog header="Case Task Details" width="450" [(visible)]="showModalAddCaseTask" [responsive]="true"
+  showEffect="fade" [modal]="true" [closable]="false">
+  <loading-bar [visible]="loadingCaseTaskLookups" [message]="'loading task data...'"></loading-bar>
+
+  <form (ngSubmit)="saveCaseTask()" #caseTaskForm="ngForm" novalidate>
+    <div class="ui-g">
+      <div class="form-group">
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Task Type</label>
+          <p-dropdown name="ddTaskType" id="ddTaskType" #ddTaskType="ngModel" placeholder="choose Task Type..."
+            [required]="true" [options]="taskTypes" optionLabel="name" [ngModel]="selectedCaseTask?.taskType"
+            [filter]="true"
+            [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
+            (onChange)="taskTypeOnChange($event)" styleClass="width-full">
+          </p-dropdown>
+          <div class="ui-message ui-messages-error ui-corner-all"
+            *ngIf="ddTaskType.errors?.required && ddTaskType.touched">
+            Task Type is required
+          </div>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Priority</label>
+          <p-dropdown name="ddPriority" id="ddPriority" placeholder="choose Priority..."
+            [options]="caseTaskPriorityTypes" [ngModel]="selectedCaseTask?.taskPriorityCode"
+            [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
+            (onChange)="priorityTypeOnChange($event)" styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+        <div class="ui-g-12">
+          <label class="minimal primary block" for="tiTaskDetails">Task Details</label>
+          <textarea id="tiTaskDetails" name="tiTaskDetails" placeholder="Please Enter Task Details if needed"
+            [ngModel]="selectedCaseTask?.taskDetails" (ngModelChange)="taskDetailsOnChange($event)"
+            [disabled]="!hasPermission(Permission.UPDATE_TASK) || selectedCaseTask?.taskDoneDate != null" [rows]="2"
+            pInputTextarea autoResize="autoResize" styleClass="width-full"></textarea>
+        </div>
+
+        <div class="ui-g-12 mb-0">
+          <label class="minimal primary block">Document Template</label>
+          <p-dropdown name="ddDocTemplate" id="ddDocTemplate" #ddDocTemplate
+            placeholder="Please select a document template if required" [filter]="true"
+            [options]="documentTemplateTypes" optionLabel="documentName" [ngModel]="selectedCaseTask?.docTemplate"
+            (onChange)="taskdocumentSelectedOnChange($event)"
+            [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
+            styleClass="width-full">
+          </p-dropdown>
+        </div>
+
+
+        <div class="ui-g-12 mb-0">
+              <label class="minimal primary block">Assigned Staff Pool</label>
+              <p-dropdown name="ddStaffPool" placeholder="choose Staff Pool..."
+                  [options]="staffPools"
+                  optionLabel="poolName"
+                  [ngModel]="selectedCaseTask?.assignedPool"
+                  [filter]="true"
+                  [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
+                  (onChange)="staffPoolTypeOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+            </div>
+
+            <div class="ui-g-12 mb-0">
+               <label class="minimal primary block">Due Date and Expected Completion Time</label>
+               <p-calendar id="ExpectedCompletionTime" name="ExpectedCompletionTime" placeholder="Enter Date and Time"
+                   [ngModel]="selectedCaseTask?.taskDueDate"
+                   (ngModelChange)="dueDateOnChange($event)"
+                   [showIcon]="true"
+                   appendTo="body"
+                   [inline]="false"
+                   [showTime]="true"
+                   [hourFormat]="12"
+                   [disabled]="!hasPermission(Permission.CREATE_TASK) || selectedCaseTask?.taskDoneDate != null"
+                   dateTimeFormat="dd-M-yy HH-mm a"
+                   [monthNavigator]="true"
+                   [yearNavigator]="true"
+                   yearRange="2000:2030">
+               </p-calendar>
+            </div>
+
+        <div class="ui-g-12 mb-0" *ngIf="selectedCaseTask?.taskOID != 0">
+          <label class="minimal primary block">Task Checked Out?</label>
+          <p-checkbox [ngModel]="selectedCaseTask?.taskCheckedOut" binary="true" name="taskCheckedOut"
+            (onChange)="taskCheckedOutOnChange($event)"
+            [disabled]="(!hasPermission(Permission.CREATE_TASK) && selectedCaseTask?.taskCheckedOutBy == 1) || selectedCaseTask?.taskDoneDate != null">
+          </p-checkbox>
+          <span class="task-name">Task Checked Out?</span>
+        </div>
+
+        <div class="ui-g-12 mb-0" *ngIf="selectedCaseTask?.taskOID != 0">
+          <label class="minimal primary block">Task Completed?</label>
+          <p-checkbox [ngModel]="selectedCaseTask?.taskCompleted" binary="true" name="taskCompleted"
+            (onChange)="taskCompletedOnChange($event)" [disabled]="selectedCaseTask?.taskDoneDate != null">
+          </p-checkbox>
+          <span class="task-name">Task Completed?</span>
+        </div>
+
+      </div>
+    </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+        <button label="Save Task" type="submit" pButton icon="fa-check" [disabled]="!caseTaskForm.form.valid"></button>
+        <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+          (click)="onCancelCaseTask(caseTaskForm)"></button>
+      </div>
+    </p-footer>
+
+  </form>
+</p-dialog>
+
+
+<!-- ADD PAYMENTS & DISBURSEMENTS MODAL -->
+
+  <p-dialog header="Payment & Disbursement Details for Case Number {{case?.caseNumber}}" width="1200" [(visible)]="showModalAddCasePayment" [responsive]="true" showEffect="fade" [modal]="true" [closable]="false">
+
+  <form (ngSubmit)="addCasePayment()" #casePaymentForm="ngForm" *ngIf="showModalAddCasePayment">
+    <div class="ui-g">
+      <div class="form-group" >
+
+
+        <div class="ui-g-12">
+
+          <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block">Date of Payment</label>
+            <p-calendar id="dateOfPayment" name="dateOfPayment" placeholder="Payment Date"
+                [ngModel]="selectedCasePayment.dateOfPayment"
+                (ngModelChange)="dateOfPaymentOnChange($event)"
+                [showIcon]="true"
+                appendTo="body"
+                [inline]="false"
+                [required]="true"
+                dateFormat="dd-M-yy"
+                [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)))"
+                [monthNavigator]="true"
+                [yearNavigator]="true"
+                yearRange="2000:2030"
+                styleClass="width-full">
+            </p-calendar>
+          </div>
+
+
+        <div class="ui-g-12 ui-md-3">
+            <label class="minimal primary block">Payment Method</label>
+            <p-dropdown name="paymentMethod" id="paymentMethod" placeholder="Choose Payment Method"
+                      [required]="true"
+                      [options]="paymentMethod"
+                      filter = "true"
+                      [ngModel]="selectedCasePayment.paymentMethod"
+                      [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)))"
+                      appendTo="body"
+                      (onChange)="paymentMethodOnChange($event)"
+                      styleClass="width-full">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="paymentMethod.errors?.required && paymentMethod.touched" >
+                  A payment Method is required
+            </div>
+        </div>
+
+        <div class="ui-g-12 ui-md-3">
+            <label class="minimal primary block">Payment Type</label>
+            <p-dropdown name="paymentType" id="paymentType" placeholder="Choose Payment Type"
+                      [required]="true"
+                      [options]="paymentTypes"
+                      filter = "true"
+                      [ngModel]="selectedCasePayment.paymentType"
+                      [disabled]="(selectedCasePayment?.paymentOID != 0 && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
+                      appendTo="body"
+                      (onChange)="paymentTypeOnChange($event)"
+                      styleClass="width-full">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all"
+                  *ngIf="paymentMethod.errors?.required && paymentMethod.touched" >
+                  A payment Type is required
+            </div>
+        </div>
+
+        <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment.paymentMethod == 'CourtPay' || selectedCasePayment.receiptNumber != ''">
+          <label class="minimal primary block" for="receiptNumber">Receipt Number</label>
+            <textarea id="receiptNumber" name="receiptNumber"
+              placeholder="Enter the Payment Receipt Number"
+              [ngModel]="selectedCasePayment.receiptNumber"
+              (ngModelChange)="receiptNumberOnChange($event)"
+              [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK))
+                          || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))
+                          || selectedCasePayment.paymentMethod != 'CourtPay')"
+              [rows]="1"
+              [required]="true"
+              pInputTextarea
+              autoResize="autoResize"
+              styleClass="width-full"></textarea>
+        </div>
+
+      </div>
+
+      <div class="ui-g-12">
+
+            <div class="ui-g-12 ui-md-3">
+              <label class="minimal primary block" for="tiTotalPaidIn">Payment by Customer</label>
+                  <input matInput type="number" name="tiTotalPaidIn" placeholder="Total Amount Paid In"
+                  [(ngModel)]="selectedCasePayment.totalPaymentIn"
+                  [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
+                  (ngModelChange)="totalAmountPainInOnChange($event)">
+            </div>
+
+            <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment.paymentMethod == 'CourtPay'">
+               <label class="minimal primary block" for="tiProcessingFee">Processing Fee</label>
+                  <input matInput type="number" name="tiProcessingFee" placeholder="Enter Processing Fees"
+                     [(ngModel)]="selectedCasePayment.processingFee"
+                     [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
+                     (ngModelChange)="processingFeeOnChange($event)">
+            </div>
+
+            <div class="ui-g-12 ui-md-3" *ngIf="((selectedCasePayment.paymentType == 'Compensation' || selectedCasePayment.paymentType == 'Fines') && (selectedCasePayment.paymentOID > 0))">
+
+            <label class="minimal primary block">Date of Disbursement</label>
+                  <p-calendar id="dateOfDisbursement" name="dateOfDisbursement" placeholder="Disbursement Date"
+                      [ngModel]="selectedCasePayment.disbursementDate"
+                      (ngModelChange)="dateOfDisbursementOnChange($event)"
+                      [showIcon]="true"
+                      appendTo="body"
+                      [inline]="false"
+                      [required]="false"
+                      [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || !hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                      dateFormat="dd-M-yy"
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
+                      yearRange="2000:2030"
+                      [disabled]="selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)"
+                      styleClass="width-full">
+                  </p-calendar>
+            </div>
+
+              <div class="ui-g-12 ui-md-3" *ngIf="selectedCasePayment?.disbursementDate != null">
+                <label class="minimal primary block">Payment Disbursed?</label>
+                <p-checkbox
+                    [ngModel]="selectedCasePayment?.paymentDisbursedFlag" binary="true" name="disbursementCompleted"
+                    [required]="false"
+
+                    [disabled]="permissionSupervisor == false && disbursementToggle == true"
+                    (onChange)="disbursementCompletedOnChange($event)"
+                    >
+                  </p-checkbox>
+              </div>
+
+
+      </div>
+
+      <!-- Adding Payments Notes Field  -->
+      <div class="ui-g-12">
+          <label class="minimal primary block">Payment Notes</label>
+              <textarea name="tiPaymentNotes"
+                  [disabled]="((selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)))"
+                  [rows]="2"
+                  [cols]="30"
+                  autoResize="autoResize"
+                  pInputTextarea placeholder="Enter Payment Notes"
+                  [(ngModel)]="selectedCasePayment.paymentNotes"
+                  class="width-full">
+              </textarea>
+        </div>
+
+
+      <div class="ui-g-12">
+
+          <div class="ui-g-12 ui-md-6">
+              <label class="minimal primary block">Payor Party</label>
+              <p-dropdown name="ddPayorParty" id="ddPayorParty" #ddPayorParty="ngModel" placeholder="choose a Payor..."
+                  [required]="true"
+                  [options]="paymentCaseParties"
+                  optionLabel="fullName"
+                  [ngModel]="selectedCasePayment?.payorParty"
+                  [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || !hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                  [filter]="true"
+                  (onChange)="payorOnChange($event)"
+                  styleClass="width-full">
+              </p-dropdown>
+          </div>
+
+          <div class="ui-g-12 ui-md-6">
+              <label class="minimal primary block">Beneficiary Party</label>
+              <p-dropdown name="ddBeneficiaryParty" id="ddBeneficiaryParty"  #ddBeneficiaryParty="ngModel" placeholder="choose Beneficiary Party..."
+                    [required]="true"
+                    [options]="paymentCaseParties"
+                    optionLabel="fullName"
+                    [ngModel]="selectedCasePayment?.beneficiaryParty"
+                    [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || !hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
+                    [filter]="true"
+                    (onChange)="beneficiaryOnChange($event)"
+                    styleClass="width-full">
+              </p-dropdown>
+            </div>
+      </div>
+
+
+            <!-- ADD PAYMENT ITEMS, FREQUENCY, PAYMENT DATE, PAYMENT FREQUENCY, PAYMENT AMOUNT-->
+
+            <div class="ui-g-12 mt-0">
+              <div class="ui-g-12">
+                <header class="mb-10">Payment &amp; Disbursement Details</header>
+              </div>
+
+              <div class="ui-g-12 mb-5 paymentDetails-th">
+                <div class="ui-g-2 pv-0">
+                  <label class="minimal primary block">Period Start Date</label>
+                </div>
+                <div class="ui-g-2 pv-0">
+                  <label class="minimal primary block">Period End Date</label>
+                </div>
+                <div class="ui-g-3 pv-0">
+                  <label class="minimal primary block">Payment Item</label>
+                </div>
+                <div class="ui-g-2 pv-0">
+                    <label class="minimal primary block">Payment Frequency</label>
+                  </div>
+                <div class="ui-g-1 pv-0">
+                      <label class="minimal primary block">Payment Ordered</label>
+                </div>
+                <div class="ui-g-1 pv-0">
+                  <label class="minimal primary block">Customer Payment</label>
+                </div>
+                <!--div class="ui-g-1 pv-0" *ngIf="selectedCasePayment?.paymentOID != 0">
+                  <label class="minimal primary block">Amount Paid Out</label>
+                </div-->
+              </div>
+
+
+              <div class="ui-g-12 mb-5 paymentsDisbursements-row" *ngFor="let paymentsDisbursements of selectedCasePayment.paymentsDisbursements; let acIdx = index">
+
+                <div class="ui-g-2 ph-0 pv-5">
+
+                  <p-calendar
+                       placeholder="Period Start Date"
+                      (ngModelChange)="periodStartDateOnChange($event,acIdx)"
+                      [showIcon]="true"
+                      appendTo="body"
+                      [inline]="false"
+                      [required]="true"
+                      dateFormat="dd-M-yy"
+                      [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
+                      yearRange="2000:2030"
+                      id="paymentsDisbursements-paymentPeriodStartDate-{{acIdx}}"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentPeriodStartDate"
+                      name="paymentsDisbursements[{{acIdx}}].paymentPeriodStartDate">
+                  </p-calendar>
+
+
+                </div>
+
+                <div class="ui-g-2 ph-10 pv-5">
+                  <p-calendar placeholder="Period End Date"
+                      (ngModelChange)="periodEndDateOnChange($event,acIdx)"
+                      [showIcon]="true"
+                      appendTo="body"
+                      [inline]="false"
+                      [required]="true"
+                      dateFormat="dd-M-yy"
+                      [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
+                      yearRange="2000:2030"
+                      id="paymentsDisbursements-paymentPeriodEndDate-{{acIdx}}"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentPeriodEndDate"
+                      name="paymentsDisbursements[{{acIdx}}].paymentPeriodEndDate">
+                  </p-calendar>
+                </div>
+
+                <div class="ui-g-3 ph-10 pv-5">
+                  <p-dropdown
+                       placeholder="Choose Payment Item"
+                      [required]="true"
+                      [options]="paymentItems"
+                      filter = "true"
+                      appendTo="body"
+                      [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
+                      (ngModelChange)="paymentItemOnChange($event,acIdx)"
+                      styleClass="width-full"
+                      id="paymentsDisbursements-paymentItem-{{acIdx}}"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentItemOID"
+                      name="paymentsDisbursements[{{acIdx}}].paymentItem">
+                  </p-dropdown>
+               </div>
+
+               <div class="ui-g-2 ph-10 pv-5">
+                  <p-dropdown
+                      placeholder="Choose Payment Frequency"
+                      [required]="true"
+                      [options]="timeFrequencies"
+                      filter = "true"
+                      appendTo="body"
+                      [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
+                      (ngModelChange)="paymentFrequencyOnChange($event,acIdx)"
+                      id="paymentsDisbursements-paymentFrequency-{{acIdx}}"
+                      [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].timeFrequencyOID"
+                      name="paymentsDisbursements[{{acIdx}}].paymentFrequency"
+                      styleClass="width-full">
+                  </p-dropdown>
+               </div>
+
+              <div class="ui-g-1 ph-10 pv-5">
+                      <input matInput type="number"
+                        placeholder="Payment Ordered"
+                        id="paymentsDisbursements-paymentAmountOrdered-{{acIdx}}"
+                        [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
+                        [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountOrdered"
+                        name="paymentsDisbursements[{{acIdx}}].paymentAmountOrdered"
+                        (ngModelChange)="paymentAmountOrderedOnChange($event,acIdx)">
+              </div>
+
+              <div class="ui-g-1 ph-10 pv-5">
+                    <input matInput type="number"
+                    placeholder="Payment Rendered"
+                    (ngModelChange)="paymentAmountInOnChange($event,acIdx)"
+                    [disabled]="(selectedCasePayment?.paymentDisbursedFlag == true && !hasPermission(Permission.CREATE_TASK)) || (!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE))"
+                    id="paymentsDisbursements-paymentAmountIn-{{acIdx}}"
+                    [ngModel]="selectedCasePayment.paymentsDisbursements[acIdx].paymentAmountIn"
+                    name="paymentsDisbursements[{{acIdx}}].paymentAmountIn">
+              </div>
+
+                <div class="ui-g-1 ta-r mt-15 ph-10 pv-5">
+                  <i class="material-icons delete-icon" (click)="requestDeleteCasePaymentDetail(acIdx)">delete</i>
+                </div>
+            </div>
+         </div>
+    </div>
+    </div>
+
+    <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="Save Payment" type="submit" pButton icon="fa-check"
+                  [disabled]="!casePaymentForm.form.valid"
+                  (click)="addCasePayment()"></button>
+
+          <button label="Cancel" type="button" class="ui-button-secondary" pButton icon="fa-close"
+                  (click)="onCancelCasePayment()">
+          </button>
+
+          <button type="button" (click)="addCasePaymentDisbursement();" label="Add Payment &amp; Disbursement"
+                icon="ui-icon-add" class="ui-button-secondary mr-15"
+
+                pButton>
+        </button>
+        </div>
+    </p-footer>
+  </form>
+</p-dialog>
+
+<!-- SENTENCING MODAL -->
+<p-dialog header="Add Consequence" width="800" [(visible)]="showAddConsequenceModal" [responsive]="true" showEffect="fade"
+  [modal]="true" [closable]="false">
+  <div class="ui-g-12">
+    <div class="ui-g-12">
+      <span class="md-inputfield">
+        <input [(ngModel)]="caseNumberText" name="tiCaseNumber" type="text" class="width-full" pInputText>
+        <label>search consequence types</label>
+      </span>
+    </div>
+    <div class="ui-g-4">
+      <mat-selection-list #matSelectionList class="items-list card" >
+        <mat-list-option *ngFor="let item of sentencingTypes; let i=index; let itm" [class.hi]="selected" [value]="item" (selectionChange)="onSentencingModalSelectionChange($event,  item)">
+          <span>{{item?.description}} </span>
+        </mat-list-option>
+      </mat-selection-list>
+
+    </div>
+
+    <div class="ui-g-8">
+      <div class="ui-g-12 mt-25">
+        <span class="md-inputfield">
+          <input pInputText type="text" *ngIf="selectedConsequence" [required]="false" [(ngModel)]="selectedConsequence.chargeDescription"
+            class="width-full">
+          <label>Consequence Name</label>
+        </span>
+      </div>
+    </div>
+  </div>
+
+
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button label="Cancel" type="button" pButton icon="fa-close" (click)="hideModals()"></button>
+      <button label="Save Consequence" mat-raised-button color="primary" type="button" pButton icon="fa-check" (click)="addNewConsequence(selectedConsequence)"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<!-- ADD JUDICIAL ASSIGNMENT MODAL -->
+
+<p-dialog width="450" [(visible)]="showModalAddJudge" [responsive]="true" showEffect="fade" [modal]="true"
+  [closable]="false">
+  <p-header>
+    {{ judge?.judicialAssignmentOID ? 'Edit' : 'Save' }} Judicial Assignment
+  </p-header>
+  <loading-bar [visible]="loadingJudgeLookups" [message]="'loading judicial data...'"></loading-bar>
+  <form (ngSubmit)="saveJudge()" #caseJudgeForm="ngForm" novalidate>
+    <div class="ui-g">
+      <div class="form-group">
+
+        <div class="ui-g-12 mb-15">
+          <label class="minimal primary block">Judge</label>
+          <div *ngIf="judge.judicialAssignmentOID > 0">{{judge.judicialOfficial.firstName}}
+            {{judge.judicialOfficial.lastName}}</div>
+          <div *ngIf="!judge.judicialAssignmentOID || judge.judicialAssignmentOID == 0">
+            <p-dropdown name="ddJudge" id="ddJudge" placeholder="choose Judge..." #ddJudge="ngModel" [required]="true"
+              [options]="judges" optionLabel="name" [(ngModel)]="judge.judicialOfficial" [filter]="true"
+              [disabled]="judge.judicialAssignmentOID > 0" styleClass="width-full">
+            </p-dropdown>
+            <div class="ui-message ui-messages-error ui-corner-all" *ngIf="ddJudge.errors?.required && ddJudge.touched">
+              Please select a Judge
+            </div>
+          </div>
+        </div>
+
+        <!-- START DATE -->
+        <div class="ui-g-12 mb-15">
+          <p-calendar id="dtStartDate" name="dtStartDate" placeholder="Start Date" #dtStartDate="ngModel" required="true"
+            [(ngModel)]="judge.startDate" [showIcon]="true" dateFormat="dd-M-yy" appendTo="body"></p-calendar>
+          <div class="ui-message ui-messages-error ui-corner-all"
+            *ngIf="dtStartDate.errors?.required && dtStartDate.touched">
+            Please select a start date
+          </div>
+        </div>
+
+        <!-- END DATE -->
+        <div class="ui-g-12">
+          <p-calendar id="dtEndDate" name="dtEndDate" placeholder="End Date" #dtEndDate="ngModel"
+            [(ngModel)]="judge.endDate" [showIcon]="true" dateFormat="dd-M-yy" appendTo="body"></p-calendar>
+        </div>
+
+      </div>
+    </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+        <button label="{{ judge?.judicialAssignmentOID ? 'Edit' : 'Save' }}  Judge" type="submit" pButton
+          icon="fa-check" [disabled]="!caseJudgeForm.form.valid"></button>
+        <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+          (click)="hideModals()"></button>
+      </div>
+    </p-footer>
+
+  </form>
+</p-dialog>
+
+
+<!-- ADD TRAFFIC CASE CHARGE MODAL -->
+<!-- zaggy -->
+<p-dialog header="Traffic Offence" width="580" [(visible)]="showModalAddTrafficCaseCharge" [responsive]="true"
+  showEffect="fade" [modal]="true" [closable]="false">
+  <ng-container *ngIf="this.isEdit == false; then saveCharge; else editCharge"></ng-container>
+  <ng-template #saveCharge>
+    <form #caseTrafficChargeForm="ngForm" novalidate>
+      <div class="ui-g">
+        <div class="form-group">
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Description of Traffic violation or Offence</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.description}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Relevant Section/Regulation</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.regulation}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Penalty</label>
+            <span *ngIf="selectedTrafficCharge">${{selectedTrafficCharge.penalty}}.00</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Applicable Demerit Points</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.demeritPoints}}</span>
+          </div>
+
+
+          <div class="ui-g-12 mb-0 feature-box">
+            <p>Enter Traffic Charge/Law First</p>
+            <div class="feature-box-inner">
+              <label class="minimal primary block">Charge/Law</label>
+              <custom-autocomplete name="ddTrafficChargeLaw" id="ddTrafficChargeLaw" #ddTrafficChargeLaw="ngModel"
+                placeholder="choose Charge/Law..." [required]="true" [options]="trafficCharges" dataField="id"
+                labelField="description" [filterFunction]="trafficChargeFilterFunction"
+                [ngModel]="selectedTrafficCharge?.id" (ngModelChange)="trafficChargeOnChange($event)"
+                [labelFunction]="trafficChargeLabelFunction" styleClass="width-full">
+                <ng-template let-option>
+                  <div class="custom-ac-label1">
+                    {{option.description}}
+                  </div>
+                  <div class="custom-ac-label2">
+                    {{option.regulation}}
+                  </div>
+                </ng-template>
+              </custom-autocomplete>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddTrafficChargeLaw.errors?.required && ddTrafficChargeLaw.touched">
+                Charge/Law is required
+              </div>
+            </div>
+          </div>
+
+          <!-- CITATION NUMBER -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="citationNumber">Citation Number</label>
+            <input pInputText id="citationNumber" name="citationNumber" #citationNumber="ngModel"
+              (ngModelChange)="citationNumberOnChange($event)" [(ngModel)]="selectedCaseTrafficCharge.citationNumber"
+              [required]="true" />
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="citationNumber.errors?.required && citationNumber.touched">
+              A Citation Number is required
+            </div>
+          </div>
+
+          <!-- REASON FOR CONTEST -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="contestReason">Reason for Contest</label>
+            <textarea id="contestReason" name="contestReason" #contestReason="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.reasonForContest" [required]="true" [rows]="5" pInputTextarea
+              autoResize="autoResize" class="width-full"></textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="contestReason.errors?.required && contestReason.touched">
+              Contest reason is required
+            </div>
+          </div>
+
+          <!-- CHARGE DATE & TIME -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="offenceDateTime">Offence Date/Time</label>
+              <!-- <input pInputText id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+              [ngModel]="selectedCaseTrafficCharge?.offenceDatetime | date: 'medium'" [required]="true"
+              (ngModelChange)="selectedCaseTrafficCharge.offenceDatetime=$event" /> -->
+              <p-calendar id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.offenceDatetime" [required]="true" [showIcon]="true"
+                [showTime]="true"></p-calendar>
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="offenceDateTime.errors?.required && offenceDateTime.touched">
+                Offence Date/Time is required
+              </div>
+            </div>
+
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="paymentDueDate">Payment Due Date</label>
+              <!-- <input pInputText id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+              [ngModel]="selectedCaseTrafficCharge.paymentDueDate | date:'medium'" [required]="true"
+              (ngModelChange)="selectedCaseTrafficCharge.paymentDueDate=$event" />-->
+              <p-calendar id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.paymentDueDate" [required]="true" [showIcon]="true"
+                [showTime]="true">
+              </p-calendar>
+              <!-- <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="paymentDueDate.errors?.required && paymentDueDate.touched">
+              Payment Due Date is required
+            </div> -->
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="offenceLocation">Location of Offence</label>
+            <textarea id="offenceLocation" name="offenceLocation" #offenceLocation="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.offenceLocation" [rows]="2" pInputTextarea autoResize="autoResize"
+              class="width-full">
+          </textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="offenceLocation.errors?.required && offenceLocation.touched">
+              Offence Location is required
+            </div>
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleMake">Vehicle Make</label>
+              <input pInputText id="vehicleMake" name="vehicleMake" #vehicleMake="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleMake" [required]="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleMake.errors?.required && vehicleMake.touched">
+                Vehicle Make is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleModel">Vehicle Model</label>
+              <input pInputText id="vehicleModel" name="vehicleModel" #vehicleModel="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleModel">
+              <!-- <span class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="vehicleModel.errors?.required && vehicleModel.touched">
+              Vehicle Model is required
+            </span> -->
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleRegistration">Vehicle Registration</label>
+              <input pInputText id="vehicleRegistration" name="vehicleRegistration" #vehicleRegistration="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleRegistration" [required]="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleRegistration.errors?.required && vehicleRegistration.touched">
+                Vehicle Registration Number is required
+              </span>
+            </div>
+
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleColour">Vehicle Colour</label>
+              <input pInputText id="vehicleColour" name="vehicleColour" #vehicleColour="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleColour">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleColour.errors?.required && vehicleColour.touched">
+                Vehicle Colour is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleYear">Vehicle Year</label>
+              <input pInputText id="vehicleYear" name="vehicleYear" #vehicleYear="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleYear">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleYear.errors?.required && vehicleYear.touched">
+                Vehicle Year is required
+              </span>
+            </div>
+            <div class=ui-g-4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="Save" type="submit" pButton icon="fa-check"
+            (click)="saveCaseTrafficCharge(caseTrafficChargeForm)"
+            [disabled]="!caseTrafficChargeForm.form.valid"></button>
+          <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+            (click)="hideModals();"></button>
+        </div>
+      </p-footer>
+    </form>
+  </ng-template>
+
+
+
+  <ng-template #editCharge>
+    <form #caseTrafficChargeForm="ngForm" novalidate>
+      <div class="ui-g">
+        <div class="form-group">
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Description of Traffic violation or Offence</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.description}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Relevant Section/Regulation</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.regulation}}</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Penalty</label>
+            <span *ngIf="selectedTrafficCharge">${{selectedTrafficCharge.penalty}}.00</span>
+          </div>
+
+          <div class="ui-g-12 mb-0">
+            <label class="minimal primary block">Applicable Demerit Points</label>
+            <span *ngIf="selectedTrafficCharge">{{selectedTrafficCharge.demeritPoints}}</span>
+          </div>
+
+
+          <!-- <div class="ui-g-12 mb-0 feature-box">
+          <p>Enter Traffic Charge/Law First</p>
+          <div class="feature-box-inner">
+            <label class="minimal primary block">Charge/Law</label>
+            <custom-autocomplete name="ddTrafficChargeLaw" id="ddTrafficChargeLaw" #ddTrafficChargeLaw="ngModel"
+              placeholder="choose Charge/Law..." [required]="true" [options]="trafficCharges" dataField="id"
+              labelField="description" [filterFunction]="trafficChargeFilterFunction"
+              [ngModel]="selectedTrafficCharge?.id" (ngModelChange)="trafficChargeOnChange($event)"
+              [labelFunction]="trafficChargeLabelFunction" styleClass="width-full">
+              <ng-template let-option>
+                <div class="custom-ac-label1">
+                  {{option.description}}
+                </div>
+                <div class="custom-ac-label2">
+                  {{option.regulation}}
+                </div>
+              </ng-template>
+            </custom-autocomplete>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="ddTrafficChargeLaw.errors?.required && ddTrafficChargeLaw.touched">
+              Charge/Law is required
+            </div>
+          </div>
+        </div> -->
+
+          <!-- CITATION NUMBER -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="citationNumber">Citation Number</label>
+            <input pInputText id="citationNumber" name="citationNumber" #citationNumber="ngModel"
+              (ngModelChange)="citationNumberOnChange($event)" [(ngModel)]="selectedCaseTrafficCharge.citationNumber"
+              [required]="true" readonly="true" />
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="citationNumber.errors?.required && citationNumber.touched">
+              A Citation Number is required
+            </div>
+          </div>
+
+          <!-- REASON FOR CONTEST -->
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="contestReason">Reason for Contest</label>
+            <textarea id="contestReason" name="contestReason" #contestReason="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.reasonForContest" [required]="true" [rows]="5" pInputTextarea
+              autoResize="autoResize" class="width-full" readonly="true"></textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="contestReason.errors?.required && contestReason.touched">
+              Contest reason is required
+            </div>
+          </div>
+
+          <!-- CHARGE DATE & TIME -->
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="offenceDateTime">Offence Date/Time</label>
+              <input pInputText id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+                [ngModel]="selectedCaseTrafficCharge?.offenceDatetime | date: 'medium'" [required]="true"
+                (ngModelChange)="selectedCaseTrafficCharge.offenceDatetime=$event" readonly="true" />
+              <!-- <p-calendar id="offenceDateTime" name="offenceDateTime" #offenceDateTime="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.offenceDatetime" [required]="true" [showIcon]="true"
+              [showTime]="true"></p-calendar> -->
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="offenceDateTime.errors?.required && offenceDateTime.touched">
+                Offence Date/Time is required
+              </div>
+            </div>
+
+            <div class="ui-g-6">
+              <label class="minimal primary block" for="paymentDueDate">Payment Due Date</label>
+              <input pInputText id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+                [ngModel]="selectedCaseTrafficCharge.paymentDueDate | date:'medium'" [required]="true"
+                (ngModelChange)="selectedCaseTrafficCharge.paymentDueDate=$event" readonly="true" />
+              <!-- <p-calendar id="paymentDueDate" name="paymentDueDate" #paymentDueDate="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.paymentDueDate" [required]="true" [showIcon]="true"
+              [showTime]="true">
+            </p-calendar> -->
+              <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="paymentDueDate.errors?.required && paymentDueDate.touched">
+                Payment Due Date is required
+              </div>
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <label class="minimal primary block" for="offenceLocation">Location of Offence</label>
+            <textarea id="offenceLocation" name="offenceLocation" #offenceLocation="ngModel"
+              [(ngModel)]="selectedCaseTrafficCharge.offenceLocation" [rows]="2" pInputTextarea autoResize="autoResize"
+              class="width-full" readonly="true">
+          </textarea>
+            <div class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="offenceLocation.errors?.required && offenceLocation.touched">
+              Offence Location is required
+            </div>
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleMake">Vehicle Make</label>
+              <input pInputText id="vehicleMake" name="vehicleMake" #vehicleMake="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleMake" [required]="true" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleMake.errors?.required && vehicleMake.touched">
+                Vehicle Make is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleModel">Vehicle Model</label>
+              <input pInputText id="vehicleModel" name="vehicleModel" #vehicleModel="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleModel" readonly="true">
+              <!-- <span class="ui-message ui-messages-error ui-corner-all"
+              *ngIf="vehicleModel.errors?.required && vehicleModel.touched">
+              Vehicle Model is required
+            </span> -->
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleRegistration">Vehicle Registration</label>
+              <input pInputText id="vehicleRegistration" name="vehicleRegistration" #vehicleRegistration="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleRegistration" [required]="true" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleRegistration.errors?.required && vehicleRegistration.touched">
+                Vehicle Registration Number is required
+              </span>
+            </div>
+
+          </div>
+
+          <div class="ui-g-12">
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleColour">Vehicle Colour</label>
+              <input pInputText id="vehicleColour" name="vehicleColour" #vehicleColour="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleColour" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleColour.errors?.required && vehicleColour.touched">
+                Vehicle Colour is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+              <label class="minimal primary block" for="vehicleYear">Vehicle Year</label>
+              <input pInputText id="vehicleYear" name="vehicleYear" #vehicleYear="ngModel"
+                [(ngModel)]="selectedCaseTrafficCharge.vehicleYear" readonly="true">
+              <span class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="vehicleYear.errors?.required && vehicleYear.touched">
+                Vehicle Year is required
+              </span>
+            </div>
+
+            <div class=ui-g-4>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button label="Close" class="ui-button-secondary" type="button" pButton icon="fa-close"
+            (click)="hideModals()">
+          </button>
+        </div>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+          <button type="button" class="ui-button-danger" (click)="showDeleteTrafficChargeConfirmation = true" pButton icon="ui-icon-trash"
+            *ngIf="hasPermission(Permission.DELETE_CASE_TRAFFIC_CHARGE)" label="Delete"></button>
+        </div>
+      </p-footer>
+    </form>
+  </ng-template>
+
+</p-dialog>
+
+
+<p-dialog header="Confirm Deletion" [(visible)]="showDeleteTrafficChargeConfirmation" [responsive]="true" showEffect="fade" [closable]="true" [modal]="true">
+  <h3>Are you sure that you want to delete this traffic offence?</h3>
+
+  <div class="ui-g-12 ta-r">
+      <button type="button"
+              (click)="confirmDeleteTrafficCharge()"
+              label="Yes"
+              icon="ui-icon-check"
+              class="secondary"
+              pButton></button>
+      <button type="button"
+              (click)="showDeleteTrafficChargeConfirmation = !showDeleteTrafficChargeConfirmation"
+              label="No"
+              icon="ui-icon-clear"
+              class="ui-button-secondary"
+              pButton></button>
+
+  </div>
+</p-dialog>
+
+
+<!-- ADD EVENT MODAL -->
+
+<p-dialog header="Add Completed Event" width="450" [(visible)]="showModalAddEvent" [responsive]="true" showEffect="fade"
+  [modal]="true" [closable]="false">
+  <form (ngSubmit)="saveEvent()" #caseEventForm="ngForm" novalidate>
+    <div class="ui-g">
+      <div class="form-group">
+
+        <!-- EVENT DATE -->
+        <div class="ui-g-12">
+          <label class="minimal primary block">Event Date</label>
+          <p-calendar id="dtEventDate" name="dtEventDate" placeholder="Event Date" #dtEventDate="ngModel"
+            [(ngModel)]="caseEvent.eventDate" [showIcon]="true" dateFormat="dd-M-yy"
+            [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0" appendTo="body"></p-calendar>
+          <div class="ui-message ui-messages-error ui-corner-all"
+            *ngIf="dtEventDate.errors?.required && dtEventDate.touched">
+            Please select a event date
+          </div>
+        </div>
+
+        <!-- EVENT ID -->
+        <div class="ui-g-12 mb-15">
+          <label class="minimal primary block">Event Description</label>
+          <p-dropdown name="ddEventId" id="ddEventId" placeholder="choose Event Description..." #ddEventId="ngModel"
+            [required]="true" [options]="eventTypes" optionLabel="description" [(ngModel)]="caseEvent.eventType"
+            [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0" styleClass="width-full">
+          </p-dropdown>
+          <div class="ui-message ui-messages-error ui-corner-all"
+            *ngIf="ddEventId.errors?.required && ddEventId.touched">
+            Please select an Event
+          </div>
+        </div>
+
+        <div class="ui-md-12 mb-15" *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
+          <label class="minimal primary block">Event Category</label>
+          <div>{{caseEvent.eventType?.eventCategoryText}}</div>
+        </div>
+
+        <!-- INITIATED BY
+          REMOVED ON 2/8/2018 PER AG
+        -->
+        <!-- <div class="ui-g-12">
+          <label class="minimal primary block">Event Initiated By</label>
+          <p-dropdown name="ddInitiator" id="ddInitiator" placeholder="choose initiator..." #ddInitiator="ngModel"
+              [required]="true"
+              [options]="case?.caseParties"
+              optionLabel="caseParty.lastName"
+              [(ngModel)]="selectedInitiatedByParty"
+              [disabled]="caseEvent.caseEventOID && caseEvent.caseEventOID > 0"
+              styleClass="width-full">
+          </p-dropdown>
+          <label class="minimal block"
+                *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
+                    [Awaiting property 'initatedBy' on Case > CaseEvent returned from server]
+          </label>
+          <div class="ui-message ui-messages-error ui-corner-all"
+                *ngIf="ddInitiator.errors?.required && ddInitiator.touched" >
+                Please select Initiator of the Event
+          </div>
+        </div> -->
+
+        <!-- ENTERED BY -->
+        <div class="ui-g-12 mb-15" *ngIf="caseEvent.caseEventOID && caseEvent.caseEventOID > 0">
+          <label class="minimal primary block">Event Entered by:</label>
+          <div>{{caseEvent.enteringParty?.firstName}} {{caseEvent.enteringParty?.lastName}}</div>
+        </div>
+
+        <!-- DURATION -->
+        <div class="ui-g-12 mt-15">
+          <span class="md-inputfield">
+            <input pInputText id="tiEventDuration" name="tiEventDuration" class="width-full"
+              [(ngModel)]="caseEvent.durationTimeMin" />
+            <label>Event Duration (Min)</label>
+          </span>
+        </div>
+
+        <!-- EVENT DOCUMENT -->
+        <!-- <div class="ui-g-12">
+          <label class="minimal primary block">Document</label>
+          <p-dropdown name="ddDocuments" id="ddDocuments" placeholder="choose Document..."
+              [options]="documentTemplateTypes"
+              optionLabel="documentName"
+              [(ngModel)]="caseEvent.docTemplate"
+              styleClass="width-full">
+          </p-dropdown>
+        </div> -->
+
+        <!-- EVENT DETAILS  -->
+
+        <!-- <div class="ui-g-12 mt-15">
+          <span class="md-inputfield">
+            <input pInputText id="tiEventDesc" name="tiEventDesc" class="width-full"
+                    [(ngModel)]="caseEvent.description"/>
+            <label>Event Details</label>
+          </span>
+        </div> -->
+
+        <div class="ui-g-12 mt-15">
+          <label class="minimal primary block" for="taDesc">Event Details</label>
+          <textarea id="tiEventDesc" name="tiEventDesc" [(ngModel)]="caseEvent.description" [rows]="2" pInputTextarea
+            autoResize="autoResize" class="width-full"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix mt-30">
+        <button label="Add Case Event" type="submit" pButton icon="fa-check"
+          [disabled]="!caseEventForm.form.valid"></button>
+        <button label="Cancel" class="ui-button-secondary" type="button" pButton icon="fa-close"
+          (click)="hideModals()"></button>
+      </div>
+    </p-footer>
+
+  </form>
+</p-dialog>
+
+
+<!-- ADD HEARING MODAL -->
+<!-- Replaced by Hearing.Component -->

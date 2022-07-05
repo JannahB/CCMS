@@ -1,0 +1,110 @@
+<div class="ui-g">
+
+  <!-- HEADER -->
+  <div class="ui-g-12 pv-0">
+    <h1 class="page-header mt-0">Staff Pool Management</h1>
+  </div>
+
+  <!-- SEARCH USER CARD -->
+  <div class="ui-g-12 card">
+    <form (ngSubmit)="onSearch()" #searchForm="ngForm" novalidate>
+      <div class="form-group mt-20" >
+        <div class="ui-g-12 ph-30 big-search">
+          <span class="md-inputfield">
+            <input [(ngModel)]="poolNameText" name="tiName" type="text" class="width-full"  pInputText>
+            <label>Search for Staff Pool Name (partial)</label>
+            <button type="submit" label="Search" icon="ui-icon-search" class="mr-20 mt-10 fr" pButton></button>
+            <button type="button" label="Reset" (click)="onReset()"  icon="ui-icon-autorenew" class="ui-button-secondary mt-10 mr-10 fr" pButton></button>
+          </span>
+          <div>
+            <p-message severity="info" text="{{recordsFoundMessage}}" *ngIf="showRecordsFoundMessage"></p-message>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="ui-g-12 mb-20 pos-relative">
+      <loading-bar [visible]="isSearching" [message]="'searching...'"></loading-bar>
+      <h2 class="mt-0">Staff Pools</h2>
+      <p-dataTable [value]="poolResults" selectionMode="single"
+            [(selection)]="selectedPool" (onRowSelect)="staffPoolOnRowSelect($event)"
+            scrollable="true" scrollHeight="280px"
+            dataKey="poolOID" #dtPartyResults>
+        <p-column field="poolName" header="Staff Pool Name" styleClass="ta-c" [style]="{'width':'30%'}"></p-column>            
+      </p-dataTable>
+    </div>
+  </div>
+  <!-- //END USER SEARCH CARD -->
+
+
+  <!-- USER DETAILS SECTION -->
+  <div class="ui-g-12 card">
+    <loading-bar [visible]="loadingUser" [message]="loadingMessage"></loading-bar>
+
+    <form #addStaffPartyForm ="ngForm" novalidate>
+
+      <div class="form-group">
+
+          <!-- ADD STAFF MEMBERS  -->
+          <div class="ui-g-12 mt-0">
+            <div class="ui-g-12">
+              <h2 class="mb-10">Staff Members</h2>
+          </div>
+
+          <!-- STAFF POOLS & MEMBERS -->
+          <div class="ui-g-12 mb-5 courts-th">
+            <div class="ui-g-6 pv-0">
+              Staff Member
+            </div>
+          </div>
+                 
+          <div class="ui-g-12 mb-5 authParty-row" *ngFor="let authParty of staffPoolParties; let acIdx = index">
+            <div class="ui-g-7 ph-20 pv-5">
+
+              <mat-form-field class="width-full" >
+
+                    <mat-select placeholder="Staff Pool Members" name="ddParty" 
+                    
+                    [compareWith] = "compareByPartyID"
+                    [value]="authParty"
+                    (selectionChange)="staffPoolMemberOnChange($event,acIdx)">
+                    
+                      <mat-option *ngFor="let sParties of staffParties" 
+                        filter = "true"
+                        [value] = "sParties">
+                         {{sParties.lastName}} {{sParties.firstName}}
+                      </mat-option>
+                    
+                    
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="ui-g-1 ta-r mt-15 ph-20 pv-5">
+              <i class="material-icons delete-icon" (click)="requestDeleteStaffPoolMember(acIdx)">delete</i>
+            </div>
+          </div>
+
+          <div class="ui-g-12">
+            <button type="button" (click)="addStaffPoolMember();" label="Add Staff Pool Member"
+                  icon="ui-icon-add" class="ui-button-secondary mr-15"
+                  pButton></button>
+          </div>
+
+        </div>
+
+        <!-- UPDATE STAFF POOL -->
+        <div class="ui-g-12 ph-10">
+          <div class="ui-g-12 ta-r">
+            <button type="button"
+                    (click)="SaveStaffPool(addStaffPartyForm)"
+                    label="Update Staff Pool"
+                    icon="ui-icon-check"
+                    class="btn-big" pButton
+                    [disabled]="!addStaffPartyForm.form.valid"></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

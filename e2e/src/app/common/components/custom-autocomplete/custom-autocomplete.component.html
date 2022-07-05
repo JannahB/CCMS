@@ -1,0 +1,23 @@
+<div>
+  <mat-form-field class="width-full">
+    <input matInput
+      #matInput="matInput"
+      [placeholder]="placeholder"
+      [matAutocomplete]="auto"
+      [ngModel]="filterText"
+      (ngModelChange)="filterOptions($event)"
+      [disabled]="disabled"
+      [ngModelOptions]="{standalone: true }"
+      (blur)="onBlur();">
+  </mat-form-field>
+
+  <mat-autocomplete #auto="matAutocomplete"
+    (optionSelected)="optionSelected($event);"
+    autoActiveFirstOption 
+    [displayWith]="displayFunction">
+      <mat-option *ngFor="let option of filteredOptions" [value]="option[dataField]" >
+        <template [ngTemplateOutlet]="ngTemplateOutlet" [ngTemplateOutletContext]="{$implicit: option}">
+        </template>
+      </mat-option>
+  </mat-autocomplete>
+</div>

@@ -1,0 +1,57 @@
+[
+  {
+    "statusOID": 5,
+    "courtOID": 5,
+    "name": "Adjourned for Sentencing"
+  },
+  {
+    "statusOID": 2,
+    "courtOID": 5,
+    "name": "Bail Granted"
+  },
+  {
+    "statusOID": 10,
+    "courtOID": 5,
+    "name": "Case Delayed for Reason"
+  },
+  {
+    "statusOID": 1,
+    "courtOID": 5,
+    "name": "Charge Laid"
+  },
+  {
+    "statusOID": 4,
+    "courtOID": 5,
+    "name": "Closed"
+  },
+  {
+    "statusOID": 3,
+    "courtOID": 5,
+    "name": "Committed for Trial"
+  },
+  {
+    "statusOID": 11,
+    "courtOID": 5,
+    "name": "Post Sentence Monitoring"
+  },
+  {
+    "statusOID": 7,
+    "courtOID": 5,
+    "name": "Referred to Drug Treatment Court"
+  },
+  {
+    "statusOID": 6,
+    "courtOID": 5,
+    "name": "Referred to Peer Resolution"
+  },
+  {
+    "statusOID": 8,
+    "courtOID": 5,
+    "name": "Referred to Program"
+  },
+  {
+    "statusOID": 9,
+    "courtOID": 5,
+    "name": "Referred to Program - External"
+  }
+]

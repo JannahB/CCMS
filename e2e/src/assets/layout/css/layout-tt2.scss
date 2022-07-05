@@ -1,0 +1,66 @@
+/* Theme */
+$primaryColor: #03A9F4; // #1A87BF;
+$primaryDarkColor: #0277BD; // #085981;
+$primaryLightColor: #66ACE2;
+$primaryXLightColor: #BAD9F1;
+$accentColor: #25BF6B;
+$accentDarkColor: #0e7c5b;
+$accentLightColor: #a2eec4;
+$accentTextColor: white; //  $accentDarkColor;
+$brandColor: #BF2E1A;
+$buttonColor: #25BF6B;
+$buttonHover: #0e7c5b;
+$topbarBGColor: $brandColor;
+$topbarHeight: 60px;
+$logoHeight: 28px;
+$logoWidth: 175px;
+$logoUrl: '../images/logo2x.png'; // relative from ./assets/layout/css/
+
+
+// below are copied from _variables
+/* Common */
+$textColor:#1c333d;
+$textSecondaryColor:#354850;
+$fontSize:16px;
+$lineHeight:1.5em;
+$transitionDuration:.3s;
+$borderRadius:3px;
+
+/* Layout */
+$bodyBgColor: #E6EFF6;
+$maskBgColor:#424242;
+
+$topbarButtonColor: white;
+$topbarButtonHoverColor:#e8e8e8;
+$topbarSearchBorderColor:white;
+$topbarSearchColor: white;
+$topbarIconColor: white;
+$topbarIconHoverColor:#e8e8e8;
+$topbarMenuBgColor:$brandColor;
+
+$layoutMenuBgColor:#ffffff;
+$layoutMenuScrollbarBgColor:#aaaaaa;
+$layoutMenuItemIconColor:#757575;
+$layoutMenuItemActiveColor:#e8e8e8;
+
+// Horizontal Light Menu
+$horizontalLightMenuBGColor: #a7a596;
+$horizontalLayoutMenuItemHoverBgColor: #7a7869;
+$horizontalLightMenuRouterLinkActiveColor: white;
+$horizontalLightMenuRouterLinkActiveHoverTextColor: white;
+$horizontalLayoutMenuItemHoverTextColor: white;
+$horizontalLayoutMenuItemTextColor: #e7e7e7;
+$horizontalLayoutMenuSubMenuBgColor:#ffffff;
+$horizontalLayoutMenuSubMenuActiveBgColor:#e8e8e8;
+
+// Horizontal Dark Menu
+$horizontalDarkLayoutMenuItemTextColor:#ffffff;
+$horizontalDarkLayoutMenuItemTextColorIcon:#ffffff;
+$horizontalDarkLayoutMenuItemTextColorHover: #f2f9ff;
+
+$darkMenuBgColor: #a7a596;
+$darkMenuHoverColor: #676767;
+$darkMenuRouterLinkActiveColor: #085981;
+$lightMenuRouterLinkActiveColor: #0e7c5b;
+
+@import '../../sass/layout/_layout';
