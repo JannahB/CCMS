@@ -884,14 +884,14 @@
 
           <div class="ui-g-12 ui-md-6 mb-20 mt-n-20">
             <label class="minimal primary block">City / Town</label>
-            <span class="md-inputfield" *ngIf="selectedAddress.countryName != 'Trinidad and Tobago'">
+            <span class="md-inputfield" *ngIf="selectedAddress.countryName != 'Barbados'">
               <input [(ngModel)]="selectedAddress.municipalityName"  type="text"
                      [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
                      pInputText>
             </span>
 
             <p-dropdown
-              *ngIf="selectedAddress.countryName == 'Trinidad and Tobago'"
+              *ngIf="selectedAddress.countryName == 'Barbados'"
               placeholder="City / Town"
               [disabled]="!hasPermission(Permission.CREATE_CASE) && !hasPermission(Permission.UPDATE_CASE)"
               [(ngModel)]="selectedAddress.municipalityName"
