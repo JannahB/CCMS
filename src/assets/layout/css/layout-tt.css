@@ -1003,9 +1003,9 @@ body {
     vertical-align: middle;
     width: 713px;
     height: 54px;
-    background: url("../images/crim.png") top left no-repeat;
-    background-size: 625px 54px;
-    background-position: -15px -12px;
+    background: url("../images/Mag_header.png") top left no-repeat;
+    background-size: 625px 50px;
+    background-position: -15px -4px;
   }
 
   .layout-container .topbar .topbar-left {
