@@ -55,7 +55,7 @@
     "quill": "1.1.8",
     "rxjs": "5.5.2",
     "web-animations-js": "2.3.1",
-    "zone.js": "0.8.18"
+    "zone.js": "0.13.0"
   },
   "devDependencies": {
     "@angular/cli": "1.6.7",
