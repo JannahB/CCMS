@@ -50,7 +50,7 @@
     "moment": "2.18.1",
     "nanoscroller": "0.8.7",
     "ngx-infinite-scroll": "^0.8.4",
-    "node-gyp": "^7.1.2",
+    "node-gyp": "^10.0.0",
     "primeng": "5.0.2",
     "quill": "1.1.8",
     "rxjs": "5.5.2",
